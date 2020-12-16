@@ -1,0 +1,56 @@
+---
+title: "Introduction"
+output: rmarkdown::html_vignette
+
+vignette: >
+  %\VignetteIndexEntry{Introduction}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(COINr2020)
+```
+
+# Introduction
+
+The `COINr` package is a comprehensive development and analysis environment for composite indicators and scoreboards, featuring a range of tools for building, visualising and analysing.
+
+This vignette is a work in progress and will be expanded as the COINr project progresses.
+
+## How to use COINr
+
+There are two main ways to use COINr. The first is to use the functions as standalone tools for your own specific use. For example, `coin_normalise.R` will take a data frame as an input, and normalise the columns according to the options specified in its input, outputting another data frame.
+
+The second way is to work inside what I'll call the 'COINrverse' (with tongue firmly in cheek). What this means is that all operations are performed on a single object, the "COIN object", which stores all data, all analysis, parameters, and methodological choices made along the way.
+
+The COINrverse approach enables the full feature set of COINr, because some functions only work on COIN objects - for example, exporting all results to Excel in one command, or running an uncertainty/sensitivity analysis. Indeed, COINr is built mainly for COINrverse use, but functions have been written with the flexibility to also accommodate independent use where possible.
+
+More details on how the COINrverse works can be found in XXX.
+
+# Terminology
+
+Let's clearly define a few terms first to avoid confusion later on.
+
++ An *indicator* is a variable which has an observed value for each unit. Indicators might be things like life expectancy, CO2 emissions, number of tertiary graduates, and so on.
+
++ A *unit* is one of the entities that you are comparing with indicators. Often, units are countries, but they could also be regions, universities, individuals or even competing policy options (the latter is the realm of multicriteria decision analysis).
+
++
+
+Together, indicators and units form the main input data frame for COINr (units as rows, and indicators as columns).
+
+# Data Input
+
+The main starting point in COINr is to read in your data. To assemble a composite indicator, COINr needs three different inputs (data frames):
+
+1. Raw indicator data (containing values of indicators for each unit)
+2. Indicator metadata
+3. Aggregation metadata
