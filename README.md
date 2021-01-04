@@ -28,3 +28,5 @@ install_github("bluefoxr/COINr")
 ```
 
 I should point out that this is an extremely early version of the package, with very little documentation, and only limited testing. A lot more should be added over early 2021, along with a detailed vignette. Stay tuned.
+
+Documentation for the package, which is also currently just a skeleton outline, is available here: https://bluefoxr.github.io/COINrDoc/
