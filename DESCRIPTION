@@ -23,9 +23,12 @@ Imports:
     rlang,
     purrr,
     tidyr,
-    stringr
+    stringr,
+    e1071,
+    tibble
 Depends: 
     R (>= 2.10)
 Suggests: 
-    knitr
+    knitr,
+    rmarkdown
 VignetteBuilder: knitr
