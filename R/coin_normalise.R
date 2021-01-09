@@ -20,7 +20,7 @@
 #' @export
 
 coin_normalise <- function(COINobj, ntype="minmax", npara = NULL, inames = NULL,
-                           dset = "raw", directions = NULL){
+                           dset = "Raw", directions = NULL){
 
   # First. check to see what kind of input we have.
   out <- coin_aux_objcheck(COINobj, dset = dset, inames = inames)

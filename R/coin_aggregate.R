@@ -25,7 +25,7 @@
 #' @export
 
 coin_aggregate <- function(COINobj, agtype="arith_mean", agweights = NULL,
-                           dset = "normalised", agtype_bylevel = NULL){
+                           dset = "Normalised", agtype_bylevel = NULL){
 
   out <- coin_aux_objcheck(COINobj, dset = dset)
   ind_data <- out$ind_data
@@ -45,8 +45,6 @@ coin_aggregate <- function(COINobj, agtype="arith_mean", agweights = NULL,
   }
 
   metad <- COINobj$Input$IndMeta
-
-  browser()
 
   ##### NOW AGGREGATE #######
 

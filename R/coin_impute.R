@@ -21,7 +21,7 @@
 #' @export
 
 coin_impute <- function(COINobj, imtype = "ind_mean", inames = NULL,
-                        dset = "raw", groupvar = NULL, byyear = FALSE){
+                        dset = "Raw", groupvar = NULL, byyear = FALSE){
 
   # First. check to see what kind of input we have.
   out <- coin_aux_objcheck(COINobj, dset = dset, inames = inames)

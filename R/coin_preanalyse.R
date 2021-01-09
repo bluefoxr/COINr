@@ -25,7 +25,7 @@
 #'
 #' @export
 
-coin_preanalyse <- function(COINobj, inames = NULL, dset = "raw",
+coin_preanalyse <- function(COINobj, inames = NULL, dset = "Raw",
                             t_skew = 2, t_kurt = 3.5, t_colin = 0.9, t_denom = 0.7,
                             t_missing = 65, IQR_coef = 1.5){
 

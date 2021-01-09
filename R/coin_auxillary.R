@@ -10,6 +10,7 @@
 #' an aggregation group name, and data will be subsetted accordingly. NOTE does not work with multiple aggregate group names.
 #'
 #' @importFrom magrittr extract
+#' @importFrom dplyr select starts_with
 #'
 #' @examples \dontrun{out <- coin_aux_objcheck(COINobj, dset = "raw", inames = NULL)}
 #'
@@ -20,7 +21,7 @@
 #'
 #' @export
 
-coin_aux_objcheck <- function(COINobj, dset = "raw", inames = NULL){
+coin_aux_objcheck <- function(COINobj, dset = "Raw", inames = NULL){
 
   # Check to see what kind of input we have.
   if ("COIN object" %in% class(COINobj)){ # COIN obj
@@ -28,25 +29,30 @@ coin_aux_objcheck <- function(COINobj, dset = "raw", inames = NULL){
     otype <- "COINobj"
 
     # Select data set to use
-    if (dset=="raw"){
+    if (dset=="Raw"){
       ind_data <- COINobj$Data$Raw # get raw indicator data
-    } else  if (dset=="denominated"){
+    } else  if (dset=="Denominated"){
       ind_data <- COINobj$Data$Denominated # get denominated indicator data
-    } else  if (dset=="imputed"){
+    } else  if (dset=="Imputed"){
       ind_data <- COINobj$Data$Imputed # get imputed indicator data
-    } else  if (dset=="normalised"){
+    } else  if (dset=="Normalised"){
       ind_data <- COINobj$Data$Normalised # get normalised indicator data
-    } else  if (dset=="treated"){
+    } else  if (dset=="Treated"){
       ind_data <- COINobj$Data$Treated # get treated indicator data
-    } else  if (dset=="aggregated"){
+    } else  if (dset=="Aggregated"){
       ind_data <- COINobj$Data$Aggregated # get treated indicator data
     } else {
       stop("dset name not recognised...")
     }
 
     if (is.null(inames)){
-      # default: use all indicators
-      ind_names <- COINobj$Parameters$IndCodes
+      if (dset=="Aggregated"){
+        ind_names <- ind_data %>% dplyr::select(!dplyr::starts_with(
+          c("UnitCode", "UnitName", "Year", "Group_","Den_")) ) %>% colnames()
+      } else {
+        # default: use all indicators
+        ind_names <- COINobj$Parameters$IndCodes
+      }
     } else if (length(inames)==1 &
                # brutish thing here which checks in the list of AggCodes to see if inames string is present
                any(as.logical(lapply(COINobj$Parameters$AggCodes, function(x) any(x == inames))))

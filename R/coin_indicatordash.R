@@ -16,7 +16,7 @@
 #' @export
 #'
 
-coin_indicatordash <- function(COINobj, inames = NULL, dset = "raw"){
+coin_indicatordash <- function(COINobj, inames = NULL, dset = "Raw"){
 
   # first, get the indicator data from input object
   out <- coin_aux_objcheck(COINobj, dset, inames)
@@ -38,6 +38,7 @@ coin_indicatordash <- function(COINobj, inames = NULL, dset = "raw"){
       h4("Indicator 2"),
       selectInput("dset2", "Data set", choices= names(COINobj$Data) ),
       selectInput("vr2", "Indicator 2", choices=colnames(ind_data_only)),
+      textOutput("info")
       #sliderInput("v2bins","Histogram bins",min = 5, max = 30, step = 1, value = 5)
     ),
 
@@ -56,8 +57,14 @@ coin_indicatordash <- function(COINobj, inames = NULL, dset = "raw"){
                textOutput("k2")
                )
       ),
+      br(),
       fluidRow(
-        plotly::plotlyOutput("scatter")
+        column(6,
+               plotly::plotlyOutput("scatter")
+               ),
+        column(6,
+               plotly::plotlyOutput("histo12")
+        )
       )
     )
   )
@@ -66,13 +73,41 @@ coin_indicatordash <- function(COINobj, inames = NULL, dset = "raw"){
 
   server <- function(input, output, session) {
 
+    # initialise reactive values: the data sets
+    idata1 <- reactiveVal(ind_data_only)
+    idata2 <- reactiveVal(ind_data_only)
+
+    # get reactive values: the indicator names
+    iname1 <- reactive(paste0(input$vr1," - ", input$dset1))
+    iname2 <- reactive(paste0(input$vr2," - ", input$dset2))
+
+    # get reactive values: the selected indicators
+    isel1 <- reactive({
+     if (exists(input$vr1,idata1())){
+       return(input$vr1)
+     } else {
+       return(colnames(idata1())[1])
+     }
+    })
+    isel2 <- reactive(input$vr2)
+
+    # update data set 1 to selected one
+    observeEvent(input$dset1,{
+      idata1(coin_aux_objcheck(COINobj, input$dset1, inames)$ind_data_only)
+    })
+
+    # update data set 2 to selected one
+    observeEvent(input$dset2,{
+      idata2(coin_aux_objcheck(COINobj, input$dset2, inames)$ind_data_only)
+    })
+
     # Violin plot v1
     output$violin <- plotly::renderPlotly({
 
-      fig <- plot_ly(data = ind_data_only, y = ~get(input$vr1), type = 'violin',
+      fig <- plot_ly(data = idata1(), y = ~get(isel1()), type = 'violin',
           box = list(visible = T),
           meanline = list(visible = T),
-          x0 = input$vr1,
+          x0 = iname1(),
           points = 'all',
           pointpos = -1.5,
           jitter = 0.1,
@@ -82,95 +117,109 @@ coin_indicatordash <- function(COINobj, inames = NULL, dset = "raw"){
         plotly::layout( yaxis = list(title = "", zeroline = F) )
 
       fig
-
-      #ggplot(ind_data_only, aes_string(x = input$vr1)) +
-        #geom_dotplot(binaxis = "x", stackdir = "center", dotsize=1, stackratio=0.5, alpha = 0.3) + theme_light()
     })
 
     # Histogram v1
     output$histo <- plotly::renderPlotly({
 
-      plot_ly(data = ind_data_only, x = ~get(input$vr1), type = "histogram") %>%
-        plotly::layout(bargap=0.1, xaxis = list(title = input$vr1))
-
+      plot_ly(data = idata1(), x = ~get(isel1()), type = "histogram") %>%
+        plotly::layout(bargap=0.1, xaxis = list(title = iname1()))
     })
 
     # Violin plot v2
     output$violin2 <- plotly::renderPlotly({
 
-      fig <- plotly::plot_ly(data = ind_data_only, y = ~get(input$vr2), type = 'violin',
+      fig <- plotly::plot_ly(data = idata2(), y = ~get(input$vr2), type = 'violin',
                      box = list(visible = T),
                      meanline = list(visible = T),
-                     x0 = input$vr2,
+                     x0 = iname2(),
                      points = 'all',
                      pointpos = -1.5,
                      jitter = 0.1,
                      hoveron = "violins+points+kde"
       ) %>%
-
         plotly::layout( yaxis = list(title = "", zeroline = F) )
-
       fig
-
       })
 
     # Histogram v2
     output$histo2 <- plotly::renderPlotly({
-
-      plotly::plot_ly(data = ind_data_only, x = ~get(input$vr2), type = "histogram") %>%
-        plotly::layout(bargap=0.1, xaxis = list(title = input$vr2))
-
+      plotly::plot_ly(data = idata2(), x = ~get(input$vr2), type = "histogram") %>%
+        plotly::layout(bargap=0.1, xaxis = list(title = iname2()))
     })
 
     # scatter plot
     output$scatter <- plotly::renderPlotly({
 
-      sc <- plotly::plot_ly(data = ind_data_only, type = 'scatter', mode = 'markers') %>%
+      # build data frame first, since the variables may come from different dfs
+      df <- data.frame(v1 = dplyr::pull(idata1(),isel1()),
+                       v2 = dplyr::pull(idata2(),input$vr2))
+
+      sc <- plotly::plot_ly(data = df, type = 'scatter', mode = 'markers') %>%
         plotly::add_trace(
-          x = ~get(input$vr1),
-          y = ~get(input$vr2),
+          x = ~v1,
+          y = ~v2,
           text = code_yr,
           hoverinfo = 'text',
           marker = list(size = 15),
           showlegend = F
         ) %>%
-        plotly::layout(xaxis = list(title = input$vr1),
-               yaxis = list(title = input$vr2))
-
+        plotly::layout(xaxis = list(title = iname1()),
+               yaxis = list(title = iname2()))
       sc
-
     })
+
+    output$histo12 <- plotly::renderPlotly({
+
+      # build data frame first, since the variables may come from different dfs
+      df <- data.frame(v1 = dplyr::pull(idata1(),isel1()),
+                       v2 = dplyr::pull(idata2(),input$vr2))
+
+      fig <- plotly::plot_ly(df, alpha = 0.6)
+      fig <- fig %>% plotly::add_histogram(x = ~v1, name = iname1())
+      fig <- fig %>% plotly::add_histogram(x = ~v2, name = iname2())
+      fig <- fig %>% plotly::layout(barmode = "overlay")
+      fig
+    })
+
+
 
     output$sk <- renderText({
       paste0("Skew = ",
-             moments::skewness(ind_data_only[[input$vr1]], na.rm = T) %>%
+             moments::skewness(idata1()[[isel1()]], na.rm = T) %>%
                round(3))
     })
     output$k <- renderText({
       paste0("Kurtosis = ",
-             moments::kurtosis(ind_data_only[[input$vr1]], na.rm = T) %>%
+             moments::kurtosis(idata1()[[isel1()]], na.rm = T) %>%
                round(3))
     })
     output$sk2 <- renderText({
       paste0("Skew = ",
-             moments::skewness(ind_data_only[[input$vr2]], na.rm = T) %>%
+             moments::skewness(idata2()[[input$vr2]], na.rm = T) %>%
                round(3))
     })
     output$k2 <- renderText({
       paste0("Kurtosis = ",
-             moments::kurtosis(ind_data_only[[input$vr2]], na.rm = T) %>%
+             moments::kurtosis(idata2()[[input$vr2]], na.rm = T) %>%
                round(3))
+    })
+
+    # Update dropdown menu of indicator selection based on data set 1
+    observeEvent(input$dset1,{
+      updateSelectInput(session = session, inputId = "vr1",
+                        choices = coin_aux_objcheck(COINobj,input$dset1,inames)$ind_names)
+    })
+
+    # Update dropdown menu of indicator selection based on data set 2
+    observeEvent(input$dset2,{
+      updateSelectInput(session = session, inputId = "vr2",
+                        choices = coin_aux_objcheck(COINobj,input$dset2,inames)$ind_names)
     })
 
   }
 
-  observeEvent(input$dset1,
-    updateSelectInput(session = session, inputId = "vr1",
-                      choices = eval(parse(text=paste0(
-                        "coin_aux_objcheck(COINobj, ",dset,")$ind_names"))))
-  )
-
   # Return a Shiny app object
-  shinyApp(ui = ui, server = server, options = list(height = 500))
+  shinyApp(ui = ui, server = server)
 
 }
