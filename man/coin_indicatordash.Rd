@@ -4,7 +4,7 @@
 \alias{coin_indicatordash}
 \title{Indicator visualisation dashboard}
 \usage{
-coin_indicatordash(COINobj, inames = NULL, dset = "raw")
+coin_indicatordash(COINobj, inames = NULL, dset = "Raw")
 }
 \arguments{
 \item{COINobj}{The COIN object, or a data frame of indicator data.}

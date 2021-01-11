@@ -174,8 +174,7 @@ coin_impute <- function(COINobj, imtype = "ind_mean", inames = NULL,
     COINobj$Method$Imputation$groupvar <- groupvar
     COINobj$Method$Imputation$byyear <- byyear
     COINobj$Method$Imputation$NImputed <- nNA_start-nNA_end
+    return(COINobj)
   }
-
-  return(COINobj)
 
 }

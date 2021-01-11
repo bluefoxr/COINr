@@ -8,7 +8,7 @@ coin_aggregate(
   COINobj,
   agtype = "arith_mean",
   agweights = NULL,
-  dset = "normalised",
+  dset = "Normalised",
   agtype_bylevel = NULL
 )
 }

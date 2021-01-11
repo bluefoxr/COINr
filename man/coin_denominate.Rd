@@ -9,15 +9,20 @@ coin_denominate(COINobj, specby = "metadata", denomby = NULL)
 \arguments{
 \item{COINobj}{COIN object (data frames are not currently supported in this function)}
 
-\item{specby}{Selects the source of the specifications for denomination. If "metadata", uses the denominator column in .$metadata. If "user", takes a character vector of denominator codes (one for each indicator, with NA for indicators that should not be denominated, and in the same order as the indicators).}
+\item{specby}{Selects the source of the specifications for denomination.
+If "metadata", uses the denominator column in .$metadata.
+If "user", takes a character vector of denominator codes (one for each indicator, with NA for indicators that should not be denominated, and in the same order as the indicators).}
 
-\item{denomby}{Character vector specifying which indicators to use as denominators. For indicators with no denomination, set elements to NA.}
+\item{denomby}{Character vector specifying which indicators to use as denominators.
+For indicators with no denomination, set elements to NA.}
 }
 \value{
 An updated COIN object, with new dataset .$Data$Denominated of denominated indicators.
 }
 \description{
-Indicators can be denominated (divided) by other external indicators. Typically, the aim here is to convert extensive (size-related) variables into intensive variables (comparable between units of different sizes).
+Indicators can be denominated (divided) by other external indicators.
+Typically, the aim here is to convert extensive (size-related) variables into intensive variables
+(comparable between units of different sizes).
 }
 \examples{
 \dontrun{

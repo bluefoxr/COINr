@@ -8,7 +8,7 @@ coin_impute(
   COINobj,
   imtype = "ind_mean",
   inames = NULL,
-  dset = "raw",
+  dset = "Raw",
   groupvar = NULL,
   byyear = FALSE
 )

@@ -4,7 +4,7 @@
 \alias{coin_aux_objcheck}
 \title{Format check auxiliary function}
 \usage{
-coin_aux_objcheck(COINobj, dset = "raw", inames = NULL)
+coin_aux_objcheck(COINobj, dset = "Raw", inames = NULL)
 }
 \arguments{
 \item{COINobj}{Can be either the COIN object, or a data frame.}

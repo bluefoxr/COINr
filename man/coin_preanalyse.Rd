@@ -7,7 +7,7 @@
 coin_preanalyse(
   COINobj,
   inames = NULL,
-  dset = "raw",
+  dset = "Raw",
   t_skew = 2,
   t_kurt = 3.5,
   t_colin = 0.9,

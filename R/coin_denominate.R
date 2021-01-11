@@ -1,10 +1,15 @@
 #' Denominate indicator data sets
 #'
-#' Indicators can be denominated (divided) by other external indicators. Typically, the aim here is to convert extensive (size-related) variables into intensive variables (comparable between units of different sizes).
+#' Indicators can be denominated (divided) by other external indicators.
+#' Typically, the aim here is to convert extensive (size-related) variables into intensive variables
+#' (comparable between units of different sizes).
 #'
 #' @param COINobj COIN object (data frames are not currently supported in this function)
-#' @param specby Selects the source of the specifications for denomination. If "metadata", uses the denominator column in .$metadata. If "user", takes a character vector of denominator codes (one for each indicator, with NA for indicators that should not be denominated, and in the same order as the indicators).
-#' @param denomby Character vector specifying which indicators to use as denominators. For indicators with no denomination, set elements to NA.
+#' @param specby Selects the source of the specifications for denomination.
+#' If "metadata", uses the denominator column in .$metadata.
+#' If "user", takes a character vector of denominator codes (one for each indicator, with NA for indicators that should not be denominated, and in the same order as the indicators).
+#' @param denomby Character vector specifying which indicators to use as denominators.
+#' For indicators with no denomination, set elements to NA.
 #'
 #' @examples \dontrun{
 #' COINobj <- coin_denominate(COINobj, specby="metadat", denomby = NULL)}

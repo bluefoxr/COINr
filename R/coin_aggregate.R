@@ -35,6 +35,12 @@ coin_aggregate <- function(COINobj, agtype="arith_mean", agweights = NULL,
     stop("Aggregation requires a COIN object (you need data plus the index structure). Use coin_assemble first.")
   }
 
+  # Write function inputs to .$Method
+  COINobj$Method$Aggregation$agtype <- agtype
+  COINobj$Method$Aggregation$agweights <- agweights
+  COINobj$Method$Aggregation$dset <- dset
+  COINobj$Method$Aggregation$agtype_bylevel <- agtype_bylevel
+
   # get weights - if not explicitly specified, we assume it is in the COIN obj
   if (is.null(agweights)){
     if (exists("Weights", COINobj$Parameters)){

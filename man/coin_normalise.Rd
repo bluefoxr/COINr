@@ -9,7 +9,7 @@ coin_normalise(
   ntype = "minmax",
   npara = NULL,
   inames = NULL,
-  dset = "raw",
+  dset = "Raw",
   directions = NULL
 )
 }

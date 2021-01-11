@@ -45,8 +45,14 @@ coin_aux_objcheck <- function(COINobj, dset = "Raw", inames = NULL){
       stop("dset name not recognised...")
     }
 
+    # get unit codes. Have to do this because if the units have been screened, then it may
+    # not be the same set as when the data was input.
+    UnitCodes <- ind_data$UnitCode
+
     if (is.null(inames)){
       if (dset=="Aggregated"){
+        # the aggregated data set includes extra names/columns, i.e. the aggregated groups.
+        # Have to extract these as well (e.g. for use in indicator_dash)
         ind_names <- ind_data %>% dplyr::select(!dplyr::starts_with(
           c("UnitCode", "UnitName", "Year", "Group_","Den_")) ) %>% colnames()
       } else {
@@ -79,10 +85,25 @@ coin_aux_objcheck <- function(COINobj, dset = "Raw", inames = NULL){
     ind_data <- COINobj
 
     if (is.null(inames)){
-      ind_names <- colnames(COINobj) # use all columns, if no indicator names supplied
+      if (exists("UnitCode",ind_data)){
+        # If there are unit codes, record them and assume all other cols are indicator names
+        ind_names <- COINobj[colnames(COINobj) != "UnitCode"] %>% colnames()
+        UnitCodes <- COINobj$UnitCode
+      } else {
+        # All cols are indicators. No names supplied.
+        ind_names <- colnames(COINobj)
+        UnitCodes <- NA
+      }
     } else {
       ind_names <- inames
+      if (exists("UnitCode",ind_data)){
+        UnitCodes <- COINobj$UnitCode
+      } else {
+        UnitCodes <- NA
+      }
     }
+
+
 
   } else {
     stop("Input should either be COIN object or data frame.")
@@ -91,6 +112,7 @@ coin_aux_objcheck <- function(COINobj, dset = "Raw", inames = NULL){
   out <- list(ind_names = ind_names,
               ind_data = ind_data,
               ind_data_only = select(ind_data,all_of(ind_names),),
+              UnitCodes = UnitCodes,
               otype = otype # the object type
               )
 
