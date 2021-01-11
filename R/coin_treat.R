@@ -4,7 +4,6 @@
 #'
 #' @param COINobj The COIN object
 #' @param dset The data set to treat
-#' @param inames The set of indicators to treat
 #' @param winmax The maximum number of points to Winsorise for each indicator. If NA, will keep Winsorising until skew&kurt thresholds achieved (but it is likely this will cause errors)
 #' @param winchange Logical: if TRUE, Winsorisation can change direction from one iteration to the next. Otherwise if FALSE (default), no change.
 #' @param deflog If "log", use simple ln(x) as log transform. If "GIIlog", use GII log transformation.
@@ -17,8 +16,6 @@
 #' @importFrom dplyr pull
 #' @importFrom e1071 skewness kurtosis
 #' @importFrom tibble add_column
-#'
-#' @examples
 #'
 #' @return A treated data set plus information about how the data was treated.
 #'
@@ -303,6 +300,12 @@ coin_treat <- function(COINobj, dset = "Raw", winmax = NULL, winchange = FALSE, 
 #' Winsorisation helper function
 #'
 #' To be used inside COIN_treat to avoid repetitions
+#'
+#' @param icol The vector of data to Winsorize
+#' @param winmax The maximum number of points to Winsorise for each indicator. If NA, will keep Winsorising until skew&kurt thresholds achieved (but it is likely this will cause errors)
+#' @param winchange Logical: if TRUE, Winsorisation can change direction from one iteration to the next. Otherwise if FALSE (default), no change.
+#' @param t_skew Absolute skew threshold (default 2)
+#' @param t_kurt Kurtosis threshold (default 3.5)
 #'
 #' @export
 

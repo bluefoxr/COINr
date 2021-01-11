@@ -6,6 +6,17 @@
 \usage{
 coin_win(icol, winmax, winchange, t_skew, t_kurt)
 }
+\arguments{
+\item{icol}{The vector of data to Winsorize}
+
+\item{winmax}{The maximum number of points to Winsorise for each indicator. If NA, will keep Winsorising until skew&kurt thresholds achieved (but it is likely this will cause errors)}
+
+\item{winchange}{Logical: if TRUE, Winsorisation can change direction from one iteration to the next. Otherwise if FALSE (default), no change.}
+
+\item{t_skew}{Absolute skew threshold (default 2)}
+
+\item{t_kurt}{Kurtosis threshold (default 3.5)}
+}
 \description{
 To be used inside COIN_treat to avoid repetitions
 }

@@ -35,15 +35,10 @@ coin_treat(
 
 \item{indiv_only}{Logical: if TRUE, only the indicators specified in "individual" are treated.
 If false, all indicators are treated: any outside of "individual" will get default treatment.}
-
-\item{inames}{The set of indicators to treat}
 }
 \value{
 A treated data set plus information about how the data was treated.
 }
 \description{
 Takes the COIN object and Winsorises indicators where necessary or specified, or reverts to log transform.
-}
-\examples{
-
 }

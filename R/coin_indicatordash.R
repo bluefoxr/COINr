@@ -280,7 +280,8 @@ coin_indicatordash <- function(COINobj, inames = NULL, dset = "Raw"){
 
       # show info of indicator 1 if a treated variable is selected, otherwise i2, otherwise message
       if(input$dset1=="Treated" | input$dset2=="Treated"){
-        treatinfoall <- COINobj$Analysis$Treatment$Summary %>% dplyr::filter(Treatment !="None")
+        treatinfoall <- COINobj$Analysis$Treatment$Summary
+        treatinfoall <- treatinfoall[treatinfoall$Treatment !="None",]
       } else {
         treatinfoall <- data.frame(IndCode = "Select a treated data set (if it exists) to view.")
       }
