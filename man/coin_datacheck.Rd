@@ -2,12 +2,20 @@
 % Please edit documentation in R/coin_datacheck.R
 \name{coin_datacheck}
 \alias{coin_datacheck}
-\title{Country screener by data availability}
+\title{Detailed unit data check and screener by data availability}
 \usage{
-coin_datacheck(COINobj, ind_thresh = 2/3, unit_screen = FALSE, Force = NULL)
+coin_datacheck(
+  COINobj,
+  dset = "Raw",
+  ind_thresh = 2/3,
+  unit_screen = FALSE,
+  Force = NULL
+)
 }
 \arguments{
 \item{COINobj}{The GII object}
+
+\item{dset}{The data set to be checked/screened}
 
 \item{ind_thresh}{A data availability threshold, which controls both Rule 1 and 2. Default 0.66. Specify as a fraction.}
 

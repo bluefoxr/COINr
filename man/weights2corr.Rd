@@ -10,6 +10,8 @@ weights2corr(COINobj, w, agnames)
 \item{COINobj}{COINobj object}
 
 \item{w}{a vector of indicator weights}
+
+\item{agnames}{Names of aggregation groups to be included in results table}
 }
 \value{
 A list with .$cr is a vector of correlations between each indicator and the index, and

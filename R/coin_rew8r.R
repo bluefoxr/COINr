@@ -3,6 +3,8 @@
 #' Interactive gadget which lets you adjust weights of indicators and see the effects on the results and
 #' the correlations. Weights can be saved with new names to the COIN object.
 #'
+#' @importFrom stats var
+#'
 #' @param COINobj COIN object
 #'
 #' @return An updated COIN object with additional sets of weights (if saved from the app).
@@ -20,8 +22,8 @@ coin_rew8r <- function(COINobj){
   inames <- COINobj$Parameters$IndCodes
 
   # aggregation level names to show in table
-  agnames <- c(COINobj2$Parameters$AggCodes[[COINobj2$Parameters$Nlevels-1]],
-               COINobj2$Parameters$AggCodes[[COINobj2$Parameters$Nlevels-2]])
+  agnames <- c(COINobj$Parameters$AggCodes[[COINobj$Parameters$Nlevels-1]],
+               COINobj$Parameters$AggCodes[[COINobj$Parameters$Nlevels-2]])
 
   # initial weights
   w0 <- COINobj$Parameters$Weights$IndWeight
@@ -177,7 +179,7 @@ coin_rew8r <- function(COINobj){
       paste0("Mean correlation = ", round(mean(crs()),3))
     })
     output$crvar <- renderText({
-      paste0("Variance of correlation = ", round(var(crs()),3))
+      paste0("Variance of correlation = ", round(stats::var(crs()),3))
     })
 
     # low correlation indicators
@@ -185,7 +187,9 @@ coin_rew8r <- function(COINobj){
       dfc <- data.frame(
         Indicator = inames,
         Weight = w(),
-        Correlation = round(crs(),3) ) %>% filter(Correlation < input$locorval)
+        Correlation = round(crs(),3) )
+
+      dfc <- dfc[dfc$Correlation < input$locorval,]
       rownames(dfc) <- NULL
       if( nrow(dfc)==0 | input$locorsw==FALSE){
         dfc <- data.frame(Indicator = "None")
@@ -273,6 +277,7 @@ coin_rew8r <- function(COINobj){
 #'
 #' @param COINobj COINobj object
 #' @param w a vector of indicator weights
+#' @param agnames Names of aggregation groups to be included in results table
 #'
 #' @return A list with .$cr is a vector of correlations between each indicator and the index, and
 #' .$dat is a data frame of rankings, with unit code, and index, input and output scores

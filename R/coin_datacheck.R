@@ -1,4 +1,4 @@
-#' Country screener by data availability
+#' Detailed unit data check and screener by data availability
 #'
 #' Screens countries based on data availability, according to rules used by the GII.
 #' Rule 1: BOTH Input and Output indicators must have data availability greater than a threshold, set as
@@ -7,19 +7,20 @@
 #' The 66% threshold is also alternatively specified by "ind_thresh". Rule 2 is NOT applied by default.
 #'
 #' @param COINobj The GII object
+#' @param dset The data set to be checked/screened
 #' @param ind_thresh A data availability threshold, which controls both Rule 1 and 2. Default 0.66. Specify as a fraction.
 #' @param unit_screen Logical: if TRUE, screens any units with indicator data availability < ind_thresh.
 #' This is output in a new data set .$Data$Screened and added as a column in the output table.
 #' @param Force A data frame with any additional countries to force inclusion or exclusion. First column is ISO code. Second column either "Include" or "Exclude" for each country to force.
+#'
+#' @importFrom dplyr select starts_with pull mutate filter
 #'
 #' @examples \dontrun{coin_datacheck(COINobj)}
 #'
 #' @return An updated COINobj object with tables showing missing data, and a filtered list of countries to include in subsequent calculations.
 #' @export
 
-coin_datacheck <- function(COINobj, ind_thresh=2/3, unit_screen = FALSE, Force = NULL){
-
-  # TO DO: CMD check tweaks, hook up with coin_aux
+coin_datacheck <- function(COINobj, dset = "Raw", ind_thresh=2/3, unit_screen = FALSE, Force = NULL){
 
   # Write function arguments to object, FTR
   COINobj$Method$Screening$IndThresh <- ind_thresh
@@ -27,9 +28,10 @@ coin_datacheck <- function(COINobj, ind_thresh=2/3, unit_screen = FALSE, Force =
   COINobj$Method$Screening$Force <- Force
 
   # Isolate indicator data
-  ind_data_only <- COINobj$Data$Raw %>% select(all_of(COINobj$Parameters$IndCodes))
+  out1 <- coin_aux_objcheck(COINobj, dset)
+  ind_data_only <- out1$ind_data_only
 
-  #--- RULE 1: 66% data for all countries or OUT
+  #--- Check overall data availability
 
   nabyrow <- rowSums(is.na(ind_data_only)) # number of missing data by row
   Prc_avail = 1 - nabyrow/ncol(ind_data_only) # the percentage of data available
@@ -39,18 +41,18 @@ coin_datacheck <- function(COINobj, ind_thresh=2/3, unit_screen = FALSE, Force =
                            PrcDataAll = Prc_avail*100,
                            LowDataAll = Prc_avail<(ind_thresh))
 
-  #--- RULE 2: 66% data availability at the sub-pillar level or ADIOS
+  #--- Check data availability by group
 
-  # the easiest way to do this is to loop over sub-pillars. Get first the index structure
+  # the easiest way to do this is to loop over groups. Get first the index structure
   # (selects indicator codes plus all aggregation level columns/codes)
-  agg_levels <- select(COINobj$Input$IndMeta, "IndCode" | starts_with("Agg"))
+  agg_levels <- dplyr::select(COINobj$Input$IndMeta, "IndCode" | dplyr::starts_with("Agg"))
 
-  data_avail_bygroup <- data.frame("UnitCode" = COINobj$Parameters$UnitCodes)
+  data_avail_bygroup <- data.frame("UnitCode" = out1$UnitCodes)
 
   for (ilev in 1:(ncol(agg_levels)-1)){ # loop over aggregation levels, except the last one
 
-    agg1 <- pull(agg_levels,1) # names of indicators
-    agg2 <- pull(agg_levels,ilev+1) # names of aggregation groups in the level above
+    agg1 <- dplyr::pull(agg_levels,1) # names of indicators
+    agg2 <- dplyr::pull(agg_levels,ilev+1) # names of aggregation groups in the level above
     agg2_names <- unique(agg2) # only the names of agg level above (no repetitions)
 
     # pre-allocate a data frame for prc data availability
@@ -63,7 +65,7 @@ coin_datacheck <- function(COINobj, ind_thresh=2/3, unit_screen = FALSE, Force =
       # get indicator codes belonging to group
       gcodes <- agg1[agg2 == gname]
       # get corresponding indicator columns
-      ginds <- ind_data_only %>% select(all_of(gcodes))
+      ginds <- ind_data_only[gcodes]
       # now count prc data available and add to data frame
       d_avail_lev[,igroup] <- 100*rowSums(!is.na(ginds))/ncol(ginds)
 
@@ -132,11 +134,10 @@ coin_datacheck <- function(COINobj, ind_thresh=2/3, unit_screen = FALSE, Force =
   # data_avail <- data_avail %>% add_column(
   #   LowDataPillar = rowSums(P_avail < ind_threshP*100) > 0
   # )
-
+  browser()
   # Now add final column which says if country is included or not, if asked for
   if (unit_screen == TRUE){
-    data_avail <- data_avail %>%
-      mutate(Included = LowDataAll == FALSE)
+    data_avail <- cbind(data_avail, Included = data_avail$LowDataAll == FALSE)
   }
 
   if (!is.null(Force)){ # if some countries to force include/exclude
@@ -154,7 +155,7 @@ coin_datacheck <- function(COINobj, ind_thresh=2/3, unit_screen = FALSE, Force =
 
   # create new data set which filters out the countries that didn't make the cut
   if (unit_screen == TRUE){
-    COINobj$Data$Screened <- filter(COINobj$Data$Raw, COINobj$Analysis$DataAvail$Summary$Included)
+    COINobj$Data$Screened <- dplyr::filter(COINobj$Data$Raw, COINobj$Analysis$DataAvail$Summary$Included)
   }
   return(COINobj)
 }
