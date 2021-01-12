@@ -27,7 +27,8 @@ Imports:
     e1071,
     tibble,
     shiny,
-    reactable
+    reactable,
+    ggplot2
 Depends: 
     R (>= 2.10)
 Suggests: 

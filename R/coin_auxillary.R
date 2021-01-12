@@ -73,9 +73,12 @@ coin_aux_objcheck <- function(COINobj, dset = "Raw", inames = NULL){
       ind_names <- COINobj$Input$IndMeta %>%
         dplyr::filter(!!as.symbol(aggcol) == inames) %>%
         dplyr::pull("IndCode")
-    } else {
+    } else if (inames %in% COINobj$Parameters$IndCodes) {
       # otherwise, use the indicator names here
       ind_names <- inames
+    } else {
+      # if we get to this point, the code is not found anywhere. Stop
+      stop("Indicator/aggregation code not recognised!")
     }
 
   } else if (is.data.frame(COINobj)){ # Data frame
