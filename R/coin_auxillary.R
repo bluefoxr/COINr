@@ -40,7 +40,9 @@ coin_aux_objcheck <- function(COINobj, dset = "Raw", inames = NULL){
     } else  if (dset=="Treated"){
       ind_data <- COINobj$Data$Treated # get treated indicator data
     } else  if (dset=="Aggregated"){
-      ind_data <- COINobj$Data$Aggregated # get treated indicator data
+      ind_data <- COINobj$Data$Aggregated # get agg. indicator data
+    } else if (dset=="Denominators") {
+      ind_data <- COINobj$Input$Denominators
     } else {
       stop("dset name not recognised...")
     }
