@@ -134,7 +134,7 @@ coin_datacheck <- function(COINobj, dset = "Raw", ind_thresh=2/3, unit_screen = 
   # data_avail <- data_avail %>% add_column(
   #   LowDataPillar = rowSums(P_avail < ind_threshP*100) > 0
   # )
-  browser()
+
   # Now add final column which says if country is included or not, if asked for
   if (unit_screen == TRUE){
     data_avail <- cbind(data_avail, Included = data_avail$LowDataAll == FALSE)

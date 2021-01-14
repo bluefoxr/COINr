@@ -11,7 +11,7 @@
 #'
 #' @importFrom tidyr replace_na
 #' @importFrom stringr str_subset
-#' @importFrom dplyr filter mutate across bind_rows group_by
+#' @importFrom dplyr filter mutate across bind_rows group_by ungroup
 #' @importFrom rlang .data
 #'
 #' @examples \dontrun{COINobj <- coin_impute(COINobj, imtype = "ind_mean", dset = "raw")}
@@ -51,6 +51,7 @@ coin_impute <- function(COINobj, imtype = "ind_mean", inames = NULL,
     if (exists("Normalised",COINobj$Data)){ # we may proceed...
 
       # call the aggregation function.... seems easiest. TO FINISH
+      stop("Sorry, didn't finish this option yet. Stay tuned.")
 
     } else {
       stop("Normalised data set not found (required for agg_mean). Please run coin_normalise first.")
@@ -167,7 +168,7 @@ coin_impute <- function(COINobj, imtype = "ind_mean", inames = NULL,
   if (is.data.frame(COINobj)){ # Data frame
     return(ind_data_imp)
   } else {
-    COINobj$Data$Imputed <- ind_data_imp
+    COINobj$Data$Imputed <- dplyr::ungroup(ind_data_imp)
     COINobj$Method$Imputation$imtype <- imtype
     COINobj$Method$Imputation$inames <- inames
     COINobj$Method$Imputation$dset <- dset

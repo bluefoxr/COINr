@@ -36,7 +36,7 @@ coin_plotframework <- function(COINobj){
 
   # isolate columns with aggregation labels in them, and indictaor labels
   agg_cols <- metad %>% dplyr::select(dplyr::starts_with("Agg"))
-  browser()
+
   agg_cols <- cbind(Code=metad$IndCode, agg_cols)
   #agg_cols <- agg_cols %>% add_column(Code=metad$IndCode, .before = 1)
   # get weights for aggregation groups
