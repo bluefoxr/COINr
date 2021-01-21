@@ -51,16 +51,11 @@ coin_aux_objcheck <- function(COINobj, dset = "Raw", inames = NULL){
     # not be the same set as when the data was input.
     UnitCodes <- ind_data$UnitCode
 
+    # get indicator names, i.e. columns excluding groups, denominators, names etc.
+    ind_names <- ind_data %>% dplyr::select(!dplyr::starts_with(
+      c("UnitCode", "UnitName", "Year", "Group_","Den_")) ) %>% colnames()
+
     if (is.null(inames)){
-      if (dset=="Aggregated"){
-        # the aggregated data set includes extra names/columns, i.e. the aggregated groups.
-        # Have to extract these as well (e.g. for use in indicator_dash)
-        ind_names <- ind_data %>% dplyr::select(!dplyr::starts_with(
-          c("UnitCode", "UnitName", "Year", "Group_","Den_")) ) %>% colnames()
-      } else {
-        # default: use all indicators
-        ind_names <- COINobj$Parameters$IndCodes
-      }
     } else if (length(inames)==1 &
                # brutish thing here which checks in the list of AggCodes to see if inames string is present
                any(as.logical(lapply(COINobj$Parameters$AggCodes, function(x) any(x == inames))))
@@ -75,7 +70,7 @@ coin_aux_objcheck <- function(COINobj, dset = "Raw", inames = NULL){
       ind_names <- COINobj$Input$IndMeta %>%
         dplyr::filter(!!as.symbol(aggcol) == inames) %>%
         dplyr::pull("IndCode")
-    } else if (inames %in% COINobj$Parameters$IndCodes) {
+    } else if (inames %in% ind_names) {
       # otherwise, use the indicator names here
       ind_names <- inames
     } else {
@@ -107,8 +102,6 @@ coin_aux_objcheck <- function(COINobj, dset = "Raw", inames = NULL){
         UnitCodes <- NA
       }
     }
-
-
 
   } else {
     stop("Input should either be COIN object or data frame.")
