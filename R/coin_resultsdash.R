@@ -21,6 +21,7 @@ coin_resultsdash <- function(COINobj, inames = NULL, dset = "Aggregated"){
   # first, get the indicator data from input object
   out <- coin_aux_objcheck(COINobj, dset, inames)
   ind_data_only <- out$ind_data_only
+  ind_data <- out$ind_data
   # this is used to label scatter plot. Will need to be generalised.
   code_yr <- out$ind_data$UnitName
 
@@ -29,24 +30,33 @@ coin_resultsdash <- function(COINobj, inames = NULL, dset = "Aggregated"){
   ###--------- Define the UI ---------------
 
   ui <- fluidPage(
-    sidebarPanel(
-      h2("Results Viewer"),
-      hr(),
-      h4("Indicator 1"),
-      selectInput("dset1", "Data set", choices= rev(names(COINobj$Data)) ),
-      selectInput("vr1", "Indicator", choices=rev(colnames(ind_data_only))),
-      plotly::plotlyOutput("radar")
-    ),
+    titlePanel("Results dashboard"),
 
-    mainPanel(
-      fluidRow(
-        plotly::plotlyOutput("map")
+    sidebarLayout(
+
+      # Sidebar panel for inputs ----
+      sidebarPanel(
+        selectInput("dset1", "Data set", choices= rev(names(COINobj$Data)) ),
+        selectInput("vr1", "Indicator", choices=rev(colnames(ind_data_only))),
+        hr(),
+        plotly::plotlyOutput("radar")
       ),
-      fluidRow(
-        plotly::plotlyOutput("bar")
-      ),
-      fluidRow(
-        reactable::reactableOutput("table")
+
+      # Main panel for displaying outputs ----
+      mainPanel(
+
+        # Output: Tabset w/ plot, summary, and table ----
+        tabsetPanel(type = "tabs",
+                    tabPanel("Indicator",
+                             plotly::plotlyOutput("barmap",height = "600px"),
+                             column(9,
+                                    tableOutput("unitinfo")),
+                             column(3,
+                                    checkboxInput("barmapsel", "Toggle map/bar chart", value = FALSE)),
+                    ),
+                    tabPanel("Table", reactable::reactableOutput("table"))
+        )
+
       )
     )
   )
@@ -59,35 +69,59 @@ coin_resultsdash <- function(COINobj, inames = NULL, dset = "Aggregated"){
 
     # initialise reactive values: the data sets
     idata1 <- reactiveVal(ind_data_only)
+    idata1_full <- reactiveVal(ind_data)
+    # the selected unit
+    usel <- reactiveVal(NULL)
+    isel1 <- reactiveVal(NULL)
 
     # get reactive values: the indicator names (with data set added, for plots)
     iname1 <- reactive(paste0(input$vr1," - ", input$dset1))
 
-    # get reactive values: the selected indicator codes (for internal reference)
-    isel1 <- reactive({
+    # # get reactive values: the selected indicator codes (for internal reference)
+    # isel1 <- reactive({
+    #   if (exists(input$vr1,idata1())){
+    #     return(input$vr1)
+    #   } else {
+    #     return(colnames(idata1())[1])
+    #   }
+    # })
+
+    # update selected indicator (table click)
+    observeEvent(input$vr1,{
       if (exists(input$vr1,idata1())){
-        return(input$vr1)
+        isel1(input$vr1)
       } else {
-        return(colnames(idata1())[1])
+        isel1(colnames(idata1())[1])
       }
+    })
+
+    # update selected indicator (table click)
+    observeEvent(input$clicked,{
+      isel1(input$clicked$column)
     })
 
     # update data set 1 to selected one
     observeEvent(input$dset1,{
-      idata1(coin_aux_objcheck(COINobj, input$dset1, inames)$ind_data_only)
+      outsel <- coin_aux_objcheck(COINobj, input$dset1, inames)
+      idata1(outsel$ind_data_only)
+      idata1_full(outsel$ind_data)
     })
 
     ## ---- Plots and tables ---- ##
 
     # Choropleth map OR bar chart
-    output$map <- plotly::renderPlotly({
-      iplot_map(COINobj, input$dset1, isel1())
+    output$barmap <- plotly::renderPlotly({
+      if (input$barmapsel==TRUE){
+        iplot_map(COINobj, input$dset1, isel1())
+      } else {
+        iplot_bar(COINobj, input$dset1, isel1(), usel())
+      }
     })
 
-    # Bar chart
-    output$bar <- plotly::renderPlotly({
-      iplot_bar(COINobj, input$dset1, isel1())
-    })
+    # # Bar chart
+    # output$bar <- plotly::renderPlotly({
+    #
+    # })
 
     # Results table
     output$table <- reactable::renderReactable({
@@ -96,19 +130,36 @@ coin_resultsdash <- function(COINobj, inames = NULL, dset = "Aggregated"){
 
     # Radar plot
     output$radar <- plotly::renderPlotly({
-      iplot_radar(ASEM, dset = "Aggregated", usel = event.data()$key, levsel = 2)
+      iplot_radar(ASEM, dset = "Aggregated", usel = usel(), levsel = 2)
     })
 
-    event.data <- reactive({plotly::event_data(event = "plotly_click", source = "mapclick")})
+    # Unit data on selected indicator
+    output$unitinfo <- renderTable({
+      if(is.null(usel())){data.frame(Info = "Select a unit")}
+      else {
+        data.frame(
+          UnitName = idata1_full()$UnitName[idata1_full()$UnitCode==usel()],
+          UnitCode = usel(),
+          Indicator = isel1(),
+          Score = idata1_full()[idata1_full()$UnitCode==usel(), isel1()] %>% as.numeric(),
+          Rank = rank(-1*idata1_full()[,isel1()])[idata1_full()$UnitCode==usel()] %>%
+            as.numeric() %>% round()
+        )}
+    })
 
-    ## ---- Text outputs ---- ##
+    # get click data
+    eventmap <- reactive({plotly::event_data(event = "plotly_click", source = "mapclick")})
+    eventbar <- reactive({plotly::event_data(event = "plotly_click", source = "barclick")})
 
-    # data treatment summary, if treated data is selected
-    output$treatinfoall <- reactable::renderReactable({
-
-      return(idata1() %>%
-               reactable::reactable(defaultPageSize = 5, highlight = TRUE, wrap = FALSE,
-                                    rownames = FALSE, resizable = TRUE))
+    # consolidate click data
+    observeEvent(eventmap(),{
+      usel(eventmap()$key)
+    })
+    observeEvent(eventbar(),{
+      usel(eventbar()$key)
+    })
+    observeEvent(input$clicked,{
+      usel(idata1_full()[input$clicked$index,"UnitCode"] )
     })
 
     ## ---- Update dropdown menus ---- ##
@@ -117,6 +168,10 @@ coin_resultsdash <- function(COINobj, inames = NULL, dset = "Aggregated"){
     observeEvent(input$dset1,{
       updateSelectInput(session = session, inputId = "vr1",
                         choices = rev(coin_aux_objcheck(COINobj,input$dset1,inames)$ind_names))
+    })
+    # Update selected indicator based on table click
+    observeEvent(input$clicked$column,{
+      updateSelectInput(session = session, inputId = "vr1", selected = input$clicked$column)
     })
 
   }
@@ -169,9 +224,9 @@ iplot_map <- function(COINobj, dset = "Raw", isel){
 
   fig <- plotly::plot_ly(data = out1$ind_data, z = ~get(isel), locations = out1$UnitCodes,
                          type = "choropleth", text=~UnitName, colorscale="Jet",
-                         source = 'mapclick', key = out1$UnitCodes)
+                         source = 'mapclick', key = out1$UnitCodes, showscale = T)
   fig <- fig %>% plotly::colorbar(title = isel)
-  fig <- fig %>% plotly::layout(geo = g)
+  fig <- fig %>% plotly::layout(title = isel, geo = g)
 
   fig
 }
@@ -193,7 +248,7 @@ iplot_map <- function(COINobj, dset = "Raw", isel){
 #'
 #' @export
 
-iplot_bar <- function(COINobj, dset = "Raw", isel){
+iplot_bar <- function(COINobj, dset = "Raw", isel, usel){
 
   out1 <- coin_aux_objcheck(COINobj, dset = dset, inames = isel)
 
@@ -203,11 +258,17 @@ iplot_bar <- function(COINobj, dset = "Raw", isel){
   colnames(df1)[2] <- "Indicator"
   df1 <- df1[order(df1[2], decreasing = TRUE),]
 
+  # colour bars
+  barcolours <- rep('#58508d', nrow(df1))
+  barcolours[df1$UnitCode==usel] <- '#ffa600'
+
   fig <- plotly::plot_ly(data = df1, x = ~UnitCode, y = ~Indicator,
-                         source = 'barclick', key = ~UnitCode, type = "bar")
-  fig <- fig %>% layout(yaxis = list(title = isel),
-                 xaxis = list(title = "",
-                              categoryorder = "array", categoryarray = df1$Indicator))
+                         source = 'barclick', key = ~UnitCode, type = "bar",
+                         marker = list(color = barcolours))
+  fig <- fig %>% layout(title = list(text = isel, y = 0.95),
+                        yaxis = list(title = isel),
+                        xaxis = list(title = "",
+                                     categoryorder = "array", categoryarray = df1$Indicator))
   fig
 }
 
@@ -279,12 +340,12 @@ iplot_table <- function(COINobj, dset = "Raw", isel = NULL){
   # coldefs2 <- coldefs2[-1]
 
   reactable::reactable(tabledata,
-            defaultSorted = "Index", defaultSortOrder = "desc",
-            resizable = TRUE, bordered = TRUE,
+            defaultSorted = colnames(tabledata)[2], defaultSortOrder = "desc",
+            resizable = TRUE, bordered = TRUE, highlight = TRUE, searchable = TRUE,
+            defaultPageSize = 15,
             #columns = coldefs2,
             onClick = reactable::JS("
   function(rowInfo, colInfo, state) {
-    window.alert('clicked row ' + rowInfo.index + ', column ' + colInfo.id + ', on page ' + state.page)
 
     // Send the click event to Shiny, which will be available at input$clicked
     // (Note that the row index starts at 0 in JavaScript, so we add 1)
@@ -331,14 +392,20 @@ iplot_radar <- function(COINobj, dset = "Raw", levsel = NULL, usel = NULL){
 
   out1 <- coin_aux_objcheck(COINobj, dset = dset, inames = levcodes)
 
+  # data to plot on radar chart (vals of each indicator/aggregate)
   uRow <- out1$ind_data_only[out1$UnitCodes == usel,]
 
+  # build plot
   fig <- plotly::plot_ly(
     type = 'scatterpolar',
     r = as.numeric(uRow),
     theta = colnames(uRow),
     fill = 'toself'
   )
+  # add name of selected country
+  fig <- fig %>% plotly::layout(title = list(text = out1$ind_data$UnitName[out1$UnitCodes == usel],
+                                             y = 0.95, x = 0.03)) # title position
+
   return(fig)
   browser()
 }
