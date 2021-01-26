@@ -39,12 +39,17 @@ named "Ind1" and "Ind5" (if they exist), in the format described below. inames c
 or aggregation groups, and can call multiple groups.
 
 You can also specify which aggregation level to target, using the "aglev" argument. See examples
-below.
+below, and the COINr vignette.
 }
 \examples{
-\dontrun{ # Get data from indicators "Ind1" and "Ind5", from the "Raw" data set
-out <- getIn(COINobj, dset = "Raw", inames = c("Ind1", "Ind5"))}
-\dontrun{ # get data from "Research" and "Education" dimensions, calling agggregation level 2.
-out <- coin_aux_objcheck(COINobj, dset = "Aggregated", inames = c("Research", "Education"), aglev = 2)}
+\dontrun{
+
+# Get data from indicators "Ind1" and "Ind5", from the "Raw" data set
+out <- getIn(COINobj, dset = "Raw", inames = c("Ind1", "Ind5"))
+
+# get data from "Research" and "Education" dimensions, calling agggregation level 2.
+out <- coin_aux_objcheck(COINobj, dset = "Aggregated", inames = c("Research", "Education"), aglev = 2)
+
+}
 
 }

@@ -9,7 +9,7 @@
 #' or aggregation groups, and can call multiple groups.
 #'
 #' You can also specify which aggregation level to target, using the "aglev" argument. See examples
-#' below.
+#' below, and the COINr vignette.
 #'
 #' @param obj An input object. The function can handle either the COIN object, or a data frame.
 #' The data frame should have each column as an indicator, and an optional column "UnitCode" which
@@ -24,10 +24,15 @@
 #' @importFrom dplyr select starts_with ends_with
 #'
 #' @examples
-#' \dontrun{ # Get data from indicators "Ind1" and "Ind5", from the "Raw" data set
-#' out <- getIn(COINobj, dset = "Raw", inames = c("Ind1", "Ind5"))}
-#' \dontrun{ # get data from "Research" and "Education" dimensions, calling agggregation level 2.
-#' out <- coin_aux_objcheck(COINobj, dset = "Aggregated", inames = c("Research", "Education"), aglev = 2)}
+#' \dontrun{
+#'
+#' # Get data from indicators "Ind1" and "Ind5", from the "Raw" data set
+#' out <- getIn(COINobj, dset = "Raw", inames = c("Ind1", "Ind5"))
+#'
+#' # get data from "Research" and "Education" dimensions, calling agggregation level 2.
+#' out <- coin_aux_objcheck(COINobj, dset = "Aggregated", inames = c("Research", "Education"), aglev = 2)
+#'
+#' }
 #'
 #' @return A list with the following entries:
 #' * .$IndCodes  The indicator codes
@@ -77,22 +82,23 @@ getIn <- function(obj, dset = "Raw", inames = NULL, aglev = NULL){
 
     }
 
-    # all agg codes in one column
-    aggcodes <- dplyr::select(obj$Input$AggMeta, dplyr::ends_with("Code")) %>%
-      as.matrix() %>% c()
-    aggcodes <- aggcodes[!is.na(aggcodes)]
-    # all agg names in one column
-    aggnames <- dplyr::select(obj$Input$AggMeta, dplyr::ends_with("Name")) %>%
-      as.matrix() %>% c()
-    aggnames <- aggnames[!is.na(aggnames)]
-
-    # this is like a lookup table of all indicator/agg codes and names
-    codesnames <- rbind(cbind(ASEM$Input$IndMeta$IndCode,
-                      ASEM$Input$IndMeta$IndName),
-                      cbind(aggcodes, aggnames) )
+    # # all agg codes in one column
+    # aggcodes <- dplyr::select(obj$Input$AggMeta, dplyr::ends_with("Code")) %>%
+    #   as.matrix() %>% c()
+    # aggcodes <- aggcodes[!is.na(aggcodes)]
+    # # all agg names in one column
+    # aggnames <- dplyr::select(obj$Input$AggMeta, dplyr::ends_with("Name")) %>%
+    #   as.matrix() %>% c()
+    # aggnames <- aggnames[!is.na(aggnames)]
+    #
+    # # this is like a lookup table of all indicator/agg codes and names
+    # codesnames <- rbind(cbind(ASEM$Input$IndMeta$IndCode,
+    #                   ASEM$Input$IndMeta$IndName),
+    #                   cbind(aggcodes, aggnames) )
 
     # get indicator names
-    IndNames <- codesnames[codesnames[,1] %in% IndCodes, 2]
+    IndNames <- ASEM$Parameters$Code2Name$AggName[
+      ASEM$Parameters$Code2Name$AggCode %in% IndCodes]
 
     # select indicator data columns
 

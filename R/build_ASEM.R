@@ -13,7 +13,7 @@
 
 build_ASEM <- function(){
 
-  ASEM <- coin_assemble(data_raw = ASEMIndData, metad = ASEMIndMeta, framewk = ASEMAggMeta)
+  ASEM <- coin_assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
   ASEM <- coin_denominate(ASEM)
   ASEM <- coin_impute(ASEM, dset = "Denominated", imtype = "indgroup_mean", groupvar = "Group_EurAsia")
   ASEM <- coin_treat(ASEM, dset = "Imputed")

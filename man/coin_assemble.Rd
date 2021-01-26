@@ -4,14 +4,14 @@
 \alias{coin_assemble}
 \title{Build COIN object}
 \usage{
-coin_assemble(data_raw, metad, framewk)
+coin_assemble(IndData, IndMeta, AggMeta)
 }
 \arguments{
-\item{data_raw}{A dataframe of indicator data.}
+\item{IndData}{A dataframe of indicator data.}
 
-\item{metad}{A dataframe containing auxilliary information for each indicator}
+\item{IndMeta}{A dataframe containing auxilliary information for each indicator}
 
-\item{framewk}{A dataframe specifying the names and weights of each aggregation group}
+\item{AggMeta}{A dataframe specifying the names and weights of each aggregation group}
 }
 \value{
 A "COIN object" (list) formatted to the specifications of COINr. Note that the COIN object is just a tag. It doesn't impose restrictions on the structure of the list.
@@ -20,6 +20,6 @@ A "COIN object" (list) formatted to the specifications of COINr. Note that the C
 This takes the raw data provided by the user and puts it into an list format (COIN object) that is recognised by COINr. It also checks whether there are any syntax errors in the data provided.
 }
 \examples{
-\dontrun{COINobj <- coin_assemble(data_raw, metad, framewk)}
+\dontrun{COINobj <- coin_assemble(IndData, IndMeta, AggMeta)}
 
 }
