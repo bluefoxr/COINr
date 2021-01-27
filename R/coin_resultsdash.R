@@ -342,6 +342,44 @@ iplot_table <- function(COINobj, dset = "Raw", isel = NULL){
   sticky_style <- list(position = "sticky", left = 0, background = "#fff", zIndex = 1,
                        borderRight = "1px solid #eee")
 
+  # now have to do sth a bit complicated to get conditional formatting
+
+  # Colour map for conditional formatting: a function that takes a value between 0 and 1
+  # and maps it to a colour according to a scale
+  orange_pal <- function(x){
+    if (!is.na(x)){
+      rgb(colorRamp(c("#eefff4", "#358554"))(x), maxColorValue = 255)
+    } else {
+      "#e9e9e9" #grey
+    }
+  }
+
+  # function which returns background colour based on cell value (using colour map)
+  # also takes column name as an input, which allows to get max and min
+  stylefunc <- function(value, index, name) {
+    normalized <- (value - min(tabledata[name], na.rm = T)) /
+      (max(tabledata[name], na.rm = T) - min(tabledata[name], na.rm = T))
+    color <- orange_pal(normalized)
+    list(background = color)
+  }
+
+  # list giving column formatting (using style function) for single column
+  coldefs <- list(
+    reactable::colDef(style = stylefunc)
+  )
+
+  # get names of numerical cols
+  inumcols <- unlist(lapply(tabledata, is.numeric)) # indices of numerical cols
+  numcols <- colnames(tabledata)[inumcols] # names of numerical cols
+  # replicate list to required length
+  coldefs <- rep(coldefs,length(numcols))
+  # name elements of list according to cols
+  names(coldefs) <- numcols
+
+  # join lists: sticky first col plus cond formatting numerical cols
+  coldefs <- c(coldefs,
+               list(UnitName = reactable::colDef(style = sticky_style, headerStyle = sticky_style)))
+
   reactable::reactable(tabledata,
             defaultSorted = colnames(tabledata)[2], defaultSortOrder = "desc",
             resizable = TRUE, bordered = TRUE, highlight = TRUE, searchable = TRUE,
@@ -356,48 +394,7 @@ iplot_table <- function(COINobj, dset = "Raw", isel = NULL){
       Shiny.onInputChange('clicked', { column: colInfo.id, index: rowInfo.index + 1 })
     }
   }
-"), columns = list(UnitName = reactable::colDef(style = sticky_style, headerStyle = sticky_style))
-
-  )
-
-  # the following is an attempt at some code for conditional formatting. Didn't work after
-  # a lot of trying, so had to abandon. Might come back at some point.
-
-  # to do: make a function which loops over columns of the data frame
-  # for each col, it adds to a list using the coldef function.
-  # hopefully should be able to subst whole list into the reactable function.
-  # basically what I did here below, but then with looping over cols.
-  # lapply probably a good bet.
-
-  # # Colour map for conditional formatting
-  # orange_pal <- function(x){
-  #   if (!is.na(x)){
-  #     rgb(colorRamp(c("#ffe4cc", "#ffb54d"))(x), maxColorValue = 255)
-  #   } else {
-  #     "#e9e9e9" #grey
-  #   }
-  # }
-
-  # coldefs <- list(Index = reactable::colDef(
-  #   style = function(value) {
-  #     normalized <- (value - min(tabledata$Index)) / (max(tabledata$Index) - min(tabledata$Index))
-  #     color <- orange_pal(normalized)
-  #     list(background = color)
-  #   }
-  # ))
-
-  # coldefs2 <- list(1)
-  # for (ii in 1:ncol(out1$ind_data_only)){
-  #   #coldefs2[out1$ind_names[ii]] = 1
-  #   coldefs2[out1$ind_names[ii]] = list( style = reactable::colDef(
-  #     style = function(value) {
-  #       normalized <- (value - min(out1$ind_data_only[ii], na.rm = T)) / (max(out1$ind_data_only[ii], na.rm = T) - min(out1$ind_data_only[ii], na.rm = T))
-  #       color <- orange_pal(normalized)
-  #       list(background = color)
-  #     }
-  #   ))
-  # }
-  # coldefs2 <- coldefs2[-1]
+"), columns = coldefs)
 }
 
 #' Radar chart
