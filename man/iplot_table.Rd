@@ -20,6 +20,6 @@ Interactive table
 Generates an interactive table of data. For use in e.g. Shiny or html documents.
 }
 \examples{
-\dontrun{coin_indicatordash(COINobj, inames = NULL, dset = "raw")}
+\dontrun{iplot_table(COINobj, dset = "Aggregated", isel = NULL)}
 
 }

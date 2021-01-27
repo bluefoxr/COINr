@@ -14,13 +14,14 @@ iplot_bar(COINobj, dset = "Raw", isel, usel)
 \item{isel}{The selected indicator code or aggregate}
 }
 \value{
-Interactive bar chart
+Interactive bar chart.
 }
 \description{
 Generates an interactive bar chart. This function is simply a wrapper for
-the Plotly bar chart function.
+the Plotly bar chart function, but accesses COIN object to get the relevant indicator.
+Also has click event data for Shiny.
 }
 \examples{
-\dontrun{coin_indicatordash(COINobj, inames = NULL, dset = "raw")}
+\dontrun{iplot_bar(COINobj, dset = "Aggregated", inames = "Index")}
 
 }

@@ -4,12 +4,10 @@
 \alias{coin_resultsdash}
 \title{Results visualisation dashboard}
 \usage{
-coin_resultsdash(COINobj, inames = NULL, dset = "Aggregated")
+coin_resultsdash(COINobj, dset = "Aggregated")
 }
 \arguments{
 \item{COINobj}{The COIN object, or a data frame of indicator data.}
-
-\item{inames}{A set of indicator codes to include. Defaults to all indicators.}
 
 \item{dset}{The data set to plot.}
 }

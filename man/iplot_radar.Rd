@@ -4,15 +4,19 @@
 \alias{iplot_radar}
 \title{Radar chart}
 \usage{
-iplot_radar(COINobj, dset = "Raw", levsel = NULL, usel = NULL)
+iplot_radar(COINobj, dset = "Raw", usel = NULL, levsel = NULL, isel = NULL)
 }
 \arguments{
 \item{COINobj}{The COIN object, or a data frame of indicator data.}
 
 \item{dset}{The data set to use in the table}
 
+\item{usel}{Character vector of unit code(s) to plot data from}
+
 \item{levsel}{The selected aggregation level to take indicator data from,
 where 1 is the base indicator level, and 2, 3 etc are higher aggregation levels}
+
+\item{isel}{The indicator or aggregation code(s) to plot}
 }
 \value{
 Interactive table
@@ -21,6 +25,8 @@ Interactive table
 Generates an interactive radar chart for a specified unit.
 }
 \examples{
-\dontrun{coin_indicatordash(COINobj, inames = NULL, dset = "raw")}
+\dontrun{
+iplot_radar(ASEM, dset = "Aggregated", usel = c("AUT", "CHN"), levsel = 1, isel = "Physical")
+}
 
 }

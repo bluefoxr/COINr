@@ -23,6 +23,6 @@ https://www.iso.org/iso-3166-country-codes.html. This function is simply a wrapp
 the Plotly choropleth map function.
 }
 \examples{
-\dontrun{coin_indicatordash(COINobj, inames = NULL, dset = "raw")}
+\dontrun{coin_indicatordash(COINobj, dset = "Raw")}
 
 }

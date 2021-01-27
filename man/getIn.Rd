@@ -48,8 +48,8 @@ below, and the COINr vignette.
 out <- getIn(COINobj, dset = "Raw", inames = c("Ind1", "Ind5"))
 
 # get data from "Research" and "Education" dimensions, calling agggregation level 2.
-out <- coin_aux_objcheck(COINobj, dset = "Aggregated", inames = c("Research", "Education"), aglev = 2)
-
+out <- coin_aux_objcheck(COINobj, dset = "Aggregated",
+                         inames = c("Research", "Education"), aglev = 2)
 }
 
 }
