@@ -3,7 +3,6 @@
 #' Generates an interactive visualisation of results. Requires Shiny and an active R session.
 #'
 #' @param COINobj The COIN object, or a data frame of indicator data.
-#' @param inames A set of indicator codes to include. Defaults to all indicators.
 #' @param dset The data set to plot.
 #'
 #' @import shiny
@@ -51,7 +50,7 @@ coin_resultsdash <- function(COINobj, dset = "Aggregated"){
       # Main panel for displaying outputs ----
       mainPanel(
 
-        # Output: Tabset w/ plot, summary, and table ----
+        # Using two tabs here
         tabsetPanel(type = "tabs",
                     tabPanel("Indicator",
                              plotly::plotlyOutput("barmap",height = "600px"),
@@ -80,8 +79,7 @@ coin_resultsdash <- function(COINobj, dset = "Aggregated"){
     usel <- reactiveVal(NULL)
     isel1 <- reactiveVal(NULL)
 
-    # get reactive values: the indicator names (with data set added, for plots)
-    iname1 <- reactive(paste0(input$vr1," - ", input$dset1))
+    ## --------- Indicator Selection ----------------
 
     # update selected indicator (table click)
     observeEvent(input$vr1,{
@@ -104,7 +102,53 @@ coin_resultsdash <- function(COINobj, dset = "Aggregated"){
       idata1_full(outsel$ind_data)
     })
 
-    ## ---- Plots and tables ---- ##
+    ## -------------- Unit selection -------
+
+    # get click data
+    eventmap <- reactive({plotly::event_data(event = "plotly_click", source = "mapclick", priority = "event")})
+    eventbar <- reactive({plotly::event_data(event = "plotly_click", source = "barclick", priority = "event")})
+    eventmap2 <- reactive({plotly::event_data(event = "plotly_doubleclick", source = "mapclick")})
+    eventbar2 <- reactive({plotly::event_data(event = "plotly_doubleclick", source = "barclick")})
+
+    # consolidate click data
+    observeEvent(eventmap(),{
+      usel(eventmap()$key)
+    })
+    observeEvent(eventbar(),{
+      usel(eventbar()$key)
+    })
+    observeEvent(input$clicked,{
+      usel(idata1_full()[input$clicked$index,"UnitCode"] )
+    })
+
+    # initialise character vector of selected units
+    usels <- reactiveVal(NULL)
+
+    # Collect all the selected units
+    observeEvent(usel(), {
+      usel_new <- usel()
+      # if already selected and clicked again, remove
+      if (usel_new %in% usels()){
+        usel_old_new <- usels()
+        usel_old_new <- usel_old_new[usel_old_new != usel_new]
+      } else {
+        # otherwise, add to list
+        usel_old_new <- c(usels(), usel())
+      }
+      # set selection to NULL if empty - avoids error on plot
+      if(length(usel_old_new)==0){usel_old_new<-NULL}
+      usels(unique(usel_old_new))
+    })
+
+    # clear the set of units when a double-click occurs
+    observeEvent(eventmap2(), {
+      usels(NULL)
+    })
+    observeEvent(eventbar2(), {
+      usels(NULL)
+    })
+
+    ## ----- Plots and tables ----- ##
 
     # Choropleth map OR bar chart
     output$barmap <- plotly::renderPlotly({
@@ -140,41 +184,6 @@ coin_resultsdash <- function(COINobj, dset = "Aggregated"){
           Rank = rank(-1*idata1_full()[,isel1()])[idata1_full()$UnitCode %in% usels()] %>%
             as.numeric() %>% round()
         )}
-    })
-
-    # get click data
-    eventmap <- reactive({plotly::event_data(event = "plotly_click", source = "mapclick")})
-    eventbar <- reactive({plotly::event_data(event = "plotly_click", source = "barclick")})
-    eventmap2 <- reactive({plotly::event_data(event = "plotly_doubleclick", source = "mapclick")})
-    eventbar2 <- reactive({plotly::event_data(event = "plotly_doubleclick", source = "barclick")})
-
-    # consolidate click data
-    observeEvent(eventmap(),{
-      usel(eventmap()$key)
-    })
-    observeEvent(eventbar(),{
-      usel(eventbar()$key)
-    })
-    observeEvent(input$clicked,{
-      usel(idata1_full()[input$clicked$index,"UnitCode"] )
-    })
-
-    # keep track of which cars have been hovered on
-    usels <- reactiveVal(NULL)
-
-    # Collect all the selected units
-    observeEvent(usel(), {
-      usel_new <- usel()
-      usel_old_new <- c(usels(), usel())
-      usels(unique(usel_old_new))
-    })
-
-    # clear the set of units when a double-click occurs
-    observeEvent(eventmap2(), {
-      usels(NULL)
-    })
-    observeEvent(eventbar2(), {
-      usels(NULL)
     })
 
     ## ---- Update dropdown menus ---- ##
@@ -259,7 +268,8 @@ iplot_map <- function(COINobj, dset = "Raw", isel){
 #' Bar chart
 #'
 #' Generates an interactive bar chart. This function is simply a wrapper for
-#' the Plotly bar chart function.
+#' the Plotly bar chart function, but accesses COIN object to get the relevant indicator.
+#' Also has click event data for Shiny.
 #'
 #' @param COINobj The COIN object, or a data frame of indicator data.
 #' @param dset The data set to plot.
@@ -267,9 +277,9 @@ iplot_map <- function(COINobj, dset = "Raw", isel){
 #'
 #' @importFrom plotly plot_ly layout
 #'
-#' @examples \dontrun{coin_indicatordash(COINobj, inames = NULL, dset = "raw")}
+#' @examples \dontrun{iplot_bar(COINobj, dset = "Aggregated", inames = "Index")}
 #'
-#' @return Interactive bar chart
+#' @return Interactive bar chart.
 #'
 #' @export
 
@@ -311,7 +321,7 @@ iplot_bar <- function(COINobj, dset = "Raw", isel, usel){
 #'
 #' @importFrom reactable reactable
 #'
-#' @examples \dontrun{coin_indicatordash(COINobj, inames = NULL, dset = "raw")}
+#' @examples \dontrun{iplot_table(COINobj, dset = "Aggregated", isel = NULL)}
 #'
 #' @return Interactive table
 #'
@@ -321,51 +331,16 @@ iplot_table <- function(COINobj, dset = "Raw", isel = NULL){
 
   out1 <- getIn(COINobj, dset = dset, inames = isel)
 
-  # Colour map for conditional formatting
-  orange_pal <- function(x){
-    if (!is.na(x)){
-      rgb(colorRamp(c("#ffe4cc", "#ffb54d"))(x), maxColorValue = 255)
-    } else {
-      "#e9e9e9" #grey
-    }
-  }
-
-  # get data and reverse so that index is first
+  # get data and reverse so that index is first, also unit names are first
 
   tabledata <- cbind(UnitName = out1$ind_data$UnitName, rev( out1$ind_data[setdiff(names(out1$ind_data), "UnitName")] )) %>%
    lapply(function(y) if(is.numeric(y)) round(y, 1) else y) %>%
     data.frame()
 
+  # these are the attributes needed to get the left col to stick when scrolling
+  # e.g. like "freeze panes" in Excel.
   sticky_style <- list(position = "sticky", left = 0, background = "#fff", zIndex = 1,
                        borderRight = "1px solid #eee")
-
-
-  # to do: make a function which loops over columns of the data frame
-  # for each col, it adds to a list using the coldef function.
-  # hopefully should be able to subst whole list into the reactable function.
-  # basically what I did here below, but then with looping over cols.
-  # lapply probably a good bet.
-
-  coldefs <- list(Index = reactable::colDef(
-    style = function(value) {
-      normalized <- (value - min(tabledata$Index)) / (max(tabledata$Index) - min(tabledata$Index))
-      color <- orange_pal(normalized)
-      list(background = color)
-    }
-  ))
-
-  # coldefs2 <- list(1)
-  # for (ii in 1:ncol(out1$ind_data_only)){
-  #   #coldefs2[out1$ind_names[ii]] = 1
-  #   coldefs2[out1$ind_names[ii]] = list( style = reactable::colDef(
-  #     style = function(value) {
-  #       normalized <- (value - min(out1$ind_data_only[ii], na.rm = T)) / (max(out1$ind_data_only[ii], na.rm = T) - min(out1$ind_data_only[ii], na.rm = T))
-  #       color <- orange_pal(normalized)
-  #       list(background = color)
-  #     }
-  #   ))
-  # }
-  # coldefs2 <- coldefs2[-1]
 
   reactable::reactable(tabledata,
             defaultSorted = colnames(tabledata)[2], defaultSortOrder = "desc",
@@ -381,16 +356,48 @@ iplot_table <- function(COINobj, dset = "Raw", isel = NULL){
       Shiny.onInputChange('clicked', { column: colInfo.id, index: rowInfo.index + 1 })
     }
   }
-")
-
-            # ),
-            # Code_country = colDef(
-            #   style = sticky_style,
-            #   headerStyle = sticky_style
-            # )
-
+"), columns = list(UnitName = reactable::colDef(style = sticky_style, headerStyle = sticky_style))
 
   )
+
+  # the following is an attempt at some code for conditional formatting. Didn't work after
+  # a lot of trying, so had to abandon. Might come back at some point.
+
+  # to do: make a function which loops over columns of the data frame
+  # for each col, it adds to a list using the coldef function.
+  # hopefully should be able to subst whole list into the reactable function.
+  # basically what I did here below, but then with looping over cols.
+  # lapply probably a good bet.
+
+  # # Colour map for conditional formatting
+  # orange_pal <- function(x){
+  #   if (!is.na(x)){
+  #     rgb(colorRamp(c("#ffe4cc", "#ffb54d"))(x), maxColorValue = 255)
+  #   } else {
+  #     "#e9e9e9" #grey
+  #   }
+  # }
+
+  # coldefs <- list(Index = reactable::colDef(
+  #   style = function(value) {
+  #     normalized <- (value - min(tabledata$Index)) / (max(tabledata$Index) - min(tabledata$Index))
+  #     color <- orange_pal(normalized)
+  #     list(background = color)
+  #   }
+  # ))
+
+  # coldefs2 <- list(1)
+  # for (ii in 1:ncol(out1$ind_data_only)){
+  #   #coldefs2[out1$ind_names[ii]] = 1
+  #   coldefs2[out1$ind_names[ii]] = list( style = reactable::colDef(
+  #     style = function(value) {
+  #       normalized <- (value - min(out1$ind_data_only[ii], na.rm = T)) / (max(out1$ind_data_only[ii], na.rm = T) - min(out1$ind_data_only[ii], na.rm = T))
+  #       color <- orange_pal(normalized)
+  #       list(background = color)
+  #     }
+  #   ))
+  # }
+  # coldefs2 <- coldefs2[-1]
 }
 
 #' Radar chart
