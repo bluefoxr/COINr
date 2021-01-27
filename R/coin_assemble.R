@@ -132,9 +132,9 @@ coin_assemble <- function(IndData, IndMeta, AggMeta){
   aggnames <- aggnames[!is.na(aggnames)]
 
   # this is like a lookup table of all indicator/agg codes and names
-  COINobj$Parameters$Code2Name <- rbind(cbind(ASEM$Input$IndMeta$IndCode,
-                            ASEM$Input$IndMeta$IndName),
-                      cbind(aggcodes, aggnames) ) %>% as.data.frame()
+  COINobj$Parameters$Code2Name <- rbind(
+    cbind(IndMeta$IndCode, IndMeta$IndName),
+    cbind(aggcodes, aggnames) ) %>% as.data.frame()
   colnames(COINobj$Parameters$Code2Name) <- c("AggCode", "AggName")
 
   #------- Last bits
