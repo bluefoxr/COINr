@@ -348,7 +348,7 @@ iplot_table <- function(COINobj, dset = "Raw", isel = NULL){
   # and maps it to a colour according to a scale
   orange_pal <- function(x){
     if (!is.na(x)){
-      rgb(colorRamp(c("#eefff4", "#358554"))(x), maxColorValue = 255)
+      grDevices::rgb(grDevices::colorRamp(c("#eefff4", "#358554"))(x), maxColorValue = 255)
     } else {
       "#e9e9e9" #grey
     }
