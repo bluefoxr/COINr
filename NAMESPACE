@@ -2,7 +2,7 @@
 
 export(build_ASEM)
 export(coin_2excel)
-export(coin_PCE)
+export(coin_PCA)
 export(coin_aggregate)
 export(coin_assemble)
 export(coin_aux_objcheck)
