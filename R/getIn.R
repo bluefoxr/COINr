@@ -22,6 +22,7 @@
 #'
 #' @importFrom magrittr extract
 #' @importFrom dplyr select starts_with ends_with
+#' @importFrom rlang .data
 #'
 #' @examples
 #' \dontrun{
@@ -74,7 +75,7 @@ getIn <- function(obj, dset = "Raw", inames = NULL, aglev = NULL){
     } else { # take inames as reference to a group or groups
 
       # get index structure from Indicator metadata
-      aggcols <- dplyr::select(obj$Input$IndMeta, IndCode, dplyr::starts_with("Agg")) %>% as.data.frame()
+      aggcols <- dplyr::select(obj$Input$IndMeta, .data$IndCode, dplyr::starts_with("Agg")) %>% as.data.frame()
       # filter any rows containing the specified string(s), pick column corresponding to agg level
       # Might look strange, but checks whether each row has any of the specified codes in.
       # Then, filters to those rows, and selects the column corresponding to the ag level.
@@ -82,23 +83,9 @@ getIn <- function(obj, dset = "Raw", inames = NULL, aglev = NULL){
 
     }
 
-    # # all agg codes in one column
-    # aggcodes <- dplyr::select(obj$Input$AggMeta, dplyr::ends_with("Code")) %>%
-    #   as.matrix() %>% c()
-    # aggcodes <- aggcodes[!is.na(aggcodes)]
-    # # all agg names in one column
-    # aggnames <- dplyr::select(obj$Input$AggMeta, dplyr::ends_with("Name")) %>%
-    #   as.matrix() %>% c()
-    # aggnames <- aggnames[!is.na(aggnames)]
-    #
-    # # this is like a lookup table of all indicator/agg codes and names
-    # codesnames <- rbind(cbind(ASEM$Input$IndMeta$IndCode,
-    #                   ASEM$Input$IndMeta$IndName),
-    #                   cbind(aggcodes, aggnames) )
-
     # get indicator names
-    IndNames <- ASEM$Parameters$Code2Name$AggName[
-      ASEM$Parameters$Code2Name$AggCode %in% IndCodes]
+    IndNames <- obj$Parameters$Code2Name$AggName[
+      obj$Parameters$Code2Name$AggCode %in% IndCodes]
 
     # select indicator data columns
 
