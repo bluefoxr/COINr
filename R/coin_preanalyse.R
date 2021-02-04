@@ -30,7 +30,7 @@ coin_preanalyse <- function(COINobj, inames = NULL, dset = "Raw",
                             t_missing = 65, IQR_coef = 1.5){
 
   # First. check to see what kind of input we have and get relevant data
-  checkout <- coin_aux_objcheck(COINobj, dset, inames)
+  checkout <- getIn(obj = COINobj, dset = dset, inames = inames, aglev = 1)
   ind_data_only <- checkout$ind_data_only
   ind_names <- checkout$ind_names
 
