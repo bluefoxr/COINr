@@ -34,6 +34,7 @@ coin_preanalyse <- function(COINobj, inames = NULL, dset = "Raw",
   ind_data_only <- checkout$ind_data_only
   ind_names <- checkout$ind_names
 
+  browser()
   ##------ Get loads of different stats on indicators. Will be added to a big table at the end.
 
   imean <- ind_data_only %>% purrr::map_dbl(mean, na.rm = T) # means

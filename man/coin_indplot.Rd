@@ -8,6 +8,7 @@ coin_indplot(
   COINobj,
   dset = "Raw",
   inames = NULL,
+  aglev = 1,
   type = "Box",
   facetplot = TRUE,
   ntype = NULL,
@@ -20,6 +21,8 @@ coin_indplot(
 \item{dset}{The source data set to use for indicator data (if input is COIN object)}
 
 \item{inames}{A character vector of indicator names to plot. Defaults to all indicators.}
+
+\item{aglev}{The aggregation level to extract the indicator data from. Defaults to indicator level (1)}
 
 \item{type}{The type of plot. Currently supported "Box", "Dot", "Violin", "Violindot", "Histogram".}
 

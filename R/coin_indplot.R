@@ -5,6 +5,7 @@
 #' @param COINobj The COIN object, or a data frame of indicator data
 #' @param dset The source data set to use for indicator data (if input is COIN object)
 #' @param inames A character vector of indicator names to plot. Defaults to all indicators.
+#' @param aglev The aggregation level to extract the indicator data from. Defaults to indicator level (1)
 #' @param type The type of plot. Currently supported "Box", "Dot", "Violin", "Violindot", "Histogram".
 #' @param facetplot If TRUE, plots each indicator
 #' @param ntype The type of nomalisation to apply. If NULL, no normalisation applied, otherwise specify
@@ -20,12 +21,12 @@
 #'
 #' @export
 
-coin_indplot <- function(COINobj, dset = "Raw", inames = NULL, type = "Box", facetplot = TRUE,
+coin_indplot <- function(COINobj, dset = "Raw", inames = NULL, aglev = 1, type = "Box", facetplot = TRUE,
                          ntype = NULL, npara = NULL){
 
-  out1 <- coin_aux_objcheck(COINobj, dset, inames)
+  out1 <- getIn(COINobj, dset = dset, inames = inames, aglev = aglev)
   ind_data_only <- out1$ind_data_only
-  ind_names <- out1$ind_names
+  ind_names <- out1$IndCodes
 
   # Normalise if required
   if (!is.null(ntype)){
