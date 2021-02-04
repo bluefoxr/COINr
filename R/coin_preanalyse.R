@@ -14,7 +14,7 @@
 #'
 #' @importFrom e1071 skewness kurtosis
 #' @importFrom purrr map_dbl
-#' @importFrom dplyr if_else
+#' @importFrom dplyr if_else n_distinct
 #' @importFrom corrplot cor.mtest
 #' @importFrom tibble tibble add_column
 #' @importFrom stats IQR cor median sd
@@ -33,7 +33,6 @@ coin_preanalyse <- function(COINobj, inames = NULL, dset = "Raw",
   checkout <- getIn(obj = COINobj, dset = dset, inames = inames, aglev = 1)
   ind_data_only <- checkout$ind_data_only
   ind_names <- checkout$IndCodes
-  browser()
 
   ##------ Get loads of different stats on indicators. Will be added to a big table at the end.
 
@@ -51,6 +50,7 @@ coin_preanalyse <- function(COINobj, inames = NULL, dset = "Raw",
   q25 <- ind_data_only %>% purrr::map_dbl(~quantile(.x, probs = 0.25, na.rm = TRUE)) # 25th prc
   q75 <- ind_data_only %>% purrr::map_dbl(~quantile(.x, probs = 0.75, na.rm = TRUE)) # 75th prc
   iIQR <- ind_data_only %>% purrr::map_dbl(stats::IQR, na.rm = TRUE) # interquartile range
+  Nunique <- ind_data_only %>% purrr::map_dbl(~{dplyr::n_distinct(.x)/length(.x)})
 
   # switching some things into a for loop for clarity
   out_flag <- matrix("OK", nrow = nrow(ind_data_only), ncol = ncol(ind_data_only)) # empty df for populating
@@ -80,7 +80,7 @@ coin_preanalyse <- function(COINobj, inames = NULL, dset = "Raw",
     Mean = imean, Median = imed,
     Q.25 = q25, Q.75 = q75, IQ.range = iIQR,
     Std.dev = istd, Skew = iskew, Kurtosis = ikurt,
-    N.missing = ina, Prc.complete = iprcna, Low.data.flag = imissflag,
+    N.missing = ina, Prc.complete = iprcna, Low.data.flag = imissflag, Prc.Unique = Nunique,
     SK.outlier.flag = skflag, Low.Outliers.IQR = out_low, High.Outliers.IQR = out_high
   )
 
