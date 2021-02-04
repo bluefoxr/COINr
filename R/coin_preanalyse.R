@@ -32,9 +32,9 @@ coin_preanalyse <- function(COINobj, inames = NULL, dset = "Raw",
   # First. check to see what kind of input we have and get relevant data
   checkout <- getIn(obj = COINobj, dset = dset, inames = inames, aglev = 1)
   ind_data_only <- checkout$ind_data_only
-  ind_names <- checkout$ind_names
-
+  ind_names <- checkout$IndCodes
   browser()
+
   ##------ Get loads of different stats on indicators. Will be added to a big table at the end.
 
   imean <- ind_data_only %>% purrr::map_dbl(mean, na.rm = T) # means
@@ -87,9 +87,12 @@ coin_preanalyse <- function(COINobj, inames = NULL, dset = "Raw",
 
 
   ##------- Now checking correlations ---------
-
   # isolate relevant data
-  den_data_only <- select(COINobj$Input$Denominators, starts_with("Den_"))
+  den_data_only <- COINobj$Input$Denominators
+  # filter for only unit codes in selected data (in case we have dropped some)
+  den_data_only <- den_data_only[den_data_only$UnitCode %in% checkout$UnitCodes,]
+  den_data_only <- select(den_data_only, starts_with("Den_"))
+
 
   # indicator correlations
   corr_ind <- stats::cor(ind_data_only, method = "pearson", use = "na.or.complete") # get correlation matrix, just indicators
