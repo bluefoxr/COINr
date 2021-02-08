@@ -4,7 +4,7 @@
 \alias{coin_assemble}
 \title{Build COIN object}
 \usage{
-coin_assemble(IndData, IndMeta, AggMeta)
+coin_assemble(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL)
 }
 \arguments{
 \item{IndData}{A dataframe of indicator data.}
@@ -12,12 +12,18 @@ coin_assemble(IndData, IndMeta, AggMeta)
 \item{IndMeta}{A dataframe containing auxilliary information for each indicator}
 
 \item{AggMeta}{A dataframe specifying the names and weights of each aggregation group}
+
+\item{include}{Optional argument specifying a subset of indicator codes to include (default all indicators included)}
+
+\item{exclude}{Optional argument specifying a subset of indicator codes to exclude (default none excluded)}
 }
 \value{
-A "COIN object" (list) formatted to the specifications of COINr. Note that the COIN object is just a tag. It doesn't impose restrictions on the structure of the list.
+A "COIN object" (list) formatted to the specifications of COINr.
+Note that the COIN object is just a tag. It doesn't impose restrictions on the structure of the list.
 }
 \description{
-This takes the raw data provided by the user and puts it into an list format (COIN object) that is recognised by COINr. It also checks whether there are any syntax errors in the data provided.
+This takes the raw data provided by the user and puts it into an list format (COIN object) that is recognised by COINr.
+It also checks whether there are any syntax errors in the data provided.
 }
 \examples{
 \dontrun{COINobj <- coin_assemble(IndData, IndMeta, AggMeta)}
