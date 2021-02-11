@@ -16,14 +16,14 @@
 #' @importFrom dplyr "n_distinct"
 #' @importFrom stats "na.omit"
 #'
-#' @examples \dontrun{COINobj <- coin_assemble(IndData, IndMeta, AggMeta)}
+#' @examples \dontrun{COINobj <- assemble(IndData, IndMeta, AggMeta)}
 #'
 #' @return A "COIN object" (list) formatted to the specifications of COINr.
 #' Note that the COIN object is just a tag. It doesn't impose restrictions on the structure of the list.
 #'
 #' @export
 
-coin_assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL){
+assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL){
 
   # Do some checks first - make sure required cols are present
   if(!exists("UnitCode", IndData)){
