@@ -106,17 +106,18 @@ getIn <- function(obj, dset = "Raw", inames = NULL, aglev = NULL){
       } else {
         # All cols are indicators. No names supplied.
         IndCodes <- colnames(obj)
+        IndNames <- IndCodes # we don't know names, so use codes
         UnitCodes <- NA
       }
     } else { # indicator names are supplied
       IndCodes <- inames
+      IndNames <- IndCodes # we don't know names, so use codes
       if (exists("UnitCode",ind_data)){
         UnitCodes <- obj$UnitCode
       } else {
         UnitCodes <- NA
       }
     }
-    IndNames <- NULL # assume not interested in names
 
   } else { # Not COIN obj OR df
     stop("Input should either be COIN object or data frame.")
