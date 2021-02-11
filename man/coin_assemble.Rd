@@ -15,7 +15,7 @@ coin_assemble(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL)
 
 \item{include}{Optional argument specifying a subset of indicator codes to include (default all indicators included)}
 
-\item{exclude}{Optional argument specifying a subset of indicator codes to exclude (default none excluded)}
+\item{Xexclude}{Optional argument specifying a subset of indicator codes to exclude (default none excluded)}
 }
 \value{
 A "COIN object" (list) formatted to the specifications of COINr.

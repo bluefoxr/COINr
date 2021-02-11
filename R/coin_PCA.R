@@ -1,6 +1,8 @@
 #' Perform PCA
 #'
-#' Performs PCA on a specified data set and subset of indicators or aggregation groups
+#' Performs PCA on a specified data set and subset of indicators or aggregation groups. Returns weights
+#' corresponding to the first principal component, i.e the weights that maximise the variance explained
+#' by the linear combination of indicators.
 #'
 #' @param COINobj An input object. The function can handle either the COIN object, or a data frame.
 #' The data frame should have each column as an indicator, and an optional column "UnitCode" which
@@ -18,9 +20,11 @@
 #'
 #' @examples \dontrun{PCAresults <- coin_PCA(COINobj, dset = "Raw")}
 #'
-#' @return PCA data
+#' @return PCA data, plus PCA weights corresponding to the loadings of the first principle component.
+#' This should correspond to the linear combination of indicators that explains the most variance.
 #'
 #' @export
+#'
 
 coin_PCA <- function(COINobj, dset = "Raw", inames = NULL, aglev = NULL, out2 = "obj"){
 
@@ -46,7 +50,7 @@ PCA. You can also try imputing data first to avoid this."))
   if(is.null(aglev)){aglev<-1}
 
   # weight from first PC should be the max variance weights
-  wts <- PCAresults$rotation[,1] %>% as.numeric()
+  wts <- PCAres$rotation[,1] %>% as.numeric()
 
   # write results
   if( (out$otype == "COINobj") & (out2 == "obj")){
@@ -54,8 +58,8 @@ PCA. You can also try imputing data first to avoid this."))
     eval(parse(text=paste0("COINobj$Analysis$",dset,"$PCA$L",aglev,"<- PCAres")))
     return(COINobj)
   } else {
-    output <- list(Weights = wts,
-                   PCAresults = PCAres)
+    output <- list("Weights" = wts,
+                   "PCAresults" = PCAres)
     return(output)
   }
 

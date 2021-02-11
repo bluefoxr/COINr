@@ -274,6 +274,7 @@ iplot_map <- function(COINobj, dset = "Raw", isel){
 #' @param COINobj The COIN object, or a data frame of indicator data.
 #' @param dset The data set to plot.
 #' @param isel The selected indicator code or aggregate
+#' @param usel A character vector of unit codes to highlight on the bar chart
 #'
 #' @importFrom plotly plot_ly layout
 #'

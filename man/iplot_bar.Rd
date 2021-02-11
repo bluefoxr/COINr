@@ -12,6 +12,8 @@ iplot_bar(COINobj, dset = "Raw", isel, usel)
 \item{dset}{The data set to plot.}
 
 \item{isel}{The selected indicator code or aggregate}
+
+\item{usel}{A character vector of unit codes to highlight on the bar chart}
 }
 \value{
 Interactive bar chart.

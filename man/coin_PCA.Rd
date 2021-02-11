@@ -23,10 +23,13 @@ to N (top aggregation level, typically the index).}
 sends the results to the COIN object, otherwise if "list", outputs to a separate list.}
 }
 \value{
-PCA data
+PCA data, plus PCA weights corresponding to the loadings of the first principle component.
+This should correspond to the linear combination of indicators that explains the most variance.
 }
 \description{
-Performs PCA on a specified data set and subset of indicators or aggregation groups
+Performs PCA on a specified data set and subset of indicators or aggregation groups. Returns weights
+corresponding to the first principal component, i.e the weights that maximise the variance explained
+by the linear combination of indicators.
 }
 \examples{
 \dontrun{PCAresults <- coin_PCA(COINobj, dset = "Raw")}
