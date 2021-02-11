@@ -10,13 +10,13 @@
 #' @importFrom matrixStats rowProds
 #' @importFrom purrr map_dfr
 #'
-#' @examples \dontrun{coin_plotframework(COINobj)}
+#' @examples \dontrun{plotframework(COINobj)}
 #'
 #' @return Interactive sunburst plot.
 #'
 #' @export
 
-coin_plotframework <- function(COINobj){
+plotframework <- function(COINobj){
 
   # the structure is in the metadata and framework data frames
   if ("COIN object" %in% class(COINobj)){ # COIN obj
