@@ -19,13 +19,13 @@
 #' @importFrom tibble tibble add_column
 #' @importFrom stats IQR cor median sd
 #'
-#' @examples \dontrun{df_norm <- coin_normalise(df, ntype="minmax", npara = c(0,1))}
+#' @examples \dontrun{df_norm <- getStats(COINobj, dset = "Raw")}
 #'
 #' @return If the input is a COIN object, returns an updated COIN object with relevant tables. If the input is a data frame, returns a table as a data frame.
 #'
 #' @export
 
-coin_preanalyse <- function(COINobj, inames = NULL, dset = "Raw",
+getStats <- function(COINobj, inames = NULL, dset = "Raw",
                             t_skew = 2, t_kurt = 3.5, t_colin = 0.9, t_denom = 0.7,
                             t_missing = 65, IQR_coef = 1.5){
 
