@@ -142,3 +142,27 @@ getIn <- function(obj, dset = "Raw", inames = NULL, aglev = NULL){
 
   return(out)
 }
+
+
+#' Round down a data frame
+#'
+#' Tiny function just to round down a data frame for display in a table.
+#'
+#'
+#'
+#' @param df A data frame to input
+#' @param decimals The number of decimal places to round to (default 2)
+#'
+#' @examples
+#' \dontrun{ }
+#'
+#' @return A data frame, with any numeric columns rounded to the specified amount
+#'
+#' @export
+
+roundDF <- function(df, decimals = 2){
+  lapply(df, function(y) if(is.numeric(y)) round(y, decimals) else y) %>%
+    data.frame()
+}
+
+
