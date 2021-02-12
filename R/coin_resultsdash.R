@@ -153,7 +153,7 @@ coin_resultsdash <- function(COINobj, dset = "Aggregated"){
     # Choropleth map OR bar chart
     output$barmap <- plotly::renderPlotly({
       if (input$barmapsel==TRUE){
-        iplot_map(COINobj, input$dset1, isel1())
+        iplotMap(COINobj, input$dset1, isel1())
       } else {
         iplotBar(COINobj, input$dset1, isel1(), usels())
       }
@@ -231,7 +231,7 @@ coin_resultsdash <- function(COINobj, dset = "Aggregated"){
 #'
 #' @export
 
-iplot_map <- function(COINobj, dset = "Raw", isel){
+iplotMap <- function(COINobj, dset = "Raw", isel){
 
   out1 <- getIn(COINobj, dset = dset, inames = isel)
 
