@@ -15,7 +15,7 @@
 #' for further information and detailed description of each indicator, and COINr documentation for the formatting
 #' of this data set.
 #'
-#' @format A data frame with 49 rows and 7 variables:
+#' @format A data frame with 49 rows and 9 variables
 #'
 #' @source \url{https://composite-indicators.jrc.ec.europa.eu/asem-sustainable-connectivity/repository}
 "ASEMIndMeta"

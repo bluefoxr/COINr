@@ -5,7 +5,7 @@
 \alias{ASEMIndMeta}
 \title{ASEM indicator metadata}
 \format{
-A data frame with 49 rows and 7 variables:
+A data frame with 49 rows and 9 variables
 }
 \source{
 \url{https://composite-indicators.jrc.ec.europa.eu/asem-sustainable-connectivity/repository}
