@@ -161,8 +161,10 @@ getIn <- function(obj, dset = "Raw", inames = NULL, aglev = NULL){
 #' @export
 
 roundDF <- function(df, decimals = 2){
-  lapply(df, function(y) if(is.numeric(y)) round(y, decimals) else y) %>%
+  df <- lapply(df, function(y) if(is.numeric(y)) round(y, decimals) else y) %>%
     data.frame()
+  rownames(df) <- NULL
+  df
 }
 
 
