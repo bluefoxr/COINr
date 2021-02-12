@@ -155,7 +155,7 @@ coin_resultsdash <- function(COINobj, dset = "Aggregated"){
       if (input$barmapsel==TRUE){
         iplot_map(COINobj, input$dset1, isel1())
       } else {
-        iplot_bar(COINobj, input$dset1, isel1(), usels())
+        iplotBar(COINobj, input$dset1, isel1(), usels())
       }
     })
 
@@ -273,20 +273,41 @@ iplot_map <- function(COINobj, dset = "Raw", isel){
 #'
 #' @param COINobj The COIN object, or a data frame of indicator data.
 #' @param dset The data set to plot.
-#' @param isel The selected indicator code or aggregate
+#' @param isel The selected indicator code or aggregate (does not support multiple indicators)
 #' @param usel A character vector of unit codes to highlight on the bar chart
+#' @param aglev The aggregation level to collect the indicator data from
 #'
 #' @importFrom plotly plot_ly layout
 #'
-#' @examples \dontrun{iplot_bar(COINobj, dset = "Aggregated", inames = "Index")}
+#' @examples \dontrun{iplotBar(ASEM, dset = "Raw", isel = "Flights")}
 #'
 #' @return Interactive bar chart.
 #'
 #' @export
 
-iplot_bar <- function(COINobj, dset = "Raw", isel, usel){
+iplotBar <- function(COINobj, dset = "Raw", isel, usel = NULL, aglev = 1){
 
-  out1 <- getIn(COINobj, dset = dset, inames = isel)
+  out1 <- getIn(COINobj, dset = dset, inames = isel, aglev = aglev)
+
+  ind_data_only <- out1$ind_data_only
+  indname <- out1$IndNames
+  ind_code <- out1$IndCodes
+
+  if(length(ind_code)>1){stop("This function only supports plotting single indicators. You may need to use the aglev argument if you are calling an aggregation group.")}
+
+  if((out1$otype=="COINobj") & (aglev == 1)){
+    # look for units
+    if(exists("IndUnit",COINobj$Input$IndMeta)){
+      # find unit for indicator
+      indunit <- COINobj$Input$IndMeta$IndUnit[COINobj$Input$IndMeta$IndCode == ind_code]
+    } else {
+      # if not, NULL
+      indunit <- ""
+    }
+  } else {
+    # if not COINobj, no units
+    indunit <- ""
+  }
 
   # Build data frame, then sort it
   df1 <- data.frame(UnitCode = out1$ind_data$UnitCode,
@@ -298,14 +319,11 @@ iplot_bar <- function(COINobj, dset = "Raw", isel, usel){
   barcolours <- rep('#58508d', nrow(df1))
   barcolours[df1$UnitCode %in% usel] <- '#ffa600'
 
-  # get indicator name
-  indname <- COINobj$Parameters$Code2Name$AggName[COINobj$Parameters$Code2Name$AggCode == isel]
-
   fig <- plotly::plot_ly(data = df1, x = ~UnitCode, y = ~Indicator,
                          source = 'barclick', key = ~UnitCode, type = "bar",
                          marker = list(color = barcolours))
   fig <- fig %>% layout(title = list(text = indname, y = 0.95),
-                        yaxis = list(title = isel),
+                        yaxis = list(title = indunit),
                         xaxis = list(title = "",
                                      categoryorder = "array", categoryarray = df1$Indicator))
   fig

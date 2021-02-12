@@ -2,7 +2,7 @@
 % Please edit documentation in R/coin_iplot.R
 \name{iplotIndDist}
 \alias{iplotIndDist}
-\title{Interactive violin plot}
+\title{Interactive indicator distribution plots}
 \usage{
 iplotIndDist(
   COINobj,
@@ -20,13 +20,15 @@ iplotIndDist(
 
 \item{inames}{A character vector of a single indicator name or aggregate name to plot.}
 
+\item{ptype}{The type of plot to produce. Currently supports "Violin" and "Histogram".}
+
 \item{aglev}{The aggregation level to extract the indicator data from. Defaults to indicator level (1)}
 }
 \value{
 Nice plots
 }
 \description{
-Generates a javascript violin plot of a single indicator, using Plotly. Plot can be embedded e.g. in
+Generates a javascript distribution plot of a single indicator, using Plotly. Plot can be embedded e.g. in
 HTML documents, websites, etc, or used for more interactive data exploration. This only plots one
 indicator at a time - for multiple plots you can use plotIndDist()
 }
