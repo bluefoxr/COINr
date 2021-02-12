@@ -310,7 +310,8 @@ iplotBar <- function(COINobj, dset = "Raw", isel, usel = NULL, aglev = 1){
   }
 
   # Build data frame, then sort it
-  df1 <- data.frame(UnitCode = out1$ind_data$UnitCode,
+  # now build df for plotly
+  df1 <- data.frame(UnitCode = out1$UnitCodes,
                     Indicator = out1$ind_data[isel])
   colnames(df1)[2] <- "Indicator"
   df1 <- df1[order(df1[2], decreasing = TRUE),]
@@ -319,9 +320,18 @@ iplotBar <- function(COINobj, dset = "Raw", isel, usel = NULL, aglev = 1){
   barcolours <- rep('#58508d', nrow(df1))
   barcolours[df1$UnitCode %in% usel] <- '#ffa600'
 
-  fig <- plotly::plot_ly(data = df1, x = ~UnitCode, y = ~Indicator,
-                         source = 'barclick', key = ~UnitCode, type = "bar",
-                         marker = list(color = barcolours))
+  if(is.na(out1$UnitCodes[1])){
+    # if there are no unitcodes, e.g. for just a df, we don't plot them
+    fig <- plotly::plot_ly(data = df1, y = ~Indicator,
+                           source = 'barclick', key = ~UnitCode, type = "bar",
+                           marker = list(color = barcolours))
+  } else {
+    # otherwise, plot unit codes on x axis
+    fig <- plotly::plot_ly(data = df1, x = ~UnitCode, y = ~Indicator,
+                           source = 'barclick', key = ~UnitCode, type = "bar",
+                           marker = list(color = barcolours))
+  }
+
   fig <- fig %>% layout(title = list(text = indname, y = 0.95),
                         yaxis = list(title = indunit),
                         xaxis = list(title = "",
