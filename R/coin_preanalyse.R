@@ -5,6 +5,7 @@
 #' @param COINobj A list of indicator data, stuctured using the COIN_assemble function
 #' @param inames A character vector of indicator names to analyse. Defaults to all indicators.
 #' @param dset The data set to analyse
+#' @param out2 Where to output the results: if "COIN" (default), outputs to the COIN, otherwise if "list", outputs to a separate list.
 #' @param t_skew Skewness threshold
 #' @param t_kurt Kurtosis threshold
 #' @param t_colin Collinearity threshold (absolute value of correlation)
@@ -25,12 +26,16 @@
 #'
 #' @export
 
-getStats <- function(COINobj, inames = NULL, dset = "Raw",
+getStats <- function(COINobj, inames = NULL, dset = "Raw", out2 = "COIN",
                             t_skew = 2, t_kurt = 3.5, t_colin = 0.9, t_denom = 0.7,
                             t_missing = 65, IQR_coef = 1.5){
 
   # First. check to see what kind of input we have and get relevant data
   checkout <- getIn(obj = COINobj, dset = dset, inames = inames, aglev = 1)
+  # Check input is a COIN
+  if (checkout$otype != "COINobj"){
+    stop("This function only supports a COIN as an input.")
+  }
   ind_data_only <- checkout$ind_data_only
   ind_names <- checkout$IndCodes
 
@@ -120,9 +125,21 @@ getStats <- function(COINobj, inames = NULL, dset = "Raw",
 
   ##---- Write results -----##
 
-  if (is.data.frame(COINobj)){
-    return(ind_stats) # if a data.frame was input, return data frame. Otherwise append to COIN object.
-  } else {
+  if (out2 == "list"){
+
+    # write to a list
+
+    return(list(
+      StatTable = ind_stats,
+      Outliers = out_flag,
+      Correlations = corr_ind,
+      DenomCorrelations = corr_denom
+    ))
+
+  } else if (out2 == "COIN") {
+
+    # write to the COIN
+
     eval(parse(text=paste0("COINobj$Analysis$",dset,"$StatTable<- ind_stats")))
     eval(parse(text=paste0("COINobj$Analysis$",dset,"$Outliers<- out_flag")))
     eval(parse(text=paste0("COINobj$Analysis$",dset,"$Correlations<- corr_ind")))
@@ -133,6 +150,8 @@ getStats <- function(COINobj, inames = NULL, dset = "Raw",
     # COINobj$Analysis$denominator_correlations <- corr_denom
     # add, but referring to correct data set so no confusion what it is
     return(COINobj)
+  } else {
+    stop("out2 not recognised, should be either COIN or list")
   }
 
 }
