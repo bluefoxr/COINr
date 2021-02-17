@@ -32,7 +32,7 @@
 #' World denomination data
 #'
 #' A small selection of common denominator indicators, which includes GDP, Population, Area, GDP per capita
-#' and income group. All data sourced from the World Bank as of Feb 2020 (data is typically from 2019).
+#' and income group. All data sourced from the World Bank as of Feb 2021 (data is typically from 2019).
 #'
 #' @format A data frame with 249 rows and 7 variables.
 #'

@@ -12,13 +12,13 @@
 #' For indicators with no denomination, set elements to NA.
 #'
 #' @examples \dontrun{
-#' COINobj <- coin_denominate(COINobj, specby="metadat", denomby = NULL)}
+#' COINobj <- denominate(COINobj, specby="metadat", denomby = NULL)}
 #'
 #' @return An updated COIN object, with new dataset .$Data$Denominated of denominated indicators.
 #'
 #' @export
 
-coin_denominate <- function(COINobj, specby = "metadata", denomby = NULL){
+denominate <- function(COINobj, specby = "metadata", denomby = NULL){
 
   if (!("COIN object" %in% class(COINobj))){stop("This function only supports COIN object as an input.")}
 
