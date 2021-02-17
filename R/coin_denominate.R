@@ -4,49 +4,68 @@
 #' Typically, the aim here is to convert extensive (size-related) variables into intensive variables
 #' (comparable between units of different sizes).
 #'
-#' @param COINobj COIN object (data frames are not currently supported in this function)
+#' @param obj COIN object (data frames are not currently supported in this function)
 #' @param specby Selects the source of the specifications for denomination.
 #' If "metadata", uses the denominator column in .$metadata.
 #' If "user", takes a character vector of denominator codes (one for each indicator, with NA for indicators that should not be denominated, and in the same order as the indicators).
-#' @param denomby Character vector specifying which indicators to use as denominators.
-#' For indicators with no denomination, set elements to NA.
+#' @param denomby Character vector specifying which indicators to use as denominators. Only used if
+#' specby = "user". For indicators with no denomination, set elements to NA.
+#' @param out2 Where to output the results. If "COIN" (default for COIN input), appends to updated COIN,
+#' otherwise if "df" outputs to data frame.
 #'
 #' @examples \dontrun{
-#' COINobj <- denominate(COINobj, specby="metadat", denomby = NULL)}
+#' COIN <- denominate(COIN, specby="metadata", denomby = NULL)}
 #'
 #' @return An updated COIN object, with new dataset .$Data$Denominated of denominated indicators.
 #'
 #' @export
 
-denominate <- function(COINobj, specby = "metadata", denomby = NULL){
+denominate <- function(obj, dset = "Raw", specby = "metadata", denomby = NULL, denominators = NULL,
+                       out2 = "COIN"){
 
-  if (!("COIN object" %in% class(COINobj))){stop("This function only supports COIN object as an input.")}
+  # run through object check
+  out1 <- getIn(obj, dset = dset)
 
-  ind_names <- COINobj$Parameters$IndCodes
-
-  if (specby == "metadata"){ # use the metadata table to specify which indicators to use for denomination
-
-    denoms <- cbind(COINobj$Input$Denominators,"Ones"=1) # get denominator cols and add a dummy column of ones
-    den_spec <- COINobj$Input$IndMeta$Denominator %>% replace(is.na(COINobj$Input$IndMeta$Denominator),"Ones") # the vector specifying which denominators to use. Replace NAs with "Ones"
-    denomtrix <- denoms[den_spec] # build data frame, same size as indicator data frame, with corresponding denominator columns
-    data_denom <- COINobj$Data$Raw # make a copy just to be safe
-    data_denom[ind_names] <- COINobj$Data$Raw[ind_names]/denomtrix # divide one by the other to give denominated data.
-
-  } else if (specby == "user"){
-
-    denoms <- cbind(COINobj$Input$Denominators,"Ones"=1) # get denominator cols and add a dummy column of ones
-    den_spec <- denomby %>% replace(is.na(denomby),"Ones") # the vector specifying which denominators to use. Replace NAs with "Ones"
-    denomtrix <- denoms[den_spec] # build data frame, same size as indicator data frame, with corresponding denominator columns
-    data_denom <- COINobj$Data$Raw # make a copy just to be safe
-    data_denom[ind_names] <- COINobj$Data$Raw[ind_names]/denomtrix # divide one by the other to give denominated data.
-
+  # some checks first
+  if( ("data.frame" %in% class(obj)) & (is.null(denomby)|is.null(denominators)) ){
+    stop("If data frame is input, you need to specify both denomby and denominators.")
   }
 
-  COINobj$Data$Denominated <- data_denom
+  # get denominator data frame and indicator data frame
+  if (("COIN object" %in% class(obj)) & is.null(denominators)){
+    # if input is COIN and no denominators are specified, look in COIN
+    dfDenoms <- cbind(obj$Input$Denominators,"Ones"=1)
+  } else {
+    # if it passed the checks above, should be a df with denoms present
+    dfDenoms <- cbind(denominators,"Ones"=1)
+  }
 
-  # Record to Method
-  COINobj$Method$Denomination$specby <- specby
-  COINobj$Method$Denomination$denomby <- denomby
+  # get the data set to denominate
+  data_denom <- out1$ind_data
 
-  return(COINobj)
+  # the vector specifying which denominators to use. Replace NAs with "Ones"
+  if (specby == "metadata"){
+    den_spec <- obj$Input$IndMeta$Denominator %>% replace(is.na(obj$Input$IndMeta$Denominator),"Ones")
+  } else if (specby == "user"){
+    den_spec <- denomby %>% replace(is.na(denomby),"Ones")
+  }
+
+  # build data frame, same size as indicator data frame, with corresponding denominator columns
+  denomtrix <- dfDenoms[den_spec]
+
+  # divide one by the other to give denominated data.
+  data_denom[out1$IndCodes] <- data_denom[out1$IndCodes]/denomtrix
+
+  # output to object if requested
+  if( (out1$otype=="COINobj") & (out2 !=  "df") ) {
+
+    obj$Data$Denominated <- data_denom
+    # Record to Method
+    obj$Method$Denomination$specby <- specby
+    obj$Method$Denomination$denomby <- denomby
+    return(obj)
+
+  } else {
+    return(data_denom)
+  }
 }
