@@ -53,11 +53,21 @@ getIn <- function(obj, dset = "Raw", inames = NULL, aglev = NULL){
     otype <- "COINobj"
 
     # The full table of indicator data
-    ind_data = tryCatch({
-      obj$Data[[dset]]
-    }, error = function(e) {
-      stop("dset name not recognised...")
-    })
+    # If looking for denominators, it is in a separate place
+    if (dset=="Denominators"){
+      ind_data = tryCatch({
+        obj$Input$Denominators
+      }, error = function(e) {
+        stop("Denominators not found.")
+      })
+    } else {
+      # all other dsets are here in the .$Data folder
+      ind_data = tryCatch({
+        obj$Data[[dset]]
+      }, error = function(e) {
+        stop("dset name not recognised...")
+      })
+    }
 
     # get unit codes. Have to do this because if the units have been screened, then it may
     # not be the same set as when the data was input.
@@ -67,12 +77,13 @@ getIn <- function(obj, dset = "Raw", inames = NULL, aglev = NULL){
     if(is.null(inames)){
       # get indicator names, i.e. columns excluding groups, denominators, names etc.
       inames <- ind_data %>% dplyr::select(!dplyr::starts_with(
-        c("UnitCode", "UnitName", "Year", "Group_","Den_")) ) %>% colnames()
+        c("UnitCode", "UnitName", "Year", "Group_")) ) %>% colnames()
     }
 
     if (is.null(aglev)){ # take inames as it is given
       IndCodes <- inames
-    } else { # take inames as reference to a group or groups
+    } else if (dset!="Denominators") {
+      # take inames as reference to a group or groups (unless it dset is denominators, then ignore)
 
       # get index structure from Indicator metadata
       aggcols <- dplyr::select(obj$Input$IndMeta, .data$IndCode, dplyr::starts_with("Agg")) %>% as.data.frame()
@@ -84,13 +95,18 @@ getIn <- function(obj, dset = "Raw", inames = NULL, aglev = NULL){
     }
 
     # get indicator names
-    IndNames <- obj$Parameters$Code2Name$AggName[
-      obj$Parameters$Code2Name$AggCode %in% IndCodes]
+    if (dset!="Denominators"){
+      IndNames <- obj$Parameters$Code2Name$AggName[
+        obj$Parameters$Code2Name$AggCode %in% IndCodes]
+    } else {
+      # if data set is denominators, then just use codes (may update this at some point)
+      IndNames <- IndCodes
+    }
 
     # select indicator data columns
 
     ind_data <- ind_data %>% dplyr::select(dplyr::starts_with(
-      c("UnitCode", "UnitName", "Year", "Group_","Den_", IndCodes)) )
+      c("UnitCode", "UnitName", "Year", "Group_", IndCodes)) )
 
   } else if (is.data.frame(obj)){ # Data frame
 
