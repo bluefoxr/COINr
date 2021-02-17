@@ -4,7 +4,7 @@
 \alias{iplotBar}
 \title{Bar chart}
 \usage{
-iplotBar(COINobj, dset = "Raw", isel, usel = NULL, aglev = 1)
+iplotBar(COINobj, dset = "Raw", isel = NULL, usel = NULL, aglev = 1)
 }
 \arguments{
 \item{COINobj}{The COIN object, or a data frame of indicator data.}

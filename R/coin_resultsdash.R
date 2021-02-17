@@ -285,13 +285,14 @@ iplotMap <- function(COINobj, dset = "Raw", isel){
 #'
 #' @export
 
-iplotBar <- function(COINobj, dset = "Raw", isel, usel = NULL, aglev = 1){
+iplotBar <- function(COINobj, dset = "Raw", isel = NULL, usel = NULL, aglev = 1){
 
   out1 <- getIn(COINobj, dset = dset, inames = isel, aglev = aglev)
 
   ind_data_only <- out1$ind_data_only
   indname <- out1$IndNames
   ind_code <- out1$IndCodes
+  browser()
 
   if(length(ind_code)>1){stop("This function only supports plotting single indicators. You may need to use the aglev argument if you are calling an aggregation group.")}
 
@@ -312,7 +313,7 @@ iplotBar <- function(COINobj, dset = "Raw", isel, usel = NULL, aglev = 1){
   # Build data frame, then sort it
   # now build df for plotly
   df1 <- data.frame(UnitCode = out1$UnitCodes,
-                    Indicator = out1$ind_data[isel])
+                    Indicator = out1$ind_data[ind_code])
   colnames(df1)[2] <- "Indicator"
   df1 <- df1[order(df1[2], decreasing = TRUE),]
 

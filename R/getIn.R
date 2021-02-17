@@ -118,6 +118,7 @@ getIn <- function(obj, dset = "Raw", inames = NULL, aglev = NULL){
         # If there are unit codes, record them and assume all other cols are indicator names
         IndCodes <- obj[colnames(obj) != "UnitCode"] %>% colnames()
         UnitCodes <- obj$UnitCode
+        IndNames <- IndCodes # we don't know names, so use codes
       } else {
         # All cols are indicators. No names supplied.
         IndCodes <- colnames(obj)
