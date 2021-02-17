@@ -9,6 +9,7 @@
 #' @param inames A character vector of a single indicator name or aggregate name to plot.
 #' @param ptype The type of plot to produce. Currently supports "Violin" and "Histogram".
 #' @param aglev The aggregation level to extract the indicator data from. Defaults to indicator level (1)
+#' @param axlims Optional parameter specifying axis limits. Useful mainly for matching with another plot.
 #'
 #' @importFrom plotly plot_ly layout
 #'
@@ -96,7 +97,7 @@ iplotIndDist <- function(COINobj, dset = "Raw", inames = NULL, ptype = "Violin",
 #' c("Raw", "Treated").
 #' @param inames A character vector of two indicator codes to plot (corresponding to the two dsets specified)
 #' @param ptype The type of plot to produce. Currently supports "Histogram" and "Scatter".
-#' @param aglev The aggregation level to extract the indicator data from. Defaults to indicator level (1). This also can
+#' @param aglevs The aggregation level to extract the indicator data from. Defaults to indicator level (1). This also can
 #' be specified as a vector if the two indicators are from different levels.
 #'
 #' @importFrom plotly plot_ly
@@ -187,8 +188,8 @@ iplotIndDist2 <- function(COIN, dsets = "Raw", inames = NULL, ptype = "Scatter",
   } else if (ptype == "Histogram"){
 
     fig <- plotly::plot_ly(df, alpha = 0.6)
-    fig <- fig %>% plotly::add_histogram(x = ~v1, name = iname1())
-    fig <- fig %>% plotly::add_histogram(x = ~v2, name = iname2())
+    fig <- fig %>% plotly::add_histogram(x = ~v1, name = out1$IndNames)
+    fig <- fig %>% plotly::add_histogram(x = ~v2, name = out2$IndNames)
     fig <- fig %>% plotly::layout(barmode = "overlay",
                                   xaxis = list(title = ""))
   }

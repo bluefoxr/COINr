@@ -23,6 +23,8 @@ iplotIndDist(
 \item{ptype}{The type of plot to produce. Currently supports "Violin" and "Histogram".}
 
 \item{aglev}{The aggregation level to extract the indicator data from. Defaults to indicator level (1)}
+
+\item{axlims}{Optional parameter specifying axis limits. Useful mainly for matching with another plot.}
 }
 \value{
 Nice plots

@@ -23,7 +23,7 @@ c("Raw", "Treated").}
 
 \item{ptype}{The type of plot to produce. Currently supports "Histogram" and "Scatter".}
 
-\item{aglev}{The aggregation level to extract the indicator data from. Defaults to indicator level (1). This also can
+\item{aglevs}{The aggregation level to extract the indicator data from. Defaults to indicator level (1). This also can
 be specified as a vector if the two indicators are from different levels.}
 }
 \value{

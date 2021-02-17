@@ -170,7 +170,7 @@ getIn <- function(obj, dset = "Raw", inames = NULL, aglev = NULL){
 #' @param decimals The number of decimal places to round to (default 2)
 #'
 #' @examples
-#' \dontrun{ }
+#' \dontrun{ df <- roundDF( as.data.frame(matrix(runif(20),10,2)) )}
 #'
 #' @return A data frame, with any numeric columns rounded to the specified amount
 #'
