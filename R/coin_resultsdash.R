@@ -292,7 +292,6 @@ iplotBar <- function(COINobj, dset = "Raw", isel = NULL, usel = NULL, aglev = 1)
   ind_data_only <- out1$ind_data_only
   indname <- out1$IndNames
   ind_code <- out1$IndCodes
-  browser()
 
   if(length(ind_code)>1){stop("This function only supports plotting single indicators. You may need to use the aglev argument if you are calling an aggregation group.")}
 
