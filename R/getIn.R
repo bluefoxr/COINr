@@ -80,10 +80,9 @@ getIn <- function(obj, dset = "Raw", inames = NULL, aglev = NULL){
         c("UnitCode", "UnitName", "Year", "Group_")) ) %>% colnames()
     }
 
-    if (is.null(aglev)){ # take inames as it is given
+    if (is.null(aglev) | (dset=="Denominators")){ # take inames as it is given
       IndCodes <- inames
-    } else if (dset!="Denominators") {
-      # take inames as reference to a group or groups (unless it dset is denominators, then ignore)
+    } else {
 
       # get index structure from Indicator metadata
       aggcols <- dplyr::select(obj$Input$IndMeta, .data$IndCode, dplyr::starts_with("Agg")) %>% as.data.frame()

@@ -51,7 +51,8 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL){
     stop("No indicators found. Please check column names.")
   }
 
-  denoms <- IndData %>% dplyr::select(dplyr::starts_with(c("UnitCode","Year","Den_"))) # keep denominators to one side for the moment
+  denoms <- IndData %>% dplyr::select(
+    dplyr::starts_with(c("UnitCode", "UnitName", "Year", "Group_", "Den_"))) # keep denominators to one side for the moment
   # everything apart from denoms is IndData
   IndData <- IndData %>% dplyr::select(!dplyr::starts_with("Den_"))
 
