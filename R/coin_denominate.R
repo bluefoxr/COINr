@@ -28,6 +28,7 @@ denominate <- function(obj, dset = "Raw", specby = "metadata", denomby = NULL, d
 
   # run through object check
   out1 <- getIn(obj, dset = dset)
+  browser()
 
   # some checks first
   if( ("data.frame" %in% class(obj)) & (is.null(denomby)|is.null(denominators)) ){
@@ -47,9 +48,11 @@ denominate <- function(obj, dset = "Raw", specby = "metadata", denomby = NULL, d
   data_denom <- out1$ind_data
 
   # the vector specifying which denominators to use. Replace NAs with "Ones"
-  if (specby == "metadata"){
+  if ((specby == "metadata") & (out1$otype == "COINobj")){
+    # only spec by metadata if COIN and specby = metadata
     den_spec <- obj$Input$IndMeta$Denominator %>% replace(is.na(obj$Input$IndMeta$Denominator),"Ones")
-  } else if (specby == "user"){
+  } else {
+    # anything else, look for specs in function argument
     den_spec <- denomby %>% replace(is.na(denomby),"Ones")
   }
 

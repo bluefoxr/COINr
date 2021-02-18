@@ -16,12 +16,17 @@ denominate(
 \arguments{
 \item{obj}{COIN object (data frames are not currently supported in this function)}
 
+\item{dset}{The data set to denominate (only if COIN used as input)}
+
 \item{specby}{Selects the source of the specifications for denomination.
 If "metadata", uses the denominator column in .$metadata.
 If "user", takes a character vector of denominator codes (one for each indicator, with NA for indicators that should not be denominated, and in the same order as the indicators).}
 
-\item{denomby}{Character vector specifying which indicators to use as denominators. Only used if
-specby = "user". For indicators with no denomination, set elements to NA.}
+\item{denomby}{Character vector specifying which denominators to use for each indicator. Only used if
+specby = "user". For indicators with no denomination, set elements to NA. Elements must be column names
+of denominators.}
+
+\item{denominators}{A data frame of denominator data}
 
 \item{out2}{Where to output the results. If "COIN" (default for COIN input), appends to updated COIN,
 otherwise if "df" outputs to data frame.}
