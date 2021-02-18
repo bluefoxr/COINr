@@ -28,7 +28,6 @@ denominate <- function(obj, dset = "Raw", specby = "metadata", denomby = NULL, d
 
   # run through object check
   out1 <- getIn(obj, dset = dset)
-  browser()
 
   # some checks first
   if( ("data.frame" %in% class(obj)) & (is.null(denomby)|is.null(denominators)) ){
