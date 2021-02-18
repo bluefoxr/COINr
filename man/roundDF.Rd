@@ -18,6 +18,6 @@ A data frame, with any numeric columns rounded to the specified amount
 Tiny function just to round down a data frame for display in a table.
 }
 \examples{
-\dontrun{ }
+\dontrun{ df <- roundDF( as.data.frame(matrix(runif(20),10,2)) )}
 
 }
