@@ -127,9 +127,12 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL){
   n_agg_levels <- length(agg_cols)
   COINobj$Parameters$Nlevels <- n_agg_levels + 1 # add 1 because indicator level not included
 
-  # list with aggregation group names in, for each level
-  COINobj$Parameters$AggCodes <- dplyr::select(AggMeta,dplyr::ends_with("Code")) %>%
-    as.list() %>% lapply(function(x) x[!is.na(x)])
+  # # list with aggregation group names in, for each level
+  AggCodeslist <- vector(mode = "list", length = n_agg_levels)
+  for (ii in 1:n_agg_levels){
+    AggCodeslist[[ii]] <- AggMeta$Code[AggMeta$AgLevel==ii+1]
+  }
+  COINobj$Parameters$AggCodes <- AggCodeslist
 
   if (n_agg_levels > 0){
 
@@ -166,29 +169,24 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL){
   # first, indicator weights
   agweights <- list(IndWeight = ind_meta$IndWeight)
   # now the other weights
-  otherweights <- AggMeta %>% dplyr::select(dplyr::ends_with("Weight"))
+
+  otherweights2 <- vector(mode = "list", length = n_agg_levels)
+  for (ii in 1:n_agg_levels){
+    otherweights2[[ii]] <- AggMeta$Weight[AggMeta$AgLevel==ii+1]
+  }
+
   # join together in one list
-  agweights <- c(agweights, as.list(otherweights))
+  agweights <- c(agweights, otherweights2)
   # we just need to remove NAs
   agweights <- lapply(agweights, function(x) x[!is.na(x)])
   # squirrel away in object
   COINobj$Parameters$Weights <- agweights
 
   #------- Create a lookup dictionary for codes <--> names
-
-  # all agg codes in one column
-  aggcodes <- dplyr::select(AggMeta, dplyr::ends_with("Code")) %>%
-    as.matrix() %>% c()
-  aggcodes <- aggcodes[!is.na(aggcodes)]
-  # all agg names in one column
-  aggnames <- dplyr::select(AggMeta, dplyr::ends_with("Name")) %>%
-    as.matrix() %>% c()
-  aggnames <- aggnames[!is.na(aggnames)]
-
   # this is like a lookup table of all indicator/agg codes and names
   COINobj$Parameters$Code2Name <- rbind(
     cbind(ind_meta$IndCode, ind_meta$IndName),
-    cbind(aggcodes, aggnames) ) %>% as.data.frame()
+    cbind(AggMeta$Code, AggMeta$Name) ) %>% as.data.frame()
   colnames(COINobj$Parameters$Code2Name) <- c("AggCode", "AggName")
 
   #------- Last bits

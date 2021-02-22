@@ -40,7 +40,7 @@ plotframework <- function(COINobj){
   agg_cols <- cbind(Code=metad$IndCode, agg_cols)
   #agg_cols <- agg_cols %>% add_column(Code=metad$IndCode, .before = 1)
   # get weights for aggregation groups
-  wt_cols <- fwk %>% dplyr::select(dplyr::ends_with("Weight"))
+  #wt_cols <- fwk %>% dplyr::select(dplyr::ends_with("Weight"))
 
   # preallocate some variables
   lbls <- NULL
@@ -69,8 +69,9 @@ plotframework <- function(COINobj){
 
     } else { # aggregation groups
 
-      wcol <- dplyr::pull(wt_cols,ii-1) # the aggregation level weights
-      wcol <- wcol[!is.na(wcol)]
+      # wcol <- dplyr::pull(wt_cols,ii-1) # the aggregation level weights
+      # wcol <- wcol[!is.na(wcol)]
+      wcol <- fwk$Weight[fwk$AgLevel==ii] # the indicator weights
       agg_col <- dplyr::pull(agg_cols,ii) # the column with the aggregation group labels in
       if (ii<ncol(agg_cols)){
         prnt <- dplyr::pull(agg_cols,ii+1) # the column specifying parent agg groups
