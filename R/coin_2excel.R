@@ -34,6 +34,7 @@ coin_2excel <- function(COINobj, fname = "COINresults.xlsx"){
 
     # name of worksheet
     shname <- paste0("Input",names(COINobj$Input[ii]))
+    if(shname == "InputOriginal"){next}
     # add worksheet with name
     openxlsx::addWorksheet(wb, sheetName = shname, tabColour = "gray")
     openxlsx::writeData(wb, shname, COINobj$Input[[ii]], colNames = TRUE)
