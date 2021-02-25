@@ -4,6 +4,9 @@
 #' You need to provide a COIN Tool file, with the "Database" sheet properly compiled.
 #'
 #' @param fname The file name and path to read, e.g. "C:/Documents/COINToolFile.xlsx"
+#' @param makecodes Logical: if TRUE, will generate short indicator codes based on indicator names,
+#' otherwise if FALSE, will use COIN Tool indicator codes "Ind.01", etc. Currently only does this
+#' for indicators, not aggregation groups.
 #'
 #' @importFrom readxl read_excel cell_limits
 #' @importFrom tibble as_tibble
@@ -17,13 +20,13 @@
 #'
 #' @export
 
-COINToolIn <- function(fname){
+COINToolIn <- function(fname, makecodes = FALSE){
 
   #----- GET IndData -----#
 
   # Get the main data first
   ind_data_only <- readxl::read_excel(fname, range = "E16:CY315", na = "n/a", col_types = "numeric",
-                                      sheet = "Database")
+                                      sheet = "Database") %>% suppressMessages()
   # Delete any rows and cols with all NAs
   ind_data_only  <- ind_data_only[rowSums(is.na(ind_data_only )) != ncol(ind_data_only ), ]
   ind_data_only  <- ind_data_only[,colSums(is.na(ind_data_only )) != nrow(ind_data_only )]
@@ -34,19 +37,21 @@ COINToolIn <- function(fname){
 
   # Unit names and codes (together)
   UnitNamesCodes <- readxl::read_excel(fname, range = readxl::cell_limits(c(17, 2), c(lastrow, 3)),
-                                       col_types = "text", col_names = FALSE, sheet = "Database")
+                                       col_types = "text", col_names = FALSE, sheet = "Database") %>%
+    suppressMessages()
+
 
   # Assemble IndData
   IndData <- cbind(UnitNamesCodes, ind_data_only) %>% tibble::as_tibble()
   colnames(IndData)[1:2] <- c("UnitName", "UnitCode")
 
-
-
   #----- GET IndMeta -----#
 
   # IndMeta (partial)
   IndMeta1 <- readxl::read_excel(fname, range = readxl::cell_limits(c(11, 5), c(16, lastcol)),
-                                 col_types = "text", col_names = FALSE, sheet = "Database")
+                                 col_types = "text", col_names = FALSE, sheet = "Database") %>%
+    suppressMessages()
+
   # Put into tidy format
   IndMeta1 <- IndMeta1 %>% t() %>% as.data.frame() %>% rev()
   # Sort out aggregation columns
@@ -62,7 +67,8 @@ COINToolIn <- function(fname){
 
   # Weights, directions, goalposts
   IndMeta2 <- readxl::read_excel(fname, range = readxl::cell_limits(c(7, 5), c(10, lastcol)),
-                                 col_types = "numeric", col_names = FALSE, sheet = "Database")
+                                 col_types = "numeric", col_names = FALSE, sheet = "Database") %>%
+    suppressMessages()
 
   # Put into tidy format
   IndMeta2 <- IndMeta2 %>% t() %>% as.data.frame() %>% rev()
@@ -94,10 +100,61 @@ COINToolIn <- function(fname){
 
   #----- Finish up -----#
 
+  # generate indicator codes if asked
+  if(makecodes){
+    IndMeta$IndCode <- names2Codes(IndMeta$IndName)
+    colnames(IndData)[3:ncol(IndData)] <- IndMeta$IndCode
+    #AggMetaIn$Code <- names2Codes(AggMetaIn$Name)
+  }
+
   message(paste0("Imported ", ncol(ind_data_only), " indicators and ", nrow(ind_data_only), " units."))
 
   return(list(IndData = IndData,
               IndMeta = IndMeta,
               AggMeta = AggMetaIn))
 
+}
+
+#' Generate short codes from long names
+#'
+#' Given a character vector of long names (probably with spaces), generates short codes.
+#' Intended for use when importing from the COIN Tool.
+#'
+#' @param cvec A character vector of names
+#' @param maxword The maximum number of words to use in building a short name (default 2)
+#' @param maxlet The number of letters to take from each word (default 4)
+#'
+#' @importFrom stringr str_to_title
+#'
+#' @examples \dontrun{
+#' shortcode <- names2Codes("Renewable energy expenditure")}
+#'
+#' @return A corresponding character vector, but with short codes, and no duplicates.
+#'
+#' @export
+
+names2Codes <- function(cvec, maxword=2, maxlet=4){
+
+  # There is definitely a better way to do this with lapply or similar, but for now...
+
+  codes <- cvec
+
+  for (ii in 1:length(cvec)){
+
+    cvecii <- cvec[ii]
+
+    # first, split into separate elements using spaces, and remove words less than four chars
+    st2 <- strsplit(gsub('\\b\\w{1,3}\\s','',cvecii), " +") %>% unlist()
+
+    nwords <- min(c(length(st2),maxword))
+
+    # now take first 3 words, take first 4 chars of each word
+    st3 <- substr(st2[1:nwords],start=1,stop=maxlet) %>% stringr::str_to_title()
+
+    # collapse back to one string and add to new vector
+    codes[ii] <- paste(st3, collapse = '')
+  }
+
+  # if we have any duplicates, make unique
+  make.unique(codes, "_")
 }
