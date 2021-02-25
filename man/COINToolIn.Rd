@@ -4,7 +4,7 @@
 \alias{COINToolIn}
 \title{Import data directly from COIN Tool}
 \usage{
-COINToolIn(fname, makecodes = FALSE)
+COINToolIn(fname, makecodes = FALSE, oldtool = FALSE)
 }
 \arguments{
 \item{fname}{The file name and path to read, e.g. "C:/Documents/COINToolFile.xlsx"}
@@ -12,6 +12,9 @@ COINToolIn(fname, makecodes = FALSE)
 \item{makecodes}{Logical: if TRUE, will generate short indicator codes based on indicator names,
 otherwise if FALSE, will use COIN Tool indicator codes "Ind.01", etc. Currently only does this
 for indicators, not aggregation groups.}
+
+\item{oldtool}{Logical: if TRUE, compatible with old COIN Tool (pre-release, early 2019 or earlier).
+There are some minor differences on where the elements are found.}
 }
 \value{
 A list

@@ -7,6 +7,8 @@
 #' @param makecodes Logical: if TRUE, will generate short indicator codes based on indicator names,
 #' otherwise if FALSE, will use COIN Tool indicator codes "Ind.01", etc. Currently only does this
 #' for indicators, not aggregation groups.
+#' @param oldtool Logical: if TRUE, compatible with old COIN Tool (pre-release, early 2019 or earlier).
+#' There are some minor differences on where the elements are found.
 #'
 #' @importFrom readxl read_excel cell_limits
 #' @importFrom tibble as_tibble
@@ -20,7 +22,7 @@
 #'
 #' @export
 
-COINToolIn <- function(fname, makecodes = FALSE){
+COINToolIn <- function(fname, makecodes = FALSE, oldtool = FALSE){
 
   #----- GET IndData -----#
 
@@ -80,7 +82,13 @@ COINToolIn <- function(fname, makecodes = FALSE){
   #----- Get AggMeta -----#
 
   # Read in aggmeta cols
-  AggMetaIn <- readxl::read_excel(fname, range = "C5:H53", col_names = TRUE, sheet = "Framework")
+  # this is the only diff with the older CT - framework rows are 1 further down
+  if(oldtool){
+    AggMetaIn <- readxl::read_excel(fname, range = "C5:H53", col_names = TRUE, sheet = "Framework")
+  } else {
+    AggMetaIn <- readxl::read_excel(fname, range = "C4:H52", col_names = TRUE, sheet = "Framework")
+  }
+
   # Delete empty rows
   AggMetaIn <- dplyr::filter(AggMetaIn,`Dimension/indicator`!="--")
   # Get rid of cols we don't want
