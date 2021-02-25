@@ -25,6 +25,8 @@
 
 assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL){
 
+  ##----- INITIAL CHECKS -----##
+
   # Do some checks first - make sure required cols are present
   if(!exists("UnitCode", IndData)){
     stop("No UnitCode column found in IndData. This column is required for assembling a COIM object.")
@@ -42,6 +44,8 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL){
     stop("No Direction column found in IndMeta. This column is required for assembling a COIM object.")
   }
 
+  ##----- IND CODES AND DENOMS -----##
+
   # Extract indicator codes from raw data
   cnames1 <- IndData %>% dplyr::select(!dplyr::starts_with(
     c("UnitCode", "UnitName", "Year", "Group_","Den_", "IndUnit")) ) %>% colnames()
@@ -51,12 +55,27 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL){
     stop("No indicators found. Please check column names.")
   }
 
-  denoms <- IndData %>% dplyr::select(
-    dplyr::starts_with(c("UnitCode", "UnitName", "Year", "Group_", "Den_"))) # keep denominators to one side for the moment
   # everything apart from denoms is IndData
-  IndData <- IndData %>% dplyr::select(!dplyr::starts_with("Den_"))
+  IndData1 <- IndData %>% dplyr::select(!dplyr::starts_with("Den_"))
 
-  #------- Select indicators, if needed -----
+  # if the everything-apart-from-denoms is diff from the original data, means there are denoms
+  # So, extract denoms
+  message("-----------------")
+  if(ncol(IndData1) < ncol(IndData)){
+    denoms <- IndData %>% dplyr::select(
+      dplyr::starts_with(c("UnitCode", "UnitName", "Year", "Group_", "Den_"))) # keep denominators to one side for the moment
+    message("Denominators detected - stored in .$Input$Denominators")
+  } else {
+    denoms <- NULL # this will have the effect of not attaching to the list
+    message("No denominators detected.")
+  }
+  message("-----------------")
+
+  # from this point, IndData is minus any denominators
+  IndData <- IndData1
+
+
+  ##------- Select indicators, if needed -----##
 
   # if include is specified
   if(!is.null(include)){
@@ -79,7 +98,6 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL){
     IndData = ind_data,
     IndMeta = ind_meta,
     AggMeta = AggMeta,
-    Denominators = denoms,
     Original = list(
       IndData = IndData,
       IndMeta = IndMeta,
@@ -89,6 +107,9 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL){
     Parameters = NULL, # for various model parameters (will be populated in a min)
     Analysis = NULL, # for analyisis of missing data, correlation etc
     Method = NULL) # a record of the methodology applied to build the index
+
+  # add denoms separately - this is because if it is NULL it will disappear
+  COINobj$Input$Denominators = denoms
 
   # Check that codes in the two tables match, save to list
   if (length(setdiff(cnames1,IndMeta$IndCode)) > 0){
@@ -174,7 +195,6 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL){
   for (ii in 1:n_agg_levels){
     otherweights2[[ii]] <- AggMeta$Weight[AggMeta$AgLevel==ii+1]
   }
-
   # join together in one list
   agweights <- c(agweights, otherweights2)
   # we just need to remove NAs
