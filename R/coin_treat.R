@@ -6,7 +6,8 @@
 #' @param dset The data set to treat
 #' @param winmax The maximum number of points to Winsorise for each indicator. If NA, will keep Winsorising until skew&kurt thresholds achieved (but it is likely this will cause errors)
 #' @param winchange Logical: if TRUE, Winsorisation can change direction from one iteration to the next. Otherwise if FALSE (default), no change.
-#' @param deflog If "log", use simple ln(x) as log transform. If "GIIlog", use GII log transformation.
+#' @param deflog If "log", use simple ln(x) as log transform (note: indicators containing negative values
+#' will be skipped). IF "CTlog", will do ln(x-min(x)+1), as used in the COIN Tool. If "GIIlog", use GII log transformation.
 #' @param t_skew Absolute skew threshold (default 2)
 #' @param t_kurt Kurtosis threshold (default 3.5)
 #' @param individual A data frame specifying individual treatment for each indicator
@@ -76,7 +77,7 @@ coin_treat <- function(COINobj, dset = "Raw", winmax = NULL, winchange = FALSE, 
           Treatment[ii] <- "Log (exceeded winmax)"
           TreatSpec[ii] <- paste0("Default, winmax = ", winmax)
 
-        } else { # GII log
+        } else if (deflog == "GIIlog"){ # GII log
 
           # get GII log
           icol <- log( (max(icol, na.rm = T)-1)*(icol-min(icol, na.rm = T))/(max(icol, na.rm = T)-min(icol, na.rm = T)) + 1 )
@@ -84,6 +85,12 @@ coin_treat <- function(COINobj, dset = "Raw", winmax = NULL, winchange = FALSE, 
           Treatment[ii] <- "GIILog (exceeded winmax)"
           TreatSpec[ii] <- paste0("Default, winmax = ", winmax)
 
+        } else if (deflog == "CTlog"){
+          # COIN TOOl style log: subtract min and add 1
+          icol <- log(icol- min(icol,na.rm = T) + 1)
+          treat_flag[,ii] <- "CTLog"
+          Treatment[ii] <- "CTLog (exceeded winmax)"
+          TreatSpec[ii] <- paste0("Default, winmax = ", winmax)
         }
 
       } else { # Winsorization DID work
@@ -224,7 +231,7 @@ coin_treat <- function(COINobj, dset = "Raw", winmax = NULL, winchange = FALSE, 
             Treatment[ii] <- "Log (exceeded winmax)"
             TreatSpec[ii] <- paste0("Default, winmax = ", winmax)
 
-          } else { # GII log
+          } else if (deflog == "GIIlog"){ # GII log
 
             # get GII log
             icol <- log( (max(icol, na.rm = T)-1)*(icol-min(icol, na.rm = T))/(max(icol, na.rm = T)-min(icol, na.rm = T)) + 1 )
@@ -232,6 +239,12 @@ coin_treat <- function(COINobj, dset = "Raw", winmax = NULL, winchange = FALSE, 
             Treatment[ii] <- "GIILog (exceeded winmax)"
             TreatSpec[ii] <- paste0("Default, winmax = ", winmax)
 
+          } else if (deflog == "CTlog"){
+            # COIN TOOl style log: subtract min and add 1
+            icol <- log(icol- min(icol,na.rm = T) + 1)
+            treat_flag[,ii] <- "CTLog"
+            Treatment[ii] <- "CTLog (exceeded winmax)"
+            TreatSpec[ii] <- paste0("Default, winmax = ", winmax)
           }
 
         } else { # Winsorization DID work

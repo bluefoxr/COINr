@@ -25,7 +25,8 @@ coin_treat(
 
 \item{winchange}{Logical: if TRUE, Winsorisation can change direction from one iteration to the next. Otherwise if FALSE (default), no change.}
 
-\item{deflog}{If "log", use simple ln(x) as log transform. If "GIIlog", use GII log transformation.}
+\item{deflog}{If "log", use simple ln(x) as log transform (note: indicators containing negative values
+will be skipped). IF "CTlog", will do ln(x-min(x)+1), as used in the COIN Tool. If "GIIlog", use GII log transformation.}
 
 \item{t_skew}{Absolute skew threshold (default 2)}
 
