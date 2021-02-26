@@ -115,10 +115,10 @@ checkData <- function(COIN, dset = "Raw", ind_thresh=2/3, unit_screen = FALSE,
     # add summary tables to COIN
     eval(parse(text=paste0("COIN$Analysis$",dset,"$MissDatSummary<- data_avail")))
     eval(parse(text=paste0("COIN$Analysis$",dset,"$MissDatByGroup<- data_avail_bygroup")))
-    eval(parse(text=paste0("COIN$Analysis$",dset,"$RemovedUnits<- ScreenedUnits")))
 
     if (unit_screen == TRUE){
       COIN$Data$Screened <- ScreenedData
+      eval(parse(text=paste0("COIN$Analysis$",dset,"$RemovedUnits<- ScreenedUnits")))
     }
     return(COIN)
 
