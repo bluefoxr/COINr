@@ -86,7 +86,7 @@ checkData <- function(COIN, dset = "Raw", ind_thresh=2/3, unit_screen = FALSE,
 
   if (!is.null(Force)){ # if some countries to force include/exclude
     # convert to logical
-    Force[2] <- Force[2]=="Included"
+    Force[2] <- Force[2]=="Include"
     # substitute in output table
 
     data_avail$LowDataAll[ data_avail$UnitCode %in% Force$UnitCode[Force$Status == TRUE] ] <- FALSE
