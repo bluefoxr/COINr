@@ -92,9 +92,11 @@ checkData <- function(COIN, dset = "Raw", ind_thresh=2/3, unit_screen = FALSE,
     data_avail$Included[ data_avail$UnitCode %in% Force$UnitCode[Force$Status == FALSE] ] <- FALSE
   }
 
-  # create new data set which filters out the countries that didn't make the cut
   if (unit_screen == TRUE){
-    COIN$Data$Screened <- dplyr::filter(COIN$Data$Raw, COIN$Analysis$DataAvail$Summary$Included)
+    # create new data set which filters out the countries that didn't make the cut
+    ScreenedData <- dplyr::filter(out1$ind_data, !data_avail$LowDataAll)
+    # units that are removed
+    ScreenedUnits <- data_avail$UnitCode[data_avail$LowDataAll]
   }
 
   if (out2 == "list"){
@@ -103,6 +105,8 @@ checkData <- function(COIN, dset = "Raw", ind_thresh=2/3, unit_screen = FALSE,
     return(list(
       MissDatSummary = data_avail,
       MissDatByGroup = data_avail_bygroup,
+      ScreenedData = ScreenedData,
+      RemovedUnits = ScreenedUnits
     ))
 
   } else if (out2 == "COIN") {
@@ -110,8 +114,13 @@ checkData <- function(COIN, dset = "Raw", ind_thresh=2/3, unit_screen = FALSE,
     # add summary tables to COIN
     eval(parse(text=paste0("COIN$Analysis$",dset,"$MissDatSummary<- data_avail")))
     eval(parse(text=paste0("COIN$Analysis$",dset,"$MissDatByGroup<- data_avail_bygroup")))
+    eval(parse(text=paste0("COIN$Analysis$",dset,"$RemovedUnits<- ScreenedUnits")))
 
+    if (unit_screen == TRUE){
+      COIN$Data$Screened <- ScreenedData
+    }
     return(COIN)
+
   } else {
     stop("out2 not recognised, should be either COIN or list")
   }
