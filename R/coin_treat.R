@@ -293,8 +293,8 @@ coin_treat <- function(COINobj, dset = "Raw", winmax = NULL, winchange = FALSE, 
 
     # write results
     COINobj$Data$Treated <- ind_data_treated
-    COINobj$Analysis$Treatment$Summary <- ntreated
-    COINobj$Analysis$Treatment$Flags <- treat_flag
+    COINobj$Analysis$Treated$TreatSummary <- ntreated
+    COINobj$Analysis$Treated$TreatFlags <- treat_flag
     return(COINobj)
   } else {
     # if input was a data frame, output a list

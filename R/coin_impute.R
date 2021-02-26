@@ -105,14 +105,14 @@ coin_impute <- function(COINobj, imtype = "ind_mean", inames = NULL,
 
         ind_data_yr <- dplyr::filter(ind_data,.data[[yrcol]] == yrs[[yr,1]]) # get only rows from year
         #now impute...
-        ind_data_imp_list[[yr]] <- ind_data_yr %>% dplyr::group_by(.dots=groupvar) %>%
+        ind_data_imp_list[[yr]] <- ind_data_yr %>% dplyr::group_by(dplyr::across(dplyr::all_of(groupvar))) %>% # OLD dplyr::group_by(.dots=groupvar)
           dplyr::mutate(dplyr::across(all_of(ind_names), ~tidyr::replace_na(.x, mean(.x, na.rm = TRUE))))
       }
       ind_data_imp <- dplyr::bind_rows(ind_data_imp_list) # join everything back together
 
     } else { # if not imputing by year
       # This works by grouping the data by the grouping variable first. Operations then performed by group.
-      ind_data_imp <- ind_data %>% dplyr::group_by(.dots=groupvar) %>%
+      ind_data_imp <- ind_data %>% dplyr::group_by(dplyr::across(dplyr::all_of(groupvar))) %>%
         dplyr::mutate(dplyr::across(all_of(ind_names), ~tidyr::replace_na(.x, mean(.x, na.rm = TRUE))))
     }
 
@@ -126,14 +126,14 @@ coin_impute <- function(COINobj, imtype = "ind_mean", inames = NULL,
 
         ind_data_yr <- dplyr::filter(ind_data,.data[[yrcol]] == yrs[[yr,1]]) # get only rows from year
         #now impute...
-        ind_data_imp_list[[yr]] <- ind_data_yr %>% dplyr::group_by(.dots=groupvar) %>%
+        ind_data_imp_list[[yr]] <- ind_data_yr %>% dplyr::group_by(dplyr::across(dplyr::all_of(groupvar))) %>%
           dplyr::mutate(dplyr::across(all_of(ind_names), ~tidyr::replace_na(.x, median(.x, na.rm = TRUE))))
       }
       ind_data_imp <- dplyr::bind_rows(ind_data_imp_list) # join everything back together
 
     } else { # if not imputing by year
       # This works by grouping the data by the grouping variable first. Operations then performed by group.
-      ind_data_imp <- ind_data %>% dplyr::group_by(.dots=groupvar) %>%
+      ind_data_imp <- ind_data %>% dplyr::group_by(dplyr::across(dplyr::all_of(groupvar))) %>%
         dplyr::mutate(dplyr::across(all_of(ind_names), ~tidyr::replace_na(.x, median(.x, na.rm = TRUE))))
     }
 

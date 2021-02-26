@@ -71,12 +71,12 @@ getStats <- function(COINobj, inames = NULL, dset = "Raw", out2 = "COIN",
 
   }
   # now convert to data fame and add column names
-  out_flag <- data.frame(out_flag)
-  colnames(out_flag) <- ind_names
+  out_flag <- data.frame(UnitCode = checkout$UnitCodes, out_flag)
+  colnames(out_flag)[2:ncol(out_flag)] <- ind_names
 
   # count number of high and low outliers for each variable
-  out_low <- out_flag %>% purrr::map_dbl(~sum(.x=="Low", na.rm = TRUE))
-  out_high <- out_flag %>% purrr::map_dbl(~sum(.x=="High", na.rm = TRUE)) # interquartile range
+  out_low <- out_flag[2:ncol(out_flag)] %>% purrr::map_dbl(~sum(.x=="Low", na.rm = TRUE))
+  out_high <- out_flag[2:ncol(out_flag)] %>% purrr::map_dbl(~sum(.x=="High", na.rm = TRUE)) # interquartile range
 
   # build indicator stats table. Will add some more columns also below.
   ind_stats <- tibble::tibble(
@@ -124,6 +124,9 @@ getStats <- function(COINobj, inames = NULL, dset = "Raw", out2 = "COIN",
   message(paste("Number of indicators with high denominator correlations = ",sum(maxcor=="High")))
 
   ##---- Write results -----##
+  # convert correlation matrices into dfs
+  corr_ind <- data.frame(IndCode = row.names(corr_ind), corr_ind, row.names = NULL)
+  corr_denom <- data.frame(Denominator = row.names(corr_denom), corr_denom, row.names = NULL)
 
   if (out2 == "list"){
 

@@ -17,6 +17,7 @@
 #' @importFrom matrixStats "weightedMean"
 #' @importFrom matrixStats "weightedMedian"
 #' @importFrom dplyr "c_across"
+#' @importFrom tibble as_tibble
 #'
 #' @examples \dontrun{COINlist <- coin_aggregate(COINlist, agtype="arith_mean", dset = "normalised")}
 #'
@@ -160,6 +161,6 @@ coin_aggregate <- function(COINobj, agtype="arith_mean", agweights = NULL,
     }
   }
 
-  COINobj$Data$Aggregated <- ind_data # add to the COIN object
+  COINobj$Data$Aggregated <- tibble::as_tibble(ind_data) # add to the COIN object
   return(COINobj)
 }
