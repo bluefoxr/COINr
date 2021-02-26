@@ -148,10 +148,6 @@ getStats <- function(COINobj, inames = NULL, dset = "Raw", out2 = "COIN",
     eval(parse(text=paste0("COINobj$Analysis$",dset,"$Correlations<- corr_ind")))
     eval(parse(text=paste0("COINobj$Analysis$",dset,"$DenomCorrelations<- corr_denom")))
 
-    # COINobj$Analysis$outlier_flag <- out_flag
-    # COINobj$Analysis$indicator_correlations <- corr_ind
-    # COINobj$Analysis$denominator_correlations <- corr_denom
-    # add, but referring to correct data set so no confusion what it is
     return(COINobj)
   } else {
     stop("out2 not recognised, should be either COIN or list")
