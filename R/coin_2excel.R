@@ -41,6 +41,31 @@ coin_2excel <- function(COINobj, fname = "COINresults.xlsx"){
 
   }
 
+  # ---- Write .$Analysis
+
+  for (ii in 1:length(COINobj$Analysis)){
+
+    thing <- COINobj$Analysis[[ii]]
+    if(is.data.frame(thing)){
+      # name of worksheet
+      shname <- paste0("Analysis",names(COINobj$Analysis[ii]))
+      # add worksheet with name
+      openxlsx::addWorksheet(wb, sheetName = shname, tabColour = "green")
+      openxlsx::writeData(wb, shname, COINobj$Analysis[[ii]], colNames = TRUE)
+    } else if (is.list(thing)) {
+      for (jj in 1:length(thing)){
+        if(is.data.frame(thing[[jj]])){
+          # name of worksheet
+          shname <- paste0(names(COINobj$Analysis[ii]),names(thing)[jj])
+          # add worksheet with name
+          openxlsx::addWorksheet(wb, sheetName = shname, tabColour = "green")
+          openxlsx::writeData(wb, shname, thing[[jj]], colNames = TRUE)
+        }
+      }
+    }
+
+  }
+
   # ---- Write .$Parameters
   # NOTE: throws an error because params have different lengths. Not sure how to fix, come back later.
   # shname <- "Parameters"
