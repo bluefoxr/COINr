@@ -88,8 +88,9 @@ checkData <- function(COIN, dset = "Raw", ind_thresh=2/3, unit_screen = FALSE,
     # convert to logical
     Force[2] <- Force[2]=="Included"
     # substitute in output table
-    data_avail$Included[ data_avail$UnitCode %in% Force$UnitCode[Force$Status == TRUE] ] <- TRUE
-    data_avail$Included[ data_avail$UnitCode %in% Force$UnitCode[Force$Status == FALSE] ] <- FALSE
+
+    data_avail$LowDataAll[ data_avail$UnitCode %in% Force$UnitCode[Force$Status == TRUE] ] <- FALSE
+    data_avail$LowDataAll[ data_avail$UnitCode %in% Force$UnitCode[Force$Status == FALSE] ] <- TRUE
   }
 
   if (unit_screen == TRUE){
