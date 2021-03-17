@@ -35,7 +35,7 @@ treat <- function(COIN, dset = "Raw", winmax = NULL, winchange = FALSE, deflog =
                        t_skew = 2, t_kurt = 3.5, individual = NULL, indiv_only = TRUE){
 
   # First check object type and extract
-  out <- coin_aux_objcheck(COIN, dset = dset)
+  out <- getIn(COIN, dset = dset)
 
   # if winmax not specified, default to 10% of units, rounded up
   if(is.null(winmax)){
@@ -45,7 +45,7 @@ treat <- function(COIN, dset = "Raw", winmax = NULL, winchange = FALSE, deflog =
   # get basic data sets
   ind_data <- out$ind_data # all indicator data
   ind_data_only <- out$ind_data_only
-  ind_names <- out$ind_names
+  IndCodes <- out$IndCodes
 
   ind_data_treated <- ind_data # make a copy, for treated data
   treat_flag <- matrix("No", nrow = nrow(ind_data_only), ncol = ncol(ind_data_only)) # empty matrix for populating
@@ -71,7 +71,7 @@ treat <- function(COIN, dset = "Raw", winmax = NULL, winchange = FALSE, deflog =
       if ( (w$winz >= winmax)  &  ((abs(sk)>t_skew) & (kt>t_kurt)) ){ # didn't work
 
         # do log-type transformation
-        params <- list(winmax = winmax, ind_names = ind_names, ii = ii, boxlam = boxlam)
+        params <- list(winmax = winmax, IndCodes = IndCodes, ii = ii, boxlam = boxlam)
         logout <- loggish(icol, deflog, params)
         # record outputs
         icol <- logout$x # the transformed values
@@ -89,7 +89,7 @@ treat <- function(COIN, dset = "Raw", winmax = NULL, winchange = FALSE, deflog =
         TreatSpec[ii] <- paste0("Default, winmax = ", winmax)
       }
 
-      ind_data_treated[ind_names[ii]]<-icol # subst treated col into treated data set
+      ind_data_treated[IndCodes[ii]]<-icol # subst treated col into treated data set
     }
 
     ###------ INDIVIDUAL INDICATOR TREATMENT -----
@@ -100,7 +100,7 @@ treat <- function(COIN, dset = "Raw", winmax = NULL, winchange = FALSE, deflog =
     for (ii in 1:ncol(ind_data_only)){
 
       icol <- dplyr::pull(ind_data_only,ii) # get relevant column
-      ind_name <- ind_names[ii] # get indicator name
+      ind_name <- IndCodes[ii] # get indicator name
 
       # check if this indicator is specified in the "individual" table
       # if it is, we treat it as specified in the table
@@ -147,7 +147,7 @@ treat <- function(COIN, dset = "Raw", winmax = NULL, winchange = FALSE, deflog =
             Treatment[ii] <- paste0("Winsorised ", w$winz, " points")}
           else {Treatment[ii] <- "None"}
 
-          ind_data_treated[ind_names[ii]]<-w$icol # subst treated col into treated data set
+          ind_data_treated[IndCodes[ii]]<-w$icol # subst treated col into treated data set
 
         } else {
 
@@ -156,7 +156,7 @@ treat <- function(COIN, dset = "Raw", winmax = NULL, winchange = FALSE, deflog =
           # do log-type transformation
           logout <- loggish(icol, individual$Treat[individual$IndCode==ind_name])
           # record outputs
-          ind_data_treated[ind_names[ii]] <- logout$x # the transformed values
+          ind_data_treated[IndCodes[ii]] <- logout$x # the transformed values
           treat_flag[,ii] <- logout$Flag
           Treatment[ii] <- logout$Treatment
           TreatSpec[ii] <- logout$TreatSpec
@@ -197,7 +197,7 @@ treat <- function(COIN, dset = "Raw", winmax = NULL, winchange = FALSE, deflog =
 
         }
 
-        ind_data_treated[ind_names[ii]]<-icol # subst treated col into treated data set
+        ind_data_treated[IndCodes[ii]]<-icol # subst treated col into treated data set
 
       } # end of if indicator in individual table
     } # end indicator loop
@@ -206,7 +206,7 @@ treat <- function(COIN, dset = "Raw", winmax = NULL, winchange = FALSE, deflog =
   # tidy up a bit
 
   ntreated <- data.frame(
-    IndCode = ind_names,
+    IndCode = IndCodes,
     Low = map_dbl(as.data.frame(treat_flag), ~sum(.x=="WLow")),
     High = map_dbl(as.data.frame(treat_flag), ~sum(.x=="WHigh")),
     TreatSpec = TreatSpec,
@@ -354,14 +354,13 @@ BoxCox <- function(x, lambda, makepos = TRUE){
 loggish <- function(x, ltype, params){
 
   l <- list(x = NA, Flag = NA, Treatment = NA, TreatSpec = NA)
-  browser()
 
   if ( (sum(x<=0, na.rm=T)>0) & (ltype == "log") ){ # negative values. No can normal log.
 
     l$Flag <- "Err"
     # x will be passed through with no treatment
     l$x <- x
-    warning(paste0(params$ind_names[params$ii],": indicator exceeded max winsorisation but cannot do log transform because negative or zero values. Please check."))
+    warning(paste0(params$IndCodes[params$ii],": indicator exceeded max winsorisation but cannot do log transform because negative or zero values. Please check."))
     l$Treatment <- "None: exceeded winmax but log error"
     l$TreatSpec <- paste0("Default, winmax = ", params$winmax)
 
