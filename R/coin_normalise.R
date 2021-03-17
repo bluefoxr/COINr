@@ -9,18 +9,20 @@
 #' @param dset The data set to normalise
 #' @param directions A vector specifying the direction assigned to each indicator.
 #' Needs to be the same length as the number of indicators, or the number of indicators in inames, if specified.
+#' @param out2 Where to output the results. If "COIN" (default for COIN input), appends to updated COIN,
+#' otherwise if "df" outputs to data frame.
 #'
 #' @importFrom purrr "map2"
 #' @importFrom purrr "modify"
 #'
-#' @examples \dontrun{df_norm <- coin_normalise(COINobj, ntype="minmax", npara = c(0,1))}
+#' @examples \dontrun{df_norm <- normalise(COINobj, ntype="minmax", npara = c(0,1))}
 #'
 #' @return An updated COIN object with .$Data$Normalised added.
 #'
 #' @export
 
-coin_normalise <- function(COINobj, ntype="minmax", npara = NULL, inames = NULL,
-                           dset = "Raw", directions = NULL){
+normalise <- function(COINobj, ntype="minmax", npara = NULL, inames = NULL,
+                           dset = "Raw", directions = NULL, out2 = NULL){
 
   # First. check to see what kind of input we have.
   out <- coin_aux_objcheck(COINobj, dset = dset, inames = inames)
@@ -71,9 +73,17 @@ coin_normalise <- function(COINobj, ntype="minmax", npara = NULL, inames = NULL,
 
   }
 
-  if (is.data.frame(COINobj)){ # Data frame
+  if(is.null(out2)){
+    out2 <- "COIN"
+  }
 
-    COINobj[ind_names] <- datamod
+  if (is.data.frame(COINobj) | (out2=="df") ){ # Output to data frame
+
+    ind_data <- out$ind_data
+    ind_data[ind_names] <- datamod
+    return(ind_data)
+
+    #COINobj[ind_names] <- datamod
 
   } else {
 
@@ -87,8 +97,9 @@ coin_normalise <- function(COINobj, ntype="minmax", npara = NULL, inames = NULL,
     COINobj$Method$Normalisation$inames <- out$ind_names
     COINobj$Method$Normalisation$dset <- dset
     COINobj$Method$Normalisation$directions <- directions
+    return(COINobj)
   }
 
-  return(COINobj)
+
 
 }
