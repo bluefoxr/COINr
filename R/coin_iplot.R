@@ -6,23 +6,23 @@
 #'
 #' @param COINobj The COIN object, or a data frame of indicator data
 #' @param dset The source data set to use for indicator data (if input is COIN object)
-#' @param inames A character vector of a single indicator name or aggregate name to plot.
+#' @param icodes A character vector of a single indicator name or aggregate name to plot.
 #' @param ptype The type of plot to produce. Currently supports "Violin" and "Histogram".
 #' @param aglev The aggregation level to extract the indicator data from. Defaults to indicator level (1)
 #' @param axlims Optional parameter specifying axis limits. Useful mainly for matching with another plot.
 #'
 #' @importFrom plotly plot_ly layout
 #'
-#' @examples \dontrun{plotIndDist(ASEM, type = "Box", inames = "Physical")}
+#' @examples \dontrun{plotIndDist(ASEM, type = "Box", icodes = "Physical")}
 #'
 #' @return Nice plots
 #'
 #' @export
 
-iplotIndDist <- function(COINobj, dset = "Raw", inames = NULL, ptype = "Violin", aglev = 1,
+iplotIndDist <- function(COINobj, dset = "Raw", icodes = NULL, ptype = "Violin", aglev = 1,
                         axlims = NULL){
 
-  out1 <- getIn(COINobj, dset = dset, inames = inames, aglev = aglev)
+  out1 <- getIn(COINobj, dset = dset, icodes = icodes, aglev = aglev)
   ind_data_only <- out1$ind_data_only
   ind_names <- out1$IndNames
   ind_code <- out1$IndCodes
@@ -95,35 +95,35 @@ iplotIndDist <- function(COINobj, dset = "Raw", inames = NULL, ptype = "Violin",
 #' @param dsets The source data sets to use for indicator data (if input is COIN object). If the source
 #' data sets are the same, this can be a single character string, otherwise, a character vector, e.g.
 #' c("Raw", "Treated").
-#' @param inames A character vector of two indicator codes to plot (corresponding to the two dsets specified)
+#' @param icodes A character vector of two indicator codes to plot (corresponding to the two dsets specified)
 #' @param ptype The type of plot to produce. Currently supports "Histogram" and "Scatter".
 #' @param aglevs The aggregation level to extract the indicator data from. Defaults to indicator level (1). This also can
 #' be specified as a vector if the two indicators are from different levels.
 #'
 #' @importFrom plotly plot_ly
 #'
-#' @examples \dontrun{plotIndDist(ASEM, type = "Box", inames = "Physical")}
+#' @examples \dontrun{plotIndDist(ASEM, type = "Box", icodes = "Physical")}
 #'
 #' @return Nice plots
 #'
 #' @export
 
-iplotIndDist2 <- function(COIN, dsets = "Raw", inames = NULL, ptype = "Scatter", aglevs = 1){
+iplotIndDist2 <- function(COIN, dsets = "Raw", icodes = NULL, ptype = "Scatter", aglevs = 1){
 
-  if(length(inames)>2){stop("This function only supports plotting two indicators. You may need to use the aglev argument if you are calling an aggregation group.")}
+  if(length(icodes)>2){stop("This function only supports plotting two indicators. You may need to use the aglev argument if you are calling an aggregation group.")}
 
   # If only one dset specified, use this for both indicators
   if(length(dsets)==1){dsets <- rep(dsets,2)}
 
   # if only one ind specified, use for both
-  if(length(inames)==1){inames <- rep(inames,2)}
+  if(length(icodes)==1){icodes <- rep(icodes,2)}
 
   # if only one aglev specified, use for both
   if(length(aglevs)==1){aglevs <- rep(aglevs,2)}
 
   # get indicator data
-  out1 <- getIn(COIN, dset = dsets[1], inames = inames[1], aglev = aglevs[1])
-  out2 <- getIn(COIN, dset = dsets[2], inames = inames[2], aglev = aglevs[2])
+  out1 <- getIn(COIN, dset = dsets[1], icodes = icodes[1], aglev = aglevs[1])
+  out2 <- getIn(COIN, dset = dsets[2], icodes = icodes[2], aglev = aglevs[2])
 
   ind_data_only <- out1$ind_data_only
   ind_names <- out1$IndNames
@@ -134,7 +134,7 @@ iplotIndDist2 <- function(COIN, dsets = "Raw", inames = NULL, ptype = "Scatter",
     # look for units
     if(exists("IndUnit",COIN$Input$IndMeta)){
       # find unit for indicator
-      indunit1 <- COIN$Input$IndMeta$IndUnit[COIN$Input$IndMeta$IndCode == inames[1]]
+      indunit1 <- COIN$Input$IndMeta$IndUnit[COIN$Input$IndMeta$IndCode == icodes[1]]
     } else {
       # if not, NULL
       indunit1 <- ""
@@ -148,7 +148,7 @@ iplotIndDist2 <- function(COIN, dsets = "Raw", inames = NULL, ptype = "Scatter",
     # look for units
     if(exists("IndUnit",COIN$Input$IndMeta)){
       # find unit for indicator
-      indunit2 <- COIN$Input$IndMeta$IndUnit[COIN$Input$IndMeta$IndCode == inames[2]]
+      indunit2 <- COIN$Input$IndMeta$IndUnit[COIN$Input$IndMeta$IndCode == icodes[2]]
     } else {
       # if not, NULL
       indunit2 <- "score"
