@@ -18,5 +18,5 @@ coin_win(icol, winmax, winchange, t_skew, t_kurt)
 \item{t_kurt}{Kurtosis threshold (default 3.5)}
 }
 \description{
-To be used inside COIN_treat to avoid repetitions
+To be used inside treat() to avoid repetitions. Winsorises one column of data.
 }

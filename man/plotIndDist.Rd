@@ -7,7 +7,7 @@
 plotIndDist(
   COINobj,
   dset = "Raw",
-  inames = NULL,
+  icodes = NULL,
   aglev = 1,
   type = "Box",
   ntype = NULL,
@@ -19,16 +19,16 @@ plotIndDist(
 
 \item{dset}{The source data set to use for indicator data (if input is COIN object)}
 
-\item{inames}{A character vector of indicator names to plot. Defaults to all indicators.}
+\item{icodes}{A character vector of indicator names to plot. Defaults to all indicators.}
 
 \item{aglev}{The aggregation level to extract the indicator data from. Defaults to indicator level (1)}
 
 \item{type}{The type of plot. Currently supported "Box", "Dot", "Violin", "Violindot", "Histogram".}
 
 \item{ntype}{The type of nomalisation to apply. If NULL, no normalisation applied, otherwise specify
-using labels in coin_normalise.}
+using labels in normalise.}
 
-\item{npara}{Optional parameters to pass to coin_normalise if normalisation required.}
+\item{npara}{Optional parameters to pass to normalise if normalisation required.}
 }
 \value{
 Nice plots
@@ -38,6 +38,6 @@ Plots indicator distributions using box plots, dot plots, violin plots, violin-d
 Supports plotting multiple indicators by calling aggregation groups.
 }
 \examples{
-\dontrun{plotIndDist(ASEM, type = "Box", inames = "Physical")}
+\dontrun{plotIndDist(ASEM, type = "Box", icodes = "Physical")}
 
 }

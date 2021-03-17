@@ -4,7 +4,7 @@
 \alias{coin_PCA}
 \title{Perform PCA}
 \usage{
-coin_PCA(COINobj, dset = "Raw", inames = NULL, aglev = NULL, out2 = "obj")
+coin_PCA(COINobj, dset = "Raw", icodes = NULL, aglev = NULL, out2 = "obj")
 }
 \arguments{
 \item{COINobj}{An input object. The function can handle either the COIN object, or a data frame.
@@ -13,7 +13,7 @@ specifies the code (or name) of each unit. Any other type of object will return 
 
 \item{dset}{If input is a COIN object, this specifies which data set in .$Data to use.}
 
-\item{inames}{An optional character vector of indicator codes to subset the indicator data. Usefully, can also refer to
+\item{icodes}{An optional character vector of indicator codes to subset the indicator data. Usefully, can also refer to
 an aggregation group name, and data will be subsetted accordingly. NOTE does not work with multiple aggregate group names.}
 
 \item{aglev}{The aggregation level to take indicator data from. Integer from 1 (indicator level)

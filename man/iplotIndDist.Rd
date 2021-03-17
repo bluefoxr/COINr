@@ -7,7 +7,7 @@
 iplotIndDist(
   COINobj,
   dset = "Raw",
-  inames = NULL,
+  icodes = NULL,
   ptype = "Violin",
   aglev = 1,
   axlims = NULL
@@ -18,7 +18,7 @@ iplotIndDist(
 
 \item{dset}{The source data set to use for indicator data (if input is COIN object)}
 
-\item{inames}{A character vector of a single indicator name or aggregate name to plot.}
+\item{icodes}{A character vector of a single indicator name or aggregate name to plot.}
 
 \item{ptype}{The type of plot to produce. Currently supports "Violin" and "Histogram".}
 
@@ -35,6 +35,6 @@ HTML documents, websites, etc, or used for more interactive data exploration. Th
 indicator at a time - for multiple plots you can use plotIndDist()
 }
 \examples{
-\dontrun{plotIndDist(ASEM, type = "Box", inames = "Physical")}
+\dontrun{plotIndDist(ASEM, type = "Box", icodes = "Physical")}
 
 }

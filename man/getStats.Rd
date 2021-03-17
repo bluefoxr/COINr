@@ -6,7 +6,7 @@
 \usage{
 getStats(
   COINobj,
-  inames = NULL,
+  icodes = NULL,
   dset = "Raw",
   out2 = "COIN",
   t_skew = 2,
@@ -20,7 +20,7 @@ getStats(
 \arguments{
 \item{COINobj}{A list of indicator data, stuctured using the COIN_assemble function}
 
-\item{inames}{A character vector of indicator names to analyse. Defaults to all indicators.}
+\item{icodes}{A character vector of indicator names to analyse. Defaults to all indicators.}
 
 \item{dset}{The data set to analyse}
 

@@ -24,6 +24,9 @@ checkData(
 This is output in a new data set .$Data$Screened and added as a column in the output table.}
 
 \item{Force}{A data frame with any additional countries to force inclusion or exclusion. First column is ISO code. Second column either "Include" or "Exclude" for each country to force.}
+
+\item{out2}{Where to output the results. If "COIN" (default for COIN input), appends to updated COIN,
+otherwise if "df" outputs to data frame.}
 }
 \value{
 An updated COIN object with tables showing missing data, and a filtered list of countries to include in subsequent calculations.

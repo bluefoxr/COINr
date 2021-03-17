@@ -4,7 +4,7 @@
 \alias{getIn}
 \title{Get subsets of indicator data}
 \usage{
-getIn(obj, dset = "Raw", inames = NULL, aglev = NULL)
+getIn(obj, dset = "Raw", icodes = NULL, aglev = NULL)
 }
 \arguments{
 \item{obj}{An input object. The function can handle either the COIN object, or a data frame.
@@ -13,7 +13,7 @@ specifies the code (or name) of each unit. Any other type of object will return 
 
 \item{dset}{If input is a COIN object, this specifies which data set in .$Data to use.}
 
-\item{inames}{An optional character vector of indicator codes to subset the indicator data. Usefully, can also refer to
+\item{icodes}{An optional character vector of indicator codes to subset the indicator data. Usefully, can also refer to
 an aggregation group name, and data will be subsetted accordingly. NOTE does not work with multiple aggregate group names.}
 
 \item{aglev}{The aggregation level to take indicator data from. Integer from 1 (indicator level)
@@ -34,8 +34,8 @@ First, it checks to see what kind of input object is input. Then, it selects the
 according to the specs supplied.
 }
 \details{
-For example, specifying dset = "Raw" and inames = c("Ind1", "Ind5"), it will the indicator columns
-named "Ind1" and "Ind5" (if they exist), in the format described below. inames can be indicators
+For example, specifying dset = "Raw" and icodes = c("Ind1", "Ind5"), it will the indicator columns
+named "Ind1" and "Ind5" (if they exist), in the format described below. icodes can be indicators
 or aggregation groups, and can call multiple groups.
 
 You can also specify which aggregation level to target, using the "aglev" argument. See examples
@@ -45,11 +45,11 @@ below, and the COINr vignette.
 \dontrun{
 
 # Get data from indicators "Ind1" and "Ind5", from the "Raw" data set
-out <- getIn(COINobj, dset = "Raw", inames = c("Ind1", "Ind5"))
+out <- getIn(COINobj, dset = "Raw", icodes = c("Ind1", "Ind5"))
 
 # get data from "Research" and "Education" dimensions, calling agggregation level 2.
 out <- coin_aux_objcheck(COINobj, dset = "Aggregated",
-                         inames = c("Research", "Education"), aglev = 2)
+                         icodes = c("Research", "Education"), aglev = 2)
 }
 
 }

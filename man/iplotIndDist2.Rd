@@ -7,7 +7,7 @@
 iplotIndDist2(
   COIN,
   dsets = "Raw",
-  inames = NULL,
+  icodes = NULL,
   ptype = "Scatter",
   aglevs = 1
 )
@@ -19,7 +19,7 @@ iplotIndDist2(
 data sets are the same, this can be a single character string, otherwise, a character vector, e.g.
 c("Raw", "Treated").}
 
-\item{inames}{A character vector of two indicator codes to plot (corresponding to the two dsets specified)}
+\item{icodes}{A character vector of two indicator codes to plot (corresponding to the two dsets specified)}
 
 \item{ptype}{The type of plot to produce. Currently supports "Histogram" and "Scatter".}
 
@@ -34,6 +34,6 @@ Generates a javascript distribution plot of two indicators, using Plotly. Plot c
 HTML documents, websites, etc, or used for more interactive data exploration.
 }
 \examples{
-\dontrun{plotIndDist(ASEM, type = "Box", inames = "Physical")}
+\dontrun{plotIndDist(ASEM, type = "Box", icodes = "Physical")}
 
 }

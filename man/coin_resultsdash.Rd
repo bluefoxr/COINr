@@ -18,6 +18,6 @@ Interactive visualisation
 Generates an interactive visualisation of results. Requires Shiny and an active R session.
 }
 \examples{
-\dontrun{coin_indicatordash(COINobj, inames = NULL, dset = "raw")}
+\dontrun{coin_indicatordash(COINobj, icodes = NULL, dset = "raw")}
 
 }
