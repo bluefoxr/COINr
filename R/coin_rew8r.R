@@ -14,7 +14,7 @@
 coin_rew8r <- function(COINobj){
 
   if (!exists("Aggregated",COINobj$Data)){
-    stop("No aggregated data set found. You have to aggregate your index first using coin_aggregate, otherwise I don't know
+    stop("No aggregated data set found. You have to aggregate your index first using aggregate, otherwise I don't know
          what method you want to use for aggregation.")
   }
 
@@ -290,7 +290,7 @@ weights2corr <- function(COINobj, w, agnames){
   COINobj$Parameters$Weights$IndWeight <- w # assign ind weights to object
 
   # aggregate
-  COINobj2 <- coin_aggregate(COINobj, agtype="arith_mean")
+  COINobj2 <- aggregate(COINobj, agtype="arith_mean")
 
   # get main table of results: these are the last two aggregation levels
   dfres <- COINobj2$Data$Aggregated[c("UnitCode", agnames)]
