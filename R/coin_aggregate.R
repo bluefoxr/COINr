@@ -19,13 +19,13 @@
 #' @importFrom dplyr "c_across"
 #' @importFrom tibble as_tibble
 #'
-#' @examples \dontrun{COINlist <- coin_aggregate(COINlist, agtype="arith_mean", dset = "normalised")}
+#' @examples \dontrun{COINlist <- aggregate(COINlist, agtype="arith_mean", dset = "normalised")}
 #'
 #' @return An updated COIN object containing the new aggregated data set.
 #'
 #' @export
 
-coin_aggregate <- function(COINobj, agtype="arith_mean", agweights = NULL,
+aggregate <- function(COINobj, agtype="arith_mean", agweights = NULL,
                            dset = "Normalised", agtype_bylevel = NULL){
 
   out <- coin_aux_objcheck(COINobj, dset = dset)
@@ -81,10 +81,10 @@ coin_aggregate <- function(COINobj, agtype="arith_mean", agweights = NULL,
         # Now get the mean. Had to do in a roundabout way to avoid rowmeans type functions... probably an easier way exists though
         newcol <- ind_data %>% dplyr::select(dplyr::all_of(iselect)) %>% dplyr::rowwise() %>%
           dplyr::transmute(!!agg_names[agroup] := matrixStats::weightedMean(dplyr::c_across(cols = dplyr::everything()),
-                                                        w = weights_group, na.rm = TRUE))
+                                                                            w = weights_group, na.rm = TRUE))
         ind_data <- cbind(ind_data,newcol) # add new col to data set
 
-        }
+      }
     }
   } else if (agtype == "median"){ # Arithmetic mean
 
