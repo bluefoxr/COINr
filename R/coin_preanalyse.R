@@ -3,7 +3,7 @@
 #' Takes a COIN object, or data frame and returns a table of statistics, including max, min, median, mean, std, kurtosis, etc. Flags indicators with possible outliers.
 #'
 #' @param COINobj A list of indicator data, stuctured using the COIN_assemble function
-#' @param inames A character vector of indicator names to analyse. Defaults to all indicators.
+#' @param icodes A character vector of indicator names to analyse. Defaults to all indicators.
 #' @param dset The data set to analyse
 #' @param out2 Where to output the results: if "COIN" (default), outputs to the COIN, otherwise if "list", outputs to a separate list.
 #' @param t_skew Skewness threshold
@@ -26,12 +26,12 @@
 #'
 #' @export
 
-getStats <- function(COINobj, inames = NULL, dset = "Raw", out2 = "COIN",
+getStats <- function(COINobj, icodes = NULL, dset = "Raw", out2 = "COIN",
                             t_skew = 2, t_kurt = 3.5, t_colin = 0.9, t_denom = 0.7,
                             t_missing = 65, IQR_coef = 1.5){
 
   # First. check to see what kind of input we have and get relevant data
-  checkout <- getIn(obj = COINobj, dset = dset, inames = inames, aglev = 1)
+  checkout <- getIn(obj = COINobj, dset = dset, icodes = icodes, aglev = 1)
   # Check input is a COIN
   if (checkout$otype != "COINobj"){
     stop("This function only supports a COIN as an input.")
@@ -89,15 +89,7 @@ getStats <- function(COINobj, inames = NULL, dset = "Raw", out2 = "COIN",
     SK.outlier.flag = skflag, Low.Outliers.IQR = out_low, High.Outliers.IQR = out_high
   )
 
-
-
   ##------- Now checking correlations ---------
-  # isolate relevant data
-  den_data_only <- COINobj$Input$Denominators
-  # filter for only unit codes in selected data (in case we have dropped some)
-  den_data_only <- den_data_only[den_data_only$UnitCode %in% checkout$UnitCodes,]
-  den_data_only <- select(den_data_only, starts_with("Den_"))
-
 
   # indicator correlations
   corr_ind <- stats::cor(ind_data_only, method = "pearson", use = "na.or.complete") # get correlation matrix, just indicators
@@ -116,28 +108,43 @@ getStats <- function(COINobj, inames = NULL, dset = "Raw", out2 = "COIN",
   ind_stats <- ind_stats %>% tibble::add_column(Neg.Correls = signegs) # add to table
   message(paste("Number of signficant negative indicator correlations = ",sum(signegs)))
 
-  # denominator correlations
-  corr_denom <- stats::cor(den_data_only, ind_data_only, method = "pearson", use = "na.or.complete")
-  maxcor <- as.data.frame(abs(corr_denom)) %>% purrr::map_dbl(max, na.rm = T) # the max absolute correlations
-  maxcor <- dplyr::if_else(maxcor>t_denom,"High","OK") # if any values exceed threshold, flag
-  ind_stats <- ind_stats %>% tibble::add_column(Denom.correlation = maxcor) # add to table
-  message(paste("Number of indicators with high denominator correlations = ",sum(maxcor=="High")))
+  # Check if any denominators exist
+  if (exists("Denominators", COINobj$Input)){
+    # isolate relevant data
+    den_data_only <- COINobj$Input$Denominators
+    # filter for only unit codes in selected data (in case we have dropped some)
+    den_data_only <- den_data_only[den_data_only$UnitCode %in% checkout$UnitCodes,]
+    den_data_only <- select(den_data_only, starts_with("Den_"))
+
+    # denominator correlations
+    corr_denom <- stats::cor(den_data_only, ind_data_only, method = "pearson", use = "na.or.complete")
+    maxcor <- as.data.frame(abs(corr_denom)) %>% purrr::map_dbl(max, na.rm = T) # the max absolute correlations
+    maxcor <- dplyr::if_else(maxcor>t_denom,"High","OK") # if any values exceed threshold, flag
+    ind_stats <- ind_stats %>% tibble::add_column(Denom.correlation = maxcor) # add to table
+    message(paste("Number of indicators with high denominator correlations = ",sum(maxcor=="High")))
+
+    # convert correlation matrices into dfs
+    corr_denom <- data.frame(Denominator = row.names(corr_denom), corr_denom, row.names = NULL)
+  }
 
   ##---- Write results -----##
   # convert correlation matrices into dfs
   corr_ind <- data.frame(IndCode = row.names(corr_ind), corr_ind, row.names = NULL)
-  corr_denom <- data.frame(Denominator = row.names(corr_denom), corr_denom, row.names = NULL)
 
   if (out2 == "list"){
 
     # write to a list
 
-    return(list(
+    lout <- list(
       StatTable = ind_stats,
       Outliers = out_flag,
-      Correlations = corr_ind,
-      DenomCorrelations = corr_denom
-    ))
+      Correlations = corr_ind
+    )
+
+    if (exists("Denominators", COINobj$Input)){
+      lout$DenomCorrelations = corr_denom
+    }
+    return(lout)
 
   } else if (out2 == "COIN") {
 
@@ -146,7 +153,9 @@ getStats <- function(COINobj, inames = NULL, dset = "Raw", out2 = "COIN",
     eval(parse(text=paste0("COINobj$Analysis$",dset,"$StatTable<- ind_stats")))
     eval(parse(text=paste0("COINobj$Analysis$",dset,"$Outliers<- out_flag")))
     eval(parse(text=paste0("COINobj$Analysis$",dset,"$Correlations<- corr_ind")))
-    eval(parse(text=paste0("COINobj$Analysis$",dset,"$DenomCorrelations<- corr_denom")))
+    if (exists("Denominators", COINobj$Input)){
+      eval(parse(text=paste0("COINobj$Analysis$",dset,"$DenomCorrelations<- corr_denom")))
+    }
 
     return(COINobj)
   } else {
