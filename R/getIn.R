@@ -68,6 +68,9 @@ getIn <- function(obj, dset = "Raw", icodes = NULL, aglev = NULL){
         stop("dset name not recognised...")
       })
     }
+    if(is.null(ind_data)){
+      stop("dset not found. Did you make a typo or forget to create it first?")
+    }
 
     # get unit codes. Have to do this because if the units have been screened, then it may
     # not be the same set as when the data was input.
