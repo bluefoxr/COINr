@@ -15,10 +15,10 @@ build_ASEM <- function(){
 
   ASEM <- assemble(IndData = COINr::ASEMIndData, IndMeta = COINr::ASEMIndMeta, AggMeta = COINr::ASEMAggMeta)
   ASEM <- denominate(ASEM)
-  ASEM <- coin_impute(ASEM, dset = "Denominated", imtype = "indgroup_mean", groupvar = "Group_EurAsia")
-  ASEM <- coin_treat(ASEM, dset = "Imputed")
-  ASEM <- coin_normalise(ASEM, dset = "Treated")
-  ASEM <- coin_aggregate(ASEM, dset = "Normalised")
+  ASEM <- impute(ASEM, dset = "Denominated", imtype = "indgroup_mean", groupvar = "Group_EurAsia")
+  ASEM <- treat(ASEM, dset = "Imputed")
+  ASEM <- normalise(ASEM, dset = "Treated")
+  ASEM <- aggregate(ASEM, dset = "Normalised")
   return(ASEM)
 
 }
