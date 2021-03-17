@@ -9,7 +9,7 @@
 #' @importFrom plotly plot_ly plotlyOutput layout add_trace renderPlotly
 #' @importFrom reactable reactable renderReactable
 #'
-#' @examples \dontrun{coin_indicatordash(COINobj, inames = NULL, dset = "raw")}
+#' @examples \dontrun{coin_indicatordash(COINobj, icodes = NULL, dset = "raw")}
 #'
 #' @return Interactive visualisation
 #'
@@ -233,7 +233,7 @@ coin_resultsdash <- function(COINobj, dset = "Aggregated"){
 
 iplotMap <- function(COINobj, dset = "Raw", isel){
 
-  out1 <- getIn(COINobj, dset = dset, inames = isel)
+  out1 <- getIn(COINobj, dset = dset, icodes = isel)
 
   # Set up appearance
   g <- list(
@@ -287,7 +287,7 @@ iplotMap <- function(COINobj, dset = "Raw", isel){
 
 iplotBar <- function(COINobj, dset = "Raw", isel = NULL, usel = NULL, aglev = 1){
 
-  out1 <- getIn(COINobj, dset = dset, inames = isel, aglev = aglev)
+  out1 <- getIn(COINobj, dset = dset, icodes = isel, aglev = aglev)
 
   ind_data_only <- out1$ind_data_only
   indname <- out1$IndNames
@@ -358,7 +358,7 @@ iplotBar <- function(COINobj, dset = "Raw", isel = NULL, usel = NULL, aglev = 1)
 
 iplot_table <- function(COINobj, dset = "Raw", isel = NULL){
 
-  out1 <- getIn(COINobj, dset = dset, inames = isel)
+  out1 <- getIn(COINobj, dset = dset, icodes = isel)
 
   # get data and reverse so that index is first, also unit names are first
 
@@ -450,7 +450,7 @@ iplot_table <- function(COINobj, dset = "Raw", isel = NULL){
 iplot_radar <- function(COINobj, dset = "Raw", usel = NULL, levsel = NULL, isel = NULL){
 
   # get indicator data
-  out1 <- getIn(COINobj, dset = dset, inames = isel, aglev = levsel)
+  out1 <- getIn(COINobj, dset = dset, icodes = isel, aglev = levsel)
 
   # data to plot on radar chart (vals of each indicator/aggregate)
   uRow <- out1$ind_data_only[out1$UnitCodes %in% usel,]
