@@ -90,7 +90,7 @@ COINToolIn <- function(fname, makecodes = FALSE, oldtool = FALSE){
   }
 
   # Delete empty rows
-  AggMetaIn <- dplyr::filter(AggMetaIn,`Dimension/indicator`!="--")
+  AggMetaIn <- dplyr::filter(AggMetaIn,.data$`Dimension/indicator`!="--")
   # Get rid of cols we don't want
   AggMetaIn <- cbind(0, AggMetaIn[c(1,6,3)]) %>% dplyr::as_tibble()
   # Rename cols
