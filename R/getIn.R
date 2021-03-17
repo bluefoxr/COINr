@@ -4,8 +4,8 @@
 #' First, it checks to see what kind of input object is input. Then, it selects the indicator data
 #' according to the specs supplied.
 #'
-#' For example, specifying dset = "Raw" and inames = c("Ind1", "Ind5"), it will the indicator columns
-#' named "Ind1" and "Ind5" (if they exist), in the format described below. inames can be indicators
+#' For example, specifying dset = "Raw" and icodes = c("Ind1", "Ind5"), it will the indicator columns
+#' named "Ind1" and "Ind5" (if they exist), in the format described below. icodes can be indicators
 #' or aggregation groups, and can call multiple groups.
 #'
 #' You can also specify which aggregation level to target, using the "aglev" argument. See examples
@@ -15,7 +15,7 @@
 #' The data frame should have each column as an indicator, and an optional column "UnitCode" which
 #' specifies the code (or name) of each unit. Any other type of object will return an error.
 #' @param dset If input is a COIN object, this specifies which data set in .$Data to use.
-#' @param inames An optional character vector of indicator codes to subset the indicator data. Usefully, can also refer to
+#' @param icodes An optional character vector of indicator codes to subset the indicator data. Usefully, can also refer to
 #' an aggregation group name, and data will be subsetted accordingly. NOTE does not work with multiple aggregate group names.
 #' @param aglev The aggregation level to take indicator data from. Integer from 1 (indicator level)
 #' to N (top aggregation level, typically the index).
@@ -28,11 +28,11 @@
 #' \dontrun{
 #'
 #' # Get data from indicators "Ind1" and "Ind5", from the "Raw" data set
-#' out <- getIn(COINobj, dset = "Raw", inames = c("Ind1", "Ind5"))
+#' out <- getIn(COINobj, dset = "Raw", icodes = c("Ind1", "Ind5"))
 #'
 #' # get data from "Research" and "Education" dimensions, calling agggregation level 2.
 #' out <- coin_aux_objcheck(COINobj, dset = "Aggregated",
-#'                          inames = c("Research", "Education"), aglev = 2)
+#'                          icodes = c("Research", "Education"), aglev = 2)
 #' }
 #'
 #' @return A list with the following entries:
@@ -45,7 +45,7 @@
 #'
 #' @export
 
-getIn <- function(obj, dset = "Raw", inames = NULL, aglev = NULL){
+getIn <- function(obj, dset = "Raw", icodes = NULL, aglev = NULL){
 
   # Check to see what kind of input we have.
   if ("COIN object" %in% class(obj)){ # COIN obj
@@ -74,14 +74,14 @@ getIn <- function(obj, dset = "Raw", inames = NULL, aglev = NULL){
     UnitCodes <- ind_data$UnitCode
 
     # If no indicator names specified, return all
-    if(is.null(inames)){
+    if(is.null(icodes)){
       # get indicator names, i.e. columns excluding groups, denominators, names etc.
-      inames <- ind_data %>% dplyr::select(!dplyr::starts_with(
+      icodes <- ind_data %>% dplyr::select(!dplyr::starts_with(
         c("UnitCode", "UnitName", "Year", "Group_")) ) %>% colnames()
     }
 
-    if (is.null(aglev) | (dset=="Denominators")){ # take inames as it is given
-      IndCodes <- inames
+    if (is.null(aglev) | (dset=="Denominators")){ # take icodes as it is given
+      IndCodes <- icodes
     } else {
 
       # get index structure from Indicator metadata
@@ -89,7 +89,7 @@ getIn <- function(obj, dset = "Raw", inames = NULL, aglev = NULL){
       # filter any rows containing the specified string(s), pick column corresponding to agg level
       # Might look strange, but checks whether each row has any of the specified codes in.
       # Then, filters to those rows, and selects the column corresponding to the ag level.
-      IndCodes <- aggcols[rowSums(sapply(aggcols, "%in%", inames))>0,aglev] %>% unique()
+      IndCodes <- aggcols[rowSums(sapply(aggcols, "%in%", icodes))>0,aglev] %>% unique()
 
     }
 
@@ -113,7 +113,7 @@ getIn <- function(obj, dset = "Raw", inames = NULL, aglev = NULL){
 
     ind_data <- obj
 
-    if (is.null(inames)){ # no ind names given
+    if (is.null(icodes)){ # no ind names given
       if (exists("UnitCode",ind_data)){
         # If there are unit codes, record them and assume all other cols are indicator names
         IndCodes <- obj[colnames(obj) != "UnitCode"] %>% colnames()
@@ -126,7 +126,7 @@ getIn <- function(obj, dset = "Raw", inames = NULL, aglev = NULL){
         UnitCodes <- NA
       }
     } else { # indicator names are supplied
-      IndCodes <- inames
+      IndCodes <- icodes
       IndNames <- IndCodes # we don't know names, so use codes
       if (exists("UnitCode",ind_data)){
         UnitCodes <- obj$UnitCode
