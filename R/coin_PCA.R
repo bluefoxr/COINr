@@ -8,7 +8,7 @@
 #' The data frame should have each column as an indicator, and an optional column "UnitCode" which
 #' specifies the code (or name) of each unit. Any other type of object will return an error.
 #' @param dset If input is a COIN object, this specifies which data set in .$Data to use.
-#' @param inames An optional character vector of indicator codes to subset the indicator data. Usefully, can also refer to
+#' @param icodes An optional character vector of indicator codes to subset the indicator data. Usefully, can also refer to
 #' an aggregation group name, and data will be subsetted accordingly. NOTE does not work with multiple aggregate group names.
 #' @param aglev The aggregation level to take indicator data from. Integer from 1 (indicator level)
 #' to N (top aggregation level, typically the index).
@@ -26,10 +26,10 @@
 #' @export
 #'
 
-coin_PCA <- function(COINobj, dset = "Raw", inames = NULL, aglev = NULL, out2 = "obj"){
+coin_PCA <- function(COINobj, dset = "Raw", icodes = NULL, aglev = NULL, out2 = "obj"){
 
   # get ind data
-  out <- getIn(COINobj, dset = dset, inames = inames, aglev = aglev)
+  out <- getIn(COINobj, dset = dset, icodes = icodes, aglev = aglev)
 
   # check for missing vals
   nNA <- sum(is.na(out$ind_data_only))
