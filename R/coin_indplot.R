@@ -5,32 +5,32 @@
 #'
 #' @param COINobj The COIN object, or a data frame of indicator data
 #' @param dset The source data set to use for indicator data (if input is COIN object)
-#' @param inames A character vector of indicator names to plot. Defaults to all indicators.
+#' @param icodes A character vector of indicator names to plot. Defaults to all indicators.
 #' @param aglev The aggregation level to extract the indicator data from. Defaults to indicator level (1)
 #' @param type The type of plot. Currently supported "Box", "Dot", "Violin", "Violindot", "Histogram".
 #' @param ntype The type of nomalisation to apply. If NULL, no normalisation applied, otherwise specify
-#' using labels in coin_normalise.
-#' @param npara Optional parameters to pass to coin_normalise if normalisation required.
+#' using labels in normalise.
+#' @param npara Optional parameters to pass to normalise if normalisation required.
 #'
 #' @importFrom reshape2 melt
 #' @importFrom ggplot2 ggplot aes geom_boxplot theme_light geom_dotplot geom_violin geom_histogram labs facet_wrap
 #'
-#' @examples \dontrun{plotIndDist(ASEM, type = "Box", inames = "Physical")}
+#' @examples \dontrun{plotIndDist(ASEM, type = "Box", icodes = "Physical")}
 #'
 #' @return Nice plots
 #'
 #' @export
 
-plotIndDist <- function(COINobj, dset = "Raw", inames = NULL, aglev = 1, type = "Box",
+plotIndDist <- function(COINobj, dset = "Raw", icodes = NULL, aglev = 1, type = "Box",
                          ntype = NULL, npara = NULL){
 
-  out1 <- getIn(COINobj, dset = dset, inames = inames, aglev = aglev)
+  out1 <- getIn(COINobj, dset = dset, icodes = icodes, aglev = aglev)
   ind_data_only <- out1$ind_data_only
   ind_names <- out1$IndCodes
 
   # Normalise if required
   if (!is.null(ntype)){
-    ind_data_only<-coin_normalise(ind_data_only, ntype, npara)
+    ind_data_only<-normalise(ind_data_only, ntype, npara)
   }
 
   datamelt <- suppressMessages(reshape2::melt(ind_data_only)) # have to put dataframe in long format for ggplot
