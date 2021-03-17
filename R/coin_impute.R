@@ -2,35 +2,44 @@
 #'
 #' Imputation of data sets using a variety of methods.
 #'
-#' @param COINobj A dataframe of indicator data following the COINR format
-#' @param imtype The type of normalisation method. Either "minmax", "zscore", or "custom".
-#' @param inames Character vector of indiator names, indicating which columns to normalise. Use this if you only want to normalise certain columns, or you are inputting a data frame with some columns which are not to be normalised (e.g. country names, groups, ...)
+#' @param COIN A COIN or a data frame
+#' @param imtype The type of imputation method. Either "agg_mean" (the mean of normalised indicators inside the aggregation group),
+#' "agg_median" (the mean of normalised indicators inside the aggregation group),
+#' "ind_mean" (the mean of all the other units in the indicator),
+#' "ind_median" (the median of all the other units in the indicator),
+#' "indgroup_mean" (the mean of all the other units in the indicator, in the same group),
+#' "indgroup_median" (the median of all the other units in the indicator, in the same group),
+#' "EM" (expectation maximisation algorithm via AMELIA package, currently without bootstrapping)
 #' @param dset The data set in .$Data to impute
 #' @param groupvar The name of the column to use for by-group imputation. Only applies when imtype is set to a group option.
-#' @param byyear Logical: set to TRUE to impute separately for each year, otherwise FALSE to impute across all years.
+#' @param byyear Logical: set to TRUE to impute separately for each year, otherwise FALSE to impute across all years. NOTE this option is experimental and not tested. Recommend not to use (yet).
+#' @param EMaglev The aggregation level to use if imtype = "EM".
+#' @param out2 Where to output the results. If "COIN" (default for COIN input), appends to updated COIN,
+#' otherwise if "df" outputs to data frame.
 #'
 #' @importFrom tidyr replace_na
 #' @importFrom stringr str_subset
 #' @importFrom dplyr filter mutate across bind_rows group_by ungroup
 #' @importFrom rlang .data
+#' @importFrom Amelia amelia
 #'
-#' @examples \dontrun{COINobj <- coin_impute(COINobj, imtype = "ind_mean", dset = "raw")}
+#' @examples \dontrun{COIN <- coin_impute(COIN, imtype = "ind_mean", dset = "raw")}
 #'
 #' @return A dataframe of normalised indicators.
 #'
 #' @export
 
-coin_impute <- function(COINobj, imtype = "ind_mean", inames = NULL,
-                        dset = "Raw", groupvar = NULL, byyear = FALSE){
+impute <- function(COIN, imtype = "ind_mean", dset = "Raw",
+                  groupvar = NULL, byyear = FALSE, EMaglev = NULL, out2 = "COIN"){
 
   # First. check to see what kind of input we have.
-  out <- coin_aux_objcheck(COINobj, dset = dset, inames = inames)
+  out <- getIn(COIN, dset = dset)
   ind_data <- out$ind_data
-  ind_names <- out$ind_names
+  IndCodes <- out$IndCodes
 
   # get number of NAs before imputation
   nasumz <- colSums(is.na(ind_data))
-  nNA_start <- sum(nasumz[ind_names])
+  nNA_start <- sum(nasumz[IndCodes])
 
   message(paste0("Missing data points detected = ", nNA_start))
 
@@ -45,17 +54,69 @@ coin_impute <- function(COINobj, imtype = "ind_mean", inames = NULL,
 
   ## Now actually do the imputation, depending on the type...
 
-  if (imtype == "agg_mean"){ # use the mean of the other indicators in the aggregation group. Only works if data is normalised first.
+  if ((imtype == "agg_mean") | (imtype == "agg_median") ){ # use the mean of the other indicators in the aggregation group. Only works if data is normalised first.
 
-    # first check that normalised data is available
-    if (exists("Normalised",COINobj$Data)){ # we may proceed...
+    # this only works with normalised data, so do that first
+    # use minmax in [0, 1]
+    ind_dataN <- normalise(COIN, dset = dset, ntype = "minmax", npara = c(0,1),
+                                out2 = "df")
+    # just get the indicator cols, not the other ones
+    ind_dataN <- ind_dataN[IndCodes]
+    # we will need the original min and max to reconstruct
+    indmins <- apply(out$ind_data_only, 2, function(x) min(x, na.rm = T))
+    indmaxs <- apply(out$ind_data_only, 2, function(x) max(x, na.rm = T))
+    # indicator metadata
+    metad <- COIN$Input$IndMeta
+    # aggregation columns
+    agg_cols <- metad %>% dplyr::select(dplyr::starts_with("Agg")) # the columns with aggregation info in them
 
-      # call the aggregation function.... seems easiest. TO FINISH
-      stop("Sorry, didn't finish this option yet. Stay tuned.")
+    agg_colname <- colnames(agg_cols[1]) # the name of the aggregation level
+    agg_names <- unique(agg_cols[[1]]) # the names of the aggregation groups
+    sub_codes <- COIN$Input$IndMeta$IndCode # the ingredients to aggregate are the base indicators
+    ind_data_impN <- ind_dataN
 
+    if(is.null(COIN$Parameters$Weights)){
+      weights_lev <- rep(1, length(sub_codes))
+      message("No weights found in COIN. Using equal weights.")
     } else {
-      stop("Normalised data set not found (required for agg_mean). Please run coin_normalise first.")
+      weights_lev <- COIN$Parameters$Weights[[1]] # Indicator weights
     }
+
+    for (agroup in 1:length(agg_names)){ # loop over aggregation groups, inside the given agg level
+
+      iselect <- sub_codes[metad[,agg_colname]==agg_names[agroup]] %>% unique() # get indicator names belonging to group
+      indselect <- ind_dataN[iselect]
+      # get weights belonging to group, using codes
+      weights_group <- weights_lev[unique(sub_codes) %in% iselect]
+
+      if (imtype == "agg_mean"){
+        # Now get the mean. Had to do in a roundabout way to avoid rowmeans type functions... probably an easier way exists though
+        newcol <- indselect %>% dplyr::rowwise() %>%
+          dplyr::transmute(!!agg_names[agroup] := matrixStats::weightedMean(dplyr::c_across(cols = dplyr::everything()),
+                                                                            w = weights_group, na.rm = TRUE))
+      } else if (imtype == "agg_median"){
+        newcol <- indselect %>% dplyr::rowwise() %>%
+          dplyr::transmute(!!agg_names[agroup] := matrixStats::weightedMedian(dplyr::c_across(cols = dplyr::everything()),
+                                                                            w = weights_group, na.rm = TRUE))
+      }
+
+      # get any rows with NAs
+      missrows <- which(rowSums(is.na(indselect)) > 0)
+      # loop over NA rows
+      for (jj in missrows){
+        missind <- is.na(indselect[jj,]) %>% as.logical()
+        indselect[jj,missind] <- newcol[jj,]
+      }
+
+      ind_data_impN[iselect] <- indselect
+    }# for
+
+    # now scale back to original scale, reverse minmax transformation
+    # for the record, this is done by imodify, where .y is the index.
+    ind_data_imp <- purrr::imodify(ind_data_impN,
+                         ~{.x*(indmaxs[.y]-indmins[.y]) + indmins[.y]} )
+    ind_data[IndCodes] <- ind_data_imp
+    ind_data_imp <- ind_data
 
   } else if (imtype == "ind_mean"){ # impute using column MEAN, i.e. the mean of the indicator over all units
 
@@ -67,13 +128,13 @@ coin_impute <- function(COINobj, imtype = "ind_mean", inames = NULL,
         ind_data_yr <- dplyr::filter(ind_data,.data[[yrcol]] == yrs[[yr,1]]) # get only rows from year
         #now impute...
         ind_data_imp_list[[yr]] <- ind_data_yr %>%
-          dplyr::mutate(dplyr::across(all_of(ind_names), ~{tidyr::replace_na(.x, mean(.x, na.rm = TRUE))}))
+          dplyr::mutate(dplyr::across(all_of(IndCodes), ~{tidyr::replace_na(.x, mean(.x, na.rm = TRUE))}))
       }
       ind_data_imp <- dplyr::bind_rows(ind_data_imp_list) # join everything back together
 
     } else { # if not imputing by year
-      # the following applies the replace_na function to all columns specified by ind_names
-      ind_data_imp <- ind_data %>% dplyr::mutate(dplyr::across(all_of(ind_names), ~{tidyr::replace_na(.x, mean(.x, na.rm = TRUE))}))
+      # the following applies the replace_na function to all columns specified by IndCodes
+      ind_data_imp <- ind_data %>% dplyr::mutate(dplyr::across(all_of(IndCodes), ~{tidyr::replace_na(.x, mean(.x, na.rm = TRUE))}))
     }
 
   } else if (imtype == "ind_median"){ # impute using column MEDIAN, i.e. the median of the indicator over all units
@@ -85,13 +146,13 @@ coin_impute <- function(COINobj, imtype = "ind_mean", inames = NULL,
         ind_data_yr <- dplyr::filter(ind_data,.data[[yrcol]] == yrs[[yr,1]]) # get only rows from year
         #now impute...
         ind_data_imp_list[[yr]] <- ind_data_yr %>%
-          dplyr::mutate(dplyr::across(all_of(ind_names), ~{tidyr::replace_na(.x, median(.x, na.rm = TRUE))}))
+          dplyr::mutate(dplyr::across(all_of(IndCodes), ~{tidyr::replace_na(.x, median(.x, na.rm = TRUE))}))
       }
       ind_data_imp <- dplyr::bind_rows(ind_data_imp_list) # join everything back together
 
     } else { # if not imputing by year
-      # the following applies the replace_na function to all columns specified by ind_names
-      ind_data_imp <- ind_data %>% dplyr::mutate(dplyr::across(all_of(ind_names), ~{tidyr::replace_na(.x, median(.x, na.rm = TRUE))}))
+      # the following applies the replace_na function to all columns specified by IndCodes
+      ind_data_imp <- ind_data %>% dplyr::mutate(dplyr::across(all_of(IndCodes), ~{tidyr::replace_na(.x, median(.x, na.rm = TRUE))}))
     }
 
   } else if (imtype == "indgroup_mean"){ # use column MEAN, restricted to a particular group
@@ -106,14 +167,14 @@ coin_impute <- function(COINobj, imtype = "ind_mean", inames = NULL,
         ind_data_yr <- dplyr::filter(ind_data,.data[[yrcol]] == yrs[[yr,1]]) # get only rows from year
         #now impute...
         ind_data_imp_list[[yr]] <- ind_data_yr %>% dplyr::group_by(dplyr::across(dplyr::all_of(groupvar))) %>% # OLD dplyr::group_by(.dots=groupvar)
-          dplyr::mutate(dplyr::across(all_of(ind_names), ~tidyr::replace_na(.x, mean(.x, na.rm = TRUE))))
+          dplyr::mutate(dplyr::across(all_of(IndCodes), ~tidyr::replace_na(.x, mean(.x, na.rm = TRUE))))
       }
       ind_data_imp <- dplyr::bind_rows(ind_data_imp_list) # join everything back together
 
     } else { # if not imputing by year
       # This works by grouping the data by the grouping variable first. Operations then performed by group.
       ind_data_imp <- ind_data %>% dplyr::group_by(dplyr::across(dplyr::all_of(groupvar))) %>%
-        dplyr::mutate(dplyr::across(all_of(ind_names), ~tidyr::replace_na(.x, mean(.x, na.rm = TRUE))))
+        dplyr::mutate(dplyr::across(all_of(IndCodes), ~tidyr::replace_na(.x, mean(.x, na.rm = TRUE))))
     }
 
   } else if (imtype == "indgroup_median"){ # use column MEDIAN, restricted to a particular group
@@ -127,14 +188,14 @@ coin_impute <- function(COINobj, imtype = "ind_mean", inames = NULL,
         ind_data_yr <- dplyr::filter(ind_data,.data[[yrcol]] == yrs[[yr,1]]) # get only rows from year
         #now impute...
         ind_data_imp_list[[yr]] <- ind_data_yr %>% dplyr::group_by(dplyr::across(dplyr::all_of(groupvar))) %>%
-          dplyr::mutate(dplyr::across(all_of(ind_names), ~tidyr::replace_na(.x, median(.x, na.rm = TRUE))))
+          dplyr::mutate(dplyr::across(all_of(IndCodes), ~tidyr::replace_na(.x, median(.x, na.rm = TRUE))))
       }
       ind_data_imp <- dplyr::bind_rows(ind_data_imp_list) # join everything back together
 
     } else { # if not imputing by year
       # This works by grouping the data by the grouping variable first. Operations then performed by group.
       ind_data_imp <- ind_data %>% dplyr::group_by(dplyr::across(dplyr::all_of(groupvar))) %>%
-        dplyr::mutate(dplyr::across(all_of(ind_names), ~tidyr::replace_na(.x, median(.x, na.rm = TRUE))))
+        dplyr::mutate(dplyr::across(all_of(IndCodes), ~tidyr::replace_na(.x, median(.x, na.rm = TRUE))))
     }
 
   } else if (imtype == "latest_year"){ # substitute NAs with any available points from previous years
@@ -143,39 +204,93 @@ coin_impute <- function(COINobj, imtype = "ind_mean", inames = NULL,
     ind_data_imp_list[[1]] <- dplyr::filter(ind_data,.data[[yrcol]] == yrs[[1,1]]) # only imputing backwards in time, so first year available remains the same.
 
     if(nyears>1){
-    for (yr in 2:nyears){
+      for (yr in 2:nyears){
 
-      # get indicator from year and year-1 as separate dfs
-      ind_data_yr_all <- dplyr::filter(ind_data,.data[[yrcol]] == yrs[[yr,1]]) %>% as.data.frame() # get only rows from year and ind. cols. Have to change to df because otherwise next step doesn't work
-      ind_data_yr <- ind_data_yr_all %>% select(ind_names) # done in 2 steps so can access the other cols in a min.
-      ind_data_prev_yr <- dplyr::filter(ind_data,.data[[yrcol]] == yrs[[yr-1,1]]) %>% as.data.frame() %>% select(ind_names) # get only rows from year-1
+        # get indicator from year and year-1 as separate dfs
+        ind_data_yr_all <- dplyr::filter(ind_data,.data[[yrcol]] == yrs[[yr,1]]) %>% as.data.frame() # get only rows from year and ind. cols. Have to change to df because otherwise next step doesn't work
+        ind_data_yr <- ind_data_yr_all %>% select(IndCodes) # done in 2 steps so can access the other cols in a min.
+        ind_data_prev_yr <- dplyr::filter(ind_data,.data[[yrcol]] == yrs[[yr-1,1]]) %>% as.data.frame() %>% select(IndCodes) # get only rows from year-1
 
-      #now substitute any NAs from yr with those from prev_yr
-      ind_data_yr[is.na(ind_data_yr)] <- ind_data_prev_yr[is.na(ind_data_yr)]
+        #now substitute any NAs from yr with those from prev_yr
+        ind_data_yr[is.na(ind_data_yr)] <- ind_data_prev_yr[is.na(ind_data_yr)]
 
-      ind_data_yr <- cbind(select(ind_data_yr_all,-ind_names),ind_data_yr)
+        ind_data_yr <- cbind(select(ind_data_yr_all,-IndCodes),ind_data_yr)
 
-      ind_data_imp_list[[yr]] <- ind_data_yr # add to the list
-    }
-    ind_data_imp <- dplyr::bind_rows(ind_data_imp_list) # join everything back together
+        ind_data_imp_list[[yr]] <- ind_data_yr # add to the list
+      }
+      ind_data_imp <- dplyr::bind_rows(ind_data_imp_list) # join everything back together
     } else {stop("You can't impute by latest year with only one year of data.")}
+
+  } else if (imtype == "EM"){
+
+    # Use the expectation maximisation algorithm via AMELIA package.
+    # The main issue here is that the EM procedure needs a certain ratio of obs to variables.
+    # This may often be exceeded, so we have to do by aggregation levels
+
+    if(is.null(EMaglev)){
+      EMaglev <- 2
+    }
+
+    # aggregation columns
+    agg_cols <- COIN$Input$IndMeta %>% dplyr::select(dplyr::starts_with("Agg"))
+    # columns of interest: the indicators, plus the aggregation level
+    groupspecs <- cbind(COIN$Input$IndMeta$IndCode, agg_cols[[EMaglev-1]])
+    # the names of the aggregation groups
+    agg_names <- unique(groupspecs[,2])
+
+    # loop over aggregation groups
+    for (ii in 1:length(agg_names)){
+
+      # get indicator data only including unit codes and indicators from group
+      df <- ind_data[c("UnitCode", groupspecs[groupspecs[,2]==agg_names[ii],1])] %>% as.data.frame()
+
+      if (sum(is.na(df))>0){
+        # NAs are present
+        amOut <- try(Amelia::amelia(df, m = 1, p2s = 0, cs = "UnitCode", boot.type = "none"))
+        # may not have enough data points per variable depending on aglev
+        if(("try-error" %in% class(amOut))|(amOut$code!=1)){
+          stop("EM maximisation has not worked. This might be solved by imputing over a lower aggregation level (lower EMaglev)")
+        }
+        # collect imputed data
+        imps <- amOut$imputations
+      } else {
+        # no NAs. Have to make a list anyway to agree with the rest
+        imps <- rep(list(df),1)
+      }
+
+      if (ii == 1){
+        # for the first iteration we need to create a list
+        implist <- imps
+      } else {
+        # for successive iterations just append
+        implist <- Map(cbind, implist, imps)
+      }
+    }
+
+    # there will be duplicate IndCode columns, so remove all
+    ind_data_imp <- lapply(implist, function(x) x[colnames(x)!="UnitCode"])[[1]]
+    # add back the original non-numeric columns
+    ind_data[IndCodes] <- ind_data_imp
+    ind_data_imp <- ind_data
+
   }
 
   nasumz <- colSums(is.na(ind_data_imp))
-  nNA_end <- sum(nasumz[ind_names]) # counts total number of NAs in indicator columns, after imputation
+  nNA_end <- sum(nasumz[IndCodes]) # counts total number of NAs in indicator columns, after imputation
   message(paste0("Missing data points imputed = ", nNA_start-nNA_end, ", using method = ", imtype))
 
-  if (is.data.frame(COINobj)){ # Data frame
-    return(ind_data_imp)
+  # output to object if requested (only if input is COIN and out2 not df)
+  if( (out$otype=="COINobj") & (out2 !=  "df") ) {
+    COIN$Data$Imputed <- dplyr::ungroup(ind_data_imp)
+    COIN$Method$Imputation$imtype <- imtype
+    COIN$Method$Imputation$dset <- dset
+    COIN$Method$Imputation$groupvar <- groupvar
+    COIN$Method$Imputation$byyear <- byyear
+    COIN$Method$Imputation$EMaglev <- EMaglev
+    COIN$Method$Imputation$NImputed <- nNA_start-nNA_end
+    return(COIN)
   } else {
-    COINobj$Data$Imputed <- dplyr::ungroup(ind_data_imp)
-    COINobj$Method$Imputation$imtype <- imtype
-    COINobj$Method$Imputation$inames <- inames
-    COINobj$Method$Imputation$dset <- dset
-    COINobj$Method$Imputation$groupvar <- groupvar
-    COINobj$Method$Imputation$byyear <- byyear
-    COINobj$Method$Imputation$NImputed <- nNA_start-nNA_end
-    return(COINobj)
+    return(ind_data_imp)
   }
 
 }
