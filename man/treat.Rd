@@ -8,7 +8,7 @@ treat(
   COIN,
   dset = "Raw",
   winmax = NULL,
-  winchange = FALSE,
+  winchange = TRUE,
   deflog = "log",
   boxlam = NULL,
   t_skew = 2,
@@ -24,10 +24,10 @@ treat(
 
 \item{winmax}{The maximum number of points to Winsorise for each indicator. If NA, will keep Winsorising until skew&kurt thresholds achieved (but it is likely this will cause errors)}
 
-\item{winchange}{Logical: if TRUE, Winsorisation can change direction from one iteration to the next. Otherwise if FALSE (default), no change.}
+\item{winchange}{Logical: if TRUE (default), Winsorisation can change direction from one iteration to the next. Otherwise if FALSE, no change.}
 
 \item{deflog}{The type of transformation to apply if Winsorisation fails. If "log", use simple ln(x) as log transform (note: indicators containing negative values
-will be skipped). If "CTlog", will do ln(x-min(x)+1), as used in the COIN Tool. If "GIIlog", use GII log transformation.
+will be skipped). If "CTlog", will do ln(x-min(x) + a), where a = 0.01*(max(x)-min(x)), similar to that used in the COIN Tool. If "GIIlog", use GII log transformation.
 If "boxcox", performs a Box Cox transformation. In this latter case, you should also specify boxlam. Finally, if "none", will
 return the indicator untreated.}
 
@@ -40,8 +40,8 @@ return the indicator untreated.}
 \item{individual}{A data frame specifying individual treatment for each indicator, with each row correspoding to one indicator to be treated. Rows are:
 "IndCode" The code of the indicator to be treated
 "Treat" The type of treatment to apply, one of "win" (Winsorise), "log" (log), "GIIlog" (GII log), "CTlog" (COIN Tool log), "boxcox" (Box Cox), or "None" (no treatment)
-"winmax" The maximum number of points to Winsorise. Ignored if the corresponding entry in "Treat" is not "win"
-"thresh" Either NA, which means that Winsorisation will continue up to winmax with no checks on skew and kurtosis, or "thresh", which uses the skew and kurtosis thresholds specified in t_skew and t_kurt.
+"Winmax" The maximum number of points to Winsorise. Ignored if the corresponding entry in "Treat" is not "win"
+"Thresh" Either NA, which means that Winsorisation will continue up to winmax with no checks on skew and kurtosis, or "thresh", which uses the skew and kurtosis thresholds specified in t_skew and t_kurt.
 "boxlam" Lambda parameter for the Box Cox transformation}
 
 \item{indiv_only}{Logical: if TRUE, only the indicators specified in "individual" are treated.

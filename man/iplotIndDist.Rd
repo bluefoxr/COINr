@@ -5,7 +5,7 @@
 \title{Interactive indicator distribution plots}
 \usage{
 iplotIndDist(
-  COINobj,
+  COIN,
   dset = "Raw",
   icodes = NULL,
   ptype = "Violin",
@@ -14,7 +14,7 @@ iplotIndDist(
 )
 }
 \arguments{
-\item{COINobj}{The COIN object, or a data frame of indicator data}
+\item{COIN}{The COIN object, or a data frame of indicator data}
 
 \item{dset}{The source data set to use for indicator data (if input is COIN object)}
 
