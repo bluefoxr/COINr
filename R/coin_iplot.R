@@ -4,7 +4,7 @@
 #' HTML documents, websites, etc, or used for more interactive data exploration. This only plots one
 #' indicator at a time - for multiple plots you can use plotIndDist()
 #'
-#' @param COINobj The COIN object, or a data frame of indicator data
+#' @param COIN The COIN object, or a data frame of indicator data
 #' @param dset The source data set to use for indicator data (if input is COIN object)
 #' @param icodes A character vector of a single indicator name or aggregate name to plot.
 #' @param ptype The type of plot to produce. Currently supports "Violin" and "Histogram".
@@ -19,10 +19,10 @@
 #'
 #' @export
 
-iplotIndDist <- function(COINobj, dset = "Raw", icodes = NULL, ptype = "Violin", aglev = 1,
+iplotIndDist <- function(COIN, dset = "Raw", icodes = NULL, ptype = "Violin", aglev = 1,
                         axlims = NULL){
 
-  out1 <- getIn(COINobj, dset = dset, icodes = icodes, aglev = aglev)
+  out1 <- getIn(COIN, dset = dset, icodes = icodes, aglev = aglev)
   ind_data_only <- out1$ind_data_only
   ind_names <- out1$IndNames
   ind_code <- out1$IndCodes
@@ -31,15 +31,15 @@ iplotIndDist <- function(COINobj, dset = "Raw", icodes = NULL, ptype = "Violin",
 
   if((out1$otype=="COINobj") & (aglev == 1)){
     # look for units
-    if(exists("IndUnit",COINobj$Input$IndMeta)){
+    if(exists("IndUnit",COIN$Input$IndMeta)){
       # find unit for indicator
-      indunit <- COINobj$Input$IndMeta$IndUnit[COINobj$Input$IndMeta$IndCode == ind_code]
+      indunit <- COIN$Input$IndMeta$IndUnit[COIN$Input$IndMeta$IndCode == ind_code]
     } else {
       # if not, NULL
       indunit <- ""
     }
   } else {
-    # if not COINobj, no units
+    # if not COIN, no units
     indunit <- ""
   }
 
