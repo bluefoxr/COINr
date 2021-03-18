@@ -5,9 +5,9 @@
 #' @param COIN The COIN object
 #' @param dset The data set to treat
 #' @param winmax The maximum number of points to Winsorise for each indicator. If NA, will keep Winsorising until skew&kurt thresholds achieved (but it is likely this will cause errors)
-#' @param winchange Logical: if TRUE, Winsorisation can change direction from one iteration to the next. Otherwise if FALSE (default), no change.
+#' @param winchange Logical: if TRUE (default), Winsorisation can change direction from one iteration to the next. Otherwise if FALSE, no change.
 #' @param deflog The type of transformation to apply if Winsorisation fails. If "log", use simple ln(x) as log transform (note: indicators containing negative values
-#' will be skipped). If "CTlog", will do ln(x-min(x)+1), as used in the COIN Tool. If "GIIlog", use GII log transformation.
+#' will be skipped). If "CTlog", will do ln(x-min(x) + a), where a = 0.01*(max(x)-min(x)), similar to that used in the COIN Tool. If "GIIlog", use GII log transformation.
 #' If "boxcox", performs a Box Cox transformation. In this latter case, you should also specify boxlam. Finally, if "none", will
 #' return the indicator untreated.
 #' @param boxlam The lambda parameter of the Box Cox transform.
@@ -16,8 +16,8 @@
 #' @param individual A data frame specifying individual treatment for each indicator, with each row correspoding to one indicator to be treated. Rows are:
 #' "IndCode" The code of the indicator to be treated
 #' "Treat" The type of treatment to apply, one of "win" (Winsorise), "log" (log), "GIIlog" (GII log), "CTlog" (COIN Tool log), "boxcox" (Box Cox), or "None" (no treatment)
-#' "winmax" The maximum number of points to Winsorise. Ignored if the corresponding entry in "Treat" is not "win"
-#' "thresh" Either NA, which means that Winsorisation will continue up to winmax with no checks on skew and kurtosis, or "thresh", which uses the skew and kurtosis thresholds specified in t_skew and t_kurt.
+#' "Winmax" The maximum number of points to Winsorise. Ignored if the corresponding entry in "Treat" is not "win"
+#' "Thresh" Either NA, which means that Winsorisation will continue up to winmax with no checks on skew and kurtosis, or "thresh", which uses the skew and kurtosis thresholds specified in t_skew and t_kurt.
 #' "boxlam" Lambda parameter for the Box Cox transformation
 #' @param indiv_only Logical: if TRUE, only the indicators specified in "individual" are treated.
 #' If false, all indicators are treated: any outside of "individual" will get default treatment.
@@ -31,7 +31,7 @@
 #' @export
 #'
 
-treat <- function(COIN, dset = "Raw", winmax = NULL, winchange = FALSE, deflog = "log", boxlam = NULL,
+treat <- function(COIN, dset = "Raw", winmax = NULL, winchange = TRUE, deflog = "log", boxlam = NULL,
                        t_skew = 2, t_kurt = 3.5, individual = NULL, indiv_only = TRUE){
 
   # First check object type and extract
@@ -71,7 +71,8 @@ treat <- function(COIN, dset = "Raw", winmax = NULL, winchange = FALSE, deflog =
       if ( (w$winz >= winmax)  &  ((abs(sk)>t_skew) & (kt>t_kurt)) ){ # didn't work
 
         # do log-type transformation
-        params <- list(winmax = winmax, IndCodes = IndCodes, ii = ii, boxlam = boxlam)
+        params <- list(winmax = winmax, IndCodes = IndCodes, ii = ii, boxlam = boxlam,
+                       forced = FALSE)
         logout <- loggish(icol, deflog, params)
         # record outputs
         icol <- logout$x # the transformed values
@@ -138,11 +139,11 @@ treat <- function(COIN, dset = "Raw", winmax = NULL, winchange = FALSE, deflog =
           treat_flag[w$imax,ii] <- "WHigh" # Flag Winsorisation (if NULL, will not assign anything)
           treat_flag[w$imin,ii] <- "WLow"
           if ( is.na(individual$Thresh[individual$IndCode==ind_name]) ){
-            TreatSpec <- paste0("Forced Win (no thresh), winmax = ", winmaxii)
+            TreatSpec[ii] <- paste0("Forced Win (no thresh), winmax = ", winmaxii)
           } else {
-            TreatSpec <- paste0("Forced Win, winmax = ", winmaxii)
+            TreatSpec[ii] <- paste0("Forced Win, winmax = ", winmaxii)
           }
-          TreatSpec <- paste0("Forced Win, winmax = ", winmaxii)
+          TreatSpec[ii] <- paste0("Forced Win, winmax = ", winmaxii)
           if (w$winz>0){
             Treatment[ii] <- paste0("Winsorised ", w$winz, " points")}
           else {Treatment[ii] <- "None"}
@@ -154,7 +155,9 @@ treat <- function(COIN, dset = "Raw", winmax = NULL, winchange = FALSE, deflog =
           icol <- dplyr::pull(ind_data_only,ii) # get fresh version of column
 
           # do log-type transformation
-          logout <- loggish(icol, individual$Treat[individual$IndCode==ind_name])
+          params <- list(winmax = individual$Winmax[individual$IndCode==ind_name], IndCodes = IndCodes, ii = ii,
+                         boxlam = individual$Boxlam[individual$IndCode==ind_name], forced = TRUE)
+          logout <- loggish(icol, individual$Treat[individual$IndCode==ind_name], params)
           # record outputs
           ind_data_treated[IndCodes[ii]] <- logout$x # the transformed values
           treat_flag[,ii] <- logout$Flag
@@ -179,7 +182,9 @@ treat <- function(COIN, dset = "Raw", winmax = NULL, winchange = FALSE, deflog =
           icol <- dplyr::pull(ind_data_only,ii) # get fresh version of column
 
           # do log-type transformation
-          logout <- loggish(icol, individual$Treat[individual$IndCode==ind_name])
+          params <- list(winmax = winmax, IndCodes = IndCodes, ii = ii, boxlam = boxlam,
+                         forced = FALSE)
+          logout <- loggish(icol, individual$Treat[individual$IndCode==ind_name], params)
           # record outputs
           icol <- logout$x # the transformed values
           treat_flag[,ii] <- logout$Flag
@@ -205,6 +210,9 @@ treat <- function(COIN, dset = "Raw", winmax = NULL, winchange = FALSE, deflog =
 
   # tidy up a bit
 
+  Treatment[is.na(Treatment)] <- "None"
+  TreatSpec[is.na(TreatSpec)] <- "None"
+
   ntreated <- data.frame(
     IndCode = IndCodes,
     Low = map_dbl(as.data.frame(treat_flag), ~sum(.x=="WLow")),
@@ -225,6 +233,7 @@ treat <- function(COIN, dset = "Raw", winmax = NULL, winchange = FALSE, deflog =
     COIN$Method$Treatment$winmax <- winmax
     COIN$Method$Treatment$winchange <- winchange
     COIN$Method$Treatment$deflog <- deflog
+    COIN$Method$Treatment$boxlam <- boxlam
     COIN$Method$Treatment$t_skew <- t_skew
     COIN$Method$Treatment$t_kurt <- t_kurt
     COIN$Method$Treatment$individual <- individual
@@ -360,43 +369,68 @@ loggish <- function(x, ltype, params){
     l$Flag <- "Err"
     # x will be passed through with no treatment
     l$x <- x
-    warning(paste0(params$IndCodes[params$ii],": indicator exceeded max winsorisation but cannot do log transform because negative or zero values. Please check."))
-    l$Treatment <- "None: exceeded winmax but log error"
-    l$TreatSpec <- paste0("Default, winmax = ", params$winmax)
+    warning(paste0(params$IndCodes[params$ii],": log transform attempted but failed because negative or zero values. Please check."))
+    if(params$forced){
+      l$TreatSpec <- paste0("Forced log")
+      l$Treatment <- "None: log error"
+    } else {
+      l$TreatSpec <- paste0("Default, winmax = ", params$winmax)
+      l$Treatment <- "None: exceeded winmax but log error"
+    }
 
   } else if ( (sum(x<=0, na.rm=T)==0) & (ltype == "log") ) { # OK to normal log
 
     l$x <- log(x)
     l$Flag <- "Log"
-    l$Treatment <- "Log (exceeded winmax)"
-    l$TreatSpec <- paste0("Default, winmax = ", params$winmax)
+    if(params$forced){
+      l$TreatSpec <- paste0("Forced log")
+      l$Treatment <- "Log"
+    } else {
+      l$TreatSpec <- paste0("Default, winmax = ", params$winmax)
+      l$Treatment <- "Log (exceeded winmax)"
+    }
 
   } else if (ltype == "GIIlog"){ # GII log
 
     # get GII log
     l$x <- log( (max(x, na.rm = T)-1)*(x-min(x, na.rm = T))/(max(x, na.rm = T)-min(x, na.rm = T)) + 1 )
     l$Flag <- "GIILog"
-    l$Treatment <- "GIILog (exceeded winmax)"
-    l$TreatSpec <- paste0("Default, winmax = ", params$winmax)
+    if(params$forced){
+      l$TreatSpec <- paste0("Forced GIIlog")
+      l$Treatment <- "GIILog"
+    } else {
+      l$TreatSpec <- paste0("Default, winmax = ", params$winmax)
+      l$Treatment <- "GIILog (exceeded winmax)"
+    }
 
   } else if (ltype == "CTlog"){
     # COIN TOOl style log: subtract min and add 1
-    l$x <- log(x- min(x,na.rm = T) + 1)
+    l$x <- log(x- min(x,na.rm = T) + 0.01*(max(x, na.rm = T)-min(x, na.rm = T)))
     l$Flag <- "CTLog"
-    l$Treatment <- "CTLog (exceeded winmax)"
-    l$TreatSpec <- paste0("Default, winmax = ", params$winmax)
+    if(params$forced){
+      l$TreatSpec <- paste0("Forced CTlog")
+      l$Treatment <- "CTLog"
+    } else {
+      l$TreatSpec <- paste0("Default, winmax = ", params$winmax)
+      l$Treatment <- "CTLog (exceeded winmax)"
+    }
 
   } else if (ltype == "boxcox"){
     # Box Cox transform
     l$x <- BoxCox(x,params$boxlam)
     l$Flag <- "BoxCox"
-    l$Treatment <- paste0("Box Cox with lambda = ",params$boxlam," (exceeded winmax)")
-    l$TreatSpec <- paste0("Default, winmax = ", params$winmax)
+    if(params$forced){
+      l$TreatSpec <- paste0("Forced Box-Cox")
+      l$Treatment <- paste0("Box Cox with lambda = ",params$boxlam)
+    } else {
+      l$TreatSpec <- paste0("Default, winmax = ", params$winmax)
+      l$Treatment <- paste0("Box Cox with lambda = ",params$boxlam," (exceeded winmax)")
+    }
 
   } else if (ltype == "none"){
 
     # No transform
-    l$x <- l$x
+    l$x <- x
     # this indicator should be excluded from any treatment
     l$Flag <- "ForcedNo"
     l$Treatment <- "ForcedNone"
