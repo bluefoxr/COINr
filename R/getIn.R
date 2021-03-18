@@ -12,13 +12,14 @@
 #' below, and the COINr vignette.
 #'
 #' @param obj An input object. The function can handle either the COIN object, or a data frame.
-#' The data frame should have each column as an indicator, and an optional column "UnitCode" which
-#' specifies the code (or name) of each unit. Any other type of object will return an error.
+#' The data frame should have each column as an indicator, and optional columns "UnitCode" and "UnitName" which
+#' specify the code (or name) of each unit. Any columns except these latter two will be treated as indicators. Any other type of object will return an error.
 #' @param dset If input is a COIN object, this specifies which data set in .$Data to use.
 #' @param icodes An optional character vector of indicator codes to subset the indicator data. Usefully, can also refer to
 #' an aggregation group name, and data will be subsetted accordingly. NOTE does not work with multiple aggregate group names.
 #' @param aglev The aggregation level to take indicator data from. Integer from 1 (indicator level)
 #' to N (top aggregation level, typically the index).
+#' @param justnumeric Logical: if TRUE, removes any non-numeric columns from ind_data_only. Otherwise keeps all except those
 #'
 #' @importFrom magrittr extract
 #' @importFrom dplyr select starts_with ends_with
@@ -28,11 +29,7 @@
 #' \dontrun{
 #'
 #' # Get data from indicators "Ind1" and "Ind5", from the "Raw" data set
-#' out <- getIn(COINobj, dset = "Raw", icodes = c("Ind1", "Ind5"))
-#'
-#' # get data from "Research" and "Education" dimensions, calling agggregation level 2.
-#' out <- coin_aux_objcheck(COINobj, dset = "Aggregated",
-#'                          icodes = c("Research", "Education"), aglev = 2)
+#' out <- getIn(obj, dset = "Raw", icodes = c("Ind1", "Ind5"))
 #' }
 #'
 #' @return A list with the following entries:
@@ -45,7 +42,7 @@
 #'
 #' @export
 
-getIn <- function(obj, dset = "Raw", icodes = NULL, aglev = NULL){
+getIn <- function(obj, dset = "Raw", icodes = NULL, aglev = NULL, justnumeric = TRUE){
 
   # Check to see what kind of input we have.
   if ("COIN object" %in% class(obj)){ # COIN obj
@@ -116,27 +113,32 @@ getIn <- function(obj, dset = "Raw", icodes = NULL, aglev = NULL){
 
     ind_data <- obj
 
-    if (is.null(icodes)){ # no ind names given
+    if (is.null(icodes)){ # no ind codes given
       if (exists("UnitCode",ind_data)){
         # If there are unit codes, record them and assume all other cols are indicator names
         IndCodes <- obj[colnames(obj) != "UnitCode"] %>% colnames()
         UnitCodes <- obj$UnitCode
-        IndNames <- IndCodes # we don't know names, so use codes
       } else {
         # All cols are indicators. No names supplied.
         IndCodes <- colnames(obj)
-        IndNames <- IndCodes # we don't know names, so use codes
         UnitCodes <- NA
       }
     } else { # indicator names are supplied
       IndCodes <- icodes
-      IndNames <- IndCodes # we don't know names, so use codes
       if (exists("UnitCode",ind_data)){
         UnitCodes <- obj$UnitCode
       } else {
         UnitCodes <- NA
       }
     }
+
+    if (exists("UnitName",ind_data)){
+      IndNames <- ind_data$UnitName
+      IndCodes <- IndCodes[IndCodes != "UnitName"]
+    } else {
+      IndNames <- IndCodes # we don't know names, so use codes
+    }
+
 
   } else { # Not COIN obj OR df
     stop("Input should either be COIN object or data frame.")
@@ -149,6 +151,16 @@ getIn <- function(obj, dset = "Raw", icodes = NULL, aglev = NULL){
   } else {
     ind_data_only = ind_data[NULL]
     warning("Indicator codes not found in selected level or data set.")
+  }
+
+  # finally, remove any non-numeric columns in ind_data_only
+  if(justnumeric){
+    numcols <- unlist(lapply(ind_data_only, is.numeric))
+    ind_data_only <- ind_data_only[numcols]
+    IndCodes <- IndCodes[numcols]
+    if (length(numcols)>ncol(ind_data_only)){
+      warning(paste0("Removed ",length(numcols)-ncol(ind_data_only), " non-numeric column(s)."))
+    }
   }
 
   out <- list(IndCodes = IndCodes,

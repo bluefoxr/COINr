@@ -4,12 +4,12 @@
 \alias{getIn}
 \title{Get subsets of indicator data}
 \usage{
-getIn(obj, dset = "Raw", icodes = NULL, aglev = NULL)
+getIn(obj, dset = "Raw", icodes = NULL, aglev = NULL, justnumeric = TRUE)
 }
 \arguments{
 \item{obj}{An input object. The function can handle either the COIN object, or a data frame.
-The data frame should have each column as an indicator, and an optional column "UnitCode" which
-specifies the code (or name) of each unit. Any other type of object will return an error.}
+The data frame should have each column as an indicator, and optional columns "UnitCode" and "UnitName" which
+specify the code (or name) of each unit. Any columns except these latter two will be treated as indicators. Any other type of object will return an error.}
 
 \item{dset}{If input is a COIN object, this specifies which data set in .$Data to use.}
 
@@ -18,6 +18,8 @@ an aggregation group name, and data will be subsetted accordingly. NOTE does not
 
 \item{aglev}{The aggregation level to take indicator data from. Integer from 1 (indicator level)
 to N (top aggregation level, typically the index).}
+
+\item{justnumeric}{Logical: if TRUE, removes any non-numeric columns from ind_data_only. Otherwise keeps all except those}
 }
 \value{
 A list with the following entries:
@@ -45,11 +47,7 @@ below, and the COINr vignette.
 \dontrun{
 
 # Get data from indicators "Ind1" and "Ind5", from the "Raw" data set
-out <- getIn(COINobj, dset = "Raw", icodes = c("Ind1", "Ind5"))
-
-# get data from "Research" and "Education" dimensions, calling agggregation level 2.
-out <- coin_aux_objcheck(COINobj, dset = "Aggregated",
-                         icodes = c("Research", "Education"), aglev = 2)
+out <- getIn(obj, dset = "Raw", icodes = c("Ind1", "Ind5"))
 }
 
 }
