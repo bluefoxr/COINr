@@ -2,29 +2,36 @@
 #'
 #' Generates an interactive visualisation of one or two indicators at a time. Requires Shiny and an active R session.
 #'
-#' @param COINobj The COIN object, or a data frame of indicator data.
-#' @param inames A set of indicator codes to include. Defaults to all indicators.
+#' @param COIN The COIN object, or a data frame of indicator data.
+#' @param icodes A set of indicator codes to include. Defaults to all indicators.
 #' @param dset The data set to plot.
 #'
 #' @import shiny
 #' @importFrom plotly plot_ly plotlyOutput layout add_trace renderPlotly
 #' @importFrom reactable reactable renderReactable
 #'
-#' @examples \dontrun{coin_indicatordash(COINobj, inames = NULL, dset = "raw")}
+#' @examples \dontrun{indDash(COIN, icodes = NULL, dset = "raw")}
 #'
 #' @return Interactive visualisation
 #'
 #' @export
 
-coin_indicatordash <- function(COINobj, inames = NULL, dset = "Raw"){
+indDash <- function(COIN, icodes = NULL, dset = "Raw"){
 
   # first, get the indicator data from input object
-  out <- coin_aux_objcheck(COINobj, dset, inames)
+  out <- getIn(COIN, dset, icodes)
   ind_data_only <- out$ind_data_only
   # this is used to label scatter plot. Will need to be generalised.
   code_yr <- out$ind_data$UnitName
 
   rfac = 0.1 # parameter to adjust the fixed range when matching axes
+
+  # data set names, include denoms if possible
+  if(is.null(COIN$Input$Denominators)){
+    dsetnames <- names(COIN$Data)
+  } else {
+    dsetnames <- c("Denominators", names(COIN$Data))
+  }
 
   ###--------- Define the UI ---------------
 
@@ -33,10 +40,10 @@ coin_indicatordash <- function(COINobj, inames = NULL, dset = "Raw"){
       h2("Indicator Viewer"),
       hr(),
       h4("Indicator 1"),
-      selectInput("dset1", "Data set", choices= names(COINobj$Data) ),
+      selectInput("dset1", "Data set", choices= dsetnames, selected =  dset),
       selectInput("vr1", "Indicator", choices=colnames(ind_data_only)),
       h4("Indicator 2"),
-      selectInput("dset2", "Data set", choices= names(COINobj$Data) ),
+      selectInput("dset2", "Data set", choices= dsetnames, selected =  dset),
       selectInput("vr2", "Indicator", choices=colnames(ind_data_only)),
       textOutput("info"),
       checkboxInput(inputId = "axmatch", label = "Plot indicators on the same axis range", value = FALSE),
@@ -116,12 +123,12 @@ coin_indicatordash <- function(COINobj, inames = NULL, dset = "Raw"){
 
     # update data set 1 to selected one
     observeEvent(input$dset1,{
-      idata1(coin_aux_objcheck(COINobj, input$dset1, inames)$ind_data_only)
+      idata1(getIn(COIN, input$dset1, icodes)$ind_data_only)
     })
 
     # update data set 2 to selected one
     observeEvent(input$dset2,{
-      idata2(coin_aux_objcheck(COINobj, input$dset2, inames)$ind_data_only)
+      idata2(getIn(COIN, input$dset2, icodes)$ind_data_only)
     })
 
     ## ---- Plots ---- ##
@@ -239,7 +246,7 @@ coin_indicatordash <- function(COINobj, inames = NULL, dset = "Raw"){
     output$treatinfo1 <- renderTable({
 
       if(input$dset1=="Treated"){
-        tbl <- COINobj$Analysis$Treatment$Summary
+        tbl <- COIN$Analysis$Treated$TreatSummary
         # get row of indicator, remove indcode
         treatinfo <- tbl[tbl$IndCode == isel1(),-1]
         # add stats
@@ -259,7 +266,7 @@ coin_indicatordash <- function(COINobj, inames = NULL, dset = "Raw"){
     output$treatinfo2 <- renderTable({
 
       if(input$dset2=="Treated"){
-        tbl <- COINobj$Analysis$Treatment$Summary
+        tbl <- COIN$Analysis$Treated$TreatSummary
         # get row of indicator, remove indcode
         treatinfo <- tbl[tbl$IndCode == isel2(),-1]
         # add stats
@@ -280,7 +287,7 @@ coin_indicatordash <- function(COINobj, inames = NULL, dset = "Raw"){
 
       # show info of indicator 1 if a treated variable is selected, otherwise i2, otherwise message
       if(input$dset1=="Treated" | input$dset2=="Treated"){
-        treatinfoall <- COINobj$Analysis$Treatment$Summary
+        treatinfoall <- COIN$Analysis$Treated$TreatSummary
         treatinfoall <- treatinfoall[treatinfoall$Treatment !="None",]
       } else {
         treatinfoall <- data.frame(IndCode = "Select a treated data set (if it exists) to view.")
@@ -295,13 +302,13 @@ coin_indicatordash <- function(COINobj, inames = NULL, dset = "Raw"){
     # Update dropdown menu of indicator selection based on data set 1
     observeEvent(input$dset1,{
       updateSelectInput(session = session, inputId = "vr1",
-                        choices = coin_aux_objcheck(COINobj,input$dset1,inames)$ind_names)
+                        choices = getIn(COIN,input$dset1,icodes)$IndCodes)
     })
 
     # Update dropdown menu of indicator selection based on data set 2
     observeEvent(input$dset2,{
       updateSelectInput(session = session, inputId = "vr2",
-                        choices = coin_aux_objcheck(COINobj,input$dset2,inames)$ind_names)
+                        choices = getIn(COIN,input$dset2,icodes)$IndCodes)
     })
 
   }
