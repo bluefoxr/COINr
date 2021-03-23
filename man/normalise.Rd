@@ -5,28 +5,37 @@
 \title{Normalise indicator data sets}
 \usage{
 normalise(
-  COINobj,
+  COIN,
   ntype = "minmax",
   npara = NULL,
-  inames = NULL,
+  icodes = NULL,
   dset = "Raw",
   directions = NULL,
+  individual = NULL,
+  indiv_only = FALSE,
   out2 = NULL
 )
 }
 \arguments{
-\item{COINobj}{Either the COIN object, or a data frame of indicator data}
+\item{COIN}{Either the COIN object, or a data frame of indicator data}
 
-\item{ntype}{The type of normalisation method. Either "minmax", "zscore", or "custom".}
+\item{ntype}{The type of normalisation method. Either "minmax", "zscore", "scaled", "rank", "borda", "prank", "fracmax", "dist2targ", "dist2ref", "dist2max", "custom" or "none".}
 
 \item{npara}{Supporting object for ntype.}
 
-\item{inames}{Character vector of indicator names, indicating which columns to normalise. Use this if you only want to normalise certain columns, or you are inputting a data frame with some columns which are not to be normalised (e.g. country names, groups, ...)}
+\item{icodes}{Character vector of indicator names, indicating which columns to normalise. Use this if you only want to normalise certain columns, or you are inputting a data frame with some columns which are not to be normalised (e.g. country names, groups, ...)}
 
 \item{dset}{The data set to normalise}
 
 \item{directions}{A vector specifying the direction assigned to each indicator.
-Needs to be the same length as the number of indicators, or the number of indicators in inames, if specified.}
+Needs to be the same length as the number of indicators, or the number of indicators in icodes, if specified.}
+
+\item{individual}{A list of named lists specifiying individual normalisation to apply to specific indicators. Should be structured as follows:
+The name of each sublist should be the indicator code. The the list elements are:
+.$ntype is the type of normalisation to apply
+.$npara is a corresponding object or parameters that are used by ntype}
+
+\item{indiv_only}{Logical: if FALSE (default), indicators not specified in individual are subjected to default normalisation. Otherwise if TRUE they are not normalised.}
 
 \item{out2}{Where to output the results. If "COIN" (default for COIN input), appends to updated COIN,
 otherwise if "df" outputs to data frame.}
@@ -38,6 +47,6 @@ An updated COIN object with .$Data$Normalised added.
 A dataset of indicators is normalised using one of several methods. This function also supports custom normalisation.
 }
 \examples{
-\dontrun{df_norm <- normalise(COINobj, ntype="minmax", npara = c(0,1))}
+\dontrun{df_norm <- normalise(COIN, ntype="minmax", npara = c(0,1))}
 
 }
