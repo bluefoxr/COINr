@@ -196,6 +196,8 @@ normalise <- function(COIN, ntype="minmax", npara = NULL, icodes = NULL,
       # Nothing
       dfn <- df
 
+    } else {
+      stop("Normalisation type not recognised.")
     }
     return(dfn)
   }
