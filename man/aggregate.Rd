@@ -5,20 +5,24 @@
 \title{Aggregate indicators}
 \usage{
 aggregate(
-  COINobj,
+  COIN,
   agtype = "arith_mean",
   agweights = NULL,
   dset = "Normalised",
-  agtype_bylevel = NULL
+  agtype_bylevel = NULL,
+  out2 = NULL
 )
 }
 \arguments{
-\item{COINobj}{COIN object}
+\item{COIN}{COIN object}
 
 \item{agtype}{The type of aggregation method.}
 
-\item{agweights}{A list of weights to use in the aggregation. If not specified,
-will look in the COIN object (i.e. via coin_weight.R).}
+\item{agweights}{The weights to use in the aggregation. This can either be:
+NULL, in which case it will use the weights that were attached to IndMeta and AggMeta in GII_assemble (if they exist), or
+A character string which corresponds to a named list of weights stored in .$Parameters$Weights. You can either add these manually or through rew8r.
+E.g. entering agweights = "Original" will use the original weights read in on assembly. This is equivalent to agweights = NULL.
+Or, a list of weights to use in the aggregation.}
 
 \item{dset}{Which data set (contained in COIN object) to use}
 
