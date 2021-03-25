@@ -13,6 +13,9 @@
 
 coin_rew8r <- function(COINobj){
 
+  ### NOTE TO ME. Replace all this with the GII version. Also cos I changed the weights location now,
+  # so it anyway won't work without some changes.
+
   if (!exists("Aggregated",COINobj$Data)){
     stop("No aggregated data set found. You have to aggregate your index first using aggregate, otherwise I don't know
          what method you want to use for aggregation.")
