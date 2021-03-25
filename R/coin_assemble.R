@@ -200,7 +200,7 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL){
   # we just need to remove NAs
   agweights <- lapply(agweights, function(x) x[!is.na(x)])
   # squirrel away in object
-  COINobj$Parameters$Weights <- agweights
+  COINobj$Parameters$Weights$Original <- agweights
 
   #------- Create a lookup dictionary for codes <--> names
   # this is like a lookup table of all indicator/agg codes and names
