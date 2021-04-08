@@ -48,7 +48,15 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL){
 
   # Extract indicator codes from raw data
   cnames1 <- IndData %>% dplyr::select(!dplyr::starts_with(
-    c("UnitCode", "UnitName", "Year", "Group_","Den_", "IndUnit")) ) %>% colnames()
+    c("UnitCode", "UnitName", "Year", "Group_","Den_", "IndUnit", "x_")) ) %>% colnames()
+
+  # check for any non-numeric cols and stop if any present
+  ind_data_only <- IndData[cnames1]
+  not_num <- cnames1[!apply(ind_data_only, 2, is.numeric)]
+  if(length(not_num)>0){
+    # stop, print any non-numeric
+    stop(paste0("Non-numeric columns detected: ", not_num))
+  }
 
   # In case no indicator cols present
   if(is.null(cnames1)){
@@ -63,7 +71,7 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL){
   message("-----------------")
   if(ncol(IndData1) < ncol(IndData)){
     denoms <- IndData %>% dplyr::select(
-      dplyr::starts_with(c("UnitCode", "UnitName", "Year", "Group_", "Den_"))) # keep denominators to one side for the moment
+      dplyr::starts_with(c("UnitCode", "UnitName", "Year", "Group_", "Den_", "x_"))) # keep denominators to one side for the moment
     message("Denominators detected - stored in .$Input$Denominators")
   } else {
     denoms <- NULL # this will have the effect of not attaching to the list
@@ -80,7 +88,7 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL){
   # if include is specified
   if(!is.null(include)){
     ind_data <- IndData %>% dplyr::select(dplyr::starts_with(
-      c("UnitCode", "UnitName", "Year", "Group_", "IndUnit")) & include )
+      c("UnitCode", "UnitName", "Year", "Group_", "IndUnit", "x_")) & include )
     ind_meta <- IndMeta[IndMeta$IndCode %in% include,]
   } else {
     ind_data <- IndData
