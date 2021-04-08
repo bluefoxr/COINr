@@ -77,7 +77,7 @@ getIn <- function(obj, dset = "Raw", icodes = NULL, aglev = NULL, justnumeric = 
     if(is.null(icodes)){
       # get indicator names, i.e. columns excluding groups, denominators, names etc.
       icodes <- ind_data %>% dplyr::select(!dplyr::starts_with(
-        c("UnitCode", "UnitName", "Year", "Group_")) ) %>% colnames()
+        c("UnitCode", "UnitName", "Year", "Group_", "x_")) ) %>% colnames()
     }
 
     if (is.null(aglev) | (dset=="Denominators")){ # take icodes as it is given
@@ -105,7 +105,7 @@ getIn <- function(obj, dset = "Raw", icodes = NULL, aglev = NULL, justnumeric = 
     # select indicator data columns
 
     ind_data <- ind_data %>% dplyr::select(dplyr::starts_with(
-      c("UnitCode", "UnitName", "Year", "Group_", IndCodes)) )
+      c("UnitCode", "UnitName", "Year", "Group_", "x_", IndCodes)) )
 
   } else if (is.data.frame(obj)){ # Data frame
 
