@@ -10,6 +10,7 @@ aggregate(
   agweights = NULL,
   dset = "Normalised",
   agtype_bylevel = NULL,
+  agfunc = NULL,
   out2 = NULL
 )
 }
@@ -27,6 +28,10 @@ Or, a list of weights to use in the aggregation.}
 \item{dset}{Which data set (contained in COIN object) to use}
 
 \item{agtype_bylevel}{A character vector with aggregation types for each level}
+
+\item{agfunc}{A custom function to use for aggregation if agtype = "custom", of the type y = f(x,w),
+where y is a scalar aggregated value and x and w are vectors of indicator values and weights respectively.
+Ensure that NAs are handled (e.g. set na.rm = T) if your data has missing values.}
 }
 \value{
 An updated COIN object containing the new aggregated data set.
