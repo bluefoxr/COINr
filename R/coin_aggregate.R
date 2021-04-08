@@ -11,6 +11,9 @@
 #' Or, a list of weights to use in the aggregation.
 #' @param dset Which data set (contained in COIN object) to use
 #' @param agtype_bylevel A character vector with aggregation types for each level
+#' @param agfunc A custom function to use for aggregation if agtype = "custom", of the type y = f(x,w),
+#' where y is a scalar aggregated value and x and w are vectors of indicator values and weights respectively.
+#' Ensure that NAs are handled (e.g. set na.rm = T) if your data has missing values.
 #'
 #' @importFrom dplyr "all_of"
 #' @importFrom dplyr "rowwise"
@@ -28,8 +31,8 @@
 #'
 #' @export
 
-aggregate <- function(COIN, agtype="arith_mean", agweights = NULL,
-                           dset = "Normalised", agtype_bylevel = NULL, out2 = NULL){
+aggregate <- function(COIN, agtype="arith_mean", agweights = NULL, dset = "Normalised",
+                      agtype_bylevel = NULL, agfunc = NULL, out2 = NULL){
 
   out <- getIn(COIN, dset = dset)
   ind_data <- out$ind_data
@@ -118,6 +121,11 @@ aggregate <- function(COIN, agtype="arith_mean", agweights = NULL,
         # rownames(chkk) <- out$UnitCodes
         # browser()
 
+      } else if (agtype_lev == "custom") {
+
+        newcol <- ind_data %>% dplyr::select(dplyr::all_of(iselect)) %>% dplyr::rowwise() %>%
+          dplyr::transmute(!!agg_names[agroup] := agfunc(dplyr::c_across(cols = dplyr::everything()),
+                                                          w = weights_group))
 
       } else {
         stop("Normalisation type not recognised.")
