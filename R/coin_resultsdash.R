@@ -177,10 +177,10 @@ coin_resultsdash <- function(COINobj, dset = "Aggregated"){
       else {
         data.frame(
           UnitName = idata1_full()$UnitName[idata1_full()$UnitCode %in% usels()],
-          UnitCode = usels(),
+          UnitCode = idata1_full()$UnitCode[idata1_full()$UnitCode %in% usels()],
           IndicatorCode = isel1(),
           IndicatorName = COINobj$Parameters$Code2Name$AggName[COINobj$Parameters$Code2Name$AggCode==isel1()],
-          Score = idata1_full()[idata1_full()$UnitCode %in% usels(), isel1()] %>% as.numeric(),
+          Score = idata1()[idata1_full()$UnitCode %in% usels(), isel1()] %>% dplyr::pull(1),
           Rank = rank(-1*idata1_full()[,isel1()])[idata1_full()$UnitCode %in% usels()] %>%
             as.numeric() %>% round()
         )}
@@ -285,7 +285,7 @@ iplotMap <- function(COINobj, dset = "Raw", isel){
 #'
 #' @export
 
-iplotBar <- function(COINobj, dset = "Raw", isel = NULL, usel = NULL, aglev = 1){
+iplotBar <- function(COINobj, dset = "Raw", isel = NULL, usel = NULL, aglev = NULL){
 
   out1 <- getIn(COINobj, dset = dset, icodes = isel, aglev = aglev)
 
@@ -295,6 +295,10 @@ iplotBar <- function(COINobj, dset = "Raw", isel = NULL, usel = NULL, aglev = 1)
 
   if(length(ind_code)>1){stop("This function only supports plotting single indicators. You may need to use the aglev argument if you are calling an aggregation group.")}
 
+  # fake aglev, just catches an error that would otherise happen when doing NULL == 1 in the next line
+  if(is.null(aglev)){aglev<-0}
+
+  # look for units
   if((out1$otype=="COINobj") & (aglev == 1)){
     # look for units
     if(exists("IndUnit",COINobj$Input$IndMeta)){
