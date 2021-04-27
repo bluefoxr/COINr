@@ -5,7 +5,6 @@
 #' @param COIN Either the COIN object, or a data frame of indicator data
 #' @param ntype The type of normalisation method. Either "minmax", "zscore", "scaled", "rank", "borda", "prank", "fracmax", "dist2targ", "dist2ref", "dist2max", "custom" or "none".
 #' @param npara Supporting object for ntype.
-#' @param icodes Character vector of indicator names, indicating which columns to normalise. Use this if you only want to normalise certain columns, or you are inputting a data frame with some columns which are not to be normalised (e.g. country names, groups, ...)
 #' @param dset The data set to normalise
 #' @param directions A vector specifying the direction assigned to each indicator.
 #' Needs to be the same length as the number of indicators, or the number of indicators in icodes, if specified.
@@ -26,14 +25,24 @@
 #'
 #' @export
 
-normalise <- function(COIN, ntype="minmax", npara = NULL, icodes = NULL,
+normalise <- function(COIN, ntype="minmax", npara = NULL,
                       dset = "Raw", directions = NULL, individual = NULL,
                       indiv_only = FALSE, out2 = NULL){
 
   # First. check to see what kind of input we have.
-  out <- getIn(COIN, dset = dset, icodes = icodes)
+  out <- getIn(COIN, dset = dset)
   ind_data_only <- out$ind_data_only
   IndCodes <- out$IndCodes
+
+  if(out$otype == "COINobj"){
+    # Write inputs to Method
+    COIN$Method$Normalisation$ntype <- ntype
+    COIN$Method$Normalisation$npara <- npara
+    COIN$Method$Normalisation$dset <- dset
+    COIN$Method$Normalisation$directions <- directions
+    COIN$Method$Normalisation$indiv_only <- indiv_only
+    COIN$Method$Normalisation$individual <- individual
+  }
 
   if (is.null(directions) & out$otype == "COINobj"){ # if no directions are explicitly specified, but COINobj input
 
@@ -247,15 +256,6 @@ normalise <- function(COIN, ntype="minmax", npara = NULL, icodes = NULL,
   } else {
 
     COIN$Data$Normalised <- dataout
-
-    # Write inputs to Method
-    COIN$Method$Normalisation$ntype <- ntype
-    COIN$Method$Normalisation$npara <- npara
-    COIN$Method$Normalisation$icodes <- out$IndCodes
-    COIN$Method$Normalisation$dset <- dset
-    COIN$Method$Normalisation$directions <- directions
-    COIN$Method$Normalisation$indiv_only <- indiv_only
-    COIN$Method$Normalisation$individual <- individual
     return(COIN)
   }
 }

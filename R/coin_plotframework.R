@@ -3,31 +3,69 @@
 #' Plots the structure of the index using a sunburst plot. Output can be used as an interactive plot
 #' in html documents, e.g. via R Markdown.
 #'
-#' @param COINobj COIN object, or list with first entry is the indicator metadata, second entry is the aggregation metadata
+#' @param COIN COIN object, or list with first entry is the indicator metadata, second entry is the aggregation metadata
 #'
 #' @importFrom dplyr select starts_with pull ends_with
 #' @importFrom plotly plot_ly
 #' @importFrom matrixStats rowProds
 #' @importFrom purrr map_dfr
 #'
-#' @examples \dontrun{plotframework(COINobj)}
+#' @examples \dontrun{plotframework(COIN)}
 #'
 #' @return Interactive sunburst plot.
 #'
 #' @export
 
-plotframework <- function(COINobj){
+plotframework <- function(COIN){
+
+  # get effective weights, labels and parents
+  outW <- effectiveWeight(COIN)
+
+  fig <- plotly::plot_ly(
+    labels = outW$LabelsParents$Labels,
+    parents = outW$LabelsParents$Parents,
+    values = outW$EffectiveWeights,
+    type = 'sunburst',
+    branchvalues = 'total'
+  )
+
+  fig
+
+}
+
+
+#' Effective weights
+#'
+#' This calculates the effective weights of each element in the indicator hierarchy. This is
+#' useful for understanding e.g. the true weight of each indicator in the framework and is also
+#' used in plotframework().
+#'
+#' @param COIN COIN object, or list with first entry is the indicator metadata, second entry is the aggregation metadata
+#'
+#' @importFrom dplyr select starts_with pull ends_with
+#' @importFrom plotly plot_ly
+#' @importFrom matrixStats rowProds
+#' @importFrom purrr map_dfr
+#'
+#' @examples \dontrun{effectiveWeight(COIN)}
+#'
+#' @return A list with effective weights, as well as a data frame with labels and parents for the
+#' sunburst plot.
+#'
+#' @export
+
+effectiveWeight <- function(COIN){
 
   # the structure is in the metadata and framework data frames
-  if ("COIN object" %in% class(COINobj)){ # COIN obj
+  if ("COIN object" %in% class(COIN)){ # COIN obj
 
-    metad<-COINobj$Input$IndMeta
-    fwk <- COINobj$Input$AggMeta
+    metad<-COIN$Input$IndMeta
+    fwk <- COIN$Input$AggMeta
 
-  } else if ("list" %in% class(COINobj) & length(COINobj)==2) { # we expect a list with 2 elements in it
+  } else if ("list" %in% class(COIN) & length(COIN)==2) { # we expect a list with 2 elements in it
 
-    metad<-COINobj[[1]]
-    fwk<-COINobj[[2]]
+    metad<-COIN[[1]]
+    fwk<-COIN[[2]]
 
   } else { # no clue what it is
 
@@ -110,16 +148,29 @@ plotframework <- function(COINobj){
     }
   }
 
-  lbls_prnts <- data.frame(lbls,prnts) %>% unique() # remove repeated rows
-  #wts <- wts[!is.na(wts)] # remove NAs
+  lbls_prnts <- data.frame(Labels = lbls,
+                           Parents = prnts) %>% unique() # remove repeated rows
 
-  fig <- plotly::plot_ly(
-    labels = lbls_prnts$lbls, parents = lbls_prnts$prnts, values = wts_eff,
-    type = 'sunburst',
-    branchvalues = 'total'
-  )
+  # also get effective weights as structured list, this is more useful outside of plotframework()
+  if ("COIN object" %in% class(COIN)){ # COIN obj
+    wts_eff_list <- COIN$Parameters$Weights$Original
+    icount <- 1
+    for (ii in 1:length(wts_eff_list)){
+      wts_eff_list[[ii]] <- wts_eff[icount:(icount+length(wts_eff_list[[ii]])-1)]
+      icount <- icount + length(wts_eff_list[[ii]])
+    }
 
-  fig
+    return(list(EffectiveWeights = wts_eff,
+                LabelsParents = lbls_prnts,
+                EffectiveWeightsList = wts_eff_list))
+
+  } else {
+
+    return(list(EffectiveWeights = wts_eff,
+                LabelsParents = lbls_prnts))
+  }
 
 }
+
+
 

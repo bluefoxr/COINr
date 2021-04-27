@@ -23,7 +23,9 @@ Note that the COIN object is just a tag. It doesn't impose restrictions on the s
 }
 \description{
 This takes the raw data provided by the user and puts it into an list format (COIN object) that is recognised by COINr.
-It also checks whether there are any syntax errors in the data provided.
+It also checks whether there are any syntax errors in the data provided. Optionally, you can exclude
+or include indicators using the "include" and "exclude" arguments. Note that if an indicator is specified in
+BOTH include and exclude, it will be excluded.
 }
 \examples{
 \dontrun{COINobj <- assemble(IndData, IndMeta, AggMeta)}

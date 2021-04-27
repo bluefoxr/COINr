@@ -32,6 +32,9 @@ Or, a list of weights to use in the aggregation.}
 \item{agfunc}{A custom function to use for aggregation if agtype = "custom", of the type y = f(x,w),
 where y is a scalar aggregated value and x and w are vectors of indicator values and weights respectively.
 Ensure that NAs are handled (e.g. set na.rm = T) if your data has missing values.}
+
+\item{out2}{Where to output the results. If "COIN" (default for COIN input), appends to updated COIN,
+otherwise if "df" outputs to data frame.}
 }
 \value{
 An updated COIN object containing the new aggregated data set.

@@ -14,6 +14,8 @@
 #' @param agfunc A custom function to use for aggregation if agtype = "custom", of the type y = f(x,w),
 #' where y is a scalar aggregated value and x and w are vectors of indicator values and weights respectively.
 #' Ensure that NAs are handled (e.g. set na.rm = T) if your data has missing values.
+#' @param out2 Where to output the results. If "COIN" (default for COIN input), appends to updated COIN,
+#' otherwise if "df" outputs to data frame.
 #'
 #' @importFrom dplyr "all_of"
 #' @importFrom dplyr "rowwise"
@@ -41,6 +43,13 @@ aggregate <- function(COIN, agtype="arith_mean", agweights = NULL, dset = "Norma
   if (out$otype != "COINobj"){ # NOT COIN obj
     stop("Aggregation requires a COIN object (you need data plus the index structure). Use coin_assemble first.")
   }
+
+  # Write function inputs to .$Method
+  COIN$Method$Aggregation$agtype <- agtype
+  COIN$Method$Aggregation$agweights <- agweights
+  COIN$Method$Aggregation$dset <- dset
+  COIN$Method$Aggregation$agtype_bylevel <- agtype_bylevel
+  COIN$Method$Aggregation$agfunc <- agfunc
 
   # get weights - if not explicitly specified, we assume it is in the GII obj
   if (is.null(agweights)){
@@ -140,12 +149,6 @@ aggregate <- function(COIN, agtype="arith_mean", agweights = NULL, dset = "Norma
 
   if(out2=="COIN"){
 
-    # Write function inputs to .$Method
-    COIN$Method$Aggregation$agtype <- agtype
-    COIN$Method$Aggregation$agweights <- agweights
-    COIN$Method$Aggregation$dset <- dset
-    COIN$Method$Aggregation$agtype_bylevel <- agtype_bylevel
-
     # add to the COIN object
     COIN$Data$Aggregated <- tibble::as_tibble(ind_data)
     return(COIN)
@@ -175,8 +178,8 @@ geoMean <- function(x, w = NULL){
 
   if(is.null(w)){
     # default equal weights
-    w <- rep(1,ncol(ind_data))
-    message("No weights specified for outranking matrix, using equal weights.")
+    w <- rep(1,length(x))
+    message("No weights specified for geometric mean, using equal weights.")
   }
 
   if(any(x <= 0)){
@@ -205,8 +208,8 @@ harMean <- function(x, w = NULL){
 
   if(is.null(w)){
     # default equal weights
-    w <- rep(1,ncol(ind_data))
-    message("No weights specified for outranking matrix, using equal weights.")
+    w <- rep(1,length(x))
+    message("No weights specified harmonic mean, using equal weights.")
   }
 
   if(any(x == 0)){

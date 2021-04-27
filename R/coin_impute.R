@@ -37,6 +37,15 @@ impute <- function(COIN, imtype = "ind_mean", dset = "Raw",
   ind_data <- out$ind_data
   IndCodes <- out$IndCodes
 
+  if( out$otype=="COINobj" ) {
+    # Write to Method
+    COIN$Method$Imputation$imtype <- imtype
+    COIN$Method$Imputation$dset <- dset
+    COIN$Method$Imputation$groupvar <- groupvar
+    COIN$Method$Imputation$byyear <- byyear
+    COIN$Method$Imputation$EMaglev <- EMaglev
+  }
+
   # get number of NAs before imputation
   nasumz <- colSums(is.na(ind_data))
   nNA_start <- sum(nasumz[IndCodes])
@@ -282,12 +291,7 @@ impute <- function(COIN, imtype = "ind_mean", dset = "Raw",
   # output to object if requested (only if input is COIN and out2 not df)
   if( (out$otype=="COINobj") & (out2 !=  "df") ) {
     COIN$Data$Imputed <- dplyr::ungroup(ind_data_imp)
-    COIN$Method$Imputation$imtype <- imtype
-    COIN$Method$Imputation$dset <- dset
-    COIN$Method$Imputation$groupvar <- groupvar
-    COIN$Method$Imputation$byyear <- byyear
-    COIN$Method$Imputation$EMaglev <- EMaglev
-    COIN$Method$Imputation$NImputed <- nNA_start-nNA_end
+    COIN$Analysis$Imputed$NImputed <- nNA_start-nNA_end
     return(COIN)
   } else {
     return(ind_data_imp)

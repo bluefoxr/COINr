@@ -37,6 +37,19 @@ treat <- function(COIN, dset = "Raw", winmax = NULL, winchange = TRUE, deflog = 
   # First check object type and extract
   out <- getIn(COIN, dset = dset)
 
+  if (out$otype == "COINobj"){
+    # write function arguments to Method
+    COIN$Method$Treatment$dset <- dset
+    COIN$Method$Treatment$winmax <- winmax
+    COIN$Method$Treatment$winchange <- winchange
+    COIN$Method$Treatment$deflog <- deflog
+    COIN$Method$Treatment$boxlam <- boxlam
+    COIN$Method$Treatment$t_skew <- t_skew
+    COIN$Method$Treatment$t_kurt <- t_kurt
+    COIN$Method$Treatment$individual <- individual
+    COIN$Method$Treatment$indiv_only <- indiv_only
+  }
+
   # if winmax not specified, default to 10% of units, rounded up
   if(is.null(winmax)){
     winmax <- ceiling((COIN$Parameters$NUnit*0.1))
@@ -229,16 +242,6 @@ treat <- function(COIN, dset = "Raw", winmax = NULL, winchange = TRUE, deflog = 
   ###---- Write results and method -----##
 
   if (out$otype == "COINobj"){
-    # write function arguments to Method
-    COIN$Method$Treatment$winmax <- winmax
-    COIN$Method$Treatment$winchange <- winchange
-    COIN$Method$Treatment$deflog <- deflog
-    COIN$Method$Treatment$boxlam <- boxlam
-    COIN$Method$Treatment$t_skew <- t_skew
-    COIN$Method$Treatment$t_kurt <- t_kurt
-    COIN$Method$Treatment$individual <- individual
-    COIN$Method$Treatment$indiv_only <- indiv_only
-
     # write results
     COIN$Data$Treated <- ind_data_treated
     COIN$Analysis$Treated$TreatSummary <- ntreated

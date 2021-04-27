@@ -29,6 +29,16 @@ denominate <- function(obj, dset = "Raw", specby = "metadata", denomby = NULL, d
   # run through object check
   out1 <- getIn(obj, dset = dset)
 
+  # output to object if requested
+  if(out1$otype=="COINobj") {
+
+    # Record to Method
+    obj$Method$Denomination$dset <- dset
+    obj$Method$Denomination$specby <- specby
+    obj$Method$Denomination$denomby <- denomby
+    obj$Method$Denomination$denominators <- denominators
+  }
+
   # some checks first
   if( ("data.frame" %in% class(obj)) & (is.null(denomby)|is.null(denominators)) ){
     stop("If data frame is input, you need to specify both denomby and denominators.")
@@ -65,9 +75,6 @@ denominate <- function(obj, dset = "Raw", specby = "metadata", denomby = NULL, d
   if( (out1$otype=="COINobj") & (out2 !=  "df") ) {
 
     obj$Data$Denominated <- data_denom
-    # Record to Method
-    obj$Method$Denomination$specby <- specby
-    obj$Method$Denomination$denomby <- denomby
     return(obj)
 
   } else {

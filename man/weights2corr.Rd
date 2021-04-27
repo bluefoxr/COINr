@@ -4,20 +4,33 @@
 \alias{weights2corr}
 \title{Recalculate correlations and ranks based on new weights}
 \usage{
-weights2corr(COINobj, w, agnames)
+weights2corr(
+  COIN,
+  w,
+  aglevs = NULL,
+  icodes = NULL,
+  cortype = "pearson",
+  withparent = TRUE
+)
 }
 \arguments{
-\item{COINobj}{COINobj object}
+\item{COIN}{COIN object}
 
-\item{w}{a vector of indicator weights}
+\item{w}{Full list of weights for each level}
 
-\item{agnames}{Names of aggregation groups to be included in results table}
+\item{aglevs}{A 2-length vector with two aggregation levels to correlate against each other}
+
+\item{icodes}{List of two character vectors of indicator codes, corresponding to the two aggregation levels}
+
+\item{cortype}{Correlation type. Either "pearson" (default), "kendall" or "spearman".}
+
+\item{withparent}{Logical: if TRUE, only correlates with the parent, e.g. sub-pillars are only correlated with their parent pillars and not others.}
 }
 \value{
 A list with .$cr is a vector of correlations between each indicator and the index, and
 .$dat is a data frame of rankings, with unit code, and index, input and output scores
 }
 \description{
-This is a short cut function which takes a new set of indicator weights, and recalculates the aggregated results
+This is a short cut function which takes a new set of indicator weights, and recalculates the COIN results
 based on these weights. It returns a summary of rankings and the correlations between indicators and index.
 }

@@ -14,7 +14,7 @@ checkData(
 )
 }
 \arguments{
-\item{COIN}{The GII object}
+\item{COIN}{The COIN object}
 
 \item{dset}{The data set to be checked/screened}
 
@@ -32,11 +32,12 @@ otherwise if "df" outputs to data frame.}
 An updated COIN object with tables showing missing data, and a filtered list of countries to include in subsequent calculations.
 }
 \description{
-Screens countries based on data availability, according to rules used by the GII.
-Rule 1: BOTH Input and Output indicators must have data availability greater than a threshold, set as
-66% by default, but can be changed using the "ind_thresh" parameter. Rule 1 is applied by default.
-Rule 2: All pillars must have at least 66% of their sub-pillars that have 66% indicator data availability.
-The 66% threshold is also alternatively specified by "ind_thresh". Rule 2 is NOT applied by default.
+Gives detailed tables of data availability, and optionally screens units based on a data
+availability threshold. Units can be optionally "forced" to be included or excluded, making
+exceptions for the data availability threshold.
+}
+\details{
+This function currently only supports COINs as inputs, not data frames.
 }
 \examples{
 \dontrun{checkData(COIN)}

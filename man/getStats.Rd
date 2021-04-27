@@ -2,7 +2,7 @@
 % Please edit documentation in R/coin_preanalyse.R
 \name{getStats}
 \alias{getStats}
-\title{Pre-aggregation analysis}
+\title{Get table of indicator statistics for any data set}
 \usage{
 getStats(
   COINobj,

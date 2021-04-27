@@ -8,7 +8,6 @@ normalise(
   COIN,
   ntype = "minmax",
   npara = NULL,
-  icodes = NULL,
   dset = "Raw",
   directions = NULL,
   individual = NULL,
@@ -22,8 +21,6 @@ normalise(
 \item{ntype}{The type of normalisation method. Either "minmax", "zscore", "scaled", "rank", "borda", "prank", "fracmax", "dist2targ", "dist2ref", "dist2max", "custom" or "none".}
 
 \item{npara}{Supporting object for ntype.}
-
-\item{icodes}{Character vector of indicator names, indicating which columns to normalise. Use this if you only want to normalise certain columns, or you are inputting a data frame with some columns which are not to be normalised (e.g. country names, groups, ...)}
 
 \item{dset}{The data set to normalise}
 

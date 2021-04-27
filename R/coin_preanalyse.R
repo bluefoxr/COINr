@@ -1,4 +1,4 @@
-#' Pre-aggregation analysis
+#' Get table of indicator statistics for any data set
 #'
 #' Takes a COIN object, or data frame and returns a table of statistics, including max, min, median, mean, std, kurtosis, etc. Flags indicators with possible outliers.
 #'

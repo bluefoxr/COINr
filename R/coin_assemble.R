@@ -1,7 +1,9 @@
 #' Build COIN object
 #'
 #' This takes the raw data provided by the user and puts it into an list format (COIN object) that is recognised by COINr.
-#' It also checks whether there are any syntax errors in the data provided.
+#' It also checks whether there are any syntax errors in the data provided. Optionally, you can exclude
+#' or include indicators using the "include" and "exclude" arguments. Note that if an indicator is specified in
+#' BOTH include and exclude, it will be excluded.
 #'
 #' @param IndData A dataframe of indicator data.
 #' @param IndMeta A dataframe containing auxilliary information for each indicator
@@ -14,6 +16,7 @@
 #' @importFrom dplyr "starts_with"
 #' @importFrom dplyr "ends_with"
 #' @importFrom dplyr "n_distinct"
+#' @importFrom purrr "map_lgl"
 #' @importFrom stats "na.omit"
 #'
 #' @examples \dontrun{COINobj <- assemble(IndData, IndMeta, AggMeta)}
@@ -46,16 +49,21 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL){
 
   ##----- IND CODES AND DENOMS -----##
 
+  # copy ind data before going any further. Used in .$Input$Original
+  IndDataOrig <- IndData
+
   # Extract indicator codes from raw data
   cnames1 <- IndData %>% dplyr::select(!dplyr::starts_with(
     c("UnitCode", "UnitName", "Year", "Group_","Den_", "IndUnit", "x_")) ) %>% colnames()
 
   # check for any non-numeric cols and stop if any present
   ind_data_only <- IndData[cnames1]
-  not_num <- cnames1[!apply(ind_data_only, 2, is.numeric)]
+  not_num <- cnames1[!purrr::map_lgl(ind_data_only, is.numeric)]
   if(length(not_num)>0){
     # stop, print any non-numeric
-    stop(paste0("Non-numeric columns detected: ", not_num))
+    message("Non-numerical columns in IndData (probably character/text?):")
+    print(not_num)
+    stop(paste0("Non-numeric columns detected. Only numerical indicators are allowed"))
   }
 
   # In case no indicator cols present
@@ -85,21 +93,28 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL){
 
   ##------- Select indicators, if needed -----##
 
-  # if include is specified
+  # if include is not specified, include everything
+  if(is.null(include)){include <- cnames1}
+
+  # the vector of indicators to include is everything in include, minus anything in exclude
+  include <- setdiff(include,exclude)
+
+  # select data and metadata accordingly
   if(!is.null(include)){
     ind_data <- IndData %>% dplyr::select(dplyr::starts_with(
-      c("UnitCode", "UnitName", "Year", "Group_", "IndUnit", "x_")) & include )
+      c("UnitCode", "UnitName", "Year", "Group_", "IndUnit", "x_")), include )
     ind_meta <- IndMeta[IndMeta$IndCode %in% include,]
-  } else {
-    ind_data <- IndData
-    ind_meta <- IndMeta
   }
-
-  # if exclude is specified
-  if(!is.null(exclude)){
-    ind_data <- ind_data[setdiff(colnames(ind_data), exclude)]
-    ind_meta <- ind_meta[!(ind_meta$IndCode %in% exclude),]
-  }
+  # } else {
+  #   ind_data <- IndData
+  #   ind_meta <- IndMeta
+  # }
+  #
+  # # if exclude is specified
+  # if(!is.null(exclude)){
+  #   ind_data <- ind_data[setdiff(colnames(ind_data), exclude)]
+  #   ind_meta <- ind_meta[!(ind_meta$IndCode %in% exclude),]
+  # }
 
   # Build list
   COINobj <- list(Input = list(
@@ -107,7 +122,7 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL){
     IndMeta = ind_meta,
     AggMeta = AggMeta,
     Original = list(
-      IndData = IndData,
+      IndData = IndDataOrig,
       IndMeta = IndMeta,
       AggMeta = AggMeta
     )),

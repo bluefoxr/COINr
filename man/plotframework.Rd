@@ -4,10 +4,10 @@
 \alias{plotframework}
 \title{Interactive sunburst plot of index structure}
 \usage{
-plotframework(COINobj)
+plotframework(COIN)
 }
 \arguments{
-\item{COINobj}{COIN object, or list with first entry is the indicator metadata, second entry is the aggregation metadata}
+\item{COIN}{COIN object, or list with first entry is the indicator metadata, second entry is the aggregation metadata}
 }
 \value{
 Interactive sunburst plot.
@@ -17,6 +17,6 @@ Plots the structure of the index using a sunburst plot. Output can be used as an
 in html documents, e.g. via R Markdown.
 }
 \examples{
-\dontrun{plotframework(COINobj)}
+\dontrun{plotframework(COIN)}
 
 }

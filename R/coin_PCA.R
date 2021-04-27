@@ -4,7 +4,7 @@
 #' corresponding to the first principal component, i.e the weights that maximise the variance explained
 #' by the linear combination of indicators.
 #'
-#' @param COINobj An input object. The function can handle either the COIN object, or a data frame.
+#' @param COIN An input object. The function can handle either the COIN object, or a data frame.
 #' The data frame should have each column as an indicator, and an optional column "UnitCode" which
 #' specifies the code (or name) of each unit. Any other type of object will return an error.
 #' @param dset If input is a COIN object, this specifies which data set in .$Data to use.
@@ -18,7 +18,7 @@
 #' @importFrom stats prcomp na.omit
 #' @importFrom rlang .data
 #'
-#' @examples \dontrun{PCAresults <- coin_PCA(COINobj, dset = "Raw")}
+#' @examples \dontrun{PCAresults <- cPCA(COIN, dset = "Raw")}
 #'
 #' @return PCA data, plus PCA weights corresponding to the loadings of the first principle component.
 #' This should correspond to the linear combination of indicators that explains the most variance.
@@ -26,10 +26,10 @@
 #' @export
 #'
 
-coin_PCA <- function(COINobj, dset = "Raw", icodes = NULL, aglev = NULL, out2 = "obj"){
+cPCA <- function(COIN, dset = "Raw", icodes = NULL, aglev = NULL, out2 = "obj"){
 
   # get ind data
-  out <- getIn(COINobj, dset = dset, icodes = icodes, aglev = aglev)
+  out <- getIn(COIN, dset = dset, icodes = icodes, aglev = aglev)
 
   # check for missing vals
   nNA <- sum(is.na(out$ind_data_only))
@@ -52,11 +52,15 @@ PCA. You can also try imputing data first to avoid this."))
   # weight from first PC should be the max variance weights
   wts <- PCAres$rotation[,1] %>% as.numeric()
 
+  # weight list
+  wlist <- COIN$Parameters$Weights$Original
+  wlist[[aglev]] <- wts
+
   # write results
   if( (out$otype == "COINobj") & (out2 == "obj")){
-    eval(parse(text=paste0("COINobj$Parameters$Weights$PCA$",dset,"L",aglev,"<-wts")))
-    eval(parse(text=paste0("COINobj$Analysis$",dset,"$PCA$L",aglev,"<- PCAres")))
-    return(COINobj)
+    eval(parse(text=paste0("COIN$Parameters$Weights$PCA_",dset,"L",aglev,"<-wlist")))
+    eval(parse(text=paste0("COIN$Analysis$",dset,"$PCA$L",aglev,"<- PCAres")))
+    return(COIN)
   } else {
     output <- list("Weights" = wts,
                    "PCAresults" = PCAres)

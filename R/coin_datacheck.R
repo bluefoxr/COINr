@@ -1,12 +1,12 @@
 #' Detailed unit data check and screener by data availability
 #'
-#' Screens countries based on data availability, according to rules used by the GII.
-#' Rule 1: BOTH Input and Output indicators must have data availability greater than a threshold, set as
-#' 66% by default, but can be changed using the "ind_thresh" parameter. Rule 1 is applied by default.
-#' Rule 2: All pillars must have at least 66% of their sub-pillars that have 66% indicator data availability.
-#' The 66% threshold is also alternatively specified by "ind_thresh". Rule 2 is NOT applied by default.
+#' Gives detailed tables of data availability, and optionally screens units based on a data
+#' availability threshold. Units can be optionally "forced" to be included or excluded, making
+#' exceptions for the data availability threshold.
 #'
-#' @param COIN The GII object
+#' This function currently only supports COINs as inputs, not data frames.
+#'
+#' @param COIN The COIN object
 #' @param dset The data set to be checked/screened
 #' @param ind_thresh A data availability threshold, which controls both Rule 1 and 2. Default 0.66. Specify as a fraction.
 #' @param unit_screen Logical: if TRUE, screens any units with indicator data availability < ind_thresh.
@@ -25,8 +25,14 @@
 checkData <- function(COIN, dset = "Raw", ind_thresh=2/3, unit_screen = FALSE,
                            Force = NULL, out2 = "COIN"){
 
+  # Check input type. If not COIN, exit.
+  if (!("COIN object" %in% class(COIN))){ # COIN obj
+    stop("This function currently only supports COINs as inputs.")
+  }
+
   # Write function arguments to object, FTR
-  COIN$Method$Screening$IndThresh <- ind_thresh
+  COIN$Method$Screening$dset <- dset
+  COIN$Method$Screening$ind_thresh <- ind_thresh
   COIN$Method$Screening$unit_screen <- unit_screen
   COIN$Method$Screening$Force <- Force
 
