@@ -13,6 +13,11 @@
 
 rew8r <- function(COIN){
 
+  stop("Sorry, rew8r is out of action for a bit until I get some updates sorted. Back soon.")
+
+  # NOTE I need to make this compatible with the new weight format. Easiest may be to simply copy
+  # GII version over which also has other small updates...
+
   # aggregate names for dropdown lists
   agnames <- paste0("Level ", 1:COIN$Parameters$Nlevels)
 
