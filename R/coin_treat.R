@@ -21,6 +21,8 @@
 #' "boxlam" Lambda parameter for the Box Cox transformation
 #' @param indiv_only Logical: if TRUE, only the indicators specified in "individual" are treated.
 #' If false, all indicators are treated: any outside of "individual" will get default treatment.
+#' @param bypass_all Logical: if TRUE, bypasses all data treatment and returns the original data. This
+#' is useful for sensitivity analysis and comparing the effects of turning data treatment on and off.
 #'
 #' @importFrom dplyr pull
 #' @importFrom e1071 skewness kurtosis
@@ -32,22 +34,22 @@
 #'
 
 treat <- function(COIN, dset = "Raw", winmax = NULL, winchange = TRUE, deflog = "log", boxlam = NULL,
-                       t_skew = 2, t_kurt = 3.5, individual = NULL, indiv_only = TRUE){
+                       t_skew = 2, t_kurt = 3.5, individual = NULL, indiv_only = TRUE, bypass_all = FALSE){
 
   # First check object type and extract
   out <- getIn(COIN, dset = dset)
 
   if (out$otype == "COINobj"){
     # write function arguments to Method
-    COIN$Method$Treatment$dset <- dset
-    COIN$Method$Treatment$winmax <- winmax
-    COIN$Method$Treatment$winchange <- winchange
-    COIN$Method$Treatment$deflog <- deflog
-    COIN$Method$Treatment$boxlam <- boxlam
-    COIN$Method$Treatment$t_skew <- t_skew
-    COIN$Method$Treatment$t_kurt <- t_kurt
-    COIN$Method$Treatment$individual <- individual
-    COIN$Method$Treatment$indiv_only <- indiv_only
+    COIN$Method$treat$dset <- dset
+    COIN$Method$treat$winmax <- winmax
+    COIN$Method$treat$winchange <- winchange
+    COIN$Method$treat$deflog <- deflog
+    COIN$Method$treat$boxlam <- boxlam
+    COIN$Method$treat$t_skew <- t_skew
+    COIN$Method$treat$t_kurt <- t_kurt
+    COIN$Method$treat$individual <- individual
+    COIN$Method$treat$indiv_only <- indiv_only
   }
 
   # if winmax not specified, default to 10% of units, rounded up
@@ -59,6 +61,25 @@ treat <- function(COIN, dset = "Raw", winmax = NULL, winchange = TRUE, deflog = 
   ind_data <- out$ind_data # all indicator data
   ind_data_only <- out$ind_data_only
   IndCodes <- out$IndCodes
+
+  ###---- Bypass everything if requested -----##
+
+  if(bypass_all){
+    if (out$otype == "COINobj"){
+      # write results
+      COIN$Data$Treated <- ind_data
+      COIN$Analysis$Treated$TreatSummary <- data.frame(Treatment = "Treatment bypassed")
+      COIN$Analysis$Treated$TreatFlags <- NULL
+      return(COIN)
+    } else {
+      # if input was a data frame, output a list
+      fout <- list(
+        DataTreated = ind_data,
+        TreatmentSummary = data.frame(Treatment = "Treatment bypassed")
+      )
+      return(fout)
+    }
+  }
 
   ind_data_treated <- ind_data # make a copy, for treated data
   treat_flag <- matrix("No", nrow = nrow(ind_data_only), ncol = ncol(ind_data_only)) # empty matrix for populating
