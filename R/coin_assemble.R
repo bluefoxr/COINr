@@ -13,6 +13,8 @@
 #'
 #' @importFrom magrittr "%>%"
 #' @importFrom dplyr "select"
+#' @importFrom dplyr "arrange"
+#' @importFrom dplyr "across"
 #' @importFrom dplyr "starts_with"
 #' @importFrom dplyr "ends_with"
 #' @importFrom dplyr "n_distinct"
@@ -32,19 +34,19 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL){
 
   # Do some checks first - make sure required cols are present
   if(!exists("UnitCode", IndData)){
-    stop("No UnitCode column found in IndData. This column is required for assembling a COIM object.")
+    stop("No UnitCode column found in IndData. This column is required for assembling a COIN object.")
   }
   if(!exists("UnitName", IndData)){
-    stop("No UnitName column found in IndData. This column is required for assembling a COIM object.")
+    stop("No UnitName column found in IndData. This column is required for assembling a COIN object.")
   }
   if(!exists("IndName", IndMeta)){
-    stop("No IndName column found in IndMeta. This column is required for assembling a COIM object.")
+    stop("No IndName column found in IndMeta. This column is required for assembling a COIN object.")
   }
   if(!exists("IndCode", IndMeta)){
-    stop("No IndCode column found in IndMeta. This column is required for assembling a COIM object.")
+    stop("No IndCode column found in IndMeta. This column is required for assembling a COIN object.")
   }
   if(!exists("Direction", IndMeta)){
-    stop("No Direction column found in IndMeta. This column is required for assembling a COIM object.")
+    stop("No Direction column found in IndMeta. This column is required for assembling a COIN object.")
   }
 
   ##----- IND CODES AND DENOMS -----##
@@ -105,16 +107,15 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL){
       c("UnitCode", "UnitName", "Year", "Group_", "IndUnit", "x_")), include )
     ind_meta <- IndMeta[IndMeta$IndCode %in% include,]
   }
-  # } else {
-  #   ind_data <- IndData
-  #   ind_meta <- IndMeta
-  # }
-  #
-  # # if exclude is specified
-  # if(!is.null(exclude)){
-  #   ind_data <- ind_data[setdiff(colnames(ind_data), exclude)]
-  #   ind_meta <- ind_meta[!(ind_meta$IndCode %in% exclude),]
-  # }
+
+  # sort ind_meta properly according to structure of index
+  ind_meta <- dplyr::arrange(ind_meta,
+    dplyr::across(dplyr::starts_with("Agg")))
+
+  # I want the indicator cols to be in the same order as ind_meta, to avoid surprises
+  ind_data <- dplyr::select(ind_data,
+                            dplyr::starts_with(c("UnitCode", "UnitName",
+                                                 "Year", "Group_", "IndUnit", "x_")), ind_meta$IndCode)
 
   # Build list
   COINobj <- list(Input = list(
@@ -210,18 +211,32 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL){
 
   #------- Also get weights and put somewhere sensible
 
-  # first, indicator weights
-  agweights <- list(IndWeight = ind_meta$IndWeight)
-  # now the other weights
+  # # first, indicator weights
+  # agweights <- list(IndWeight = ind_meta$IndWeight)
+  # # now the other weights
+  #
+  # otherweights2 <- vector(mode = "list", length = n_agg_levels)
+  # for (ii in 1:n_agg_levels){
+  #   otherweights2[[ii]] <- AggMeta$Weight[AggMeta$AgLevel==ii+1]
+  # }
+  # # join together in one list
+  # agweights <- c(agweights, otherweights2)
+  # # we just need to remove NAs
+  # agweights <- lapply(agweights, function(x) x[!is.na(x)])
+  # # squirrel away in object
+  # COINobj$Parameters$Weights$Original <- agweights
 
-  otherweights2 <- vector(mode = "list", length = n_agg_levels)
-  for (ii in 1:n_agg_levels){
-    otherweights2[[ii]] <- AggMeta$Weight[AggMeta$AgLevel==ii+1]
-  }
-  # join together in one list
-  agweights <- c(agweights, otherweights2)
-  # we just need to remove NAs
-  agweights <- lapply(agweights, function(x) x[!is.na(x)])
+  #------- Also get weights for all levels
+  agg_cols <- ind_meta %>% dplyr::select(dplyr::starts_with("Agg"))
+  n_agg_levels <- length(agg_cols)
+
+  agweights <- data.frame(AgLevel = 1,
+                          Code = ind_meta$IndCode,
+                          Weight = ind_meta$IndWeight)
+
+  agweights <- rbind(agweights,
+                     AggMeta[c("AgLevel", "Code", "Weight")])
+
   # squirrel away in object
   COINobj$Parameters$Weights$Original <- agweights
 
@@ -235,8 +250,8 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL){
   #------- Last bits
 
   # record inclusion/exclusion choices
-  COINobj$Method$Assemble$include <- include
-  COINobj$Method$Assemble$exclude <- exclude
+  COINobj$Method$assemble$include <- include
+  COINobj$Method$assemble$exclude <- exclude
 
   class(COINobj) <- "COIN object" # assigns a "COIN object" class to the list. Helpful for later on.
 

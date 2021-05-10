@@ -8,7 +8,7 @@
 #' NULL, in which case it will use the weights that were attached to IndMeta and AggMeta in GII_assemble (if they exist), or
 #' A character string which corresponds to a named list of weights stored in .$Parameters$Weights. You can either add these manually or through rew8r.
 #' E.g. entering agweights = "Original" will use the original weights read in on assembly. This is equivalent to agweights = NULL.
-#' Or, a list of weights to use in the aggregation.
+#' Or, a data frame of weights to use in the aggregation.
 #' @param dset Which data set (contained in COIN object) to use
 #' @param agtype_bylevel A character vector with aggregation types for each level
 #' @param agfunc A custom function to use for aggregation if agtype = "custom", of the type y = f(x,w),
@@ -45,13 +45,13 @@ aggregate <- function(COIN, agtype="arith_mean", agweights = NULL, dset = "Norma
   }
 
   # Write function inputs to .$Method
-  COIN$Method$Aggregation$agtype <- agtype
-  COIN$Method$Aggregation$agweights <- agweights
-  COIN$Method$Aggregation$dset <- dset
-  COIN$Method$Aggregation$agtype_bylevel <- agtype_bylevel
-  COIN$Method$Aggregation$agfunc <- agfunc
+  COIN$Method$aggregate$agtype <- agtype
+  COIN$Method$aggregate$agweights <- agweights
+  COIN$Method$aggregate$dset <- dset
+  COIN$Method$aggregate$agtype_bylevel <- agtype_bylevel
+  COIN$Method$aggregate$agfunc <- agfunc
 
-  # get weights - if not explicitly specified, we assume it is in the GII obj
+  # get weights - if not explicitly specified, we assume it is in the obj
   if (is.null(agweights)){
     # use original weights
     agweights <- COIN$Parameters$Weights$Original
@@ -81,7 +81,7 @@ aggregate <- function(COIN, agtype="arith_mean", agweights = NULL, dset = "Norma
 
     agg_colname <- colnames(agg_cols[aglev]) # the name of the aggregation level
     agg_names <- unique(agg_cols[[aglev]]) # the names of the aggregation groups
-    weights_lev <- agweights[[aglev]] # the weights at this level
+    weights_lev <- agweights$Weight[agweights$AgLevel == aglev] # the weights at this level
 
     # first we have to get the columns (indicators, or agg levels below) to aggregate
     if (aglev ==1){

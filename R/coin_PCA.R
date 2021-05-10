@@ -54,7 +54,7 @@ PCA. You can also try imputing data first to avoid this."))
 
   # weight list
   wlist <- COIN$Parameters$Weights$Original
-  wlist[[aglev]] <- wts
+  wlist$Weight[wlist$AgLevel == aglev] <- wts
 
   # write results
   if( (out$otype == "COINobj") & (out2 == "obj")){
