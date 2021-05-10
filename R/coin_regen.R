@@ -18,13 +18,21 @@ regen <- function(COINold, quietly = FALSE){
     COINnew <- assemble(IndData = COINold$Input$Original$IndData,
                         IndMeta = COINold$Input$Original$IndMeta,
                         AggMeta = COINold$Input$Original$AggMeta,
-                        include = COINold$Method$Assemble$include,
-                        exclude = COINold$Method$Assemble$exclude) %>% suppressMessages()
+                        include = COINold$Method$assemble$include,
+                        exclude = COINold$Method$assemble$exclude) %>% suppressMessages()
+
+    # copy weights from old COIN (otherwise any additional will be deleted)
+    # first, save the new original weights (may have added/deleted indicators)
+    rescueorig <- COINnew$Parameters$Weights$Original
+    # overwrite new weights with old (all weight sets)
+    COINnew$Parameters$Weights <- COINold$Parameters$Weights
+    # re-add the new original weights as we don't want to disturb these.
+    COINnew$Parameters$Weights$Original <- rescueorig
 
     # optional custom operation
     if (exists("Custom",COINold$Method)){
-      if (exists("AfterAssemble", COINold$Method$Custom)){
-        eval(COINold$Method$Custom$AfterAssemble) %>% suppressMessages()
+      if (exists("after_assemble", COINold$Method$Custom)){
+        eval(COINold$Method$Custom$after_assemble) %>% suppressMessages()
       }
     }
 
@@ -41,110 +49,110 @@ regen <- function(COINold, quietly = FALSE){
       fi <- fOps[ii]
 
       # if we find custom folder, go to next (these are dealt with inside each if below)
-      if ((fi == "Custom")|(fi == "Assemble")){next}
+      if ((fi == "Custom")|(fi == "assemble")){next}
 
       # Now we have to see which function to run.
-      if(fi=="Screening"){
+      if(fi=="checkData"){
 
         # run checkData
-        COINnew <- checkData(COINnew, dset = COINold$Method$Screening$dset,
-                             ind_thresh = COINold$Method$Screening$ind_thresh,
-                             unit_screen = COINold$Method$Screening$unit_screen,
-                             Force = COINold$Method$Screening$Force,
+        COINnew <- checkData(COINnew, dset = COINold$Method$checkData$dset,
+                             ind_thresh = COINold$Method$checkData$ind_thresh,
+                             unit_screen = COINold$Method$checkData$unit_screen,
+                             Force = COINold$Method$checkData$Force,
                              out2 = "COIN") %>% suppressMessages()
 
         # optional custom operation
         if (exists("Custom",COINold$Method)){
-          if (exists("AfterScreening", COINold$Method$Custom)){
-            eval(COINold$Method$Custom$AfterScreening) %>% suppressMessages()
+          if (exists("after_checkData", COINold$Method$Custom)){
+            eval(COINold$Method$Custom$after_checkData) %>% suppressMessages()
           }
         }
 
-      } else if (fi=="Denomination"){
+      } else if (fi=="denominate"){
 
         # run denominate
-        COINnew <- denominate(COINnew, dset = COINold$Method$Denomination$dset,
-                              specby = COINold$Method$Denomination$specby,
-                              denomby = COINold$Method$Denomination$denomby,
-                              denominators = COINold$Method$Denomination$denominators,
+        COINnew <- denominate(COINnew, dset = COINold$Method$denominate$dset,
+                              specby = COINold$Method$denominate$specby,
+                              denomby = COINold$Method$denominate$denomby,
+                              denominators = COINold$Method$denominate$denominators,
                               out2 = "COIN") %>% suppressMessages()
 
         # optional custom operation
         if (exists("Custom",COINold$Method)){
-          if (exists("AfterDenomination", COINold$Method$Custom)){
-            eval(COINold$Method$Custom$AfterDenomination) %>% suppressMessages()
+          if (exists("after_denominate", COINold$Method$Custom)){
+            eval(COINold$Method$Custom$after_denominate) %>% suppressMessages()
           }
         }
 
-      } else if (fi=="Imputation"){
+      } else if (fi=="impute"){
 
         # run impute
-        COINnew <- impute(COINnew, imtype = COINold$Method$Imputation$imtype,
-                          dset = COINold$Method$Imputation$dset,
-                          groupvar = COINold$Method$Imputation$groupvar,
-                          byyear = COINold$Method$Imputation$byyear,
-                          EMaglev = COINold$Method$Imputation$EMaglev,
+        COINnew <- impute(COINnew, imtype = COINold$Method$impute$imtype,
+                          dset = COINold$Method$impute$dset,
+                          groupvar = COINold$Method$impute$groupvar,
+                          byyear = COINold$Method$impute$byyear,
+                          EMaglev = COINold$Method$impute$EMaglev,
                           out2 = "COIN") %>% suppressMessages()
 
         # optional custom operation
         if (exists("Custom",COINold$Method)){
-          if (exists("AfterImputation", COINold$Method$Custom)){
-            eval(COINold$Method$Custom$AfterImputation) %>% suppressMessages()
+          if (exists("after_impute", COINold$Method$Custom)){
+            eval(COINold$Method$Custom$after_impute) %>% suppressMessages()
           }
         }
 
-      } else if (fi=="Treatment"){
+      } else if (fi=="treat"){
 
         # run treat
-        COINnew <- treat(COINnew, dset = COINold$Method$Treatment$dset,
-                         winmax = COINold$Method$Treatment$winmax,
-                         winchange = COINold$Method$Treatment$winchange,
-                         deflog = COINold$Method$Treatment$deflog,
-                         boxlam = COINold$Method$Treatment$boxlam,
-                         t_skew = COINold$Method$Treatment$t_skew,
-                         t_kurt = COINold$Method$Treatment$t_kurt,
-                         individual = COINold$Method$Treatment$individual,
-                         indiv_only = COINold$Method$Treatment$indiv_only) %>% suppressMessages()
+        COINnew <- treat(COINnew, dset = COINold$Method$treat$dset,
+                         winmax = COINold$Method$treat$winmax,
+                         winchange = COINold$Method$treat$winchange,
+                         deflog = COINold$Method$treat$deflog,
+                         boxlam = COINold$Method$treat$boxlam,
+                         t_skew = COINold$Method$treat$t_skew,
+                         t_kurt = COINold$Method$treat$t_kurt,
+                         individual = COINold$Method$treat$individual,
+                         indiv_only = COINold$Method$treat$indiv_only) %>% suppressMessages()
 
         # optional custom operation
         if (exists("Custom",COINold$Method)){
-          if (exists("AfterTreatment", COINold$Method$Custom)){
-            eval(COINold$Method$Custom$AfterTreatment) %>% suppressMessages()
+          if (exists("after_treat", COINold$Method$Custom)){
+            eval(COINold$Method$Custom$after_treat) %>% suppressMessages()
           }
         }
 
-      } else if (fi=="Normalisation"){
+      } else if (fi=="normalise"){
 
         # run normalise
-        COINnew <- normalise(COINnew, ntype = COINold$Method$Normalisation$ntype,
-                             npara = COINold$Method$Normalisation$npara,
-                             dset = COINold$Method$Normalisation$dset,
-                             directions = COINold$Method$Normalisation$directions,
-                             individual = COINold$Method$Normalisation$individual,
-                             indiv_only = COINold$Method$Normalisation$indiv_only,
+        COINnew <- normalise(COINnew, ntype = COINold$Method$normalise$ntype,
+                             npara = COINold$Method$normalise$npara,
+                             dset = COINold$Method$normalise$dset,
+                             directions = COINold$Method$normalise$directions,
+                             individual = COINold$Method$normalise$individual,
+                             indiv_only = COINold$Method$normalise$indiv_only,
                              out2 = "COIN") %>% suppressMessages()
 
         # optional custom operation
         if (exists("Custom",COINold$Method)){
-          if (exists("AfterNormalisation", COINold$Method$Custom)){
-            eval(COINold$Method$Custom$AfterNormalisation) %>% suppressMessages()
+          if (exists("after_normalise", COINold$Method$Custom)){
+            eval(COINold$Method$Custom$after_normalise) %>% suppressMessages()
           }
         }
 
-      } else if (fi=="Aggregation"){
+      } else if (fi=="aggregate"){
 
         # run aggregate
-        COINnew <- aggregate(COINnew, agtype = COINold$Method$Aggregation$agtype,
-                             agweights = COINold$Method$Aggregation$agweights,
-                             dset = COINold$Method$Aggregation$dset,
-                             agtype_bylevel = COINold$Method$Aggregation$agtype_bylevel,
-                             agfunc = COINold$Method$Aggregation$agfunc,
+        COINnew <- aggregate(COINnew, agtype = COINold$Method$aggregate$agtype,
+                             agweights = COINold$Method$aggregate$agweights,
+                             dset = COINold$Method$aggregate$dset,
+                             agtype_bylevel = COINold$Method$aggregate$agtype_bylevel,
+                             agfunc = COINold$Method$aggregate$agfunc,
                              out2 = "COIN") %>% suppressMessages()
 
         # optional custom operation
         if (exists("Custom",COINold$Method)){
-          if (exists("AfterAggregation", COINold$Method$Custom)){
-            eval(COINold$Method$Custom$AfterAggregation) %>% suppressMessages()
+          if (exists("after_aggregate", COINold$Method$Custom)){
+            eval(COINold$Method$Custom$after_aggregate) %>% suppressMessages()
           }
         }
 
@@ -169,8 +177,8 @@ regen <- function(COINold, quietly = FALSE){
 
     # optional custom operation
     if (exists("Custom",COINold$Method)){
-      if (exists("AfterAssemble", COINold$Method$Custom)){
-        eval(COINold$Method$Custom$AfterAssemble)
+      if (exists("after_assemble", COINold$Method$Custom)){
+        eval(COINold$Method$Custom$after_assemble)
       }
     }
 
@@ -190,107 +198,107 @@ regen <- function(COINold, quietly = FALSE){
       if ((fi == "Custom")|(fi == "Assemble")){next}
 
       # Now we have to see which function to run.
-      if(fi=="Screening"){
+      if(fi=="checkData"){
 
         # run checkData
-        COINnew <- checkData(COINnew, dset = COINold$Method$Screening$dset,
-                             ind_thresh = COINold$Method$Screening$ind_thresh,
-                             unit_screen = COINold$Method$Screening$unit_screen,
-                             Force = COINold$Method$Screening$Force,
+        COINnew <- checkData(COINnew, dset = COINold$Method$checkData$dset,
+                             ind_thresh = COINold$Method$checkData$ind_thresh,
+                             unit_screen = COINold$Method$checkData$unit_screen,
+                             Force = COINold$Method$checkData$Force,
                              out2 = "COIN")
 
         # optional custom operation
         if (exists("Custom",COINold$Method)){
-          if (exists("AfterScreening", COINold$Method$Custom)){
-            eval(COINold$Method$Custom$AfterScreening)
+          if (exists("after_checkData", COINold$Method$Custom)){
+            eval(COINold$Method$Custom$after_checkData)
           }
         }
 
-      } else if (fi=="Denomination"){
+      } else if (fi=="denominate"){
 
         # run denominate
-        COINnew <- denominate(COINnew, dset = COINold$Method$Denomination$dset,
-                              specby = COINold$Method$Denomination$specby,
-                              denomby = COINold$Method$Denomination$denomby,
-                              denominators = COINold$Method$Denomination$denominators,
+        COINnew <- denominate(COINnew, dset = COINold$Method$denominate$dset,
+                              specby = COINold$Method$denominate$specby,
+                              denomby = COINold$Method$denominate$denomby,
+                              denominators = COINold$Method$denominate$denominators,
                               out2 = "COIN")
 
         # optional custom operation
         if (exists("Custom",COINold$Method)){
-          if (exists("AfterDenomination", COINold$Method$Custom)){
-            eval(COINold$Method$Custom$AfterDenomination)
+          if (exists("after_denominate", COINold$Method$Custom)){
+            eval(COINold$Method$Custom$after_denominate)
           }
         }
 
-      } else if (fi=="Imputation"){
+      } else if (fi=="impute"){
 
         # run impute
-        COINnew <- impute(COINnew, imtype = COINold$Method$Imputation$imtype,
-                          dset = COINold$Method$Imputation$dset,
-                          groupvar = COINold$Method$Imputation$groupvar,
-                          byyear = COINold$Method$Imputation$byyear,
-                          EMaglev = COINold$Method$Imputation$EMaglev,
+        COINnew <- impute(COINnew, imtype = COINold$Method$impute$imtype,
+                          dset = COINold$Method$impute$dset,
+                          groupvar = COINold$Method$impute$groupvar,
+                          byyear = COINold$Method$impute$byyear,
+                          EMaglev = COINold$Method$impute$EMaglev,
                           out2 = "COIN")
 
         # optional custom operation
         if (exists("Custom",COINold$Method)){
-          if (exists("AfterImputation", COINold$Method$Custom)){
-            eval(COINold$Method$Custom$AfterImputation)
+          if (exists("after_impute", COINold$Method$Custom)){
+            eval(COINold$Method$Custom$after_impute)
           }
         }
 
-      } else if (fi=="Treatment"){
+      } else if (fi=="treat"){
 
         # run treat
-        COINnew <- treat(COINnew, dset = COINold$Method$Treatment$dset,
-                         winmax = COINold$Method$Treatment$winmax,
-                         winchange = COINold$Method$Treatment$winchange,
-                         deflog = COINold$Method$Treatment$deflog,
-                         boxlam = COINold$Method$Treatment$boxlam,
-                         t_skew = COINold$Method$Treatment$t_skew,
-                         t_kurt = COINold$Method$Treatment$t_kurt,
-                         individual = COINold$Method$Treatment$individual,
-                         indiv_only = COINold$Method$Treatment$indiv_only)
+        COINnew <- treat(COINnew, dset = COINold$Method$treat$dset,
+                         winmax = COINold$Method$treat$winmax,
+                         winchange = COINold$Method$treat$winchange,
+                         deflog = COINold$Method$treat$deflog,
+                         boxlam = COINold$Method$treat$boxlam,
+                         t_skew = COINold$Method$treat$t_skew,
+                         t_kurt = COINold$Method$treat$t_kurt,
+                         individual = COINold$Method$treat$individual,
+                         indiv_only = COINold$Method$treat$indiv_only)
 
         # optional custom operation
         if (exists("Custom",COINold$Method)){
-          if (exists("AfterTreatment", COINold$Method$Custom)){
-            eval(COINold$Method$Custom$AfterTreatment)
+          if (exists("after_treat", COINold$Method$Custom)){
+            eval(COINold$Method$Custom$after_treat)
           }
         }
 
-      } else if (fi=="Normalisation"){
+      } else if (fi=="normalise"){
 
         # run normalise
-        COINnew <- normalise(COINnew, ntype = COINold$Method$Normalisation$ntype,
-                             npara = COINold$Method$Normalisation$npara,
-                             dset = COINold$Method$Normalisation$dset,
-                             directions = COINold$Method$Normalisation$directions,
-                             individual = COINold$Method$Normalisation$individual,
-                             indiv_only = COINold$Method$Normalisation$indiv_only,
+        COINnew <- normalise(COINnew, ntype = COINold$Method$normalise$ntype,
+                             npara = COINold$Method$normalise$npara,
+                             dset = COINold$Method$normalise$dset,
+                             directions = COINold$Method$normalise$directions,
+                             individual = COINold$Method$normalise$individual,
+                             indiv_only = COINold$Method$normalise$indiv_only,
                              out2 = "COIN")
 
         # optional custom operation
         if (exists("Custom",COINold$Method)){
-          if (exists("AfterNormalisation", COINold$Method$Custom)){
-            eval(COINold$Method$Custom$AfterNormalisation)
+          if (exists("after_normalise", COINold$Method$Custom)){
+            eval(COINold$Method$Custom$after_normalise)
           }
         }
 
-      } else if (fi=="Aggregation"){
+      } else if (fi=="aggregate"){
 
         # run aggregate
-        COINnew <- aggregate(COINnew, agtype = COINold$Method$Aggregation$agtype,
-                             agweights = COINold$Method$Aggregation$agweights,
-                             dset = COINold$Method$Aggregation$dset,
-                             agtype_bylevel = COINold$Method$Aggregation$agtype_bylevel,
-                             agfunc = COINold$Method$Aggregation$agfunc,
+        COINnew <- aggregate(COINnew, agtype = COINold$Method$aggregate$agtype,
+                             agweights = COINold$Method$aggregate$agweights,
+                             dset = COINold$Method$aggregate$dset,
+                             agtype_bylevel = COINold$Method$aggregate$agtype_bylevel,
+                             agfunc = COINold$Method$aggregate$agfunc,
                              out2 = "COIN")
 
         # optional custom operation
         if (exists("Custom",COINold$Method)){
-          if (exists("AfterAggregation", COINold$Method$Custom)){
-            eval(COINold$Method$Custom$AfterAggregation)
+          if (exists("after_aggregate", COINold$Method$Custom)){
+            eval(COINold$Method$Custom$after_aggregate)
           }
         }
 
