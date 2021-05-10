@@ -1,17 +1,27 @@
 #' Detailed unit data check and screener by data availability
 #'
 #' Gives detailed tables of data availability, and optionally screens units based on a data
-#' availability threshold. Units can be optionally "forced" to be included or excluded, making
+#' availability threshold and presence of zeros. Units can be optionally "forced" to be included or excluded, making
 #' exceptions for the data availability threshold.
+#'
+#' The two main criteria of interest are NA values, and zeros. The summary table gives percentages of
+#' NA values for each unit, across indicators, and percentage zero values (*as a percentage of non-NA values*).
+#' Each unit is flagged as having low data or too many zeros based on thresholds.
 #'
 #' This function currently only supports COINs as inputs, not data frames.
 #'
 #' @param COIN The COIN object
 #' @param dset The data set to be checked/screened
-#' @param ind_thresh A data availability threshold, which controls both Rule 1 and 2. Default 0.66. Specify as a fraction.
-#' @param unit_screen Logical: if TRUE, screens any units with indicator data availability < ind_thresh.
-#' This is output in a new data set .$Data$Screened and added as a column in the output table.
-#' @param Force A data frame with any additional countries to force inclusion or exclusion. First column is ISO code. Second column either "Include" or "Exclude" for each country to force.
+#' @param ind_thresh A data availability threshold used for flagging low data and screening units if unit_screen != "none". Default 0.66. Specify as a fraction.
+#' @param zero_thresh As ind_thresh but for non-zero values. Defaults to 0.05, i.e. it will flag any units with less than 5% non-zero values (equivalently more than 95% zero values).
+#' @param unit_screen Specifies whether and how to screen units based on data availability or zero values.
+#' * If set to "none" (default), does not screen any units.
+#' * If set to "byNA", screens units with data availability below ind_thresh
+#' * If set to "byzeros", screens units with non-zero values below zero_thresh
+#' * If set to "byNAandzeros", screens units based on either of the previous two criteria being true.
+#' * If you simply want to force a unit or units to be excluded (without any other screening), use the Force argument and set unit_screen = TRUE.
+#' unit_screen != "none" outputs a new data set .$Data$Screened.
+#' @param Force A data frame with any additional countries to force inclusion or exclusion. First column is "UnitCode". Second column "Status" either "Include" or "Exclude" for each country to force.
 #' @param out2 Where to output the results. If "COIN" (default for COIN input), appends to updated COIN,
 #' otherwise if "df" outputs to data frame.
 #'
@@ -22,8 +32,8 @@
 #' @return An updated COIN object with tables showing missing data, and a filtered list of countries to include in subsequent calculations.
 #' @export
 
-checkData <- function(COIN, dset = "Raw", ind_thresh=2/3, unit_screen = FALSE,
-                           Force = NULL, out2 = "COIN"){
+checkData <- function(COIN, dset = "Raw", ind_thresh=2/3, zero_thresh = 0.05,
+                      unit_screen = "none", Force = NULL, out2 = "COIN"){
 
   # Check input type. If not COIN, exit.
   if (!("COIN object" %in% class(COIN))){ # COIN obj
@@ -31,10 +41,10 @@ checkData <- function(COIN, dset = "Raw", ind_thresh=2/3, unit_screen = FALSE,
   }
 
   # Write function arguments to object, FTR
-  COIN$Method$Screening$dset <- dset
-  COIN$Method$Screening$ind_thresh <- ind_thresh
-  COIN$Method$Screening$unit_screen <- unit_screen
-  COIN$Method$Screening$Force <- Force
+  COIN$Method$checkData$dset <- dset
+  COIN$Method$checkData$ind_thresh <- ind_thresh
+  COIN$Method$checkData$unit_screen <- unit_screen
+  COIN$Method$checkData$Force <- Force
 
   # Isolate indicator data
   out1 <- getIn(COIN, dset = dset)
@@ -43,12 +53,22 @@ checkData <- function(COIN, dset = "Raw", ind_thresh=2/3, unit_screen = FALSE,
   #--- Check overall data availability
 
   nabyrow <- rowSums(is.na(ind_data_only)) # number of missing data by row
+  zerobyrow <- rowSums(ind_data_only == 0, na.rm = TRUE) # number of zeros for each row
+  nazerobyrow <- nabyrow + zerobyrow # number of zeros or NAs for each row
   Prc_avail = 1 - nabyrow/ncol(ind_data_only) # the percentage of data available
+  Prc_nonzero = 1 - zerobyrow/(ncol(ind_data_only) - nabyrow) # the percentage of non zeros
+  #Prc_avail_and_nonzero = 1 - nazerobyrow/ncol(ind_data_only) # the percentage of non zeros AND not NA
 
-  data_avail <- data.frame(UnitCode = COIN$Parameters$UnitCodes,
+  data_avail <- data.frame(UnitCode = out1$UnitCodes,
                            N_missing = nabyrow,
+                           N_zero = zerobyrow,
+                           N_miss_or_zero = nazerobyrow,
                            PrcDataAll = Prc_avail*100,
-                           LowDataAll = Prc_avail<(ind_thresh))
+                           PrcNonZero = Prc_nonzero*100,
+                           #PrcDataAndNonZero = Prc_avail_and_nonzero*100,
+                           LowDataAll = Prc_avail < ind_thresh,
+                           ZeroFlag = Prc_nonzero < zero_thresh,
+                           LowDatOrZeroFlag = (Prc_avail < ind_thresh) | (Prc_nonzero < zero_thresh))
 
   #--- Check data availability by group
 
@@ -88,24 +108,31 @@ checkData <- function(COIN, dset = "Raw", ind_thresh=2/3, unit_screen = FALSE,
   }
 
   # Now add final column which says if country is included or not, if asked for
-  if (unit_screen == TRUE){
+  if (unit_screen == "byNA"){
     data_avail <- cbind(data_avail, Included = data_avail$LowDataAll == FALSE)
+  } else if (unit_screen == "byzeros"){
+    data_avail <- cbind(data_avail, Included = data_avail$ZeroFlag == FALSE)
+  } else if (unit_screen == "byNAandzeros"){
+    data_avail <- cbind(data_avail, Included = data_avail$LowDatOrZeroFlag == FALSE)
+  } else {
+    data_avail <- cbind(data_avail, Included = TRUE)
   }
 
   if (!is.null(Force)){ # if some countries to force include/exclude
+    browser()
     # convert to logical
     Force[2] <- Force[2]=="Include"
     # substitute in output table
 
-    data_avail$LowDataAll[ data_avail$UnitCode %in% Force$UnitCode[Force$Status == TRUE] ] <- FALSE
-    data_avail$LowDataAll[ data_avail$UnitCode %in% Force$UnitCode[Force$Status == FALSE] ] <- TRUE
+    data_avail$Included[ data_avail$UnitCode %in% Force$UnitCode[Force$Status == TRUE] ] <- TRUE
+    data_avail$Included[ data_avail$UnitCode %in% Force$UnitCode[Force$Status == FALSE] ] <- FALSE
   }
 
-  if (unit_screen == TRUE){
+  if (unit_screen != "none"){
     # create new data set which filters out the countries that didn't make the cut
-    ScreenedData <- dplyr::filter(out1$ind_data, !data_avail$LowDataAll)
+    ScreenedData <- dplyr::filter(out1$ind_data, data_avail$Included)
     # units that are removed
-    ScreenedUnits <- data_avail$UnitCode[data_avail$LowDataAll]
+    ScreenedUnits <- data_avail$UnitCode[!data_avail$Included]
   }
 
   if (out2 == "list"){
@@ -124,7 +151,7 @@ checkData <- function(COIN, dset = "Raw", ind_thresh=2/3, unit_screen = FALSE,
     eval(parse(text=paste0("COIN$Analysis$",dset,"$MissDatSummary<- data_avail")))
     eval(parse(text=paste0("COIN$Analysis$",dset,"$MissDatByGroup<- data_avail_bygroup")))
 
-    if (unit_screen == TRUE){
+    if (unit_screen != "none"){
       COIN$Data$Screened <- ScreenedData
       eval(parse(text=paste0("COIN$Analysis$",dset,"$RemovedUnits<- ScreenedUnits")))
     }
