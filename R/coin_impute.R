@@ -39,11 +39,11 @@ impute <- function(COIN, imtype = "ind_mean", dset = "Raw",
 
   if( out$otype=="COINobj" ) {
     # Write to Method
-    COIN$Method$Imputation$imtype <- imtype
-    COIN$Method$Imputation$dset <- dset
-    COIN$Method$Imputation$groupvar <- groupvar
-    COIN$Method$Imputation$byyear <- byyear
-    COIN$Method$Imputation$EMaglev <- EMaglev
+    COIN$Method$impute$imtype <- imtype
+    COIN$Method$impute$dset <- dset
+    COIN$Method$impute$groupvar <- groupvar
+    COIN$Method$impute$byyear <- byyear
+    COIN$Method$impute$EMaglev <- EMaglev
   }
 
   # get number of NAs before imputation
@@ -84,11 +84,13 @@ impute <- function(COIN, imtype = "ind_mean", dset = "Raw",
     sub_codes <- COIN$Input$IndMeta$IndCode # the ingredients to aggregate are the base indicators
     ind_data_impN <- ind_dataN
 
-    if(is.null(COIN$Parameters$Weights)){
+    if(is.null(COIN$Parameters$Weights$Original)){
       weights_lev <- rep(1, length(sub_codes))
       message("No weights found in COIN. Using equal weights.")
     } else {
-      weights_lev <- COIN$Parameters$Weights[[1]] # Indicator weights
+      weights_lev <- COIN$Parameters$Weights$Original$Weight[
+        COIN$Parameters$Weights$Original$AgLevel == 1
+      ] # Indicator weights
     }
 
     for (agroup in 1:length(agg_names)){ # loop over aggregation groups, inside the given agg level

@@ -33,10 +33,10 @@ denominate <- function(obj, dset = "Raw", specby = "metadata", denomby = NULL, d
   if(out1$otype=="COINobj") {
 
     # Record to Method
-    obj$Method$Denomination$dset <- dset
-    obj$Method$Denomination$specby <- specby
-    obj$Method$Denomination$denomby <- denomby
-    obj$Method$Denomination$denominators <- denominators
+    obj$Method$denominate$dset <- dset
+    obj$Method$denominate$specby <- specby
+    obj$Method$denominate$denomby <- denomby
+    obj$Method$denominate$denominators <- denominators
   }
 
   # some checks first
