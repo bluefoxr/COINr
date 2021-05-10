@@ -251,13 +251,13 @@ indDash <- function(COIN, icodes = NULL, dset = "Raw"){
         treatinfo <- tbl[tbl$IndCode == isel1(),-1]
         # add stats
         treatinfo <- cbind(treatinfo,
-                           Skew = round( moments::skewness(idata1()[[isel1()]], na.rm = T), 3),
-                           Kurtosis = round( moments::kurtosis(idata1()[[isel1()]], na.rm = T), 3))
+                           Skew = round( e1071::skewness(idata1()[[isel1()]], na.rm = T, type = 2), 3),
+                           Kurtosis = round( e1071::kurtosis(idata1()[[isel1()]], na.rm = T, type = 2), 3))
       } else {
         # no treated data set selected, so just return skew and kurtosis
         treatinfo <- data.frame(
-                           Skew = round( moments::skewness(idata1()[[isel1()]], na.rm = T), 3),
-                           Kurtosis = round( moments::kurtosis(idata1()[[isel1()]], na.rm = T), 3))
+                           Skew = round( e1071::skewness(idata1()[[isel1()]], na.rm = T, type = 2), 3),
+                           Kurtosis = round( e1071::kurtosis(idata1()[[isel1()]], na.rm = T, type = 2), 3))
       }
       return(treatinfo)
     })
@@ -271,13 +271,13 @@ indDash <- function(COIN, icodes = NULL, dset = "Raw"){
         treatinfo <- tbl[tbl$IndCode == isel2(),-1]
         # add stats
         treatinfo <- cbind(treatinfo,
-                           Skew = round( moments::skewness(idata2()[[isel2()]], na.rm = T), 3),
-                           Kurtosis = round( moments::kurtosis(idata2()[[isel2()]], na.rm = T), 3))
+                           Skew = round( e1071::skewness(idata2()[[isel2()]], na.rm = T, type = 2), 3),
+                           Kurtosis = round( e1071::kurtosis(idata2()[[isel2()]], na.rm = T, type = 2), 3))
       } else {
         # no treated data set selected, so just return skew and kurtosis
         treatinfo <- data.frame(
-          Skew = round( moments::skewness(idata2()[[isel2()]], na.rm = T), 3),
-          Kurtosis = round( moments::kurtosis(idata2()[[isel2()]], na.rm = T), 3))
+          Skew = round( e1071::skewness(idata2()[[isel2()]], na.rm = T, type = 2), 3),
+          Kurtosis = round( e1071::kurtosis(idata2()[[isel2()]], na.rm = T, type = 2), 3))
       }
       return(treatinfo)
     })
