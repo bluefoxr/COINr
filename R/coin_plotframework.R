@@ -154,11 +154,15 @@ effectiveWeight <- function(COIN){
   # also get effective weights as structured list, this is more useful outside of plotframework()
   if ("COIN object" %in% class(COIN)){ # COIN obj
     wts_eff_list <- COIN$Parameters$Weights$Original
-    icount <- 1
-    for (ii in 1:length(wts_eff_list)){
-      wts_eff_list[[ii]] <- wts_eff[icount:(icount+length(wts_eff_list[[ii]])-1)]
-      icount <- icount + length(wts_eff_list[[ii]])
-    }
+    wts_eff_list$Weight <- wts_eff
+    colnames(wts_eff_list)[3] <- "EffectiveWeight"
+
+    # icount <- 1
+    # browser()
+    # for (ii in 1:length(wts_eff_list)){
+    #   wts_eff_list[[ii]] <- wts_eff[icount:(icount+length(wts_eff_list[[ii]])-1)]
+    #   icount <- icount + length(wts_eff_list[[ii]])
+    # }
 
     return(list(EffectiveWeights = wts_eff,
                 LabelsParents = lbls_prnts,
