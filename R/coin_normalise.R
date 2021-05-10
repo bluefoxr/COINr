@@ -36,12 +36,12 @@ normalise <- function(COIN, ntype="minmax", npara = NULL,
 
   if(out$otype == "COINobj"){
     # Write inputs to Method
-    COIN$Method$Normalisation$ntype <- ntype
-    COIN$Method$Normalisation$npara <- npara
-    COIN$Method$Normalisation$dset <- dset
-    COIN$Method$Normalisation$directions <- directions
-    COIN$Method$Normalisation$indiv_only <- indiv_only
-    COIN$Method$Normalisation$individual <- individual
+    COIN$Method$normalise$ntype <- ntype
+    COIN$Method$normalise$npara <- npara
+    COIN$Method$normalise$dset <- dset
+    COIN$Method$normalise$directions <- directions
+    COIN$Method$normalise$indiv_only <- indiv_only
+    COIN$Method$normalise$individual <- individual
   }
 
   if (is.null(directions) & out$otype == "COINobj"){ # if no directions are explicitly specified, but COINobj input
