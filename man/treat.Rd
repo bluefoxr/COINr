@@ -14,7 +14,8 @@ treat(
   t_skew = 2,
   t_kurt = 3.5,
   individual = NULL,
-  indiv_only = TRUE
+  indiv_only = TRUE,
+  bypass_all = FALSE
 )
 }
 \arguments{
@@ -46,6 +47,9 @@ return the indicator untreated.}
 
 \item{indiv_only}{Logical: if TRUE, only the indicators specified in "individual" are treated.
 If false, all indicators are treated: any outside of "individual" will get default treatment.}
+
+\item{bypass_all}{Logical: if TRUE, bypasses all data treatment and returns the original data. This
+is useful for sensitivity analysis and comparing the effects of turning data treatment on and off.}
 }
 \value{
 A treated data set plus information about how the data was treated.

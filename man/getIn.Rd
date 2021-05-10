@@ -23,12 +23,14 @@ to N (top aggregation level, typically the index).}
 }
 \value{
 A list with the following entries:
-* .$IndCodes  The indicator codes
-* .$IndNames  The indicator names (if a COIN object is input)
-* .$ind_data A data frame of indicator data, according to the input specifications, including any unit codes, names and groups
-* .$ind_data_only A data frame, as above, but without unit codes, names, groups
-* .$UnitCodes Unit codes of selected data set
-* .$otype Object type (a string: either "COINobj" or "df")
+\itemize{
+\item .$IndCodes  The indicator codes
+\item .$IndNames  The indicator names (if a COIN object is input)
+\item .$ind_data A data frame of indicator data, according to the input specifications, including any unit codes, names and groups
+\item .$ind_data_only A data frame, as above, but without unit codes, names, groups
+\item .$UnitCodes Unit codes of selected data set
+\item .$otype Object type (a string: either "COINobj" or "df")
+}
 }
 \description{
 This function does a number of things that are useful for many COINr functions and operations.

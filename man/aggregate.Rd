@@ -23,7 +23,7 @@ aggregate(
 NULL, in which case it will use the weights that were attached to IndMeta and AggMeta in GII_assemble (if they exist), or
 A character string which corresponds to a named list of weights stored in .$Parameters$Weights. You can either add these manually or through rew8r.
 E.g. entering agweights = "Original" will use the original weights read in on assembly. This is equivalent to agweights = NULL.
-Or, a list of weights to use in the aggregation.}
+Or, a data frame of weights to use in the aggregation.}
 
 \item{dset}{Which data set (contained in COIN object) to use}
 
