@@ -16,6 +16,11 @@ Interactive sunburst plot.
 Plots the structure of the index using a sunburst plot. Output can be used as an interactive plot
 in html documents, e.g. via R Markdown.
 }
+\details{
+Note that this plot is sensitive to the \emph{order} of the elements. If you use assemble() and input
+a COIN, this plot should work automatically. If you input a list, you should make sure that the indicator metadata
+is ordered by descending order of the hierarchy (i.e. highest level, working downwards)
+}
 \examples{
 \dontrun{plotframework(COIN)}
 

@@ -3,6 +3,10 @@
 #' Plots the structure of the index using a sunburst plot. Output can be used as an interactive plot
 #' in html documents, e.g. via R Markdown.
 #'
+#' Note that this plot is sensitive to the *order* of the elements. If you use assemble() and input
+#' a COIN, this plot should work automatically. If you input a list, you should make sure that the indicator metadata
+#' is ordered by descending order of the hierarchy (i.e. highest level, working downwards)
+#'
 #' @param COIN COIN object, or list with first entry is the indicator metadata, second entry is the aggregation metadata
 #'
 #' @importFrom dplyr select starts_with pull ends_with
@@ -153,16 +157,10 @@ effectiveWeight <- function(COIN){
 
   # also get effective weights as structured list, this is more useful outside of plotframework()
   if ("COIN object" %in% class(COIN)){ # COIN obj
+
     wts_eff_list <- COIN$Parameters$Weights$Original
     wts_eff_list$Weight <- wts_eff
     colnames(wts_eff_list)[3] <- "EffectiveWeight"
-
-    # icount <- 1
-    # browser()
-    # for (ii in 1:length(wts_eff_list)){
-    #   wts_eff_list[[ii]] <- wts_eff[icount:(icount+length(wts_eff_list[[ii]])-1)]
-    #   icount <- icount + length(wts_eff_list[[ii]])
-    # }
 
     return(list(EffectiveWeights = wts_eff,
                 LabelsParents = lbls_prnts,
