@@ -172,8 +172,8 @@ regen <- function(COINold, quietly = FALSE){
     COINnew <- assemble(IndData = COINold$Input$Original$IndData,
                         IndMeta = COINold$Input$Original$IndMeta,
                         AggMeta = COINold$Input$Original$AggMeta,
-                        include = COINold$Method$Assemble$include,
-                        exclude = COINold$Method$Assemble$exclude)
+                        include = COINold$Method$assemble$include,
+                        exclude = COINold$Method$assemble$exclude)
 
     # optional custom operation
     if (exists("Custom",COINold$Method)){
@@ -195,7 +195,7 @@ regen <- function(COINold, quietly = FALSE){
       fi <- fOps[ii]
 
       # if we find custom folder, go to next (these are dealt with inside each if below)
-      if ((fi == "Custom")|(fi == "Assemble")){next}
+      if ((fi == "Custom")|(fi == "assemble")){next}
 
       # Now we have to see which function to run.
       if(fi=="checkData"){
@@ -328,7 +328,7 @@ regen <- function(COINold, quietly = FALSE){
 #' @param add A character vector of indicator codes to add (must be present in the original input data)
 #' @param drop A character vector of indicator codes to remove (must be present in the original input data)
 #' @param regen Logical (default): if TRUE, automatically regenerates the results based on the new specs
-#' Otherwise, just updates the .$Method$Assemble parameters. This latter might be useful if you want to
+#' Otherwise, just updates the .$Method$assemble parameters. This latter might be useful if you want to
 #' Make other changes before re-running using the regen function.
 #'
 #' @importFrom magrittr "%>%"
@@ -346,8 +346,8 @@ indChange <- function(COIN, add = NULL, drop = NULL, regen = FALSE){
   # ADDING INDICATORS
   if(!is.null(add)){
     # assume when we add, we take the existing indicators and add specified ones
-    COIN$Method$Assemble$include <- c(COIN$Parameters$IndCodes, add)
-    COIN$Method$Assemble$exclude <- NULL
+    COIN$Method$assemble$include <- c(COIN$Parameters$IndCodes, add)
+    COIN$Method$assemble$exclude <- NULL
   }
 
   # DROPPING INDICATORS
@@ -355,8 +355,8 @@ indChange <- function(COIN, add = NULL, drop = NULL, regen = FALSE){
     # when we drop an indicator, this is relative to the existing COIN object, not to the
     # original input data. Therefore, the best approach is to use the "include" option again.
     # use the existing vector of ind codes, minus the indicators to drop
-    COIN$Method$Assemble$include <- setdiff(COIN$Parameters$IndCodes, drop)
-    COIN$Method$Assemble$exclude <- NULL
+    COIN$Method$assemble$include <- setdiff(COIN$Parameters$IndCodes, drop)
+    COIN$Method$assemble$exclude <- NULL
   }
 
   # REGEN if asked (nicely)
