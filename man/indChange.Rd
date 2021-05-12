@@ -14,7 +14,7 @@ indChange(COIN, add = NULL, drop = NULL, regen = FALSE)
 \item{drop}{A character vector of indicator codes to remove (must be present in the original input data)}
 
 \item{regen}{Logical (default): if TRUE, automatically regenerates the results based on the new specs
-Otherwise, just updates the .$Method$Assemble parameters. This latter might be useful if you want to
+Otherwise, just updates the .$Method$assemble parameters. This latter might be useful if you want to
 Make other changes before re-running using the regen function.}
 }
 \value{
