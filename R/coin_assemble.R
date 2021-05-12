@@ -95,6 +95,9 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL){
 
   ##------- Select indicators, if needed -----##
 
+  include0 <- include
+  exclude0 <- exclude
+
   # if include is not specified, include everything
   if(is.null(include)){include <- cnames1}
 
@@ -109,8 +112,11 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL){
   }
 
   # sort ind_meta properly according to structure of index
+  # note: I sort according to the reversed order of the agg columns, so starting with the
+  # highest level of aggregation first then working down
+
   ind_meta <- dplyr::arrange(ind_meta,
-    dplyr::across(dplyr::starts_with("Agg")))
+                             rev(dplyr::across(dplyr::starts_with("Agg"))))
 
   # I want the indicator cols to be in the same order as ind_meta, to avoid surprises
   ind_data <- dplyr::select(ind_data,
@@ -209,23 +215,6 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL){
 
   message("-----------------")
 
-  #------- Also get weights and put somewhere sensible
-
-  # # first, indicator weights
-  # agweights <- list(IndWeight = ind_meta$IndWeight)
-  # # now the other weights
-  #
-  # otherweights2 <- vector(mode = "list", length = n_agg_levels)
-  # for (ii in 1:n_agg_levels){
-  #   otherweights2[[ii]] <- AggMeta$Weight[AggMeta$AgLevel==ii+1]
-  # }
-  # # join together in one list
-  # agweights <- c(agweights, otherweights2)
-  # # we just need to remove NAs
-  # agweights <- lapply(agweights, function(x) x[!is.na(x)])
-  # # squirrel away in object
-  # COINobj$Parameters$Weights$Original <- agweights
-
   #------- Also get weights for all levels
   agg_cols <- ind_meta %>% dplyr::select(dplyr::starts_with("Agg"))
   n_agg_levels <- length(agg_cols)
@@ -250,8 +239,8 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL){
   #------- Last bits
 
   # record inclusion/exclusion choices
-  COINobj$Method$assemble$include <- include
-  COINobj$Method$assemble$exclude <- exclude
+  COINobj$Method$assemble$include <- include0
+  COINobj$Method$assemble$exclude <- exclude0
 
   class(COINobj) <- "COIN object" # assigns a "COIN object" class to the list. Helpful for later on.
 
