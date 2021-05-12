@@ -362,16 +362,16 @@ weights2corr <- function(COIN, w, aglevs = NULL, icodes = NULL,
     aglevs <- c(1, COIN$Parameters$Nlevels)
   }
 
-  if(is.null(COIN$Method$Aggregation)){
+  if(is.null(COIN$Method$aggregate)){
     stop("You have not yet aggregated your data. This needs to be done first.")
   }
 
   # aggregate
-  COIN2 <- aggregate(COIN, agtype = COIN$Method$Aggregation$agtype,
+  COIN2 <- aggregate(COIN, agtype = COIN$Method$aggregate$agtype,
                      agweights = w,
-                     dset = COIN$Method$Aggregation$dset,
-                     agtype_bylevel = COIN$Method$Aggregation$agtype_bylevel,
-                     agfunc = COIN$Method$Aggregation$agfunc
+                     dset = COIN$Method$aggregate$dset,
+                     agtype_bylevel = COIN$Method$aggregate$agtype_bylevel,
+                     agfunc = COIN$Method$aggregate$agfunc
                      )
 
   # get data to correlate against each other
@@ -384,7 +384,7 @@ weights2corr <- function(COIN, w, aglevs = NULL, icodes = NULL,
                                    COIN$Parameters$AggCodes[[length(COIN$Parameters$AggCodes)-1]])]
   dfres <- cbind("Rank"=rank(COIN2$Data$Aggregated$Index*-1, ties.method = "min"), dfres)
   # get correlations
-  cr = stats::cor(idata1, idata2, method = cortype, use = "na.or.complete")
+  cr = stats::cor(idata1, idata2, method = cortype, use = "pairwise.complete.obs")
 
   # get index structure
   agcols <- dplyr::select(COIN$Input$IndMeta, .data$IndCode, dplyr::starts_with("Agg"))
@@ -583,7 +583,7 @@ hicorrSP <- function(COIN, dset = "Normalised", hicorval = 0.9, cortype = "pears
   out1 <- getIn(COIN, dset = "Normalised")
 
   corr_ind <- stats::cor(out1$ind_data_only,
-                         method = cortype, use = "na.or.complete") %>% round(2)
+                         method = cortype, use = "pairwise.complete.obs") %>% round(2)
 
   subpill <- dplyr::select(COIN$Input$IndMeta, dplyr::starts_with("Agg"))[[1]]
 
@@ -651,11 +651,11 @@ plotCorr <- function(COIN, aglevs = NULL, insig = FALSE, levs = TRUE, grouprects
   # if weights are specified, reaggregate first
   if(!is.null(useweights)){
     # aggregate
-    COIN <- aggregate(COIN, agtype = COIN$Method$Aggregation$agtype,
+    COIN <- aggregate(COIN, agtype = COIN$Method$aggregate$agtype,
                        agweights = useweights,
-                       dset = COIN$Method$Aggregation$dset,
-                       agtype_bylevel = COIN$Method$Aggregation$agtype_bylevel,
-                       agfunc = COIN$Method$Aggregation$agfunc
+                       dset = COIN$Method$aggregate$dset,
+                       agtype_bylevel = COIN$Method$aggregate$agtype_bylevel,
+                       agfunc = COIN$Method$aggregate$agfunc
     )
   }
 
@@ -664,7 +664,7 @@ plotCorr <- function(COIN, aglevs = NULL, insig = FALSE, levs = TRUE, grouprects
   out2 <- getIn(COIN, dset = "Aggregated", aglev = aglevs[2])
 
   # correlation
-  corr_ind <- stats::cor(out1$ind_data_only, out2$ind_data_only, method = cortype, use = "na.or.complete") %>% round(2)
+  corr_ind <- stats::cor(out1$ind_data_only, out2$ind_data_only, method = cortype, use = "pairwise.complete.obs") %>% round(2)
   corr_ind_text <- corr_ind # for annotations later
 
   # change insignificant correlations to NAs if asked
@@ -931,13 +931,13 @@ weightOpt <- function(COIN, itarg, aglev, cortype = "pearson", optype = "balance
   # if equal influence requested
   if(is.character(itarg)){
     if(itarg == "equal"){
-      itarg <- rep(1, length(COIN$Parameters$Weights$Original[[aglev]]) )
+      itarg <- rep(1, sum(COIN$Parameters$Weights$Original$AgLevel == aglev))
     } else {
       stop("itarg not recognised - should be either numeric vector or \"equal\" ")
     }
   }
 
-  if(length(itarg) != length(COIN$Parameters$Weights$Original[[aglev]]) ){
+  if(length(itarg) != sum(COIN$Parameters$Weights$Original$AgLevel == aglev) ){
     stop("itarg is not the correct length for the specified aglev")
   }
 
@@ -951,7 +951,7 @@ weightOpt <- function(COIN, itarg, aglev, cortype = "pearson", optype = "balance
     # get full list of weights
     wlist <- COIN$Parameters$Weights$Original
     # modify appropriate level to current vector of weights
-    wlist[[aglev]] <- w
+    wlist$Weight[wlist$AgLevel == aglev] <- w
     # re-aggregate using these weights, get correlations
     crs <- weights2corr(COIN, wlist, aglevs = c(aglev, COIN$Parameters$Nlevels),
                         cortype = cortype)$cr$Correlation
@@ -990,7 +990,7 @@ weightOpt <- function(COIN, itarg, aglev, cortype = "pearson", optype = "balance
   # get full list of weights
   wopt <- COIN$Parameters$Weights$Original
   # modify appropriate level to optimised vector of weights
-  wopt[[aglev]] <- optOut$par
+  wopt$Weight[wopt$AgLevel == aglev] <- optOut$par
 
   if(is.null(out2)){out2 <- "list"}
 
