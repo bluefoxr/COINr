@@ -125,11 +125,6 @@ aggregate <- function(COIN, agtype="arith_mean", agweights = NULL, dset = "Norma
         newcol <- copeout$Scores %>% as.data.frame()
         colnames(newcol) <- agg_names[agroup]
 
-        # chkk <- copeout$OutRankMat %>% as.data.frame()
-        # colnames(chkk) <- out$UnitCodes
-        # rownames(chkk) <- out$UnitCodes
-        # browser()
-
       } else if (agtype_lev == "custom") {
 
         newcol <- ind_data %>% dplyr::select(dplyr::all_of(iselect)) %>% dplyr::rowwise() %>%
