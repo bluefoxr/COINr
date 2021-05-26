@@ -4,7 +4,7 @@
 \alias{coin_win}
 \title{Winsorisation helper function}
 \usage{
-coin_win(icol, winmax, winchange, t_skew, t_kurt)
+coin_win(icol, winmax, winchange, t_skew, t_kurt, icode)
 }
 \arguments{
 \item{icol}{The vector of data to Winsorize}

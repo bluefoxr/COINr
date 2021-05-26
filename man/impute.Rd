@@ -18,12 +18,13 @@ impute(
 \item{COIN}{A COIN or a data frame}
 
 \item{imtype}{The type of imputation method. Either "agg_mean" (the mean of normalised indicators inside the aggregation group),
-"agg_median" (the mean of normalised indicators inside the aggregation group),
+"agg_median" (the median of normalised indicators inside the aggregation group),
 "ind_mean" (the mean of all the other units in the indicator),
 "ind_median" (the median of all the other units in the indicator),
 "indgroup_mean" (the mean of all the other units in the indicator, in the same group),
 "indgroup_median" (the median of all the other units in the indicator, in the same group),
-"EM" (expectation maximisation algorithm via AMELIA package, currently without bootstrapping)}
+"EM" (expectation maximisation algorithm via AMELIA package, currently without bootstrapping)
+"none" (no imputation, returns original data set)}
 
 \item{dset}{The data set in .$Data to impute}
 

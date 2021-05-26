@@ -9,7 +9,7 @@ treat(
   dset = "Raw",
   winmax = NULL,
   winchange = TRUE,
-  deflog = "log",
+  deflog = "CTlog",
   boxlam = NULL,
   t_skew = 2,
   t_kurt = 3.5,

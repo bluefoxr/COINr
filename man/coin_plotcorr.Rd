@@ -2,26 +2,18 @@
 % Please edit documentation in R/coin_plotcorr.R
 \name{coin_plotcorr}
 \alias{coin_plotcorr}
-\title{Plots of correlations}
+\title{Static heatmaps of correlation using ggplot2}
 \usage{
 coin_plotcorr(COINobj, inames = NULL, dset = "Raw", plotgroups = TRUE)
 }
 \arguments{
-\item{COINobj}{A list of indicator data, stuctured using the COIN_assemble function}
+\item{dset}{The data set to treat}
 
-\item{inames}{An optional character vector of indicator codes to plot}
-
-\item{dset}{The source dataset to select}
-
-\item{plotgroups}{Logical: if TRUE, overlays rectangles representing aggregation groups}
+\item{COIN}{The COIN object}
 }
 \value{
-A correlation plot.
+A treated data set plus information about how the data was treated.
 }
 \description{
-Visualisation of correlations between indicators.
-}
-\examples{
-\dontrun{coin_plotcorr(COINobj)}
-
+Correlation heatmaps
 }
