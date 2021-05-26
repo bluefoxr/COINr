@@ -49,7 +49,8 @@ getStats <- function(COINobj, icodes = NULL, dset = "Raw", out2 = "COIN",
   iskew <- ind_data_only %>% purrr::map_dbl(e1071::skewness, na.rm = T, type = 2) # skew
   ikurt <- ind_data_only %>% purrr::map_dbl(e1071::kurtosis, na.rm = T, type = 2) # kurtosis
   ina <- ind_data_only %>% purrr::map_dbl(~sum(is.na(.x)), na.rm = T) # n. missing
-  iprcna <- (1-ina/COINobj$Parameters$NUnit) * 100  # percent available data
+  fraczero <- ind_data_only %>% purrr::map_dbl(~{sum(.x == 0, na.rm = TRUE)}/nrow(ind_data_only)) # frac zeros
+  iprcna <- (1-ina/nrow(ind_data_only)) * 100  # percent available data
   imissflag <- (iprcna < t_missing) %>% dplyr::if_else(true = "Low", false = "OK") # flag if data availability is below threshold
   skflag <- ((abs(iskew)>t_skew) & (ikurt>t_kurt)) %>% dplyr::if_else(true = "Outliers", false = "OK") # flag if exceed both skew and kurt thresholds
   q25 <- ind_data_only %>% purrr::map_dbl(~quantile(.x, probs = 0.25, na.rm = TRUE)) # 25th prc
@@ -85,14 +86,14 @@ getStats <- function(COINobj, icodes = NULL, dset = "Raw", out2 = "COIN",
     Mean = imean, Median = imed,
     Q.25 = q25, Q.75 = q75, IQ.range = iIQR,
     Std.dev = istd, Skew = iskew, Kurtosis = ikurt,
-    N.missing = ina, Prc.complete = iprcna, Low.data.flag = imissflag, Prc.Unique = Nunique,
+    N.missing = ina, Prc.complete = iprcna, Low.data.flag = imissflag, Prc.Unique = Nunique, Frac.Zero = fraczero,
     SK.outlier.flag = skflag, Low.Outliers.IQR = out_low, High.Outliers.IQR = out_high
   )
 
   ##------- Now checking correlations ---------
 
   # indicator correlations
-  corr_ind <- stats::cor(ind_data_only, method = "pearson", use = "na.or.complete") # get correlation matrix, just indicators
+  corr_ind <- stats::cor(ind_data_only, method = "pearson", use = "pairwise.complete.obs") # get correlation matrix, just indicators
   diag(corr_ind) <- NA # replace 1s with NAs since we are not interested in them
   p_ind <- corrplot::cor.mtest(ind_data_only, method = "pearson") # p values
 
@@ -117,7 +118,7 @@ getStats <- function(COINobj, icodes = NULL, dset = "Raw", out2 = "COIN",
     den_data_only <- select(den_data_only, starts_with("Den_"))
 
     # denominator correlations
-    corr_denom <- stats::cor(den_data_only, ind_data_only, method = "pearson", use = "na.or.complete")
+    corr_denom <- stats::cor(den_data_only, ind_data_only, method = "pearson", use = "pairwise.complete.obs")
     maxcor <- as.data.frame(abs(corr_denom)) %>% purrr::map_dbl(max, na.rm = T) # the max absolute correlations
     maxcor <- dplyr::if_else(maxcor>t_denom,"High","OK") # if any values exceed threshold, flag
     ind_stats <- ind_stats %>% tibble::add_column(Denom.correlation = maxcor) # add to table
