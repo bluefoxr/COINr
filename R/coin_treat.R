@@ -33,7 +33,7 @@
 #' @export
 #'
 
-treat <- function(COIN, dset = "Raw", winmax = NULL, winchange = TRUE, deflog = "log", boxlam = NULL,
+treat <- function(COIN, dset = "Raw", winmax = NULL, winchange = TRUE, deflog = "CTlog", boxlam = NULL,
                        t_skew = 2, t_kurt = 3.5, individual = NULL, indiv_only = TRUE, bypass_all = FALSE){
 
   # First check object type and extract
@@ -94,8 +94,9 @@ treat <- function(COIN, dset = "Raw", winmax = NULL, winchange = TRUE, deflog = 
     for (ii in 1:ncol(ind_data_only)){
 
       icol <- dplyr::pull(ind_data_only,ii) # get relevant column
+      icode <- colnames(ind_data_only)[ii]
 
-      w <- coin_win(icol, winmax, winchange, t_skew, t_kurt)
+      w <- coin_win(icol, winmax, winchange, t_skew, t_kurt, icode)
 
       # test skew and kurtosis again
       sk <- e1071::skewness(w$icol, na.rm = T, type = 2)
@@ -166,7 +167,7 @@ treat <- function(COIN, dset = "Raw", winmax = NULL, winchange = TRUE, deflog = 
             t_kurti <- t_kurt
           }
 
-          w <- coin_win(icol, winmaxii, winchange, t_skewi, t_kurti)
+          w <- coin_win(icol, winmaxii, winchange, t_skewi, t_kurti, ind_name)
 
           # loop exited, we don't know if we succeeded or not and don't go to log
 
@@ -191,6 +192,7 @@ treat <- function(COIN, dset = "Raw", winmax = NULL, winchange = TRUE, deflog = 
           # do log-type transformation
           params <- list(winmax = individual$Winmax[individual$IndCode==ind_name], IndCodes = IndCodes, ii = ii,
                          boxlam = individual$Boxlam[individual$IndCode==ind_name], forced = TRUE)
+
           logout <- loggish(icol, individual$Treat[individual$IndCode==ind_name], params)
           # record outputs
           ind_data_treated[IndCodes[ii]] <- logout$x # the transformed values
@@ -205,7 +207,7 @@ treat <- function(COIN, dset = "Raw", winmax = NULL, winchange = TRUE, deflog = 
         # the indiv_only flag is set so that all other indicators should be treated by default process
         # So, applying default process to this one.
 
-        w <- coin_win(icol, winmax, winchange, t_skew, t_kurt)
+        w <- coin_win(icol, winmax, winchange, t_skew, t_kurt, ind_name)
 
         sk <- e1071::skewness(w$icol, na.rm = T, type = 2)
         kt <- e1071::kurtosis(w$icol, na.rm = T, type = 2)
@@ -218,7 +220,7 @@ treat <- function(COIN, dset = "Raw", winmax = NULL, winchange = TRUE, deflog = 
           # do log-type transformation
           params <- list(winmax = winmax, IndCodes = IndCodes, ii = ii, boxlam = boxlam,
                          forced = FALSE)
-          logout <- loggish(icol, individual$Treat[individual$IndCode==ind_name], params)
+          logout <- loggish(icol, deflog, params)
           # record outputs
           icol <- logout$x # the transformed values
           treat_flag[,ii] <- logout$Flag
@@ -294,7 +296,7 @@ treat <- function(COIN, dset = "Raw", winmax = NULL, winchange = TRUE, deflog = 
 #'
 #' @export
 
-coin_win <- function(icol, winmax, winchange, t_skew, t_kurt){
+coin_win <- function(icol, winmax, winchange, t_skew, t_kurt, icode){
 
   # first, check skew and kurtosis
   sk <- e1071::skewness(icol, na.rm = T, type = 2)
@@ -331,9 +333,15 @@ coin_win <- function(icol, winmax, winchange, t_skew, t_kurt){
     winz<-winz+1 # add the winsorisation counter
 
     # test skew and kurtosis again
-    sk <- e1071::skewness(icol, na.rm = T, type = 2)
-    kt <- e1071::kurtosis(icol, na.rm = T, type = 2)
-
+    if(length(unique(icol)) < 2){
+      stop(paste0("Can't Winsorise further because it would imply less than two unique values in the indicator.
+      This is probably not a good idea. Consider individual settings for this indicator, such as
+      a lower winmax, using a transformation by default, or excluding from treatment.
+      **INDICATOR = ",icode,"**"))
+    } else {
+      sk <- e1071::skewness(icol, na.rm = T, type = 2)
+      kt <- e1071::kurtosis(icol, na.rm = T, type = 2)
+    }
   }
 
   # write outputs
@@ -451,7 +459,7 @@ loggish <- function(x, ltype, params){
       l$Treatment <- paste0("Box Cox with lambda = ",params$boxlam," (exceeded winmax)")
     }
 
-  } else if (ltype == "none"){
+  } else if (ltype == "None"){
 
     # No transform
     l$x <- x
