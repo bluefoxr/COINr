@@ -119,7 +119,6 @@ checkData <- function(COIN, dset = "Raw", ind_thresh=2/3, zero_thresh = 0.05,
   }
 
   if (!is.null(Force)){ # if some countries to force include/exclude
-    browser()
     # convert to logical
     Force[2] <- Force[2]=="Include"
     # substitute in output table
