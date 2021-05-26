@@ -195,6 +195,10 @@ sensitivity <- function(COIN, v_targ, SA_specs, N, SA_type = "UA", NrepWeights =
     # Run uncertainty analysis. Randomly sample from uncertain variables.
     # a random (uniform) sample
     XX <- matrix(runif(npara_all*N), nrow = N, ncol = npara_all)
+  } else if (SA_type == "SA"){
+    # use standard MC estimators of sensitivity indices
+
+    XX <- SA_sample(N, d)
   }
 
   # first, make a data frame to record parameter values in (except weights)
@@ -255,11 +259,16 @@ sensitivity <- function(COIN, v_targ, SA_specs, N, SA_type = "UA", NrepWeights =
 
   # Post process into ranks etc ----------------------------------------
 
+  # ranks for each iteration
   SAlist$Ranks <- apply(SAlist$Scores, MARGIN = 2,
                         function(xx) rank(-1*xx, na.last = "keep", ties.method = "min"))
 
+  # get nominal ranks
+  nomranks <- rank(-1*COIN$Data$Aggregated[[v_targ]], na.last = "keep", ties.method = "min")
+
   SAlist$RankStats <- data.frame(
     UnitCode = COIN$Data$Aggregated$UnitCode,
+    Nominal = nomranks,
     Mean = apply(SAlist$Ranks, MARGIN = 1, mean, na.rm = TRUE),
     Median = apply(SAlist$Ranks, MARGIN = 1, stats::median, na.rm = TRUE),
     Q5 = apply(SAlist$Ranks, MARGIN = 1,
@@ -278,7 +287,7 @@ sensitivity <- function(COIN, v_targ, SA_specs, N, SA_type = "UA", NrepWeights =
 
   SAlist$Nominal <- data.frame(UnitCode = COIN$Data$Aggregated$UnitCode,
                                Score = COIN$Data$Aggregated[[v_targ]],
-                               Rank = rank(-1*COIN$Data$Aggregated[[v_targ]], na.last = "keep", ties.method = "min"))
+                               Rank = nomranks)
 
   return(SAlist)
 
@@ -398,11 +407,47 @@ plotSARanks <- function(SAresults, plot_units = NULL, order_by = "nominal"){
     ggplot2::geom_point(aes(color = .data$Statistic, shape = .data$Statistic, size= .data$Statistic)) +
     ggplot2::scale_shape_manual(values = c(16, 15, 15)) +
     ggplot2::scale_size_manual(values = c(3, 1, 1)) +
-    ggplot2::labs(y = "UnitCode", color = "") +
+    ggplot2::labs(y = "", color = "") +
     ggplot2::guides(shape = FALSE, size = FALSE, color = FALSE) +
     ggplot2::theme_classic() +
     ggplot2::theme(legend.position="top") +
     ggplot2::scale_color_manual(values = c("#83af70", "#e67f83", "#e67f83")) +
-    ggplot2::scale_y_discrete(limits = plot_order)
+    ggplot2::scale_y_discrete(limits = plot_order) +
+    ggplot2::scale_x_reverse() +
+    ggplot2::coord_flip() +
+    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1))
 
+}
+
+
+#' Generate sample for sensitivity analysis
+#'
+#' Generates an input sample for a Monte Carlo estimation of global sensitivity indices. Used in
+#' the sensitivity() function. The total sample size will be N(d+2).
+#'
+#' @param N The number of sample points per dimension.
+#' @param d The dimensionality of the sample
+#'
+#' @export
+
+SA_sample <- function(N, d){
+
+  # a random (uniform) sample
+  Xbase <- matrix(runif(d*N*2), nrow = N, ncol = d*2)
+  # get first half
+  XA <- Xbase[, 1:d]
+  # get second half
+  XB <- Xbase[, (d+1):(2*d)]
+  # make big matrix (copy matrix d times on the bottom)
+  XX <- matrix(rep(t(XA), d), ncol = ncol(XA), byrow = TRUE )
+
+  # now substitute in columns from B into A
+  for (ii in 1:d){
+    XX[(1 + (ii-1)*N):(ii*N), ii] <- XB[, ii]
+  }
+
+  # add original matrices on the beginning
+  XX <-  rbind(XA, XB, XX)
+
+  XX
 }
