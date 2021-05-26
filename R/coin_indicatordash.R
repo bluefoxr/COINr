@@ -21,6 +21,9 @@ indDash <- function(COIN, icodes = NULL, dset = "Raw"){
   # first, get the indicator data from input object
   out <- getIn(COIN, dset, icodes)
   ind_data_only <- out$ind_data_only
+  ind_data <- out$ind_data
+  ind_codes <- out$IndCodes
+
   # this is used to label scatter plot. Will need to be generalised.
   code_yr <- out$ind_data$UnitName
 
@@ -84,8 +87,11 @@ indDash <- function(COIN, icodes = NULL, dset = "Raw"){
     ## ---- First initialise and modify some values ---- ##
 
     # initialise reactive values: the data sets
-    idata1 <- reactiveVal(ind_data_only)
-    idata2 <- reactiveVal(ind_data_only)
+    idata1 <- reactiveVal(ind_data)
+    idata2 <- reactiveVal(ind_data)
+    # initialise reactive values: the indicator codes for each dset
+    icodes1 <- reactiveVal(ind_codes)
+    icodes2 <- reactiveVal(ind_codes)
 
     # get reactive values: the indicator names (with data set added, for plots)
     iname1 <- reactive(paste0(input$vr1," - ", input$dset1))
@@ -96,14 +102,14 @@ indDash <- function(COIN, icodes = NULL, dset = "Raw"){
      if (exists(input$vr1,idata1())){
        return(input$vr1)
      } else {
-       return(colnames(idata1())[1])
+       return(icodes1()[1])
      }
     })
     isel2 <- reactive({
       if (exists(input$vr2,idata2())){
         return(input$vr2)
       } else {
-        return(colnames(idata2())[1])
+        return(icodes2()[1])
       }
     })
 
@@ -121,14 +127,18 @@ indDash <- function(COIN, icodes = NULL, dset = "Raw"){
       return(r12)
     })
 
-    # update data set 1 to selected one
+    # update data set 1 to selected one plus codes
     observeEvent(input$dset1,{
-      idata1(getIn(COIN, input$dset1, icodes)$ind_data_only)
+      out1 <- getIn(COIN, input$dset1, icodes)
+      idata1(out1$ind_data)
+      icodes1(out1$IndCodes)
     })
 
     # update data set 2 to selected one
     observeEvent(input$dset2,{
-      idata2(getIn(COIN, input$dset2, icodes)$ind_data_only)
+      out2 <- getIn(COIN, input$dset2, icodes)
+      idata2(out2$ind_data)
+      icodes2(out2$IndCodes)
     })
 
     ## ---- Plots ---- ##
@@ -208,14 +218,22 @@ indDash <- function(COIN, icodes = NULL, dset = "Raw"){
     output$scatter <- plotly::renderPlotly({
 
       # build data frame first, since the variables may come from different dfs
-      df <- data.frame(v1 = dplyr::pull(idata1(),isel1()),
-                       v2 = dplyr::pull(idata2(),input$vr2))
+      df <- dplyr::inner_join(
+        idata1()[c("UnitCode", "UnitName", isel1())],
+        idata2()[c("UnitCode", "UnitName", isel2())],
+        by = "UnitCode"
+      )
+      colnames(df) <- c("UnitCode", "UnitName", "v1", "UnitName2", "v2")
+
+      # build data frame first, since the variables may come from different dfs
+      # df <- data.frame(v1 = dplyr::pull(idata1(),isel1()),
+      #                  v2 = dplyr::pull(idata2(),input$vr2))
 
       sc <- plotly::plot_ly(data = df, type = 'scatter', mode = 'markers') %>%
         plotly::add_trace(
           x = ~v1,
           y = ~v2,
-          text = code_yr,
+          text = ~UnitName,
           hoverinfo = 'text',
           marker = list(size = 15),
           showlegend = F
@@ -228,9 +246,17 @@ indDash <- function(COIN, icodes = NULL, dset = "Raw"){
     # Overlaid histogram of v1 and v2 together
     output$histo12 <- plotly::renderPlotly({
 
+      # # build data frame first, since the variables may come from different dfs
+      # df <- data.frame(v1 = dplyr::pull(idata1(),isel1()),
+      #                  v2 = dplyr::pull(idata2(),input$vr2))
+
       # build data frame first, since the variables may come from different dfs
-      df <- data.frame(v1 = dplyr::pull(idata1(),isel1()),
-                       v2 = dplyr::pull(idata2(),input$vr2))
+      df <- dplyr::inner_join(
+        idata1()[c("UnitCode", "UnitName", isel1())],
+        idata2()[c("UnitCode", "UnitName", isel2())],
+        by = "UnitCode"
+      )
+      colnames(df) <- c("UnitCode", "UnitName", "v1", "UnitName2", "v2")
 
       fig <- plotly::plot_ly(df, alpha = 0.6)
       fig <- fig %>% plotly::add_histogram(x = ~v1, name = iname1())
