@@ -79,7 +79,7 @@ plotIndDist <- function(COINobj, dset = "Raw", icodes = NULL, aglev = 1, type = 
 
   # If plotting single indicator, use long name, otherwise use codes and facet plotting
   if (length(out1$IndCodes) == 1){
-    plt <- plt + ggplot2::labs(x = out1$IndNames[1], y = "Frequency") # add axis labels
+    plt <- plt + ggplot2::labs(x = out1$IndNames[1]) # add axis labels
   } else {
     nfrows <- ceiling(sqrt(nlevels(datamelt$variable))/2) # A way to get the number of rows so that we have about twice as many cols as rows
     plt <- plt + ggplot2::facet_wrap(~ variable, nrow = nfrows, scales="free") +
