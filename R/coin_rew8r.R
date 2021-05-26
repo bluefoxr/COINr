@@ -216,7 +216,7 @@ rew8r <- function(COIN){
 
     ## Create correlation heatmap
     output$corrheat <- plotly::renderPlotly({
-      plotCorr(COIN, aglevs = c(lev1(), lev2()), grouprects = TRUE,
+      iplotCorr(COIN, aglevs = c(lev1(), lev2()), grouprects = TRUE,
                corthresh = list(clow = input$locorval, chigh = input$hicorval),
                showvals = input$HMcorrvals, cortype = input$cortype, useweights = w()) %>%
         suppressWarnings()
@@ -609,7 +609,8 @@ hicorrSP <- function(COIN, dset = "Normalised", hicorval = 0.9, cortype = "pears
 
 #' Correlation heatmap
 #'
-#' Plots a heatmap of a correlation matrix
+#' Plots an interactive heatmap of a correlation matrix. Currently this only works with the
+#' aggregated data set, i.e. you need to have aggregated the data first before using this.
 #'
 #' @param COIN The COIN object
 #' @param aglevs A two length vector specifying which level to plot against which level. E.g. c(2,4) for
@@ -631,12 +632,12 @@ hicorrSP <- function(COIN, dset = "Normalised", hicorval = 0.9, cortype = "pears
 #' @importFrom reshape2 melt
 #' @importFrom rlang .data
 #'
-#' @examples \dontrun{flags <- plotCorr(COIN, aglevs = c(2,3))}
+#' @examples \dontrun{flags <- iplotCorr(COIN, aglevs = c(2,3))}
 #'
 #' @return A correlation map
 #' @export
 
-plotCorr <- function(COIN, aglevs = NULL, insig = FALSE, levs = TRUE, grouprects = TRUE,
+iplotCorr <- function(COIN, aglevs = NULL, insig = FALSE, levs = TRUE, grouprects = TRUE,
                      mapcols = "thresholds", corthresh = NULL, showvals = TRUE, cortype = "pearson",
                      useweights = NULL){
 
