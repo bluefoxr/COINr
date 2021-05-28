@@ -4,7 +4,7 @@
 \alias{coin_win}
 \title{Winsorisation helper function}
 \usage{
-coin_win(icol, winmax, winchange, t_skew, t_kurt, icode)
+coin_win(icol, winmax, winchange, t_skew, t_kurt, icode = NULL)
 }
 \arguments{
 \item{icol}{The vector of data to Winsorize}
@@ -16,6 +16,8 @@ coin_win(icol, winmax, winchange, t_skew, t_kurt, icode)
 \item{t_skew}{Absolute skew threshold (default 2)}
 
 \item{t_kurt}{Kurtosis threshold (default 3.5)}
+
+\item{icode}{The indicator name - used for error messages.}
 }
 \description{
 To be used inside treat() to avoid repetitions. Winsorises one column of data.

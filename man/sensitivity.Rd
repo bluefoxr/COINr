@@ -12,6 +12,7 @@ sensitivity(
   SA_type = "UA",
   NrepWeights = 1000,
   store_results = "results+params",
+  Nboot = NULL,
   quietly = FALSE
 )
 }
@@ -36,6 +37,9 @@ should be an indicator/aggregate code present in .$Data$Aggregated.}
 \item "results+method" stores all of the above, plus the full .$Method list of each replication
 \item "results+COIN" stores all results and the complete COIN of each replication
 }}
+
+\item{Nboot}{Number of bootstrap draws for estimates of confidence intervals on sensitivity indices.
+If this is not specified, bootstrapping is not applied. Ignored if SA_type = "UA".}
 
 \item{quietly}{If FALSE (default), gives progress messages. Set TRUE to suppress these.}
 }
