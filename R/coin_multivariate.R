@@ -35,7 +35,7 @@ plotCorr <- function(COIN, dset = "Raw", icodes = NULL, aglevs = 1){
 
   # heatmap plot
   ggplot2::ggplot(crmat_melt,
-                  ggplot2::aes(x = Var1, y = Var2, fill = value, label = value)) +
+                  ggplot2::aes(x = .data$Var1, y = .data$Var2, fill = .data$value, label = .data$value)) +
     ggplot2::geom_tile(colour = "white") +
     ggplot2::labs(x = NULL, y = NULL, fill = "Correlation") +
     ggplot2::scale_fill_gradient2(mid="#FBFEF9",low="#A63446",high="#0C6291", limits=c(-1,1)) +
