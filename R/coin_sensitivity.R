@@ -14,6 +14,8 @@
 #'   * "results+params" (default) stores all of the above, plus a record of the parameter values used for each replication
 #'   * "results+method" stores all of the above, plus the full .$Method list of each replication
 #'   * "results+COIN" stores all results and the complete COIN of each replication
+#' @param Nboot Number of bootstrap draws for estimates of confidence intervals on sensitivity indices.
+#' If this is not specified, bootstrapping is not applied. Ignored if SA_type = "UA".
 #' @param quietly If FALSE (default), gives progress messages. Set TRUE to suppress these.
 #'
 #' @importFrom purrr flatten
@@ -26,19 +28,21 @@
 #' @export
 
 sensitivity <- function(COIN, v_targ, SA_specs, N, SA_type = "UA", NrepWeights = 1000,
-                        store_results = "results+params", quietly = FALSE){
+                        store_results = "results+params", Nboot = NULL, quietly = FALSE){
 
   # to add:
   # - extend to multiple target variables
   # - continuous distribution support
 
-  # Rebuild function --------------------------------------------------------
+  ### REBUILD FUNCTION ### --------------------------------------------------------
   # We will need a function which rebuilds the index according to specifications in the SA_specs list.
+
+  t0 <- proc.time()
 
   COIN_rebuild <- function(x, store_results){
 
     if (!quietly){
-      message(paste0("Iteration ",ii," of ",N," ... ", ii*100/N, "% complete" ))
+      message(paste0("Iteration ",ii," of ",nrow(XX)," ... ", round(ii*100/nrow(XX),1), "% complete" ))
     }
 
     # make a fresh copy of the COIN
@@ -170,13 +174,19 @@ sensitivity <- function(COIN, v_targ, SA_specs, N, SA_type = "UA", NrepWeights =
 
   } # end rebuild function
 
-  # Prep and make design for running thru function ----------------------------------------------
+  ### CREATE DESIGN ### -----------------------------------------------------------
 
   # The names and number of SA parameters. This is slightly tricky because of the list format
   # of SA_specs. We exclude the weights here as has different structure. If it exists, we add one to the number
   # of parameters, since weights are treated as a single parameter
 
   paranames <- names(purrr::flatten(SA_specs[-which(names(SA_specs)=="weights")]))
+  # get full names, including weights. We need this for labelling later on, as we need to know
+  # the order as well
+  paranames_all <- names(purrr::flatten(SA_specs))
+  paranames_all[paranames_all == "NoiseSpecs"] <- "weights"
+  paranames_all <- paranames_all[paranames_all != "Nominal"]
+
   npara_noweights <- length(paranames)
 
   # this is the number of parameters including weights. This is added to in a sec if the weights
@@ -192,24 +202,27 @@ sensitivity <- function(COIN, v_targ, SA_specs, N, SA_type = "UA", NrepWeights =
   }
 
   if (SA_type == "UA"){
+
     # Run uncertainty analysis. Randomly sample from uncertain variables.
     # a random (uniform) sample
     XX <- matrix(runif(npara_all*N), nrow = N, ncol = npara_all)
-  } else if (SA_type == "SA"){
-    # use standard MC estimators of sensitivity indices
 
-    XX <- SA_sample(N, d)
+  } else if (SA_type == "SA"){
+
+    # use standard MC estimators of sensitivity indices
+    XX <- SA_sample(N, npara_all)
+
   }
 
   # first, make a data frame to record parameter values in (except weights)
-  Xpara <- matrix(NA, nrow = N, ncol = npara_noweights) %>% as.data.frame()
+  Xpara <- matrix(NA, nrow = nrow(XX), ncol = npara_noweights) %>% as.data.frame()
   colnames(Xpara) <- paranames
   # now a matrix to store the results in
-  SAres <- matrix(NA, nrow = nrow(COIN$Data$Aggregated), ncol = N)
+  SAres <- matrix(NA, nrow = nrow(COIN$Data$Aggregated), ncol = nrow(XX))
   # also an empty list for the methods
-  SAmethods <- vector(mode = "list", length = N)
+  SAmethods <- vector(mode = "list", length = nrow(XX))
 
-  # Run design through function according to options ---------------------------------------------
+  ### RUN DESIGN ### --------------------------------------------------------------
 
   if (store_results == "onlyresults"){
 
@@ -219,7 +232,7 @@ sensitivity <- function(COIN, v_targ, SA_specs, N, SA_type = "UA", NrepWeights =
   } else if (store_results == "results+params") {
 
     # Now run the sample through function
-    for (ii in 1:N) {
+    for (ii in 1:nrow(XX)) {
       SAout <- COIN_rebuild(XX[ii,], store_results = "results+params")
       Xpara[ii,] <- SAout$Para
       SAres[, ii] <- SAout$Index
@@ -231,7 +244,7 @@ sensitivity <- function(COIN, v_targ, SA_specs, N, SA_type = "UA", NrepWeights =
   } else if (store_results == "results+method") {
 
     # Now run the sample through function
-    for (ii in 1:N) {
+    for (ii in 1:nrow(XX)) {
       SAout <- COIN_rebuild(XX[ii,], store_results = "results+method")
       Xpara[ii,] <- SAout$Para
       SAres[, ii] <- SAout$Index
@@ -245,7 +258,7 @@ sensitivity <- function(COIN, v_targ, SA_specs, N, SA_type = "UA", NrepWeights =
   } else if (store_results == "results+COIN") {
 
     # Now run the sample through function
-    for (ii in 1:N) {
+    for (ii in 1:nrow(XX)) {
       SAout <- COIN_rebuild(XX[ii,], store_results = "results+COIN")
       Xpara[ii,] <- SAout$Para
       SAres[, ii] <- SAout$Index
@@ -257,7 +270,7 @@ sensitivity <- function(COIN, v_targ, SA_specs, N, SA_type = "UA", NrepWeights =
                 COINs = SAmethods)
   }
 
-  # Post process into ranks etc ----------------------------------------
+  ### POST PROCESSING ### ---------------------------------------------------------
 
   # ranks for each iteration
   SAlist$Ranks <- apply(SAlist$Scores, MARGIN = 2,
@@ -266,16 +279,47 @@ sensitivity <- function(COIN, v_targ, SA_specs, N, SA_type = "UA", NrepWeights =
   # get nominal ranks
   nomranks <- rank(-1*COIN$Data$Aggregated[[v_targ]], na.last = "keep", ties.method = "min")
 
-  SAlist$RankStats <- data.frame(
-    UnitCode = COIN$Data$Aggregated$UnitCode,
-    Nominal = nomranks,
-    Mean = apply(SAlist$Ranks, MARGIN = 1, mean, na.rm = TRUE),
-    Median = apply(SAlist$Ranks, MARGIN = 1, stats::median, na.rm = TRUE),
-    Q5 = apply(SAlist$Ranks, MARGIN = 1,
-                   function(xx) stats::quantile(xx, probs = 0.05, na.rm = TRUE)),
-    Q95 = apply(SAlist$Ranks, MARGIN = 1,
-                     function(xx) stats::quantile(xx, probs = 0.95, na.rm = TRUE))
-  )
+  if (SA_type == "UA"){
+
+    # Get stats directly from ranks
+    SAlist$RankStats <- data.frame(
+      UnitCode = COIN$Data$Aggregated$UnitCode,
+      Nominal = nomranks,
+      Mean = apply(SAlist$Ranks, MARGIN = 1, mean, na.rm = TRUE),
+      Median = apply(SAlist$Ranks, MARGIN = 1, stats::median, na.rm = TRUE),
+      Q5 = apply(SAlist$Ranks, MARGIN = 1,
+                 function(xx) stats::quantile(xx, probs = 0.05, na.rm = TRUE)),
+      Q95 = apply(SAlist$Ranks, MARGIN = 1,
+                  function(xx) stats::quantile(xx, probs = 0.95, na.rm = TRUE))
+    )
+
+  } else if (SA_type == "SA"){
+
+    # UA PART - we anyway get confidence intervals, as with UA, but not using all runs
+    # Get runs corresponding to random sampling (the first 2N)
+    UAranks <- SAlist$Ranks[,1:(2*N)]
+    # Now make results table based on this
+    SAlist$RankStats <- data.frame(
+      UnitCode = COIN$Data$Aggregated$UnitCode,
+      Nominal = nomranks,
+      Mean = apply(UAranks, MARGIN = 1, mean, na.rm = TRUE),
+      Median = apply(UAranks, MARGIN = 1, stats::median, na.rm = TRUE),
+      Q5 = apply(UAranks, MARGIN = 1,
+                 function(xx) stats::quantile(xx, probs = 0.05, na.rm = TRUE)),
+      Q95 = apply(UAranks, MARGIN = 1,
+                  function(xx) stats::quantile(xx, probs = 0.95, na.rm = TRUE))
+    )
+
+    # SA PART
+    # here we need to process the ranks into a target for the sensitivity analysis
+    # An easy target is the mean absolute rank change
+    y_AvDiffs <- apply(SAlist$Ranks, 2, FUN = function(x) sum(abs(x-nomranks))/nrow(SAlist$Ranks))
+
+    # using this, get sensitivity estimates and write to output list
+    SAout <- SA_estimate(y_AvDiffs, N = N, d = npara_all, Nboot = Nboot)
+    SAlist$Sensitivity <- SAout$SensInd
+    SAlist$Sensitivity$Variable <- paranames_all
+  }
 
   addUC <- function(mx){
     mx <- as.data.frame(mx)
@@ -288,6 +332,19 @@ sensitivity <- function(COIN, v_targ, SA_specs, N, SA_type = "UA", NrepWeights =
   SAlist$Nominal <- data.frame(UnitCode = COIN$Data$Aggregated$UnitCode,
                                Score = COIN$Data$Aggregated[[v_targ]],
                                Rank = nomranks)
+
+  # timing
+  tf <- proc.time()
+  tdiff <- tf-t0
+  telapse <- as.numeric(tdiff[3])
+  taverage <- telapse/nrow(XX)
+  SAlist$t_elapse <- telapse
+  SAlist$t_average <- taverage
+
+  # write parameter names (for plotting, mainly)
+  SAlist$ParaNames <- paranames_all
+
+  message(paste0("Time elapsed = ", round(telapse,2), "s, average ", round(taverage,2), "s/rep."))
 
   return(SAlist)
 
@@ -450,4 +507,173 @@ SA_sample <- function(N, d){
   XX <-  rbind(XA, XB, XX)
 
   XX
+}
+
+#' Estimate sensitivity indices
+#'
+#' Post process a sample to obtain sensitivity indices. This function takes a univariate output
+#' which is generated as a result of running a Monte Carlo sample from SA_sample() through a system.
+#' Then it estimates sensitivity indices using this sample.
+#'
+#' @param yy A vector of model output values, as a result of a N(d+2) Monte Carlo design.
+#' @param N The number of sample points per dimension.
+#' @param d The dimensionality of the sample
+#' @param Nboot Number of bootstrap draws for estimates of confidence intervals on sensitivity indices.
+#' If this is not specified, bootstrapping is not applied.
+#'
+#' @importFrom stats var
+#'
+#' @return A list with variance, first order and total order sensitivity indices.
+#'
+#' @export
+
+SA_estimate <- function(yy, N, d, Nboot = NULL){
+
+  # put into matrix format: just the ABis
+  yyABi <- matrix(yy[(2*N +1):length(yy)], nrow = N)
+  # get yA and yB
+  yA <- yy[1:N]
+  yB <- yy[(N+1) : (2*N)]
+
+  # calculate variance
+  varY <- stats::var(c(yA,yB))
+
+  # calculate Si
+  Si <- apply(yyABi, 2, function(x){
+    mean(yB*(x - yA))/varY
+  })
+
+  # calculate ST
+  STi <- apply(yyABi, 2, function(x){
+    sum((yA - x)^2)/(2*N*varY)
+  })
+
+  # make a df
+  SensInd <- data.frame(Variable = paste0("V", 1:d),
+                        Si = Si,
+                        STi = STi)
+
+  ## BOOTSTRAP ## -----
+
+  if (!is.null(Nboot)){
+
+    # Get the "elements" to sample from
+    STdiffs <- apply(yyABi, 2, function(x){
+      yA - x
+    })
+    Sidiffs <- apply(yyABi, 2, function(x){
+      yB*(x - yA)
+    })
+
+    # prep matrices for bootstrap samples
+    Si_boot <- matrix(NA, d, Nboot)
+    STi_boot <- Si_boot
+
+    # do the bootstrapping bit
+    for (iboot in 1:Nboot){
+
+      # calculate Si
+      Si_boot[,iboot] <- apply(Sidiffs, 2, function(x){
+        mean(sample(x, replace = TRUE))/varY
+      })
+
+      # calculate ST
+      STi_boot[,iboot] <- apply(STdiffs, 2, function(x){
+        sum(sample(x, replace = TRUE)^2)/(2*N*varY)
+      })
+
+    }
+
+    # get quantiles of sensitivity indices to add to
+    SensInd$Si_q5 <- apply(Si_boot, MARGIN = 1,
+                           function(xx) stats::quantile(xx, probs = 0.05, na.rm = TRUE))
+    SensInd$Si_q95 <- apply(Si_boot, MARGIN = 1,
+                           function(xx) stats::quantile(xx, probs = 0.95, na.rm = TRUE))
+    SensInd$STi_q5 <- apply(STi_boot, MARGIN = 1,
+                           function(xx) stats::quantile(xx, probs = 0.05, na.rm = TRUE))
+    SensInd$STi_q95 <- apply(STi_boot, MARGIN = 1,
+                            function(xx) stats::quantile(xx, probs = 0.95, na.rm = TRUE))
+
+  }
+
+  # return outputs
+  list(Variance = varY,
+       SensInd = SensInd)
+
+}
+
+
+#' Plot sensitivity indices
+#'
+#' Plots sensitivity indices as bar or pie charts.
+#' To use this function you first need to run sensitivity().
+#'
+#' @param SAresults A list of sensitivity/uncertainty analysis results from COINr::sensitivity().
+#' @param ptype Type of plot to generate - either "bar", "pie" or "box"
+#'
+#' @export
+
+plotSA <- function(SAresults, ptype = "bar"){
+
+  # prep data first
+  Sdf <- SAresults$Sensitivity
+  numcols <- Sdf[-1]
+  # set any negative values to zero. By definition they can't be negative.
+  numcols[numcols < 0] <- 0
+  Sdf[-1] <- numcols
+
+  if(ptype == "bar"){
+
+    # the full bar is STi. It is divided into Si and the remainder, so we need STi - Si
+    Sdf <- dplyr::mutate(Sdf, Interactions = .data$STi - .data$Si)
+    Sdf$Interactions[Sdf$Interactions < 0] <- 0
+    # rename col to improve plot
+    colnames(Sdf)[colnames(Sdf) == "Si"] <- "MainEffect"
+    # now pivot to get in format for ggplot
+    bardf <- tidyr::pivot_longer(Sdf,
+                                 cols = c("MainEffect", "Interactions"))
+
+    # make stacked bar plot
+    ggplot2::ggplot(bardf, ggplot2::aes(fill=.data$name, y=.data$value, x=.data$Variable)) +
+      ggplot2::geom_bar(position="stack", stat="identity") +
+      ggplot2::labs(
+        x = NULL,
+        y = NULL,
+        fill = NULL) +
+      ggplot2::theme_minimal()
+
+
+  } else if (ptype == "pie"){
+
+    # we are plotting first order sensitivity indices. So, also estimate interactions.
+    Sis <- Sdf[c("Variable", "Si")]
+    intsum <- max(c(1 - sum(Sis$Si, na.rm = TRUE), 0))
+    Sis <- rbind(Sis, data.frame(Variable = "Interactions", Si = intsum))
+
+    # Basic piechart
+    ggplot2::ggplot(Sis, ggplot2::aes(x = "", y = .data$Si, fill = .data$Variable)) +
+      ggplot2::geom_bar(stat="identity", width=1, color="white") +
+      ggplot2::coord_polar("y", start=0) +
+      ggplot2::theme_void() # remove background, grid, numeric labels
+
+  } else if (ptype == "box"){
+
+    Sdf <- tidyr::pivot_longer(Sdf, cols = c("Si", "STi"))
+    Sdf$q5 <- ifelse(Sdf$name == "STi", Sdf$STi_q5, Sdf$Si_q5)
+    Sdf$q95 <- ifelse(Sdf$name == "STi", Sdf$STi_q95, Sdf$Si_q95)
+    Sdf$q5[Sdf$q5 > 1] <- 1
+    Sdf$q95[Sdf$q95 > 1] <- 1
+    Sdf$value[Sdf$value > 1] <- 1
+
+    ggplot2::ggplot(Sdf, ggplot2::aes(x = .data$Variable, y = .data$value, ymax = .data$q95, ymin = .data$q5)) +
+      ggplot2::geom_point(size = 1.5) +
+      ggplot2::geom_errorbar(width = 0.2) +
+      ggplot2::theme_bw() +
+      facet_wrap(~name) +
+      ggplot2::labs(
+        x = NULL,
+        y = NULL)
+
+  }
+
 }
