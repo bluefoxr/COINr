@@ -293,10 +293,11 @@ treat <- function(COIN, dset = "Raw", winmax = NULL, winchange = TRUE, deflog = 
 #' @param winchange Logical: if TRUE, Winsorisation can change direction from one iteration to the next. Otherwise if FALSE (default), no change.
 #' @param t_skew Absolute skew threshold (default 2)
 #' @param t_kurt Kurtosis threshold (default 3.5)
+#' @param icode The indicator name - used for error messages.
 #'
 #' @export
 
-coin_win <- function(icol, winmax, winchange, t_skew, t_kurt, icode){
+coin_win <- function(icol, winmax, winchange, t_skew, t_kurt, icode = NULL){
 
   # first, check skew and kurtosis
   sk <- e1071::skewness(icol, na.rm = T, type = 2)
