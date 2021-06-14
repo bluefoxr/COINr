@@ -4,14 +4,18 @@
 #'
 #' @param COIN Either the COIN object, or a data frame of indicator data
 #' @param ntype The type of normalisation method. Either "minmax", "zscore", "scaled", "rank", "borda", "prank", "fracmax", "dist2targ", "dist2ref", "dist2max", "custom" or "none".
-#' @param npara Supporting object for ntype.
+#' @param npara Supporting object for ntype. This is a list of the form list(ntype = parameters_for_ntype). So,
+#' if ntype = "minmax", npara could be list(minmax = c(0, 100)) to scale into the 0 to 100 interval
+#' If ntype = "zscore", npara could be list(zscore = c(0, 1)) to scale to mean zero and std 1.
+#' This means you can store parameters for more than one normalisation type side by side, which helps in
+#' comparisons, adjustments, and sensitivity analyses.
 #' @param dset The data set to normalise
 #' @param directions A vector specifying the direction assigned to each indicator.
 #' Needs to be the same length as the number of indicators, or the number of indicators in icodes, if specified.
 #' @param individual A list of named lists specifiying individual normalisation to apply to specific indicators. Should be structured as follows:
 #' The name of each sublist should be the indicator code. The the list elements are:
 #' .$ntype is the type of normalisation to apply
-#' .$npara is a corresponding object or parameters that are used by ntype
+#' .$npara is a corresponding object or parameters that are used by ntype, in the same format as npara above.
 #' @param indiv_only Logical: if FALSE (default), indicators not specified in individual are subjected to default normalisation. Otherwise if TRUE they are not normalised.
 #' @param out2 Where to output the results. If "COIN" (default for COIN input), appends to updated COIN,
 #' otherwise if "df" outputs to data frame.
@@ -19,7 +23,7 @@
 #' @importFrom purrr "map2"
 #' @importFrom purrr "modify"
 #'
-#' @examples \dontrun{df_norm <- normalise(COIN, ntype="minmax", npara = c(0,1))}
+#' @examples \dontrun{df_norm <- normalise(COIN, ntype="minmax", npara = list(minmax = c(0,1)))}
 #'
 #' @return An updated COIN object with .$Data$Normalised added.
 #'
@@ -85,25 +89,25 @@ normalise <- function(COIN, ntype="minmax", npara = NULL,
     if (ntype == "minmax"){
 
       # MIN MAX
-      if (is.null(npara)){ # default parameters
-        npara <- c(0,100)
+      if (is.null(npara$minmax)){ # default parameters
+        npara$minmax <- c(0,100)
       }
       if(is.data.frame(df)){
-        dfn <- purrr::modify(df,~{ (.x-min(.x, na.rm = TRUE))/(max(.x, na.rm = TRUE)-min(.x, na.rm = TRUE))*(npara[2]-npara[1]) + npara[1]} )
+        dfn <- purrr::modify(df,~{ (.x-min(.x, na.rm = TRUE))/(max(.x, na.rm = TRUE)-min(.x, na.rm = TRUE))*(npara$minmax[2]-npara$minmax[1]) + npara$minmax[1]} )
       } else {
-        dfn <- (df-min(df, na.rm = TRUE))/(max(df, na.rm = TRUE)-min(df, na.rm = TRUE))*(npara[2]-npara[1]) + npara[1]
+        dfn <- (df-min(df, na.rm = TRUE))/(max(df, na.rm = TRUE)-min(df, na.rm = TRUE))*(npara$minmax[2]-npara$minmax[1]) + npara$minmax[1]
       }
 
     } else if (ntype == "zscore"){
 
       # Z SCORE
-      if (is.null(npara)){ # default parameters
-        npara <- c(0,1)
+      if (is.null(npara$zscore)){ # default parameters
+        npara$zscore <- c(0,1)
       }
       if(is.data.frame(df)){
-        dfn <- purrr::modify(df,~{(.x-mean(.x, na.rm = TRUE))/stats::sd(.x, na.rm = TRUE)*npara[2] + npara[1]})
+        dfn <- purrr::modify(df,~{(.x-mean(.x, na.rm = TRUE))/stats::sd(.x, na.rm = TRUE)*npara$zscore[2] + npara$zscore[1]})
       } else {
-        dfn <- (df-mean(df, na.rm = TRUE))/stats::sd(df, na.rm = TRUE)*npara[2] + npara[1]
+        dfn <- (df-mean(df, na.rm = TRUE))/stats::sd(df, na.rm = TRUE)*npara$zscore[2] + npara$zscore[1]
       }
 
     } else if (ntype == "custom"){
@@ -111,13 +115,13 @@ normalise <- function(COIN, ntype="minmax", npara = NULL,
       # CUSTOM
       if(is.data.frame(df)){
         dfn = tryCatch({
-          purrr::modify(df,npara)
+          purrr::modify(df,npara$custom)
         }, error = function(e) {
           stop("Error: custom function not valid for some reason.")
         })
       } else {
         dfn = tryCatch({
-          rlang::exec(npara, df)
+          rlang::exec(npara$custom, df)
         }, error = function(e) {
           stop("Error: custom function not valid for some reason.")
         })
@@ -126,10 +130,10 @@ normalise <- function(COIN, ntype="minmax", npara = NULL,
     } else if (ntype == "scaled"){
 
       # SCALED
-      if (is.null(npara)){ # default parameters
-        npara <- c(0,1)
+      if (is.null(npara$scaled)){ # default parameters
+        npara$scaled <- c(0,1)
       }
-      dfn <- (df-npara[1])/npara[2]
+      dfn <- (df-npara$scaled[1])/npara$scaled[2]
 
     } else if (ntype == "rank"){
 
@@ -179,11 +183,11 @@ normalise <- function(COIN, ntype="minmax", npara = NULL,
     } else if (ntype == "dist2ref"){
 
       # DISTANCE TO REFERENCE UNIT
-      if (is.null(npara)){
-        stop("You need to specify a reference unit (UnitCode) via npara.")
+      if (is.null(npara$dist2ref)){
+        stop("You need to specify a reference unit (UnitCode) via npara$dist2ref.")
       }
       # get index of reference country
-      iref <- which(out$UnitCodes==npara)
+      iref <- which(out$UnitCodes == npara$dist2ref)
 
       if(is.data.frame(df)){
         dfn <- purrr::modify(df, ~{ 1 - (.x[iref] - .x)/(max(.x,na.rm = T)-min(.x, na.rm = T)) } )
