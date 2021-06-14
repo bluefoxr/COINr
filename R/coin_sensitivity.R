@@ -53,9 +53,12 @@ sensitivity <- function(COIN, v_targ, SA_specs, N, SA_type = "UA", NrepWeights =
 
     # variable counter (makes indexing easier in a hierarchical list)
     pcount <- 1
+    # flag whether weights have already been counted (because they are separate from the df that records parameter values)
+    wflag <- 0
 
     # first, loop over the construction functions contained in the list
     for (ifunc in 1:length(SA_specs)){
+
 
       # function name
       fname <- names(SA_specs)[ifunc]
@@ -73,7 +76,8 @@ sensitivity <- function(COIN, v_targ, SA_specs, N, SA_type = "UA", NrepWeights =
           pname <- names(plist)[iparam]
 
           # get the alternative parameter values
-          pvals <- unlist(plist[[iparam]])
+          #pvals <- unlist(plist[[iparam]])
+          pvals <- plist[[iparam]]
 
           # we now have to alter the parameter
           # First, get the parameter index according to x
@@ -85,8 +89,14 @@ sensitivity <- function(COIN, v_targ, SA_specs, N, SA_type = "UA", NrepWeights =
           # Update the Method
           iCOIN$Method[[fname]][[pname]] <- ipval
 
-          # also store value in vector
-          vpara[pcount] <- ipval
+          # also store value in vector (for now, I just collapsed any vectors into one)
+          # here I have to account for the fact that any weights variable may or may not
+          # have passed. Do this using the wflag variable (see elsewhere in function)
+          if(wflag==0){
+            vpara[pcount] <- paste(ipval, collapse = ",")
+          } else if (wflag == 1){
+            vpara[pcount-1] <- paste(ipval, collapse = ",")
+          }
 
           # Update the counter (for recording parameter index)
           pcount <- pcount + 1
@@ -103,6 +113,8 @@ sensitivity <- function(COIN, v_targ, SA_specs, N, SA_type = "UA", NrepWeights =
         iCOIN$Method$aggregate$agweights <- "Randomised"
         # add to counter
         pcount <- pcount + 1
+        # flag that weights have been counted
+        wflag <- 1
       } # end if weights
 
     } # end function loop
@@ -201,6 +213,8 @@ sensitivity <- function(COIN, v_targ, SA_specs, N, SA_type = "UA", NrepWeights =
                  noise_specs = SA_specs$weights$NoiseSpecs, Nrep = NrepWeights)
   }
 
+
+
   if (SA_type == "UA"){
 
     # Run uncertainty analysis. Randomly sample from uncertain variables.
@@ -208,6 +222,11 @@ sensitivity <- function(COIN, v_targ, SA_specs, N, SA_type = "UA", NrepWeights =
     XX <- matrix(runif(npara_all*N), nrow = N, ncol = npara_all)
 
   } else if (SA_type == "SA"){
+
+    if(npara_all==1){
+      stop("Only one uncertain input defined. It is not meaningful to run a sensitivity analysis
+      with only one input variable. Consider changing SA_type to \"UA\".")
+    }
 
     # use standard MC estimators of sensitivity indices
     XX <- SA_sample(N, npara_all)
@@ -378,6 +397,9 @@ sensitivity <- function(COIN, v_targ, SA_specs, N, SA_type = "UA", NrepWeights =
 noisyWeights <- function(w, noise_specs, Nrep){
 
   stopifnot(is.data.frame(noise_specs))
+  if (length(unique(noise_specs$AgLevel)) < nrow(noise_specs)){
+    stop("Looks like you have duplicate AgLevel values in the noise_specs df?")
+  }
 
   # make list for weights
   wlist <- vector(mode = "list", length = Nrep)
@@ -463,7 +485,7 @@ plotSARanks <- function(SAresults, plot_units = NULL, order_by = "nominal"){
     ggplot2::geom_line(aes(group = .data$UnitCode), color = "grey") +
     ggplot2::geom_point(aes(color = .data$Statistic, shape = .data$Statistic, size= .data$Statistic)) +
     ggplot2::scale_shape_manual(values = c(16, 15, 15)) +
-    ggplot2::scale_size_manual(values = c(3, 1, 1)) +
+    ggplot2::scale_size_manual(values = c(2, 0, 0)) +
     ggplot2::labs(y = "", color = "") +
     ggplot2::guides(shape = FALSE, size = FALSE, color = FALSE) +
     ggplot2::theme_classic() +
