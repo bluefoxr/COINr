@@ -7,7 +7,9 @@
 #' @param winmax The maximum number of points to Winsorise for each indicator. If NA, will keep Winsorising until skew&kurt thresholds achieved (but it is likely this will cause errors)
 #' @param winchange Logical: if TRUE (default), Winsorisation can change direction from one iteration to the next. Otherwise if FALSE, no change.
 #' @param deflog The type of transformation to apply if Winsorisation fails. If "log", use simple ln(x) as log transform (note: indicators containing negative values
-#' will be skipped). If "CTlog", will do ln(x-min(x) + a), where a = 0.01*(max(x)-min(x)), similar to that used in the COIN Tool. If "GIIlog", use GII log transformation.
+#' will be skipped). If "CTlog", will do ln(x-min(x) + a), where a = 0.01*(max(x)-min(x)), similar to that used in the COIN Tool.
+#' If "CTlog_orig", this is exactly the COIN Tool log transformation, which is ln(x-min(x) + 1).
+#' If "GIIlog", use GII log transformation.
 #' If "boxcox", performs a Box Cox transformation. In this latter case, you should also specify boxlam. Finally, if "none", will
 #' return the indicator untreated.
 #' @param boxlam The lambda parameter of the Box Cox transform.
@@ -437,7 +439,7 @@ loggish <- function(x, ltype, params){
     }
 
   } else if (ltype == "CTlog"){
-    # COIN TOOl style log: subtract min and add 1
+    # COIN TOOl style log: subtract min and add fraction of range
     l$x <- log(x- min(x,na.rm = T) + 0.01*(max(x, na.rm = T)-min(x, na.rm = T)))
     l$Flag <- "CTLog"
     if(params$forced){
@@ -446,6 +448,18 @@ loggish <- function(x, ltype, params){
     } else {
       l$TreatSpec <- paste0("Default, winmax = ", params$winmax)
       l$Treatment <- "CTLog (exceeded winmax)"
+    }
+
+  } else if (ltype == "CTlog_orig"){
+    # COIN TOOl original log: subtract min and add 1
+    l$x <- log(x- min(x,na.rm = T) + 1)
+    l$Flag <- "CTlog_orig"
+    if(params$forced){
+      l$TreatSpec <- paste0("Forced CTlog_orig")
+      l$Treatment <- "CTlog_orig"
+    } else {
+      l$TreatSpec <- paste0("Default, winmax = ", params$winmax)
+      l$Treatment <- "CTlog_orig (exceeded winmax)"
     }
 
   } else if (ltype == "boxcox"){
