@@ -18,52 +18,72 @@ coin_2excel <- function(COINobj, fname = "COINresults.xlsx"){
   # Create workbook
   wb <- openxlsx::createWorkbook()
 
+  # ---- Write .$Results
+  if (!is.null(COINobj$Results)){
+    for (ii in 1:length(COINobj$Results)){
+
+      # name of worksheet
+      shname <- paste0("Results",names(COINobj$Results[ii]))
+      # add worksheet with name
+      openxlsx::addWorksheet(wb, sheetName = shname, tabColour = "red")
+      openxlsx::writeData(wb, shname, COINobj$Results[[ii]], colNames = TRUE)
+
+    }
+  }
+
+
   # ---- Write .$Data
-  for (ii in 1:length(COINobj$Data)){
+  if (!is.null(COINobj$Data)){
+    for (ii in 1:length(COINobj$Data)){
 
-    # name of worksheet
-    shname <- paste0("Data",names(COINobj$Data[ii]))
-    # add worksheet with name
-    openxlsx::addWorksheet(wb, sheetName = shname, tabColour = "blue")
-    openxlsx::writeData(wb, shname, COINobj$Data[[ii]], colNames = TRUE)
+      # name of worksheet
+      shname <- paste0("Data",names(COINobj$Data[ii]))
+      # add worksheet with name
+      openxlsx::addWorksheet(wb, sheetName = shname, tabColour = "blue")
+      openxlsx::writeData(wb, shname, COINobj$Data[[ii]], colNames = TRUE)
 
+    }
   }
 
   # ---- Write .$Input
-  for (ii in 1:length(COINobj$Input)){
+  if (!is.null(COINobj$Input)){
+    for (ii in 1:length(COINobj$Input)){
 
-    # name of worksheet
-    shname <- paste0("Input",names(COINobj$Input[ii]))
-    if(shname == "InputOriginal"){next}
-    # add worksheet with name
-    openxlsx::addWorksheet(wb, sheetName = shname, tabColour = "gray")
-    openxlsx::writeData(wb, shname, COINobj$Input[[ii]], colNames = TRUE)
+      # name of worksheet
+      shname <- paste0("Input",names(COINobj$Input[ii]))
+      if(shname == "InputOriginal"){next}
+      # add worksheet with name
+      openxlsx::addWorksheet(wb, sheetName = shname, tabColour = "gray")
+      openxlsx::writeData(wb, shname, COINobj$Input[[ii]], colNames = TRUE)
 
+    }
   }
 
   # ---- Write .$Analysis
 
-  for (ii in 1:length(COINobj$Analysis)){
+  if (!is.null(COINobj$Analysis)){
+    for (ii in 1:length(COINobj$Analysis)){
 
-    thing <- COINobj$Analysis[[ii]]
-    if(is.data.frame(thing)){
-      # name of worksheet
-      shname <- paste0("Analysis",names(COINobj$Analysis[ii]))
-      # add worksheet with name
-      openxlsx::addWorksheet(wb, sheetName = shname, tabColour = "green")
-      openxlsx::writeData(wb, shname, COINobj$Analysis[[ii]], colNames = TRUE)
-    } else if (is.list(thing)) {
-      for (jj in 1:length(thing)){
-        if(is.data.frame(thing[[jj]])){
-          # name of worksheet
-          shname <- paste0(names(COINobj$Analysis[ii]),names(thing)[jj])
-          # add worksheet with name
-          openxlsx::addWorksheet(wb, sheetName = shname, tabColour = "green")
-          openxlsx::writeData(wb, shname, thing[[jj]], colNames = TRUE)
+      thing <- COINobj$Analysis[[ii]]
+      if(is.data.frame(thing)){
+        # name of worksheet
+        shname <- paste0("Analysis",names(COINobj$Analysis[ii]))
+        # add worksheet with name
+        openxlsx::addWorksheet(wb, sheetName = shname, tabColour = "green")
+        openxlsx::writeData(wb, shname, COINobj$Analysis[[ii]], colNames = TRUE)
+      } else if (is.list(thing)) {
+        for (jj in 1:length(thing)){
+          if(is.data.frame(thing[[jj]])){
+            # name of worksheet
+            shname <- paste0(names(COINobj$Analysis[ii]),names(thing)[jj])
+            # add worksheet with name
+            openxlsx::addWorksheet(wb, sheetName = shname, tabColour = "green")
+            openxlsx::writeData(wb, shname, thing[[jj]], colNames = TRUE)
+          }
         }
       }
-    }
 
+    }
   }
 
   # ---- Write .$Parameters
