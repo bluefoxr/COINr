@@ -98,6 +98,8 @@ aggregate <- function(COIN, agtype="arith_mean", agweights = NULL, dset = "Norma
       # get weights belonging to group, using codes
       weights_group <- weights_lev[unique(sub_codes) %in% iselect]
 
+      # aggregate. NOTE: this is is not a very efficient way to do these operations and will be updated
+      # at some point.
       if (agtype_lev == "arith_mean"){
         newcol <- ind_data %>% select(dplyr::all_of(iselect)) %>% dplyr::rowwise() %>%
           dplyr::transmute(!!agg_names[agroup] := matrixStats::weightedMean(dplyr::c_across(cols =dplyr:: everything()),
@@ -109,6 +111,10 @@ aggregate <- function(COIN, agtype="arith_mean", agweights = NULL, dset = "Norma
       } else if (agtype_lev == "geom_mean"){
         newcol <- ind_data %>% dplyr::select(dplyr::all_of(iselect)) %>% dplyr::rowwise() %>%
           dplyr::transmute(!!agg_names[agroup] := geoMean(dplyr::c_across(cols = dplyr::everything()),
+                                                          w = weights_group))
+      } else if (agtype_lev == "geom_mean_rescaled"){
+        newcol <- ind_data %>% dplyr::select(dplyr::all_of(iselect)) %>% dplyr::rowwise() %>%
+          dplyr::transmute(!!agg_names[agroup] := geoMean_rescaled(dplyr::c_across(cols = dplyr::everything()),
                                                           w = weights_group))
       } else if (agtype_lev == "harm_mean"){
         newcol <- ind_data %>% dplyr::select(dplyr::all_of(iselect)) %>% dplyr::rowwise() %>%
@@ -132,7 +138,7 @@ aggregate <- function(COIN, agtype="arith_mean", agweights = NULL, dset = "Norma
                                                           w = weights_group))
 
       } else {
-        stop("Normalisation type not recognised.")
+        stop("Aggregation type not recognised.")
       }
 
       ind_data <- cbind(ind_data,newcol) # add new col to data set
@@ -177,11 +183,68 @@ geoMean <- function(x, w = NULL){
     message("No weights specified for geometric mean, using equal weights.")
   }
 
-  if(any(x <= 0)){
-    stop("Negative or zero values found when applying geometric mean. This doesn't work because geometric
+  if(any(!is.na(x))){
+
+    if(any((x <= 0), na.rm = TRUE)){
+      stop("Negative or zero values found when applying geometric mean. This doesn't work because geometric
          mean uses log. Normalise to remove negative/zero values first or use another aggregation method.")}
 
-  gm <- exp( sum(w * log(x), na.rm = TRUE)/sum(w, na.rm = TRUE) )
+    # have to set any weights to NA to correspond to NAs in x
+    w[is.na(x)] <- NA
+    # calculate geom mean
+    gm <- exp( sum(w * log(x), na.rm = TRUE)/sum(w, na.rm = TRUE) )
+
+  } else {
+    gm <- NA
+  }
+  message("ding")
+
+  return(gm)
+
+}
+
+#' Rescaled weighted geometric mean
+#'
+#' Weighted geometric mean of a vector. Here, any zero or negative values are automatically dealt with
+#' by rescaling the data to be all positive, i.e. it shifts so that the minimum is equal to 0.1.
+#'
+#' Note that this could be better achieved by normalising first. However, following default normalisation
+#' between 0 and 100, this function offers a quick way to test the effect of a geometric mean, for example in
+#' a sensitivity analysis, and avoids bugs arising.
+#'
+#' @param x A numeric vector of positive values.
+#' @param w A vector of weights, which should have length equal to length(x). Weights are relative
+#' and will be rescaled to sum to 1. If w is not specified, defaults to equal weights.
+#'
+#' @return Geometric mean
+#'
+#' @export
+
+geoMean_rescaled <- function(x, w = NULL){
+
+  if(is.null(w)){
+    # default equal weights
+    w <- rep(1,length(x))
+    message("No weights specified for geometric mean, using equal weights.")
+  }
+
+  # because this uses the min function, sometimes we may get all NAs.
+  # in that case, it throws an annoying warning. To avoid, we just output NA.
+
+  if(any(!is.na(x))){
+    # make all values positive with min value 0.1
+    x <- x - min(x, na.rm = TRUE) + 0.1
+    # have to set any weights to NA to correspond to NAs in x
+    w[is.na(x)] <- NA
+    # calc geo mean
+    gm <- exp( sum(w * log(x), na.rm = TRUE)/sum(w, na.rm = TRUE) )
+  } else {
+    gm <- NA
+  }
+
+
+
+
 
   return(gm)
 
@@ -207,11 +270,20 @@ harMean <- function(x, w = NULL){
     message("No weights specified harmonic mean, using equal weights.")
   }
 
-  if(any(x == 0)){
-    stop("Zero values found when applying harmonic mean. This doesn't work because harmonic
+  if(any(!is.na(x))){
+
+    if(any(x == 0, na.rm = TRUE)){
+      stop("Zero values found when applying harmonic mean. This doesn't work because harmonic
          mean uses 1/x. Normalise to remove zero values first or use another aggregation method.")}
 
-  hm <- sum(w, na.rm = TRUE)/sum(w/x, na.rm = TRUE)
+    # have to set any weights to NA to correspond to NAs in x
+    w[is.na(x)] <- NA
+
+    hm <- sum(w, na.rm = TRUE)/sum(w/x, na.rm = TRUE)
+
+  } else {
+    hm <- NA
+  }
 
   return(hm)
 
