@@ -10,7 +10,7 @@ iplotCorr(
   insig = FALSE,
   levs = TRUE,
   grouprects = TRUE,
-  mapcols = "thresholds",
+  flagcolours = TRUE,
   corthresh = NULL,
   showvals = TRUE,
   cortype = "pearson",
@@ -29,10 +29,10 @@ COIN plots sub-pillars against sub-indexes. If NULL, plots everything against ev
 
 \item{grouprects}{Logical: if TRUE, plots rectangles showing aggregation groups}
 
-\item{mapcols}{If set to "thresholds", uses a discrete colour scale specified by corthresh. Otherwise if "continuous"
+\item{flagcolours}{If TRUE uses a discrete colour scale specified by corthresh. Otherwise if "continuous"
 uses a continuous colour map.}
 
-\item{corthresh}{A named list specifying the colour thresholds to use if mapcols = "thresholds". Entries should
+\item{corthresh}{A named list specifying the colour thresholds to use if flagcolours = "thresholds". Entries should
 specify correlation thresholds and can specify any of clow, cmid and chi. Anything below clow will be
 coloured red. Anything between clow and cmid will be grey. Anything between cmid and chigh will be blue.
 Anything above chigh will be green. Default is list(clow = -0.4, cmid = 0.4, chigh = 0.85). You can

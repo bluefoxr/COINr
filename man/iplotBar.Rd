@@ -4,10 +4,10 @@
 \alias{iplotBar}
 \title{Bar chart}
 \usage{
-iplotBar(COINobj, dset = "Raw", isel = NULL, usel = NULL, aglev = NULL)
+iplotBar(COIN, dset = "Raw", isel = NULL, usel = NULL, aglev = NULL)
 }
 \arguments{
-\item{COINobj}{The COIN object, or a data frame of indicator data.}
+\item{COIN}{The COIN object, or a data frame of indicator data.}
 
 \item{dset}{The data set to plot.}
 

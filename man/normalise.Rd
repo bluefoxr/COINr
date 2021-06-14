@@ -20,7 +20,11 @@ normalise(
 
 \item{ntype}{The type of normalisation method. Either "minmax", "zscore", "scaled", "rank", "borda", "prank", "fracmax", "dist2targ", "dist2ref", "dist2max", "custom" or "none".}
 
-\item{npara}{Supporting object for ntype.}
+\item{npara}{Supporting object for ntype. This is a list of the form list(ntype = parameters_for_ntype). So,
+if ntype = "minmax", npara could be list(minmax = c(0, 100)) to scale into the 0 to 100 interval
+If ntype = "zscore", npara could be list(zscore = c(0, 1)) to scale to mean zero and std 1.
+This means you can store parameters for more than one normalisation type side by side, which helps in
+comparisons, adjustments, and sensitivity analyses.}
 
 \item{dset}{The data set to normalise}
 
@@ -30,7 +34,7 @@ Needs to be the same length as the number of indicators, or the number of indica
 \item{individual}{A list of named lists specifiying individual normalisation to apply to specific indicators. Should be structured as follows:
 The name of each sublist should be the indicator code. The the list elements are:
 .$ntype is the type of normalisation to apply
-.$npara is a corresponding object or parameters that are used by ntype}
+.$npara is a corresponding object or parameters that are used by ntype, in the same format as npara above.}
 
 \item{indiv_only}{Logical: if FALSE (default), indicators not specified in individual are subjected to default normalisation. Otherwise if TRUE they are not normalised.}
 
@@ -44,6 +48,6 @@ An updated COIN object with .$Data$Normalised added.
 A dataset of indicators is normalised using one of several methods. This function also supports custom normalisation.
 }
 \examples{
-\dontrun{df_norm <- normalise(COIN, ntype="minmax", npara = c(0,1))}
+\dontrun{df_norm <- normalise(COIN, ntype="minmax", npara = list(minmax = c(0,1)))}
 
 }

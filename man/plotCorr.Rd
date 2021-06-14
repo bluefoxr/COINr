@@ -2,23 +2,62 @@
 % Please edit documentation in R/coin_multivariate.R
 \name{plotCorr}
 \alias{plotCorr}
-\title{Static heatmaps of correlation using ggplot2}
+\title{Static heatmaps of correlation matrices}
 \usage{
-plotCorr(COIN, dset = "Raw", icodes = NULL, aglevs = 1)
+plotCorr(
+  COIN,
+  dset = "Raw",
+  icodes = NULL,
+  aglevs = 1,
+  cortype = "pearson",
+  withparent = "parent",
+  grouplev = NULL,
+  showvals = TRUE,
+  flagcolours = FALSE,
+  flagthresh = c(-0.4, 0.3, 0.9),
+  pval = 0.05,
+  out2 = "fig"
+)
 }
 \arguments{
 \item{COIN}{The COIN object}
 
 \item{dset}{The data set to treat}
 
-\item{icodes}{An optional list or character vector where the first entry specifies the indicator/agg
+\item{icodes}{An optional list of character vectors where the first entry specifies the indicator/agg
 codes to correlate against the second entry (also a specification of ind/agg codes)}
 
-\item{aglevs}{The aggregation levels to take the two groups of indicators from. See getIn() for details.}
+\item{aglevs}{The aggregation levels to take the two groups of indicators from. See \code{getIn()} for details.}
+
+\item{cortype}{The type of correlation to calculate, either "pearson", "spearman", or "kendall".}
+
+\item{withparent}{If \code{aglev[1] != aglev[2]}, and equal "parent" will only plot correlations of each row with its parent (default).
+If "family", plots the lowest aggregation level in aglev against all its parent levels.
+If "none" plots the full correlation matrix.}
+
+\item{grouplev}{The aggregation level to group correlations by if \code{aglev[1] == aglev[2]}. By default, groups correlations into the
+aggregation level above. Set to 0 to disable grouping and plot the full matrix.}
+
+\item{showvals}{If TRUE, shows correlation values. If FALSE, no values shown.}
+
+\item{flagcolours}{If TRUE, uses discrete colour map with thresholds defined by flagthresh. If FALSE uses continuous colour map.}
+
+\item{flagthresh}{A 3-length vector of thresholds for highlighting correlations, if \code{flagcolours = TRUE}.
+\code{flagthresh[1]} is the negative threshold. Below this value, values will be flagged red.
+\code{flagthresh[2]} is the "weak" threshold. Values between \code{flagthresh[1]} and \code{flagthresh[2]} are coloured grey.
+\code{flagthresh[3]} is the "high" threshold. Anything between \code{flagthresh[2]} and \code{flagthresh[3]} is flagged "OK",
+and anything above \code{flagthresh[3]} is flagged "high".}
+
+\item{pval}{The significance level for plotting correlations. Correlations with p < pval will be shown,
+otherwise they will be plotted as white squares. Set to 0 to disable this.}
+
+\item{out2}{If "fig" returns a plot, if "dflong" returns the correlation matrix in long form, if "dfwide",
+returns the correlation matrix in wide form. The last option here is probably useful if you want to
+present a table of the data in a report.}
 }
 \value{
 A treated data set plus information about how the data was treated.
 }
 \description{
-Correlation heatmaps
+Generates heatmaps of correlation matrices using ggplot2. The
 }

@@ -28,7 +28,9 @@ treat(
 \item{winchange}{Logical: if TRUE (default), Winsorisation can change direction from one iteration to the next. Otherwise if FALSE, no change.}
 
 \item{deflog}{The type of transformation to apply if Winsorisation fails. If "log", use simple ln(x) as log transform (note: indicators containing negative values
-will be skipped). If "CTlog", will do ln(x-min(x) + a), where a = 0.01*(max(x)-min(x)), similar to that used in the COIN Tool. If "GIIlog", use GII log transformation.
+will be skipped). If "CTlog", will do ln(x-min(x) + a), where a = 0.01*(max(x)-min(x)), similar to that used in the COIN Tool.
+If "CTlog_orig", this is exactly the COIN Tool log transformation, which is ln(x-min(x) + 1).
+If "GIIlog", use GII log transformation.
 If "boxcox", performs a Box Cox transformation. In this latter case, you should also specify boxlam. Finally, if "none", will
 return the indicator untreated.}
 

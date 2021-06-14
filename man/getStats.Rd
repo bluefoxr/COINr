@@ -9,6 +9,7 @@ getStats(
   icodes = NULL,
   dset = "Raw",
   out2 = "COIN",
+  cortype = "pearson",
   t_skew = 2,
   t_kurt = 3.5,
   t_colin = 0.9,
@@ -25,6 +26,8 @@ getStats(
 \item{dset}{The data set to analyse}
 
 \item{out2}{Where to output the results: if "COIN" (default), outputs to the COIN, otherwise if "list", outputs to a separate list.}
+
+\item{cortype}{The type of correlation to calculate, either "pearson", "spearman", or "kendall".}
 
 \item{t_skew}{Skewness threshold}
 

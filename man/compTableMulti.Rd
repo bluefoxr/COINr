@@ -17,5 +17,6 @@ compTableMulti(COINs, tabtype = "Ranks", ibase = 1)
 Table
 }
 \description{
-Takes multiple COINs, and generates a rank comparison at the index level
+Takes multiple COINs, and generates a rank comparison at the index level. Note, at the moment this
+only works if your index is called "Index". This will be fixed at some point.
 }

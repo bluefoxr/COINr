@@ -4,10 +4,10 @@
 \alias{iplotMap}
 \title{Choropleth map}
 \usage{
-iplotMap(COINobj, dset = "Raw", isel)
+iplotMap(COIN, dset = "Raw", isel)
 }
 \arguments{
-\item{COINobj}{The COIN object, or a data frame of indicator data.}
+\item{COIN}{The COIN object, or a data frame of indicator data.}
 
 \item{dset}{The data set to plot.}
 
@@ -23,6 +23,6 @@ https://www.iso.org/iso-3166-country-codes.html. This function is simply a wrapp
 the Plotly choropleth map function.
 }
 \examples{
-\dontrun{coin_indicatordash(COINobj, dset = "Raw")}
+\dontrun{coin_indicatordash(COIN, dset = "Raw")}
 
 }
