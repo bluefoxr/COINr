@@ -164,7 +164,7 @@ iplotIndDist2 <- function(COIN, dsets = "Raw", icodes = NULL, ptype = "Scatter",
   UnitNames2 <- intersect(out1$ind_data$UnitName,out2$ind_data$UnitName)
 
   df <- data.frame(v1 = out1$ind_data_only[out1$UnitCodes %in% UnitCodes2,],
-                   v2 = out2$ind_data_only[out1$UnitCodes %in% UnitCodes2,])
+                   v2 = out2$ind_data_only[out2$UnitCodes %in% UnitCodes2,])
   colnames(df) <- c("v1", "v2")
 
   if (ptype == "Scatter"){
