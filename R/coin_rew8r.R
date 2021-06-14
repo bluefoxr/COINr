@@ -618,9 +618,9 @@ hicorrSP <- function(COIN, dset = "Normalised", hicorval = 0.9, cortype = "pears
 #' @param insig Logical: if TRUE, all correlation values are plotted; if FALSE (default), does not plot insignificant correlations.
 #' @param levs Logical: if TRUE, plots lines showing the division between different levels. Only works if aglevs = NULL.
 #' @param grouprects Logical: if TRUE, plots rectangles showing aggregation groups
-#' @param mapcols If set to "thresholds", uses a discrete colour scale specified by corthresh. Otherwise if "continuous"
+#' @param flagcolours If TRUE uses a discrete colour scale specified by corthresh. Otherwise if "continuous"
 #' uses a continuous colour map.
-#' @param corthresh A named list specifying the colour thresholds to use if mapcols = "thresholds". Entries should
+#' @param corthresh A named list specifying the colour thresholds to use if flagcolours = "thresholds". Entries should
 #' specify correlation thresholds and can specify any of clow, cmid and chi. Anything below clow will be
 #' coloured red. Anything between clow and cmid will be grey. Anything between cmid and chigh will be blue.
 #' Anything above chigh will be green. Default is list(clow = -0.4, cmid = 0.4, chigh = 0.85). You can
@@ -638,7 +638,7 @@ hicorrSP <- function(COIN, dset = "Normalised", hicorval = 0.9, cortype = "pears
 #' @export
 
 iplotCorr <- function(COIN, aglevs = NULL, insig = FALSE, levs = TRUE, grouprects = TRUE,
-                     mapcols = "thresholds", corthresh = NULL, showvals = TRUE, cortype = "pearson",
+                     flagcolours = TRUE, corthresh = NULL, showvals = TRUE, cortype = "pearson",
                      useweights = NULL){
 
   # this expects that the parent is the second entry of aglevs. If not, swap
@@ -671,6 +671,7 @@ iplotCorr <- function(COIN, aglevs = NULL, insig = FALSE, levs = TRUE, grouprect
   # change insignificant correlations to NAs if asked
   if(insig==FALSE){
     corr_ind[abs(corr_ind)<(2/sqrt(nrow(out1$ind_data_only)))] <- NA
+    corr_ind_text[abs(corr_ind_text)<(2/sqrt(nrow(out1$ind_data_only)))] <- NA
   }
 
   sometext <- matrix("3", nrow(corr_ind), ncol(corr_ind))
@@ -860,7 +861,7 @@ iplotCorr <- function(COIN, aglevs = NULL, insig = FALSE, levs = TRUE, grouprect
   colorScale$col <- as.character(colorScale$col)
 
   # plot
-  if(mapcols == "thresholds"){
+  if(flagcolours){
     fig <- plotly::plot_ly(z = corr_ind,
                            x = names(out2$ind_data_only),
                            xgap = 2,
@@ -871,7 +872,7 @@ iplotCorr <- function(COIN, aglevs = NULL, insig = FALSE, levs = TRUE, grouprect
                            zmin = -1, zmax = 1,
                            hovertemplate = "corr(%{x}, %{y}) = %{z}<extra></extra>")
 
-  } else if (mapcols == "continuous"){
+  } else {
     fig <- plotly::plot_ly() %>%
       plotly::add_heatmap(
         x = names(out2$ind_data_only),
@@ -890,6 +891,7 @@ iplotCorr <- function(COIN, aglevs = NULL, insig = FALSE, levs = TRUE, grouprect
                         shapes = rectslist)
 
   tx <- reshape2::melt(corr_ind_text)
+  tx <- tx[!is.na(tx$value),]
 
   if(showvals){
     # add values of correlation to each square
