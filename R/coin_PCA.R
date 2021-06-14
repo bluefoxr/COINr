@@ -18,7 +18,7 @@
 #' @importFrom stats prcomp na.omit
 #' @importFrom rlang .data
 #'
-#' @examples \dontrun{PCAresults <- cPCA(COIN, dset = "Raw")}
+#' @examples \dontrun{PCAresults <- getPCA(COIN, dset = "Raw")}
 #'
 #' @return PCA data, plus PCA weights corresponding to the loadings of the first principle component.
 #' This should correspond to the linear combination of indicators that explains the most variance.
@@ -26,44 +26,82 @@
 #' @export
 #'
 
-cPCA <- function(COIN, dset = "Raw", icodes = NULL, aglev = NULL, out2 = "obj"){
+getPCA <- function(COIN, dset = "Raw", icodes = NULL, aglev = NULL, out2 = "obj"){
 
-  # get ind data
-  out <- getIn(COIN, dset = dset, icodes = icodes, aglev = aglev)
+  # There is a catch here because we might want to do PCA weights across one level, but that level
+  # may have multiple groups. This means we have to call PCA separately for each group.
 
-  # check for missing vals
-  nNA <- sum(is.na(out$ind_data_only))
+  # first we define a function which returns weights for a given set of indicator data
+  # this function implicitly other variables from the environment inside getPCA() so we don't need
+  # to explicitly pass everything to it.
+  PCAwts <- function(icodes1){
 
-  # remove any rows with missing data
-  if (nNA > 0){
-    dat4PCA <- stats::na.omit(out$ind_data_only)
-    warning(paste0(nNA, " missing values found. Removing ", nrow(out$ind_data_only)-nrow(dat4PCA), " rows with missing values in order to perform
+    # get ind data
+    out <- getIn(COIN, dset = dset, icodes = icodes1, aglev = aglev)
+
+    # check for missing vals
+    nNA <- sum(is.na(out$ind_data_only))
+
+    # remove any rows with missing data
+    if (nNA > 0){
+      dat4PCA <- stats::na.omit(out$ind_data_only)
+      warning(paste0(nNA, " missing values found. Removing ", nrow(out$ind_data_only)-nrow(dat4PCA), " rows with missing values in order to perform
 PCA. You can also try imputing data first to avoid this."))
-  } else {
-    dat4PCA <- out$ind_data_only
+    } else {
+      dat4PCA <- out$ind_data_only
+    }
+
+    # perform PCA
+    PCAres <- stats::prcomp(dat4PCA, center = TRUE, scale = TRUE)
+
+    # just for writing results - if aglev not specified then we are working at ind level
+    if(is.null(aglev)){aglev<-1}
+
+    # weight from first PC should be the max variance weights
+    wts <- PCAres$rotation[,1] %>% as.numeric()
+
+    return(list(wts = wts, PCAres = PCAres, IndCodes = out$IndCodes))
   }
 
-  # perform PCA
-  PCAres <- stats::prcomp(dat4PCA, center = TRUE, scale = TRUE)
+  # OK, first thing is to find what groups we have
+  # Get index structure
+  agcols <- dplyr::select(COIN$Input$IndMeta, .data$IndCode, dplyr::starts_with("Agg"))
+  # Get cols of interest: the present one plus the parents
+  agcols <- agcols[c(aglev, aglev + 1)]
+  # We need to know the codes of the inds/aggs to get weights from
+  out3 <- getIn(COIN, dset = dset, icodes = icodes, aglev = aglev)
+  IndCodes <- out3$IndCodes
+  # Get parents of these codes
+  parents <- unique(agcols[(agcols[[1]] %in% IndCodes) ,2])
+  parents <- parents[[1]]
 
-  # just for writing results - if aglev not specified then we are working at ind level
-  if(is.null(aglev)){aglev<-1}
-
-  # weight from first PC should be the max variance weights
-  wts <- PCAres$rotation[,1] %>% as.numeric()
-
-  # weight list
+  # Right, now we need to cycle through these groups and do PCA on each group.
+  # List for general PCA results
+  PCAlist <- vector(mode = "list", length = length(parents))
+  # copy of weights to modify
   wlist <- COIN$Parameters$Weights$Original
-  wlist$Weight[wlist$AgLevel == aglev] <- wts
+
+  for (ii in 1: length(parents)){
+    # get PCA results for group
+    outPCA <- PCAwts(parents[ii])
+    # attach weights to list
+    # wts should be in the same order as out$IndCodes. We have to make sure they match exactly here as
+    # sometimes things get reordered. This is done with match() rather than %in% for this reason.
+    wlist$Weight[match(outPCA$IndCodes, wlist$Code)] <- outPCA$wts
+    # add general results to list
+    PCAlist[[ii]] <- outPCA
+  }
+  # rename list
+  names(PCAlist) <- parents
 
   # write results
-  if( (out$otype == "COINobj") & (out2 == "obj")){
+  if( (out3$otype == "COINobj") & (out2 == "obj")){
     eval(parse(text=paste0("COIN$Parameters$Weights$PCA_",dset,"L",aglev,"<-wlist")))
-    eval(parse(text=paste0("COIN$Analysis$",dset,"$PCA$L",aglev,"<- PCAres")))
+    eval(parse(text=paste0("COIN$Analysis$",dset,"$PCA$L",aglev,"<- PCAlist")))
     return(COIN)
   } else {
-    output <- list("Weights" = wts,
-                   "PCAresults" = PCAres)
+    output <- list("Weights" = wlist,
+                   "PCAresults" = PCAlist)
     return(output)
   }
 
