@@ -2,23 +2,23 @@
 #'
 #' Generates an interactive visualisation of results. Requires Shiny and an active R session.
 #'
-#' @param COINobj The COIN object, or a data frame of indicator data.
+#' @param COIN The COIN object, or a data frame of indicator data.
 #' @param dset The data set to plot.
 #'
 #' @import shiny
 #' @importFrom plotly plot_ly plotlyOutput layout add_trace renderPlotly
 #' @importFrom reactable reactable renderReactable
 #'
-#' @examples \dontrun{coin_indicatordash(COINobj, icodes = NULL, dset = "raw")}
+#' @examples \dontrun{coin_indicatordash(COIN, icodes = NULL, dset = "raw")}
 #'
 #' @return Interactive visualisation
 #'
 #' @export
 
-coin_resultsdash <- function(COINobj, dset = "Aggregated"){
+resultsDash <- function(COIN, dset = "Aggregated"){
 
   # first, get the indicator data from input object
-  out <- getIn(COINobj, dset)
+  out <- getIn(COIN, dset)
   ind_data_only <- out$ind_data_only
   ind_data <- out$ind_data
 
@@ -33,17 +33,17 @@ coin_resultsdash <- function(COINobj, dset = "Aggregated"){
 
       # Sidebar panel for inputs ----
       sidebarPanel(
-        selectInput("dset1", "Data set", choices= rev(names(COINobj$Data)) ),
+        selectInput("dset1", "Data set", choices= rev(names(COIN$Data)) ),
         selectInput("vr1", "Indicator", choices=rev(colnames(ind_data_only))),
         hr(),
         h4("Unit comparison"),
         "Click a unit in the bar or map chart to plot data. Double click to clear.",
         plotly::plotlyOutput("radar"),
         column(6,
-               numericInput("aglev", "Aggregation level", 1, min = 1, max = COINobj$Parameters$Nlevels-1, step = 1)
+               numericInput("aglev", "Aggregation level", 1, min = 1, max = COIN$Parameters$Nlevels-1, step = 1)
         ),
         column(6,
-               selectInput("aggroup", "Aggregation group", choices= COINobj$Parameters$AggCodes[[1]] )
+               selectInput("aggroup", "Aggregation group", choices= COIN$Parameters$AggCodes[[1]] )
         )
       ),
 
@@ -97,7 +97,7 @@ coin_resultsdash <- function(COINobj, dset = "Aggregated"){
 
     # update data set 1 to selected one
     observeEvent(input$dset1,{
-      outsel <- getIn(COINobj, input$dset1)
+      outsel <- getIn(COIN, input$dset1)
       idata1(outsel$ind_data_only)
       idata1_full(outsel$ind_data)
     })
@@ -153,22 +153,22 @@ coin_resultsdash <- function(COINobj, dset = "Aggregated"){
     # Choropleth map OR bar chart
     output$barmap <- plotly::renderPlotly({
       if (input$barmapsel==TRUE){
-        iplotMap(COINobj, input$dset1, isel1())
+        iplotMap(COIN, input$dset1, isel1())
       } else {
-        iplotBar(COINobj, input$dset1, isel1(), usels())
+        iplotBar(COIN, input$dset1, isel1(), usels())
       }
     })
 
     # Results table
     output$table <- reactable::renderReactable({
-      iplot_table(COINobj, input$dset1)
+      iplotTable(COIN, input$dset1)
     })
 
     # Radar plot
     output$radar <- plotly::renderPlotly({
       if(is.null(usels())){NULL} else {
-      iplot_radar(COINobj, dset = "Aggregated", usel = usels(),
-                  levsel = input$aglev, isel = input$aggroup) }
+      iplotRadar(COIN, dset = "Aggregated", usel = usels(),
+                  aglev = input$aglev, isel = input$aggroup) }
     })
 
     # Unit data on selected indicator
@@ -179,7 +179,7 @@ coin_resultsdash <- function(COINobj, dset = "Aggregated"){
           UnitName = idata1_full()$UnitName[idata1_full()$UnitCode %in% usels()],
           UnitCode = idata1_full()$UnitCode[idata1_full()$UnitCode %in% usels()],
           IndicatorCode = isel1(),
-          IndicatorName = COINobj$Parameters$Code2Name$AggName[COINobj$Parameters$Code2Name$AggCode==isel1()],
+          IndicatorName = COIN$Parameters$Code2Name$AggName[COIN$Parameters$Code2Name$AggCode==isel1()],
           Score = idata1()[idata1_full()$UnitCode %in% usels(), isel1()] %>% dplyr::pull(1),
           Rank = rank(-1*idata1_full()[,isel1()])[idata1_full()$UnitCode %in% usels()] %>%
             as.numeric() %>% round()
@@ -191,7 +191,7 @@ coin_resultsdash <- function(COINobj, dset = "Aggregated"){
     # Update dropdown menu of indicator selection based on data set 1
     observeEvent(input$dset1,{
       updateSelectInput(session = session, inputId = "vr1",
-                        choices = rev(getIn(COINobj,input$dset1)$ind_names))
+                        choices = rev(getIn(COIN,input$dset1)$ind_names))
     })
     # Update selected indicator based on table click
     observeEvent(input$clicked$column,{
@@ -199,7 +199,7 @@ coin_resultsdash <- function(COINobj, dset = "Aggregated"){
     })
     # Update dropdown menu of aggregation groups based on selected agg level
     observeEvent(input$aglev,{
-      newchoices <- COINobj$Parameters$AggCodes[[input$aglev]]
+      newchoices <- COIN$Parameters$AggCodes[[input$aglev]]
       updateSelectInput(session = session, inputId = "aggroup",
                         choices = newchoices,
                         selected = newchoices[1])
@@ -219,21 +219,21 @@ coin_resultsdash <- function(COINobj, dset = "Aggregated"){
 #' https://www.iso.org/iso-3166-country-codes.html. This function is simply a wrapper for
 #' the Plotly choropleth map function.
 #'
-#' @param COINobj The COIN object, or a data frame of indicator data.
+#' @param COIN The COIN object, or a data frame of indicator data.
 #' @param dset The data set to plot.
 #' @param isel The selected indicator code or aggregate
 #'
 #' @importFrom plotly plot_ly layout colorbar
 #'
-#' @examples \dontrun{coin_indicatordash(COINobj, dset = "Raw")}
+#' @examples \dontrun{coin_indicatordash(COIN, dset = "Raw")}
 #'
 #' @return Interactive map
 #'
 #' @export
 
-iplotMap <- function(COINobj, dset = "Raw", isel){
+iplotMap <- function(COIN, dset = "Raw", isel){
 
-  out1 <- getIn(COINobj, dset = dset, icodes = isel)
+  out1 <- getIn(COIN, dset = dset, icodes = isel)
 
   # Set up appearance
   g <- list(
@@ -249,7 +249,7 @@ iplotMap <- function(COINobj, dset = "Raw", isel){
     coastlinecolor = plotly::toRGB("white")
   )
 
-  indname <- COINobj$Parameters$Code2Name$AggName[COINobj$Parameters$Code2Name$AggCode == isel]
+  indname <- COIN$Parameters$Code2Name$AggName[COIN$Parameters$Code2Name$AggCode == isel]
 
   # Colourscale options:
   # Greys,YlGnBu,Greens,YlOrRd,Bluered,RdBu,Reds,Blues,Picnic,Rainbow,Portland,Jet,
@@ -271,7 +271,7 @@ iplotMap <- function(COINobj, dset = "Raw", isel){
 #' the Plotly bar chart function, but accesses COIN object to get the relevant indicator.
 #' Also has click event data for Shiny.
 #'
-#' @param COINobj The COIN object, or a data frame of indicator data.
+#' @param COIN The COIN object, or a data frame of indicator data.
 #' @param dset The data set to plot.
 #' @param isel The selected indicator code or aggregate (does not support multiple indicators)
 #' @param usel A character vector of unit codes to highlight on the bar chart
@@ -285,9 +285,9 @@ iplotMap <- function(COINobj, dset = "Raw", isel){
 #'
 #' @export
 
-iplotBar <- function(COINobj, dset = "Raw", isel = NULL, usel = NULL, aglev = NULL){
+iplotBar <- function(COIN, dset = "Raw", isel = NULL, usel = NULL, aglev = NULL){
 
-  out1 <- getIn(COINobj, dset = dset, icodes = isel, aglev = aglev)
+  out1 <- getIn(COIN, dset = dset, icodes = isel, aglev = aglev)
 
   ind_data_only <- out1$ind_data_only
   indname <- out1$IndNames
@@ -301,15 +301,15 @@ iplotBar <- function(COINobj, dset = "Raw", isel = NULL, usel = NULL, aglev = NU
   # look for units
   if((out1$otype=="COINobj") & (aglev == 1)){
     # look for units
-    if(exists("IndUnit",COINobj$Input$IndMeta)){
+    if(exists("IndUnit",COIN$Input$IndMeta)){
       # find unit for indicator
-      indunit <- COINobj$Input$IndMeta$IndUnit[COINobj$Input$IndMeta$IndCode == ind_code]
+      indunit <- COIN$Input$IndMeta$IndUnit[COIN$Input$IndMeta$IndCode == ind_code]
     } else {
       # if not, NULL
       indunit <- ""
     }
   } else {
-    # if not COINobj, no units
+    # if not COIN, no units
     indunit <- ""
   }
 
@@ -348,27 +348,42 @@ iplotBar <- function(COINobj, dset = "Raw", isel = NULL, usel = NULL, aglev = NU
 #'
 #' Generates an interactive table of data. For use in e.g. Shiny or html documents.
 #'
-#' @param COINobj The COIN object, or a data frame of indicator data.
+#' @param COIN The COIN object, or a data frame of indicator data.
 #' @param dset The data set to use in the table
 #' @param isel The selected indicator codes (default all in dset)
+#' @param aglev The aggregation level to select data from
+#' @param nround The number of decimal places to round scores to (default 1).
+#' @param extra_cols If FALSE (default), excludes group columns and similar. If TRUE, includes them.
 #'
 #' @importFrom reactable reactable
 #'
-#' @examples \dontrun{iplot_table(COINobj, dset = "Aggregated", isel = NULL)}
+#' @examples \dontrun{iplotTable(COIN, dset = "Aggregated", isel = NULL)}
 #'
 #' @return Interactive table
 #'
 #' @export
 
-iplot_table <- function(COINobj, dset = "Raw", isel = NULL){
+iplotTable <- function(COIN, dset = "Raw", isel = NULL, aglev = NULL, nround = 1,
+                       extra_cols = FALSE){
 
-  out1 <- getIn(COINobj, dset = dset, icodes = isel)
+  # reverse order of selected indicators (if any): necessary because later we reverse
+  if(!is.null(isel)){
+    isel <- rev(isel)
+  }
+
+  # get indicator data
+  out1 <- getIn(COIN, dset = dset, icodes = isel, aglev = aglev)
 
   # get data and reverse so that index is first, also unit names are first
 
-  tabledata <- cbind(UnitName = out1$ind_data$UnitName, rev( out1$ind_data[setdiff(names(out1$ind_data), "UnitName")] )) %>%
-   lapply(function(y) if(is.numeric(y)) round(y, 1) else y) %>%
-    data.frame()
+  if(extra_cols == TRUE){
+    tabledata <- cbind(UnitName = out1$ind_data$UnitName, rev( out1$ind_data[setdiff(names(out1$ind_data), "UnitName")] )) %>%
+      roundDF(nround)
+  } else {
+    tabledata <- cbind(UnitName = out1$ind_data$UnitName, rev( out1$ind_data_only )) %>%
+      roundDF(nround)
+  }
+
 
   # these are the attributes needed to get the left col to stick when scrolling
   # e.g. like "freeze panes" in Excel.
@@ -434,30 +449,31 @@ iplot_table <- function(COINobj, dset = "Raw", isel = NULL){
 #'
 #' Generates an interactive radar chart for a specified unit.
 #'
-#' @param COINobj The COIN object, or a data frame of indicator data.
+#' @param COIN The COIN object, or a data frame of indicator data.
 #' @param dset The data set to use in the table
 #' @param usel Character vector of unit code(s) to plot data from
-#' @param levsel The selected aggregation level to take indicator data from,
-#' where 1 is the base indicator level, and 2, 3 etc are higher aggregation levels
 #' @param isel The indicator or aggregation code(s) to plot
+#' @param aglev The selected aggregation level to take indicator data from,
+#' where 1 is the base indicator level, and 2, 3 etc are higher aggregation levels
 #'
 #' @importFrom plotly plot_ly add_trace
 #'
 #' @examples \dontrun{
-#' iplot_radar(ASEM, dset = "Aggregated", usel = c("AUT", "CHN"), levsel = 1, isel = "Physical")
+#' iplotRadar(ASEM, dset = "Aggregated", usel = c("AUT", "CHN"), isel = "Physical", aglev = 1)
 #' }
 #'
 #' @return Interactive table
 #'
 #' @export
 
-iplot_radar <- function(COINobj, dset = "Raw", usel = NULL, levsel = NULL, isel = NULL){
+iplotRadar <- function(COIN, dset = "Raw", usel = NULL, aglev = NULL, isel = NULL){
 
   # get indicator data
-  out1 <- getIn(COINobj, dset = dset, icodes = isel, aglev = levsel)
+  out1 <- getIn(COIN, dset = dset, icodes = isel, aglev = aglev)
 
   # data to plot on radar chart (vals of each indicator/aggregate)
-  uRow <- out1$ind_data_only[out1$UnitCodes %in% usel,]
+  uRow <- out1$ind_data_only[out1$ind_data$UnitCode %in% usel,]
+  uNames <- out1$ind_data$UnitName[out1$ind_data$UnitCode %in% usel]
 
   # build plot
   fig <- plotly::plot_ly(
@@ -472,7 +488,8 @@ iplot_radar <- function(COINobj, dset = "Raw", usel = NULL, levsel = NULL, isel 
       plotly::add_trace(
         r = as.numeric(uRow[ii,]),
         theta = colnames(uRow),
-        name = COINobj$Input$IndData$UnitName[COINobj$Input$IndData$UnitCode == usel[ii]]
+        name = uNames[ii]
+        #name = COIN$Input$IndData$UnitName[COIN$Input$IndData$UnitCode == usel[ii]]
       )
   }
 
