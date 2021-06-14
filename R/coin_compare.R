@@ -181,6 +181,7 @@ compareCOINs <- function(COINbase, ... = NULL){
 compTable <- function(COIN1, COIN2, dset = "Raw", isel, COINnames = NULL){
 
   #NOTE: rewrite this to bypass getIn, and to do ranks here. Also ensure that isel is a string.
+  stop("This function is not working at the moment - will fix soon.")
 
   out1 <- getIn(COIN1, dset = dset)
   out2 <- getIn(COIN2, dset = dset)
@@ -204,7 +205,8 @@ compTable <- function(COIN1, COIN2, dset = "Raw", isel, COINnames = NULL){
 
 #' Rank tables between multiple COINs
 #'
-#' Takes multiple COINs, and generates a rank comparison at the index level
+#' Takes multiple COINs, and generates a rank comparison at the index level. Note, at the moment this
+#' only works if your index is called "Index". This will be fixed at some point.
 #'
 #' @param COINs A list of COINs
 #' @param tabtype The type of table to generate
@@ -216,12 +218,17 @@ compTable <- function(COIN1, COIN2, dset = "Raw", isel, COINnames = NULL){
 #'
 compTableMulti <- function(COINs, tabtype = "Ranks", ibase = 1){
 
+  stop("This function is not working at the moment - will fix soon.")
+  # NOTE the issue is that ranks are calculated by calling getIn, which doesn't calculate ranks.
+  # Need to calculate ranks inside this function. Also, need to perform a join on the tables so that
+  # units are correctly matched between different versions.
+
   # change order of list: put ibase first
   COINs <- COINs[c(ibase, setdiff(1:length(COINs), ibase))]
 
   # get base ranks
   out_base <- getIn(COINs[[1]], dset = "Aggregated", icodes = "Index")
-  ranks_base <- out_base$ind_ranks[[1]]
+  ranks_base <- out_base$ind_data_only
   UnitNames <- out_base$UnitNames
 
   # prep a matrix
