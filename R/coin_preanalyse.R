@@ -6,6 +6,7 @@
 #' @param icodes A character vector of indicator names to analyse. Defaults to all indicators.
 #' @param dset The data set to analyse
 #' @param out2 Where to output the results: if "COIN" (default), outputs to the COIN, otherwise if "list", outputs to a separate list.
+#' @param cortype The type of correlation to calculate, either "pearson", "spearman", or "kendall".
 #' @param t_skew Skewness threshold
 #' @param t_kurt Kurtosis threshold
 #' @param t_colin Collinearity threshold (absolute value of correlation)
@@ -26,12 +27,12 @@
 #'
 #' @export
 
-getStats <- function(COINobj, icodes = NULL, dset = "Raw", out2 = "COIN",
+getStats <- function(COINobj, icodes = NULL, dset = "Raw", out2 = "COIN", cortype = "pearson",
                             t_skew = 2, t_kurt = 3.5, t_colin = 0.9, t_denom = 0.7,
                             t_missing = 65, IQR_coef = 1.5){
 
   # First. check to see what kind of input we have and get relevant data
-  checkout <- getIn(obj = COINobj, dset = dset, icodes = icodes, aglev = 1)
+  checkout <- getIn(obj = COINobj, dset = dset, icodes = icodes)
   # Check input is a COIN
   if (checkout$otype != "COINobj"){
     stop("This function only supports a COIN as an input.")
@@ -93,9 +94,9 @@ getStats <- function(COINobj, icodes = NULL, dset = "Raw", out2 = "COIN",
   ##------- Now checking correlations ---------
 
   # indicator correlations
-  corr_ind <- stats::cor(ind_data_only, method = "pearson", use = "pairwise.complete.obs") # get correlation matrix, just indicators
+  corr_ind <- stats::cor(ind_data_only, method = cortype, use = "pairwise.complete.obs") # get correlation matrix, just indicators
   diag(corr_ind) <- NA # replace 1s with NAs since we are not interested in them
-  p_ind <- corrplot::cor.mtest(ind_data_only, method = "pearson") # p values
+  p_ind <- corrplot::cor.mtest(ind_data_only, method = cortype) # p values
 
   # check for collinearity
   maxcor <- sapply(as.data.frame(abs(corr_ind)), max, na.rm = T) # the max absolute correlations
@@ -118,7 +119,7 @@ getStats <- function(COINobj, icodes = NULL, dset = "Raw", out2 = "COIN",
     den_data_only <- select(den_data_only, starts_with("Den_"))
 
     # denominator correlations
-    corr_denom <- stats::cor(den_data_only, ind_data_only, method = "pearson", use = "pairwise.complete.obs")
+    corr_denom <- stats::cor(den_data_only, ind_data_only, method = cortype, use = "pairwise.complete.obs")
     maxcor <- as.data.frame(abs(corr_denom)) %>% purrr::map_dbl(max, na.rm = T) # the max absolute correlations
     maxcor <- dplyr::if_else(maxcor>t_denom,"High","OK") # if any values exceed threshold, flag
     ind_stats <- ind_stats %>% tibble::add_column(Denom.correlation = maxcor) # add to table
