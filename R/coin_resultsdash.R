@@ -276,6 +276,8 @@ iplotMap <- function(COIN, dset = "Raw", isel){
 #' @param isel The selected indicator code or aggregate (does not support multiple indicators)
 #' @param usel A character vector of unit codes to highlight on the bar chart
 #' @param aglev The aggregation level to collect the indicator data from
+#' @param stack_children If TRUE, produces a stacked bar chart with any children of isel. In this case, usel is ignored.
+#' This only works if dset = "Aggregated" and aglev > 1.
 #'
 #' @importFrom plotly plot_ly layout
 #'
@@ -285,7 +287,8 @@ iplotMap <- function(COIN, dset = "Raw", isel){
 #'
 #' @export
 
-iplotBar <- function(COIN, dset = "Raw", isel = NULL, usel = NULL, aglev = NULL){
+iplotBar <- function(COIN, dset = "Raw", isel = NULL, usel = NULL, aglev = NULL,
+                     stack_children = FALSE){
 
   out1 <- getIn(COIN, dset = dset, icodes = isel, aglev = aglev)
 
@@ -313,33 +316,82 @@ iplotBar <- function(COIN, dset = "Raw", isel = NULL, usel = NULL, aglev = NULL)
     indunit <- ""
   }
 
-  # Build data frame, then sort it
-  # now build df for plotly
-  df1 <- data.frame(UnitCode = out1$UnitCodes,
-                    Indicator = out1$ind_data[ind_code])
-  colnames(df1)[2] <- "Indicator"
-  df1 <- df1[order(df1[2], decreasing = TRUE),]
+  if(stack_children){
 
-  # colour bars based on selected units
-  barcolours <- rep('#58508d', nrow(df1))
-  barcolours[df1$UnitCode %in% usel] <- '#ffa600'
+    if(aglev == 1 | dset != "Aggregated"){
+      stop("Stacked bar chart only works with aglev > 1 and dset = 'Aggregated'.")
+    }
 
-  if(is.na(out1$UnitCodes[1])){
-    # if there are no unitcodes, e.g. for just a df, we don't plot them
-    fig <- plotly::plot_ly(data = df1, y = ~Indicator,
+    # if stack_children is TRUE and we are above the indicator level, stacked bar chart with children
+    # First we need to find who the children are
+    # Get index structure
+    aggcols <- dplyr::select(COIN$Input$IndMeta,
+                             dplyr::starts_with(c("IndCode", "Agg")))
+    aggcols <- aggcols[c(aglev-1, aglev)]
+
+    # get children
+    children <- unique(aggcols[aggcols[2] == ind_code, 1])
+    children <- children[[1]]
+
+    # get scores for children
+    out_children <- getIn(COIN, dset = dset, icodes = children, aglev = aglev-1)
+
+    df1 <- data.frame(UnitCode = out_children$UnitCodes, Indicator = ind_data_only, out_children$ind_data_only)
+
+
+    colnames(df1)[2] <- "Indicator"
+    df1 <- df1[order(df1[2], decreasing = TRUE),]
+
+    fig <- plotly::plot_ly(data = df1, x = ~UnitCode, y = ~get(children[1]),
                            source = 'barclick', key = ~UnitCode, type = "bar",
-                           marker = list(color = barcolours))
+                           name = children[1])
+
+
+    for (iii in 2:length(children)){
+
+      fig <- plotly::add_trace(fig, y = df1[[children[iii]]], name = children[iii])
+
+    }
+
+    fig <- fig %>% plotly::layout(title = list(text = indname, y = 0.95),
+                          yaxis = list(title = indunit, showticklabels = FALSE),
+                          xaxis = list(title = "",
+                                       categoryorder = "array", categoryarray = df1$Indicator),
+                          barmode = "stack")
+
   } else {
-    # otherwise, plot unit codes on x axis
-    fig <- plotly::plot_ly(data = df1, x = ~UnitCode, y = ~Indicator,
-                           source = 'barclick', key = ~UnitCode, type = "bar",
-                           marker = list(color = barcolours))
+
+    # Build data frame, then sort it
+    # now build df for plotly
+    df1 <- data.frame(UnitCode = out1$UnitCodes,
+                      Indicator = out1$ind_data[ind_code])
+    colnames(df1)[2] <- "Indicator"
+    df1 <- df1[order(df1[2], decreasing = TRUE),]
+
+    # colour bars based on selected units
+    barcolours <- rep('#58508d', nrow(df1))
+    barcolours[df1$UnitCode %in% usel] <- '#ffa600'
+
+    if(is.na(out1$UnitCodes[1])){
+      # if there are no unitcodes, e.g. for just a df, we don't plot them
+      fig <- plotly::plot_ly(data = df1, y = ~Indicator,
+                             source = 'barclick', key = ~UnitCode, type = "bar",
+                             marker = list(color = barcolours))
+    } else {
+      # otherwise, plot unit codes on x axis
+      fig <- plotly::plot_ly(data = df1, x = ~UnitCode, y = ~Indicator,
+                             source = 'barclick', key = ~UnitCode, type = "bar",
+                             marker = list(color = barcolours))
+    }
+
+    fig <- fig %>% layout(title = list(text = indname, y = 0.95),
+                          yaxis = list(title = indunit),
+                          xaxis = list(title = "",
+                                       categoryorder = "array", categoryarray = df1$Indicator))
+
   }
 
-  fig <- fig %>% layout(title = list(text = indname, y = 0.95),
-                        yaxis = list(title = indunit),
-                        xaxis = list(title = "",
-                                     categoryorder = "array", categoryarray = df1$Indicator))
+
   fig
 }
 
@@ -455,6 +507,13 @@ iplotTable <- function(COIN, dset = "Raw", isel = NULL, aglev = NULL, nround = 1
 #' @param isel The indicator or aggregation code(s) to plot
 #' @param aglev The selected aggregation level to take indicator data from,
 #' where 1 is the base indicator level, and 2, 3 etc are higher aggregation levels
+#' @param addstat Adds the statistic of the scores in each dimension as a separate trace. If "mean" adds the overall
+#' mean for each dimension/indicator. If "median" adds the overall median. If "groupmean" or "groupmedian", adds the
+#' group mean or median respectively of the first unit specified in usel, using the group specified by statgroup. Default "none", i.e. no extra trace.
+#' Using a group mean or median won't make sense unless all of selected units are from the same group.
+#' @param statgroup A grouping variable (must be present in dset) if addstat = "groupmean" or "groupmedian"
+#' @param statgroup_name An optional name to display for statgroup. In the legend this will appear as e.g. "statgroup_name group mean".
+#' Defaults to statgroup.
 #'
 #' @importFrom plotly plot_ly add_trace
 #'
@@ -466,7 +525,12 @@ iplotTable <- function(COIN, dset = "Raw", isel = NULL, aglev = NULL, nround = 1
 #'
 #' @export
 
-iplotRadar <- function(COIN, dset = "Raw", usel = NULL, aglev = NULL, isel = NULL){
+iplotRadar <- function(COIN, dset = "Raw", usel = NULL, aglev = NULL, isel = NULL, addstat = "none",
+                       statgroup = NULL, statgroup_name = NULL){
+
+  if(is.null(usel)){
+    stop("You need to select a unit using usel.")
+  }
 
   # get indicator data
   out1 <- getIn(COIN, dset = dset, icodes = isel, aglev = aglev)
@@ -474,6 +538,58 @@ iplotRadar <- function(COIN, dset = "Raw", usel = NULL, aglev = NULL, isel = NUL
   # data to plot on radar chart (vals of each indicator/aggregate)
   uRow <- out1$ind_data_only[out1$ind_data$UnitCode %in% usel,]
   uNames <- out1$ind_data$UnitName[out1$ind_data$UnitCode %in% usel]
+
+  if(addstat == "mean"){
+
+    uRow <- rbind(colMeans(out1$ind_data_only, na.rm = TRUE),
+                  uRow)
+    uNames <- c("<b>Mean<b>", uNames)
+
+  } else if (addstat == "median"){
+
+    uRow <- rbind(apply(out1$ind_data_only, 2, stats::median, na.rm = T),
+                  uRow)
+    uNames <- c("<b>Median<b>", uNames)
+
+  } else if ((addstat == "groupmean") | (addstat == "groupmedian")){
+
+    # trap some errors first
+    if(is.null(statgroup)){
+      stop("You didn't specify which grouping variable to use. Use statgroup argument.")
+    }
+    if(!(statgroup %in% colnames(out1$ind_data))){
+      stop("Specified statgroup not found in the selected data set - please check.")
+    }
+
+    # first need to find which group usel is in. Use the first unit in usel as reference.
+    group_usel <- out1$ind_data[out1$ind_data$UnitCode == usel[1] ,statgroup]
+    group_usel <- group_usel[[1]]
+
+    # get df with just the indicators, and rows belonging to specified group
+    groupdata <- out1$ind_data[out1$ind_data[[statgroup]] == group_usel, out1$IndCodes]
+
+    # get group name - use statgroup_name or if NULL use statgroup (will start with "Group_" though)
+    if(is.null(statgroup_name)){
+      statgroup_name = statgroup
+    }
+
+    if (addstat == "groupmean"){
+
+      uRow <- rbind(apply(groupdata, 2, mean, na.rm = T),
+                    uRow)
+      uNames <- c(paste0("<b>", statgroup_name, " group mean (", group_usel, ")<b>"),
+                  uNames)
+
+    } else if (addstat == "groupmedian"){
+
+      uRow <- rbind(apply(groupdata, 2, stats::median, na.rm = T),
+                    uRow)
+      uNames <- c(paste0("<b>", statgroup_name, " group median<b>"),
+                  uNames)
+
+    }
+
+  }
 
   # build plot
   fig <- plotly::plot_ly(
@@ -483,7 +599,7 @@ iplotRadar <- function(COIN, dset = "Raw", usel = NULL, aglev = NULL, isel = NUL
   )
 
   # Add each unit trace by looping over units
-  for (ii in 1:length(usel)){
+  for (ii in 1:length(uNames)){
     fig <- fig %>%
       plotly::add_trace(
         r = as.numeric(uRow[ii,]),
