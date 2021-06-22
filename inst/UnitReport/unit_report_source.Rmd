@@ -1,0 +1,61 @@
+---
+title: "Country report for `r params$COIN$Data$Aggregated$UnitName[params$COIN$Data$Aggregated$UnitCode == params$usel]`"
+date: "`r Sys.Date()`"
+output:
+  word_document
+    
+params:
+  COIN: NULL
+  usel: "AUT"
+
+always_allow_html: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, fig.width = 8)
+iname <- params$COIN$Data$Aggregated$UnitName[params$COIN$Data$Aggregated$UnitCode == params$usel]
+COIN <- params$COIN
+usel <- params$usel
+
+# generate big ranks and scores tables if not already present
+if(is.null(COIN$Results$FullRanks)){
+  COIN <- getResults(COIN, tab_type = "Full", use = "ranks", out2 = "COIN")
+}
+if(is.null(COIN$Results$FullScores)){
+  COIN <- getResults(COIN, tab_type = "Full", use = "scores", out2 = "COIN")
+}
+
+rnks <- COIN$Results$FullRanks
+scrs <- COIN$Results$FullScores
+```
+
+```{r barchart}
+library(COINr)
+# plot bar chart
+iplotBar(COIN, dset = "Aggregated", isel = "Index", usel = usel)
+```
+
+`r iname` is ranked `r rnks$Index[rnks$UnitCode == usel]` out of `r nrow(rnks)` in the overall index. At the pillar level, its scores are summarised as follows:
+
+```{r summarytable, include=T}
+# get summary table
+knitr::kable(getUnitSummary(COIN, usel = usel, aglevs = c(4,3,2)))
+```
+
+```{r radarchart}
+# plot bar chart
+iplotRadar(COIN, dset = "Aggregated", usel = usel, aglev = 2, addstat = "median")
+```
+
+At the indicator level, the main strengths of `r iname`, as its top five highest ranking indicators, are as follows:
+
+```{r top5}
+SAW <- getStrengthNWeak(COIN, usel = usel, withcodes = FALSE)
+knitr::kable(SAW$Strengths)
+```
+
+In terms of rankings, the weakest five indicators are the following:
+
+```{r bott5}
+knitr::kable(SAW$Weaknesses)
+```
