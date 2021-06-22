@@ -171,6 +171,8 @@ compareCOINs <- function(COINbase, ... = NULL){
 #' @param dset The data set of interest
 #' @param isel The indicator/col of interest
 #' @param COINnames An optional character vector of the names of COIN1 and COIN2, to be used in the table headers.
+#' @param sort_by If "RankCOIN1", sorts by the indicator values of COIN1, if "RankCOIN2", sorts by COIN2,
+#' if "RankChange", sorts by rank change, and if "AbsRankChange" sorts by absolute rank change.
 #'
 #' @examples \dontrun{coin_indicatordash(COINobj, inames = NULL, dset = "raw")}
 #'
@@ -178,87 +180,103 @@ compareCOINs <- function(COINbase, ... = NULL){
 #'
 #' @export
 #'
-compTable <- function(COIN1, COIN2, dset = "Raw", isel, COINnames = NULL){
+compTable <- function(COIN1, COIN2, dset = "Raw", isel, COINnames = NULL, sort_by = "AbsRankChange"){
 
-  #NOTE: rewrite this to bypass getIn, and to do ranks here. Also ensure that isel is a string.
-  stop("This function is not working at the moment - will fix soon.")
+  tab1 <- COIN1$Data[[dset]][c("UnitCode", "UnitName", isel)]
+  tab2 <- COIN2$Data[[dset]][c("UnitCode", "UnitName", isel)]
 
-  out1 <- getIn(COIN1, dset = dset)
-  out2 <- getIn(COIN2, dset = dset)
+  # join the two tables
+  df1 <- merge(tab1, tab2, by = c("UnitCode", "UnitName"))
+  # convert scores to ranks
+  df1 <- rankDF(df1)
+  # add diff and abs diff
+  df1 <- cbind(df1,
+               df1[3] - df1[4],
+               abs(df1[3] - df1[4]))
+  # tidy up
+  colnames(df1) <- c("UnitCode", "UnitName", "RankCOIN1", "RankCOIN2", "RankChange", "AbsRankChange")
 
-  df <- data.frame(Country = out1$UnitNames,
-                   out1$ind_ranks[isel],
-                   out2$ind_ranks[isel],
-                   out1$ind_ranks[isel] - out2$ind_ranks[isel],
-                   abs(out1$ind_ranks[isel] - out2$ind_ranks[isel]))
-  colnames(df) <- c("Country", "RankCOIN1", "RankCOIN2", "RankChange", "AbsRankChange")
-  if (!is.null(COINnames)){
-    colnames(df)[2:3] <- paste0("Rank:",COINnames)
+  # sort
+  if(sort_by == "RankCOIN1" | sort_by == "RankCOIN2"){
+    df1 <- df1[order(df1[[sort_by]]),]
+  } else {
+    df1 <- df1[order(-df1[[sort_by]]),]
   }
 
-  # outtab <- dat$ind_ranks %>% rev() %>%
-  #   data.frame(Country = dat$UnitNames) %>%
-  #   reactable(defaultPageSize = 10, highlight = TRUE, wrap = F,
-  #             defaultSorted = list(Index = "desc"))
-  df
+
+  if (!is.null(COINnames)){
+    colnames(df)[3:4] <- paste0("Rank:",COINnames)
+  }
+
+  df1
 }
 
 #' Rank tables between multiple COINs
 #'
-#' Takes multiple COINs, and generates a rank comparison at the index level. Note, at the moment this
-#' only works if your index is called "Index". This will be fixed at some point.
+#' Takes multiple COINs, and generates a rank comparison for a single indicator or aggregate.
 #'
 #' @param COINs A list of COINs
+#' @param dset The data set to extract the indicator from (must be present in each COIN). Default "Aggregated".
+#' @param isel Code of the indicator or aggregate to extract from each COIN (must be present in the specified
+#' data set of each COIN). Default "Index".
 #' @param tabtype The type of table to generate
 #' @param ibase The index of the COIN to use as a base comparison
 #'
-#' @return Table
+#' @return Rank comparison table as a data frame
 #'
 #' @export
 #'
-compTableMulti <- function(COINs, tabtype = "Ranks", ibase = 1){
+compTableMulti <- function(COINs, dset = "Aggregated", isel = "Index", tabtype = "Ranks", ibase = 1){
 
-  stop("This function is not working at the moment - will fix soon.")
-  # NOTE the issue is that ranks are calculated by calling getIn, which doesn't calculate ranks.
-  # Need to calculate ranks inside this function. Also, need to perform a join on the tables so that
-  # units are correctly matched between different versions.
+  message("This needs to be tested and probably has some bugs here and there!")
 
   # change order of list: put ibase first
   COINs <- COINs[c(ibase, setdiff(1:length(COINs), ibase))]
 
-  # get base ranks
-  out_base <- getIn(COINs[[1]], dset = "Aggregated", icodes = "Index")
-  ranks_base <- out_base$ind_data_only
-  UnitNames <- out_base$UnitNames
+  # get scores of baseline COIN
+  tab1 <- COINs[[1]]$Data[[dset]][c("UnitCode", "UnitName", isel)]
+  colnames(tab1)[3] <- names(COINs)[1]
 
-  # prep a matrix
-  rankmatrix <- matrix(data = NA, nrow = length(ranks_base), ncol = length(COINs))
+  # now loop over COINs to get the other columns
+  for (ii in 2:length(COINs)){
 
-  # populate matrix
-  if (tabtype == "Ranks"){
-    rankmatrix[,1] <- ranks_base
-    for (ii in 2: length(COINs)){
-      rankmatrix[,ii] <- getIn(COINs[[ii]], dset = "Aggregated",
-                                    icodes = "Index")$ind_ranks[[1]]
-    }
-  } else if (tabtype == "Diffs"){
-    rankmatrix[,1] <- 0
-    for (ii in 2: length(COINs)){
-      rankmatrix[,ii] <- ranks_base - getIn(COINs[[ii]], dset = "Aggregated",
-                                                 icodes = "Index")$ind_ranks[[1]] %>% abs()
-    }
-  } else if (tabtype == "AbsDiffs"){
-    rankmatrix[,1] <- 0
-    for (ii in 2: length(COINs)){
-      rankmatrix[,ii] <- abs(ranks_base - getIn(COINs[[ii]], dset = "Aggregated",
-                                                     icodes = "Index")$ind_ranks[[1]])
-    }
+    # get indicator data for iith COIN
+    tabi <- COINs[[ii]]$Data[[dset]][c("UnitCode", isel)]
+
+    # join the two tables
+    tab1 <- merge(tab1, tabi, by = "UnitCode")
+
+    # rename col
+    colnames(tab1)[ii + 2] <- names(COINs)[ii]
   }
 
-  # change to df and rename cols
-  df <- cbind(UnitNames, as.data.frame(rankmatrix))
-  colnames(df)[2] <- names(COINs)[1]
-  colnames(df)[3:ncol(df)] <- names(COINs)[-1]
+  # convert to ranks
+  tab1 <- rankDF(tab1)
 
-  return(df)
+  # if tabtype is not "Ranks", have to do a further step
+  if  (tabtype == "Diffs"){
+
+    # calculate rank differences
+    tab1 <- apply(tab1, 2, function(x){
+      if(is.numeric(x)){
+        tab1[3] - x
+      } else {
+        x
+      }
+    })
+
+  } else if (tabtype == "AbsDiffs"){
+
+    # calculate abs rank differences
+    tab1 <- apply(tab1, 2, function(x){
+      if(is.numeric(x)){
+        abs(tab1[3] - x)
+      } else {
+        x
+      }
+    })
+
+  }
+
+  return(tab1)
 }
