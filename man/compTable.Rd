@@ -4,7 +4,14 @@
 \alias{compTable}
 \title{Rank comparison table between 2 COINs}
 \usage{
-compTable(COIN1, COIN2, dset = "Raw", isel, COINnames = NULL)
+compTable(
+  COIN1,
+  COIN2,
+  dset = "Raw",
+  isel,
+  COINnames = NULL,
+  sort_by = "AbsRankChange"
+)
 }
 \arguments{
 \item{COIN1}{First COIN obj}
@@ -16,6 +23,9 @@ compTable(COIN1, COIN2, dset = "Raw", isel, COINnames = NULL)
 \item{isel}{The indicator/col of interest}
 
 \item{COINnames}{An optional character vector of the names of COIN1 and COIN2, to be used in the table headers.}
+
+\item{sort_by}{If "RankCOIN1", sorts by the indicator values of COIN1, if "RankCOIN2", sorts by COIN2,
+if "RankChange", sorts by rank change, and if "AbsRankChange" sorts by absolute rank change.}
 }
 \value{
 A data frame with ranks and rank changes

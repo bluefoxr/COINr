@@ -4,7 +4,14 @@
 \alias{iplotBar}
 \title{Bar chart}
 \usage{
-iplotBar(COIN, dset = "Raw", isel = NULL, usel = NULL, aglev = NULL)
+iplotBar(
+  COIN,
+  dset = "Raw",
+  isel = NULL,
+  usel = NULL,
+  aglev = NULL,
+  stack_children = FALSE
+)
 }
 \arguments{
 \item{COIN}{The COIN object, or a data frame of indicator data.}
@@ -16,6 +23,9 @@ iplotBar(COIN, dset = "Raw", isel = NULL, usel = NULL, aglev = NULL)
 \item{usel}{A character vector of unit codes to highlight on the bar chart}
 
 \item{aglev}{The aggregation level to collect the indicator data from}
+
+\item{stack_children}{If TRUE, produces a stacked bar chart with any children of isel. In this case, usel is ignored.
+This only works if dset = "Aggregated" and aglev > 1.}
 }
 \value{
 Interactive bar chart.

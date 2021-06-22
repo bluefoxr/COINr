@@ -4,19 +4,29 @@
 \alias{compTableMulti}
 \title{Rank tables between multiple COINs}
 \usage{
-compTableMulti(COINs, tabtype = "Ranks", ibase = 1)
+compTableMulti(
+  COINs,
+  dset = "Aggregated",
+  isel = "Index",
+  tabtype = "Ranks",
+  ibase = 1
+)
 }
 \arguments{
 \item{COINs}{A list of COINs}
+
+\item{dset}{The data set to extract the indicator from (must be present in each COIN). Default "Aggregated".}
+
+\item{isel}{Code of the indicator or aggregate to extract from each COIN (must be present in the specified
+data set of each COIN). Default "Index".}
 
 \item{tabtype}{The type of table to generate}
 
 \item{ibase}{The index of the COIN to use as a base comparison}
 }
 \value{
-Table
+Rank comparison table as a data frame
 }
 \description{
-Takes multiple COINs, and generates a rank comparison at the index level. Note, at the moment this
-only works if your index is called "Index". This will be fixed at some point.
+Takes multiple COINs, and generates a rank comparison for a single indicator or aggregate.
 }
