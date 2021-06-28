@@ -219,23 +219,32 @@ compTable <- function(COIN1, COIN2, dset = "Raw", isel, COINnames = NULL, sort_b
 #' @param dset The data set to extract the indicator from (must be present in each COIN). Default "Aggregated".
 #' @param isel Code of the indicator or aggregate to extract from each COIN (must be present in the specified
 #' data set of each COIN). Default "Index".
-#' @param tabtype The type of table to generate
+#' @param tabtype The type of table to generate - "Ranks", "Diffs", or "AbsDiffs".
 #' @param ibase The index of the COIN to use as a base comparison
+#' @param sort_by If TRUE, sorts by the base COIN (ibase), if "change" (default).
+#' @param extra_cols A character vector of any extra columns to include from the COIN referenced by ibase. For example,
+#' this could include group columns.
+#'
+#' @importFrom purrr modify_if
 #'
 #' @return Rank comparison table as a data frame
 #'
 #' @export
-#'
-compTableMulti <- function(COINs, dset = "Aggregated", isel = "Index", tabtype = "Ranks", ibase = 1){
 
-  message("This needs to be tested and probably has some bugs here and there!")
+compTableMulti <- function(COINs, dset = "Aggregated", isel = "Index", tabtype = "Ranks", ibase = 1,
+                           sort_table = TRUE, extra_cols = NULL){
 
   # change order of list: put ibase first
   COINs <- COINs[c(ibase, setdiff(1:length(COINs), ibase))]
 
+  # names
+  if(is.null(names(COINs))){
+    names(COINs) <- paste0("COIN_", 1:length(COINs))
+  }
+
   # get scores of baseline COIN
-  tab1 <- COINs[[1]]$Data[[dset]][c("UnitCode", "UnitName", isel)]
-  colnames(tab1)[3] <- names(COINs)[1]
+  tab1 <- COINs[[1]]$Data[[dset]][c("UnitCode", "UnitName", extra_cols, isel)]
+  colnames(tab1)[ncol(tab1)] <- names(COINs)[1]
 
   # now loop over COINs to get the other columns
   for (ii in 2:length(COINs)){
@@ -247,7 +256,7 @@ compTableMulti <- function(COINs, dset = "Aggregated", isel = "Index", tabtype =
     tab1 <- merge(tab1, tabi, by = "UnitCode")
 
     # rename col
-    colnames(tab1)[ii + 2] <- names(COINs)[ii]
+    colnames(tab1)[ncol(tab1)] <- names(COINs)[ii]
   }
 
   # convert to ranks
@@ -257,25 +266,23 @@ compTableMulti <- function(COINs, dset = "Aggregated", isel = "Index", tabtype =
   if  (tabtype == "Diffs"){
 
     # calculate rank differences
-    tab1 <- apply(tab1, 2, function(x){
-      if(is.numeric(x)){
-        tab1[3] - x
-      } else {
-        x
-      }
-    })
+    tab1 <- purrr::modify_if(tab1,
+                             .p = is.numeric,
+                             .f = ~{tab1[names(COINs)[1]] - .x}
+    )
 
   } else if (tabtype == "AbsDiffs"){
 
     # calculate abs rank differences
-    tab1 <- apply(tab1, 2, function(x){
-      if(is.numeric(x)){
-        abs(tab1[3] - x)
-      } else {
-        x
-      }
-    })
+    tab1 <- purrr::modify_if(tab1,
+                             .p = is.numeric,
+                             .f = ~{abs(tab1[names(COINs)[1]] - .x)}
+                             )
+  }
 
+  # sort
+  if(sort_table){
+    tab1 <- tab1[order(tab1[[names(COINs)[1]]]),]
   }
 
   return(tab1)
