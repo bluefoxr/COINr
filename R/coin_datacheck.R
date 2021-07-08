@@ -32,17 +32,34 @@
 #' @return An updated COIN object with tables showing missing data, and a filtered list of countries to include in subsequent calculations.
 #' @export
 
-checkData <- function(COIN, dset = "Raw", ind_thresh=2/3, zero_thresh = 0.05,
+checkData <- function(COIN, dset = NULL, ind_thresh = NULL, zero_thresh = NULL,
                       unit_screen = "none", Force = NULL, out2 = "COIN"){
 
   # Check input type. If not COIN, exit.
   if (!("COIN object" %in% class(COIN))){ # COIN obj
     stop("This function currently only supports COINs as inputs.")
   }
+  # Check for dset. If not specified, exit.
+  if (is.null(dset)){
+    stop("dset is NULL. Please specify which data set to operate on.")
+  }
+
+  ##----- SET DEFAULTS -------##
+  # Done here because otherwise if we use regen, this input could be input as NULL
+  if(is.null(ind_thresh)){
+    ind_thresh <- 2/3
+  }
+  if(is.null(zero_thresh)){
+    zero_thresh <- 0.05
+  }
+  if(is.null(unit_screen)){
+    unit_screen <- "none"
+  }
 
   # Write function arguments to object, FTR
   COIN$Method$checkData$dset <- dset
   COIN$Method$checkData$ind_thresh <- ind_thresh
+  COIN$Method$checkData$zero_thresh <- zero_thresh
   COIN$Method$checkData$unit_screen <- unit_screen
   COIN$Method$checkData$Force <- Force
 
