@@ -10,6 +10,7 @@
 #' @param AggMeta A dataframe specifying the names and weights of each aggregation group
 #' @param include Optional argument specifying a subset of indicator codes to include (default all indicators included)
 #' @param exclude Optional argument specifying a subset of indicator codes to exclude (default none excluded)
+#' @param preagg Set to TRUE if you want to assemble a COIN using pre-aggregated data (typically for ex-post analysis)
 #'
 #' @importFrom magrittr "%>%"
 #' @importFrom dplyr "select"
@@ -28,7 +29,13 @@
 #'
 #' @export
 
-assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL){
+assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL, preagg = NULL){
+
+  ##----- SET DEFAULTS -------##
+  # Done here because otherwise if we use regen, this input could be input as NULL
+  if(is.null(preagg)){
+    preagg <- FALSE
+  }
 
   ##----- INITIAL CHECKS -----##
 
@@ -47,6 +54,11 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL){
   }
   if(!exists("Direction", IndMeta)){
     stop("No Direction column found in IndMeta. This column is required for assembling a COIN object.")
+  }
+
+  # also check aggmeta
+  if(any(!(c("AgLevel", "Code", "Name", "Weight") %in% colnames(AggMeta)))){
+    stop("One or more of required columns 'AgLevel', 'Code', 'Name', 'Weight' not found in AggMeta. Please check.")
   }
 
   ##----- IND CODES AND DENOMS -----##
@@ -106,6 +118,12 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL){
 
   # select data and metadata accordingly
   if(!is.null(include)){
+    if(any(!(include %in% IndMeta$IndCode)) & !preagg){
+      # note this is not implemented if preagg is TRUE, because aggregates are not present in IndMeta
+      warning("Some codes in include or exclude are not present in the indicator data and metadata. Ignoring any codes that are not found.")
+      include <- include[include %in% IndMeta$IndCode]
+    }
+
     ind_data <- IndData %>% dplyr::select(dplyr::starts_with(
       c("UnitCode", "UnitName", "Year", "Group_", "IndUnit", "x_")), include )
     ind_meta <- IndMeta[IndMeta$IndCode %in% include,]
@@ -119,9 +137,12 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL){
                              rev(dplyr::across(dplyr::starts_with("Agg"))))
 
   # I want the indicator cols to be in the same order as ind_meta, to avoid surprises
-  ind_data <- dplyr::select(ind_data,
-                            dplyr::starts_with(c("UnitCode", "UnitName",
-                                                 "Year", "Group_", "IndUnit", "x_")), ind_meta$IndCode)
+  # Don't do for preagg though, because there would be extra cols.
+  if (!preagg){
+    ind_data <- dplyr::select(ind_data,
+                              dplyr::starts_with(c("UnitCode", "UnitName",
+                                                   "Year", "Group_", "IndUnit", "x_")), ind_meta$IndCode)
+  }
 
   # Build list
   COINobj <- list(Input = list(
@@ -132,53 +153,73 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL){
       IndData = IndDataOrig,
       IndMeta = IndMeta,
       AggMeta = AggMeta
-    )),
-    Data = list(Raw = ind_data), # for various datasets as they emerge (raw, treated, etc.)
-    Parameters = NULL, # for various model parameters (will be populated in a min)
-    Analysis = NULL, # for analyisis of missing data, correlation etc
-    Method = NULL) # a record of the methodology applied to build the index
+    )))
+    #Parameters = NULL, # for various model parameters (will be populated in a min)
+    #Analysis = NULL, # for analysis of missing data, correlation etc
+    #Method = NULL) # a record of the methodology applied to build the index
 
   # add denoms separately - this is because if it is NULL it will disappear
   COINobj$Input$Denominators = denoms
 
-  # Check that codes in the two tables match, save to list
-  if (length(setdiff(cnames1,IndMeta$IndCode)) > 0){
+  # Add $Data - depends on preagg
+  if(preagg){
 
-    stop("Indicator codes in metadata table and indicator table are not the same. Please correct.")
+    COINobj$Data = list(PreAggregated = ind_data)
+
+    # Check that codes in the two tables match, save to list
+    if (!setequal(cnames1, c(IndMeta$IndCode, AggMeta$Code))){
+      stop("Indicator/agg codes in metadata tables and indicator table are not the same. Please correct.")
+    }
 
   } else {
 
-    message("-----------------")
-    message("Indicator codes cross-checked and OK.")
-    message("-----------------")
-    COINobj$Parameters$NInd <- length(ind_meta$IndCode) # save to list
-    COINobj$Parameters$IndCodes <- ind_meta$IndCode # save to list
-    COINobj$Parameters$UnitCodes <- dplyr::pull(ind_data, "UnitCode") %>% unique()
-    COINobj$Parameters$NUnit <- dplyr::n_distinct(ind_data$UnitCode, na.rm = TRUE)
-    message(paste("Number of indicators =",COINobj$Parameters$NInd))
-    message(paste("Number of units =",COINobj$Parameters$NUnit))
+    COINobj$Data = list(Raw = ind_data) # for various datasets as they emerge (raw, treated, etc.)
 
-    if (ncol(dplyr::select(ind_data,dplyr::starts_with("Year"))) > 0){
-      message(paste("Number of reference years of data =",
-                    dplyr::n_distinct(dplyr::select(ind_data,dplyr::starts_with("Year")))))
-      message(paste("Years from",min(dplyr::select(ind_data,starts_with("Year"))),
-                    "to", max(dplyr::select(ind_data,dplyr::starts_with("Year")))))
-    } else {
-      message("No Year column detected in input data. Assuming you only have one year of data.")
+    # Check that codes in the two tables match, save to list
+    if (!setequal(cnames1,IndMeta$IndCode)){
+      stop("Indicator codes in metadata table and indicator table are not the same. Please correct.")
     }
-
   }
+
+  # Check for duplicates
+  if(anyDuplicated(cnames1) != 0){
+    stop("Duplicate indicator codes detected - please ensure indicator codes are unique and try again.")
+  }
+  if(anyDuplicated(ind_data$UnitCode) != 0){
+    stop("Duplicate unit codes detected - please ensure unit codes are unique and try again.")
+  }
+  if(anyDuplicated(c(ind_data$UnitCode, cnames1)) != 0){
+    stop("At least one unit code is the same as an indicator code. Please make sure all codes are unique.")
+  }
+
+  message("-----------------")
+  message("Indicator codes cross-checked and OK.")
+  message("-----------------")
+  COINobj$Parameters$NInd <- length(ind_meta$IndCode) # save to list
+  COINobj$Parameters$IndCodes <- ind_meta$IndCode # save to list
+  message(paste("Number of indicators =",COINobj$Parameters$NInd))
+  message(paste("Number of units =", dplyr::n_distinct(ind_data$UnitCode, na.rm = TRUE)))
+
+  # COMMENTED out because no multi-year support at the moment
+  # if (ncol(dplyr::select(ind_data,dplyr::starts_with("Year"))) > 0){
+  #   message(paste("Number of reference years of data =",
+  #                 dplyr::n_distinct(dplyr::select(ind_data,dplyr::starts_with("Year")))))
+  #   message(paste("Years from",min(dplyr::select(ind_data,starts_with("Year"))),
+  #                 "to", max(dplyr::select(ind_data,dplyr::starts_with("Year")))))
+  # } else {
+  #   message("No Year column detected in input data. Assuming you only have one year of data.")
+  # }
 
   # Check aggregation levels present and say how many
   agg_cols <- ind_meta %>% dplyr::select(dplyr::starts_with("Agg"))
   # In case no aggregation columns present
   if(is.null(agg_cols)){
-    stop("No aggregation columns detected in IndMeta.")
+    stop("No aggregation columns detected in IndMeta. Aggregation column names must start with 'Agg'.")
   }
   n_agg_levels <- length(agg_cols)
   COINobj$Parameters$Nlevels <- n_agg_levels + 1 # add 1 because indicator level not included
 
-  # # list with aggregation group names in, for each level
+  # list with aggregation group names in, for each level
   AggCodeslist <- vector(mode = "list", length = n_agg_levels)
   for (ii in 1:n_agg_levels){
     AggCodeslist[[ii]] <- AggMeta$Code[AggMeta$AgLevel==ii+1]
@@ -241,6 +282,7 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL){
   # record inclusion/exclusion choices
   COINobj$Method$assemble$include <- include0
   COINobj$Method$assemble$exclude <- exclude0
+  COINobj$Method$assemble$preagg <- preagg
 
   class(COINobj) <- "COIN object" # assigns a "COIN object" class to the list. Helpful for later on.
 
