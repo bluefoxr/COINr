@@ -29,9 +29,20 @@
 #'
 #' @export
 
-normalise <- function(COIN, ntype="minmax", npara = NULL,
-                      dset = "Raw", directions = NULL, individual = NULL,
-                      indiv_only = FALSE, out2 = NULL){
+normalise <- function(COIN, ntype = "minmax", npara = NULL,
+                      dset = NULL, directions = NULL, individual = NULL,
+                      indiv_only = NULL, out2 = NULL){
+
+  # Check for dset. If not specified, exit.
+  if (is.null(dset) & !("data.frame" %in% class(COIN))){
+    stop("dset is NULL. Please specify which data set to operate on.")
+  }
+
+  ##----- SET DEFAULTS -------##
+  # Done here because otherwise if we use regen, this input could be input as NULL
+  if(is.null(indiv_only)){
+    indiv_only <- FALSE
+  }
 
   # First. check to see what kind of input we have.
   out <- getIn(COIN, dset = dset)
