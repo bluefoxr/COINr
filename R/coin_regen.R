@@ -19,7 +19,8 @@ regen <- function(COINold, quietly = FALSE){
                         IndMeta = COINold$Input$Original$IndMeta,
                         AggMeta = COINold$Input$Original$AggMeta,
                         include = COINold$Method$assemble$include,
-                        exclude = COINold$Method$assemble$exclude) %>% suppressMessages()
+                        exclude = COINold$Method$assemble$exclude,
+                        preagg = COINold$Method$assemble$preagg) %>% suppressMessages()
 
     # copy weights from old COIN (otherwise any additional will be deleted)
     # first, save the new original weights (may have added/deleted indicators)
@@ -57,6 +58,7 @@ regen <- function(COINold, quietly = FALSE){
         # run checkData
         COINnew <- checkData(COINnew, dset = COINold$Method$checkData$dset,
                              ind_thresh = COINold$Method$checkData$ind_thresh,
+                             zero_thresh = COINold$Method$checkData$zero_thresh,
                              unit_screen = COINold$Method$checkData$unit_screen,
                              Force = COINold$Method$checkData$Force,
                              out2 = "COIN") %>% suppressMessages()
@@ -75,6 +77,7 @@ regen <- function(COINold, quietly = FALSE){
                               specby = COINold$Method$denominate$specby,
                               denomby = COINold$Method$denominate$denomby,
                               denominators = COINold$Method$denominate$denominators,
+                              scaledenoms = COINold$Method$denominate$scaledenoms,
                               out2 = "COIN") %>% suppressMessages()
 
         # optional custom operation
@@ -90,7 +93,7 @@ regen <- function(COINold, quietly = FALSE){
         COINnew <- impute(COINnew, imtype = COINold$Method$impute$imtype,
                           dset = COINold$Method$impute$dset,
                           groupvar = COINold$Method$impute$groupvar,
-                          byyear = COINold$Method$impute$byyear,
+                          #byyear = COINold$Method$impute$byyear,
                           EMaglev = COINold$Method$impute$EMaglev,
                           out2 = "COIN") %>% suppressMessages()
 
@@ -112,7 +115,8 @@ regen <- function(COINold, quietly = FALSE){
                          t_skew = COINold$Method$treat$t_skew,
                          t_kurt = COINold$Method$treat$t_kurt,
                          individual = COINold$Method$treat$individual,
-                         indiv_only = COINold$Method$treat$indiv_only) %>% suppressMessages()
+                         indiv_only = COINold$Method$treat$indiv_only,
+                         bypass_all = COINold$Method$treat$bypass_all) %>% suppressMessages()
 
         # optional custom operation
         if (exists("Custom",COINold$Method)){
@@ -175,6 +179,14 @@ regen <- function(COINold, quietly = FALSE){
                         include = COINold$Method$assemble$include,
                         exclude = COINold$Method$assemble$exclude)
 
+    # copy weights from old COIN (otherwise any additional will be deleted)
+    # first, save the new original weights (may have added/deleted indicators)
+    rescueorig <- COINnew$Parameters$Weights$Original
+    # overwrite new weights with old (all weight sets)
+    COINnew$Parameters$Weights <- COINold$Parameters$Weights
+    # re-add the new original weights as we don't want to disturb these.
+    COINnew$Parameters$Weights$Original <- rescueorig
+
     # optional custom operation
     if (exists("Custom",COINold$Method)){
       if (exists("after_assemble", COINold$Method$Custom)){
@@ -236,7 +248,7 @@ regen <- function(COINold, quietly = FALSE){
         COINnew <- impute(COINnew, imtype = COINold$Method$impute$imtype,
                           dset = COINold$Method$impute$dset,
                           groupvar = COINold$Method$impute$groupvar,
-                          byyear = COINold$Method$impute$byyear,
+                          #byyear = COINold$Method$impute$byyear,
                           EMaglev = COINold$Method$impute$EMaglev,
                           out2 = "COIN")
 
