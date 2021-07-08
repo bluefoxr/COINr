@@ -57,7 +57,8 @@ resultsDash <- function(COIN, dset = "Aggregated"){
                              column(9,
                                     tableOutput("unitinfo")),
                              column(3,
-                                    checkboxInput("barmapsel", "Toggle map/bar chart", value = FALSE)),
+                                    checkboxInput("barmapsel", "Toggle map/bar chart", value = FALSE),
+                                    checkboxInput("stack_kids", "Show component scores (bar only)", value = FALSE)),
                     ),
                     tabPanel("Table", reactable::reactableOutput("table"))
         )
@@ -155,7 +156,20 @@ resultsDash <- function(COIN, dset = "Aggregated"){
       if (input$barmapsel==TRUE){
         iplotMap(COIN, input$dset1, isel1())
       } else {
-        iplotBar(COIN, input$dset1, isel1(), usels())
+
+        # need to find aglev
+        if (isel1() %in% COIN$Input$IndMeta$IndCode){
+          aglev1 <- 1
+        } else {
+          aglev1 <- COIN$Input$AggMeta$AgLevel[COIN$Input$AggMeta$Code == isel1()]
+        }
+
+        if(input$stack_kids & aglev1 > 1){
+          iplotBar(COIN, dset = input$dset1, isel = isel1(), usel = usels(), aglev = aglev1, stack_children = TRUE)
+        } else {
+          iplotBar(COIN, dset = input$dset1, isel = isel1(), usel = usels(), aglev = aglev1)
+        }
+
       }
     })
 
@@ -274,10 +288,12 @@ iplotMap <- function(COIN, dset = "Raw", isel){
 #' @param COIN The COIN object, or a data frame of indicator data.
 #' @param dset The data set to plot.
 #' @param isel The selected indicator code or aggregate (does not support multiple indicators)
-#' @param usel A character vector of unit codes to highlight on the bar chart
-#' @param aglev The aggregation level to collect the indicator data from
+#' @param usel A character vector of unit codes to highlight on the bar chart (optional)
+#' @param aglev The aggregation level to collect the indicator data from (this needs to be specified)
 #' @param stack_children If TRUE, produces a stacked bar chart with any children of isel. In this case, usel is ignored.
 #' This only works if dset = "Aggregated" and aglev > 1.
+#' @param from_group Filters the bar chart to a specified group using a group column that is present in the specified
+#' data set. Specified as list(group_variable = selected_group).
 #'
 #' @importFrom plotly plot_ly layout
 #'
@@ -288,7 +304,12 @@ iplotMap <- function(COIN, dset = "Raw", isel){
 #' @export
 
 iplotBar <- function(COIN, dset = "Raw", isel = NULL, usel = NULL, aglev = NULL,
-                     stack_children = FALSE){
+                     stack_children = FALSE, from_group = NULL){
+
+  # for a COIN we need to know the aggregation level to make things a bit easier later on
+  if(is.null(aglev) & (class(COIN) == "COIN object")){
+    stop("aglev must be specified if a COIN is input.")
+  }
 
   out1 <- getIn(COIN, dset = dset, icodes = isel, aglev = aglev)
 
@@ -298,13 +319,10 @@ iplotBar <- function(COIN, dset = "Raw", isel = NULL, usel = NULL, aglev = NULL,
 
   if(length(ind_code)>1){stop("This function only supports plotting single indicators. You may need to use the aglev argument if you are calling an aggregation group.")}
 
-  # fake aglev, just catches an error that would otherise happen when doing NULL == 1 in the next line
-  if(is.null(aglev)){aglev<-0}
-
   # look for units
-  if((out1$otype=="COINobj") & (aglev == 1)){
+  if((out1$otype=="COINobj")){
     # look for units
-    if(exists("IndUnit",COIN$Input$IndMeta)){
+    if(exists("IndUnit",COIN$Input$IndMeta) & (aglev == 1)){
       # find unit for indicator
       indunit <- COIN$Input$IndMeta$IndUnit[COIN$Input$IndMeta$IndCode == ind_code]
     } else {
@@ -318,7 +336,7 @@ iplotBar <- function(COIN, dset = "Raw", isel = NULL, usel = NULL, aglev = NULL,
 
   if(stack_children){
 
-    if(aglev == 1 | dset != "Aggregated"){
+    if(aglev == 1 | !(dset %in% c("Aggregated", "PreAggregated"))){
       stop("Stacked bar chart only works with aglev > 1 and dset = 'Aggregated'.")
     }
 
@@ -336,11 +354,32 @@ iplotBar <- function(COIN, dset = "Raw", isel = NULL, usel = NULL, aglev = NULL,
     # get scores for children
     out_children <- getIn(COIN, dset = dset, icodes = children, aglev = aglev-1)
 
-    df1 <- data.frame(UnitCode = out_children$UnitCodes, Indicator = ind_data_only, out_children$ind_data_only)
+    #df1 <- data.frame(UnitCode = out_children$UnitCodes, Indicator = ind_data_only, out_children$ind_data_only)
+
+    df1 <- merge(out_children$ind_data, out1$ind_data)
+
+    # filter to a group, if asked
+    if(!is.null(from_group)){
+
+      # checks
+      stopifnot(is.list(from_group),
+                length(from_group)==1,
+                !is.null(names(from_group)),
+                is.character(from_group[[1]]),
+                names(from_group)[1] %in% colnames(df1))
+
+      # filter to group
+      df1 <- df1[ df1[names(from_group)[1]] == from_group[[1]], ]
+
+      # alter title
+      bartitle <- paste0(indname, "<br>(", from_group[[1]], ")" )
+    } else {
+      bartitle <- indname
+    }
 
 
-    colnames(df1)[2] <- "Indicator"
-    df1 <- df1[order(df1[2], decreasing = TRUE),]
+    #colnames(df1)[2] <- "Indicator"
+    df1 <- df1[order(df1[[ind_code]], decreasing = TRUE),]
 
     fig <- plotly::plot_ly(data = df1, x = ~UnitCode, y = ~get(children[1]),
                            source = 'barclick', key = ~UnitCode, type = "bar",
@@ -353,20 +392,34 @@ iplotBar <- function(COIN, dset = "Raw", isel = NULL, usel = NULL, aglev = NULL,
 
     }
 
-    fig <- fig %>% plotly::layout(title = list(text = indname, y = 0.95),
+    fig <- fig %>% plotly::layout(title = list(text = bartitle, y = 0.95),
                           yaxis = list(title = indunit, showticklabels = FALSE),
                           xaxis = list(title = "",
-                                       categoryorder = "array", categoryarray = df1$Indicator),
+                                       categoryorder = "array", categoryarray = df1[ind_code]),
                           barmode = "stack")
 
   } else {
 
     # Build data frame, then sort it
     # now build df for plotly
-    df1 <- data.frame(UnitCode = out1$UnitCodes,
-                      Indicator = out1$ind_data[ind_code])
-    colnames(df1)[2] <- "Indicator"
-    df1 <- df1[order(df1[2], decreasing = TRUE),]
+    df1 <- out1$ind_data
+
+    # filter to a group, if asked
+    if(!is.null(from_group)){
+
+      # checks
+      stopifnot(is.list(from_group),
+                length(from_group)==1,
+                !is.null(names(from_group)),
+                is.character(from_group[[1]]),
+                names(from_group)[1] %in% colnames(df1))
+
+      # filter to group
+      df1 <- df1[ df1[names(from_group)[1]] == from_group[[1]], ]
+    }
+
+    # colnames(df1)[2] <- "Indicator"
+    df1 <- df1[order(df1[[ind_code]], decreasing = TRUE),]
 
     # colour bars based on selected units
     barcolours <- rep('#58508d', nrow(df1))
@@ -374,12 +427,12 @@ iplotBar <- function(COIN, dset = "Raw", isel = NULL, usel = NULL, aglev = NULL,
 
     if(is.na(out1$UnitCodes[1])){
       # if there are no unitcodes, e.g. for just a df, we don't plot them
-      fig <- plotly::plot_ly(data = df1, y = ~Indicator,
+      fig <- plotly::plot_ly(data = df1, y = ~get(ind_code),
                              source = 'barclick', key = ~UnitCode, type = "bar",
                              marker = list(color = barcolours))
     } else {
       # otherwise, plot unit codes on x axis
-      fig <- plotly::plot_ly(data = df1, x = ~UnitCode, y = ~Indicator,
+      fig <- plotly::plot_ly(data = df1, x = ~UnitCode, y = ~get(ind_code),
                              source = 'barclick', key = ~UnitCode, type = "bar",
                              marker = list(color = barcolours))
     }
@@ -387,7 +440,7 @@ iplotBar <- function(COIN, dset = "Raw", isel = NULL, usel = NULL, aglev = NULL,
     fig <- fig %>% layout(title = list(text = indname, y = 0.95),
                           yaxis = list(title = indunit),
                           xaxis = list(title = "",
-                                       categoryorder = "array", categoryarray = df1$Indicator))
+                                       categoryorder = "array", categoryarray = df1[ind_code]))
 
   }
 
@@ -436,6 +489,36 @@ iplotTable <- function(COIN, dset = "Raw", isel = NULL, aglev = NULL, nround = 1
       roundDF(nround)
   }
 
+  colourTable(tabledata)
+
+}
+
+
+#' Conditionally formatted table
+#'
+#' Given a data frame, generates a conditionally-formatted html table using reactable. This function is used by
+#' iplotTable().
+#'
+#' @param df The COIN object, or a data frame of indicator data.
+#' @param freeze1 If TRUE (default), freezes the first column. This may be for example the unit name or code.
+#' @param sortcol A column name to sort the table by. Defaults to first numerical column. Set to "none" to disable.
+#' @param sortorder Either "desc" for sorted col to be sorted from high to low (default) or "asc" for the opposite.
+#' @param searchable If TRUE, includes a search box
+#' @param pagesize The number of rows to display on each page.
+#' @param cell_colours A character vector of colour codes (e.g. Hex codes) to use for the colour palette. Should be in
+#' order of low to high values. Defaults to a simple green palette. See grDevices::colorRamp() for more info.
+#' @param reverse_colours If TRUE, reverses the colour map- useful for rank tables where lowest numbers mean high scores.
+#'
+#' @importFrom reactable reactable
+#'
+#' @examples \dontrun{colourTable(as.data.frame(matrix(runif(12), 3, 4)))}
+#'
+#' @return Interactive table
+#'
+#' @export
+
+colourTable <- function(df, freeze1 = TRUE, sortcol = NULL, sortorder = "desc", searchable = TRUE,
+                        pagesize = 10, cell_colours = NULL, reverse_colours = FALSE){
 
   # these are the attributes needed to get the left col to stick when scrolling
   # e.g. like "freeze panes" in Excel.
@@ -444,11 +527,18 @@ iplotTable <- function(COIN, dset = "Raw", isel = NULL, aglev = NULL, nround = 1
 
   # now have to do sth a bit complicated to get conditional formatting
 
+  if(is.null(cell_colours)){
+    cell_colours <- c("#eefff4", "#358554")
+  }
+  if(reverse_colours){
+    cell_colours <- rev(cell_colours)
+  }
+
   # Colour map for conditional formatting: a function that takes a value between 0 and 1
   # and maps it to a colour according to a scale
   orange_pal <- function(x){
     if (!is.na(x)){
-      grDevices::rgb(grDevices::colorRamp(c("#eefff4", "#358554"))(x), maxColorValue = 255)
+      grDevices::rgb(grDevices::colorRamp(cell_colours)(x), maxColorValue = 255)
     } else {
       "#e9e9e9" #grey
     }
@@ -457,8 +547,8 @@ iplotTable <- function(COIN, dset = "Raw", isel = NULL, aglev = NULL, nround = 1
   # function which returns background colour based on cell value (using colour map)
   # also takes column name as an input, which allows to get max and min
   stylefunc <- function(value, index, name) {
-    normalized <- (value - min(tabledata[name], na.rm = T)) /
-      (max(tabledata[name], na.rm = T) - min(tabledata[name], na.rm = T))
+    normalized <- (value - min(df[name], na.rm = T)) /
+      (max(df[name], na.rm = T) - min(df[name], na.rm = T))
     color <- orange_pal(normalized)
     list(background = color)
   }
@@ -469,23 +559,33 @@ iplotTable <- function(COIN, dset = "Raw", isel = NULL, aglev = NULL, nround = 1
   )
 
   # get names of numerical cols
-  inumcols <- unlist(lapply(tabledata, is.numeric)) # indices of numerical cols
-  numcols <- colnames(tabledata)[inumcols] # names of numerical cols
+  inumcols <- unlist(lapply(df, is.numeric)) # indices of numerical cols
+  numcols <- colnames(df)[inumcols] # names of numerical cols
   # replicate list to required length
   coldefs <- rep(coldefs,length(numcols))
   # name elements of list according to cols
   names(coldefs) <- numcols
 
-  # join lists: sticky first col plus cond formatting numerical cols
-  coldefs <- c(coldefs,
-               list(UnitName = reactable::colDef(style = sticky_style, headerStyle = sticky_style)))
+  # sticky first column
+  if (freeze1){
+    # name of first col
+    freezecol <- colnames(df)[1]
+    # make sticky
+    coldefs[[freezecol]] <- reactable::colDef(style = sticky_style, headerStyle = sticky_style)
+  }
 
-  reactable::reactable(tabledata,
-            defaultSorted = colnames(tabledata)[2], defaultSortOrder = "desc",
-            resizable = TRUE, bordered = TRUE, highlight = TRUE, searchable = TRUE,
-            defaultPageSize = 15,
-            #columns = coldefs2,
-            onClick = reactable::JS("
+  if(is.null(sortcol)){
+    sortcol <- numcols[1]
+  } else if (sortcol == "none"){
+    sortcol <- NULL
+  }
+
+  reactable::reactable(df,
+                       defaultSorted = sortcol, defaultSortOrder = sortorder,
+                       resizable = TRUE, bordered = TRUE, highlight = TRUE, searchable = searchable,
+                       defaultPageSize = pagesize,
+                       #columns = coldefs2,
+                       onClick = reactable::JS("
   function(rowInfo, colInfo, state) {
 
     // Send the click event to Shiny, which will be available at input$clicked
@@ -495,7 +595,10 @@ iplotTable <- function(COIN, dset = "Raw", isel = NULL, aglev = NULL, nround = 1
     }
   }
 "), columns = coldefs)
+
 }
+
+
 
 #' Radar chart
 #'
