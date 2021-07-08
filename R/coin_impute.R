@@ -13,7 +13,6 @@
 #' "none" (no imputation, returns original data set)
 #' @param dset The data set in .$Data to impute
 #' @param groupvar The name of the column to use for by-group imputation. Only applies when imtype is set to a group option.
-#' @param byyear Logical: set to TRUE to impute separately for each year, otherwise FALSE to impute across all years. NOTE this option is experimental and not tested. Recommend not to use (yet).
 #' @param EMaglev The aggregation level to use if imtype = "EM".
 #' @param out2 Where to output the results. If "COIN" (default for COIN input), appends to updated COIN,
 #' otherwise if "df" outputs to data frame.
@@ -30,8 +29,23 @@
 #'
 #' @export
 
-impute <- function(COIN, imtype = "ind_mean", dset = "Raw",
-                  groupvar = NULL, byyear = FALSE, EMaglev = NULL, out2 = "COIN"){
+impute <- function(COIN, imtype = NULL, dset = NULL,
+                  groupvar = NULL, EMaglev = NULL, out2 = "COIN"){
+
+  # Check for dset. If not specified, exit.
+  if (is.null(dset) & !("data.frame" %in% class(COIN))){
+    stop("dset is NULL. Please specify which data set to operate on.")
+  }
+
+  ##----- SET DEFAULTS -------##
+  # Done here because otherwise if we use regen, this input could be input as NULL
+  if(is.null(imtype)){
+    stop("Imputation type (imtype) not specified.")
+  }
+
+  # this is a switch for some old code where you can impute by year. It was an argument to the function, but since at the moment
+  # COINs don't support years, it has no sense. To reactivate, this should be moved back to a function argument.
+  byyear <- FALSE
 
   # First. check to see what kind of input we have.
   out <- getIn(COIN, dset = dset)
@@ -43,7 +57,7 @@ impute <- function(COIN, imtype = "ind_mean", dset = "Raw",
     COIN$Method$impute$imtype <- imtype
     COIN$Method$impute$dset <- dset
     COIN$Method$impute$groupvar <- groupvar
-    COIN$Method$impute$byyear <- byyear
+    #COIN$Method$impute$byyear <- byyear
     COIN$Method$impute$EMaglev <- EMaglev
   }
 
