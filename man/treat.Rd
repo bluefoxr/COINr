@@ -6,16 +6,16 @@
 \usage{
 treat(
   COIN,
-  dset = "Raw",
+  dset = NULL,
   winmax = NULL,
-  winchange = TRUE,
-  deflog = "CTlog",
+  winchange = NULL,
+  deflog = NULL,
   boxlam = NULL,
-  t_skew = 2,
-  t_kurt = 3.5,
+  t_skew = NULL,
+  t_kurt = NULL,
   individual = NULL,
-  indiv_only = TRUE,
-  bypass_all = FALSE
+  indiv_only = NULL,
+  bypass_all = NULL
 )
 }
 \arguments{

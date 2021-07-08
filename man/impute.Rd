@@ -6,10 +6,9 @@
 \usage{
 impute(
   COIN,
-  imtype = "ind_mean",
-  dset = "Raw",
+  imtype = NULL,
+  dset = NULL,
   groupvar = NULL,
-  byyear = FALSE,
   EMaglev = NULL,
   out2 = "COIN"
 )
@@ -29,8 +28,6 @@ impute(
 \item{dset}{The data set in .$Data to impute}
 
 \item{groupvar}{The name of the column to use for by-group imputation. Only applies when imtype is set to a group option.}
-
-\item{byyear}{Logical: set to TRUE to impute separately for each year, otherwise FALSE to impute across all years. NOTE this option is experimental and not tested. Recommend not to use (yet).}
 
 \item{EMaglev}{The aggregation level to use if imtype = "EM".}
 

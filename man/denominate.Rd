@@ -6,15 +6,16 @@
 \usage{
 denominate(
   obj,
-  dset = "Raw",
-  specby = "metadata",
+  dset = NULL,
+  specby = NULL,
   denomby = NULL,
+  scaledenoms = NULL,
   denominators = NULL,
   out2 = "COIN"
 )
 }
 \arguments{
-\item{obj}{COIN object (data frames are not currently supported in this function)}
+\item{obj}{COIN object or a data frame of indicator data to be denominated. If a data frame, must include a UnitCode column.}
 
 \item{dset}{The data set to denominate (only if COIN used as input)}
 
@@ -26,7 +27,15 @@ If "user", takes a character vector of denominator codes (one for each indicator
 specby = "user". For indicators with no denomination, set elements to NA. Elements must be column names
 of denominators.}
 
-\item{denominators}{A data frame of denominator data}
+\item{scaledenoms}{This allows the possibility to scale denominators if needed. For example, if GDP is a denominator and is meausured in
+dollars, dividing will create very small numbers (order 1e-10 and smaller) which could cause problems with numerical precision. This should be
+a named list of the form e.g. \code{list(Den_GDP = 1e-9)}, where the name is the denominator to be scaled, and the entry is a factor to multiply
+the denominator values by. In the example, this would multiply GDP values by 1e-9, which (if the original values are in dollars) would
+scale them to billions of dollars. The list can include more than one entry, corresponding to any denominators that are present.}
+
+\item{denominators}{A data frame of denominator data. Columns should be denominator data, with column names corresponding
+to entries in denomby. This must also include a UnitCode column to match units (ordering is unimportant, this is done inside the function).
+Ensure that the unit codes correspond to the unit codes in the indicator data.}
 
 \item{out2}{Where to output the results. If "COIN" (default for COIN input), appends to updated COIN,
 otherwise if "df" outputs to data frame.}

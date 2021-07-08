@@ -8,10 +8,10 @@ normalise(
   COIN,
   ntype = "minmax",
   npara = NULL,
-  dset = "Raw",
+  dset = NULL,
   directions = NULL,
   individual = NULL,
-  indiv_only = FALSE,
+  indiv_only = NULL,
   out2 = NULL
 )
 }

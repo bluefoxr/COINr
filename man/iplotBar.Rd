@@ -10,7 +10,8 @@ iplotBar(
   isel = NULL,
   usel = NULL,
   aglev = NULL,
-  stack_children = FALSE
+  stack_children = FALSE,
+  from_group = NULL
 )
 }
 \arguments{
@@ -20,12 +21,15 @@ iplotBar(
 
 \item{isel}{The selected indicator code or aggregate (does not support multiple indicators)}
 
-\item{usel}{A character vector of unit codes to highlight on the bar chart}
+\item{usel}{A character vector of unit codes to highlight on the bar chart (optional)}
 
-\item{aglev}{The aggregation level to collect the indicator data from}
+\item{aglev}{The aggregation level to collect the indicator data from (this needs to be specified)}
 
 \item{stack_children}{If TRUE, produces a stacked bar chart with any children of isel. In this case, usel is ignored.
 This only works if dset = "Aggregated" and aglev > 1.}
+
+\item{from_group}{Filters the bar chart to a specified group using a group column that is present in the specified
+data set. Specified as list(group_variable = selected_group).}
 }
 \value{
 Interactive bar chart.

@@ -6,9 +6,9 @@
 \usage{
 checkData(
   COIN,
-  dset = "Raw",
-  ind_thresh = 2/3,
-  zero_thresh = 0.05,
+  dset = NULL,
+  ind_thresh = NULL,
+  zero_thresh = NULL,
   unit_screen = "none",
   Force = NULL,
   out2 = "COIN"

@@ -9,7 +9,9 @@ compTableMulti(
   dset = "Aggregated",
   isel = "Index",
   tabtype = "Ranks",
-  ibase = 1
+  ibase = 1,
+  sort_table = TRUE,
+  extra_cols = NULL
 )
 }
 \arguments{
@@ -20,9 +22,14 @@ compTableMulti(
 \item{isel}{Code of the indicator or aggregate to extract from each COIN (must be present in the specified
 data set of each COIN). Default "Index".}
 
-\item{tabtype}{The type of table to generate}
+\item{tabtype}{The type of table to generate - "Ranks", "Diffs", or "AbsDiffs".}
 
 \item{ibase}{The index of the COIN to use as a base comparison}
+
+\item{sort_table}{If TRUE, sorts by the base COIN (ibase), if "change" (default).}
+
+\item{extra_cols}{A character vector of any extra columns to include from the COIN referenced by ibase. For example,
+this could include group columns.}
 }
 \value{
 Rank comparison table as a data frame

@@ -4,7 +4,14 @@
 \alias{assemble}
 \title{Build COIN object}
 \usage{
-assemble(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL)
+assemble(
+  IndData,
+  IndMeta,
+  AggMeta,
+  include = NULL,
+  exclude = NULL,
+  preagg = NULL
+)
 }
 \arguments{
 \item{IndData}{A dataframe of indicator data.}
@@ -16,6 +23,8 @@ assemble(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL)
 \item{include}{Optional argument specifying a subset of indicator codes to include (default all indicators included)}
 
 \item{exclude}{Optional argument specifying a subset of indicator codes to exclude (default none excluded)}
+
+\item{preagg}{Set to TRUE if you want to assemble a COIN using pre-aggregated data (typically for ex-post analysis)}
 }
 \value{
 A "COIN object" (list) formatted to the specifications of COINr.

@@ -8,7 +8,7 @@ aggregate(
   COIN,
   agtype = "arith_mean",
   agweights = NULL,
-  dset = "Normalised",
+  dset = NULL,
   agtype_bylevel = NULL,
   agfunc = NULL,
   out2 = NULL
