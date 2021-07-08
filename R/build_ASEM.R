@@ -14,7 +14,7 @@
 build_ASEM <- function(){
 
   ASEM <- assemble(IndData = COINr::ASEMIndData, IndMeta = COINr::ASEMIndMeta, AggMeta = COINr::ASEMAggMeta)
-  ASEM <- denominate(ASEM)
+  ASEM <- denominate(ASEM, dset = "Raw")
   ASEM <- impute(ASEM, dset = "Denominated", imtype = "indgroup_mean", groupvar = "Group_EurAsia")
   ASEM <- treat(ASEM, dset = "Imputed")
   ASEM <- normalise(ASEM, dset = "Treated")
