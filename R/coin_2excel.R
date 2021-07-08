@@ -7,13 +7,13 @@
 #'
 #' @importFrom openxlsx write.xlsx createWorkbook addWorksheet writeData saveWorkbook
 #'
-#' @examples \dontrun{coin_2excel(COINobj, fname="COINresults.xlsx")}
+#' @examples \dontrun{coin2Excel(COINobj, fname="COINresults.xlsx")}
 #'
 #' @return An Excel workbook with each table on a separate named tab.
 #'
 #' @export
 
-coin_2excel <- function(COINobj, fname = "COINresults.xlsx"){
+coin2Excel <- function(COINobj, fname = "COINresults.xlsx"){
 
   # Create workbook
   wb <- openxlsx::createWorkbook()
