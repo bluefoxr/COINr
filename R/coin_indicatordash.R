@@ -48,6 +48,7 @@ indDash <- function(COIN, icodes = NULL, dset = "Raw"){
       h4("Indicator 2"),
       selectInput("dset2", "Data set", choices= dsetnames, selected =  dset),
       selectInput("vr2", "Indicator", choices=colnames(ind_data_only)),
+      checkboxInput(inputId = "vrmatch", label = "Match indicators (select using indicator 1)", value = FALSE),
       textOutput("info"),
       checkboxInput(inputId = "axmatch", label = "Plot indicators on the same axis range", value = FALSE),
       hr(),
@@ -94,8 +95,8 @@ indDash <- function(COIN, icodes = NULL, dset = "Raw"){
     icodes2 <- reactiveVal(ind_codes)
 
     # get reactive values: the indicator names (with data set added, for plots)
-    iname1 <- reactive(paste0(input$vr1," - ", input$dset1))
-    iname2 <- reactive(paste0(input$vr2," - ", input$dset2))
+    iname1 <- reactive(paste0(isel1()," - ", input$dset1))
+    iname2 <- reactive(paste0(isel2()," - ", input$dset2))
 
     # get reactive values: the selected indicator codes (for internal reference)
     isel1 <- reactive({
@@ -106,8 +107,15 @@ indDash <- function(COIN, icodes = NULL, dset = "Raw"){
      }
     })
     isel2 <- reactive({
-      if (exists(input$vr2,idata2())){
-        return(input$vr2)
+
+      if (input$vrmatch){
+        isel_2 <- isel1()
+      } else {
+        isel_2 <- input$vr2
+      }
+
+      if (exists(isel_2,idata2())){
+        return(isel_2)
       } else {
         return(icodes2()[1])
       }
@@ -182,7 +190,7 @@ indDash <- function(COIN, icodes = NULL, dset = "Raw"){
     # Violin plot v2
     output$violin2 <- plotly::renderPlotly({
 
-      fig <- plotly::plot_ly(data = idata2(), y = ~get(input$vr2), type = 'violin',
+      fig <- plotly::plot_ly(data = idata2(), y = ~get(isel2()), type = 'violin',
                      box = list(visible = T),
                      meanline = list(visible = T),
                      x0 = iname2(),
@@ -335,6 +343,11 @@ indDash <- function(COIN, icodes = NULL, dset = "Raw"){
     observeEvent(input$dset2,{
       updateSelectInput(session = session, inputId = "vr2",
                         choices = getIn(COIN,input$dset2,icodes)$IndCodes)
+    })
+
+    # Update selected indicator in dropdown 2
+    observeEvent(isel2(),{
+      updateSelectInput(session = session, inputId = "vr2", selected = isel2())
     })
 
   }
