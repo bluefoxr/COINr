@@ -33,8 +33,13 @@
 #'
 #' @export
 
-aggregate <- function(COIN, agtype="arith_mean", agweights = NULL, dset = "Normalised",
+aggregate <- function(COIN, agtype = "arith_mean", agweights = NULL, dset = NULL,
                       agtype_bylevel = NULL, agfunc = NULL, out2 = NULL){
+
+  # Check for dset. If not specified, exit.
+  if (is.null(dset)){
+    stop("dset is NULL. Please specify which data set to operate on.")
+  }
 
   out <- getIn(COIN, dset = dset)
   ind_data <- out$ind_data
