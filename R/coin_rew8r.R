@@ -13,7 +13,7 @@
 
 rew8r <- function(COIN){
 
-  stop("Sorry, rew8r is out of action for a bit until I get some updates sorted. Back soon.")
+  #stop("Sorry, rew8r is out of action for a bit until I get some updates sorted. Back soon.")
 
   # NOTE I need to make this compatible with the new weight format. Easiest may be to simply copy
   # GII version over which also has other small updates...
@@ -32,7 +32,7 @@ rew8r <- function(COIN){
   # initialise data frame for plotting
   dat <- data.frame(
     Indicator = crOut[[1]],
-    Weight = w0[[1]],
+    Weight = w0$Weight[w0$AgLevel == 1],
     Correlation = crOut[[3]] )
   colnames(dat)[3] <- "Correlation"
 
@@ -163,14 +163,11 @@ rew8r <- function(COIN){
 
     # modify weight vector
     observeEvent(input$wi,{
-      # this is the full list of weights
+      # this is the full df of weights
       wdash <- w()
-      # get the right level
-      wdash1 <- wdash[[lev1()]]
-      # modify the right element
-      wdash1[icodes() == acvar()] <- input$wi
-      # put it all back
-      wdash[[lev1()]] <- wdash1
+      # modify
+      wdash$Weight[wdash$Code == acvar()] <- input$wi
+      # update variable
       w(wdash)
     })
 
@@ -189,7 +186,7 @@ rew8r <- function(COIN){
       dat <- data.frame(
         Indicator = out1$cr[[1]],
         Parent = out1$cr[[2]],
-        Weight = wts[[lev1()]],
+        Weight = wts$Weight[wts$AgLevel == lev1()],
         Correlation = out1$cr[[3]] )
       colnames(dat)[4] <- "Correlation"
 
@@ -199,19 +196,22 @@ rew8r <- function(COIN){
 
     # also update everything when level changes
     observeEvent(lev1(),{
-
-      out1 <- weights2corr(COIN, w(), aglevs = c(lev1(), lev2()), cortype = input$cortype)
       # get new ind codes
-      icodes(out1$cr[[1]])
+      icodes(w0$Code[w0$AgLevel==lev1()])
     })
 
     ## Create correlation scatter plot
     output$corrplot <- plotly::renderPlotly({
-      p <- corrweightscat(dat1(), facet = input$facet, acvar = acvar(), linesw = TRUE,
-                          locorval = input$locorval, hicorval = input$hicorval) %>%
-        suppressWarnings()
-      p <- p %>% plotly::layout(title = paste0("Correlation of ", input$aglev1, " with ", input$aglev2))
-      p
+
+      if(lev1()==lev2()){
+        return(NULL)
+      } else {
+        p <- corrweightscat(dat1(), facet = input$facet, acvar = acvar(), linesw = TRUE,
+                            locorval = input$locorval, hicorval = input$hicorval) %>%
+          suppressWarnings()
+        p <- p %>% plotly::layout(title = paste0("Correlation of ", input$aglev1, " with ", input$aglev2))
+        return(p)
+      }
     })
 
     ## Create correlation heatmap
@@ -266,10 +266,10 @@ rew8r <- function(COIN){
     # update slider
     observeEvent(acvar(),{
       wts <- w()
-      wts <- wts[[lev1()]]
+      #wts <- wts[[lev1()]]
       updateSliderInput(session, "wi",
                         label = acvar(),
-                        value = wts[icodes()==acvar()])
+                        value = wts$Weight[wts$Code == acvar()])
     })
 
     # update dropdown menu on active variable
@@ -285,15 +285,14 @@ rew8r <- function(COIN){
     # button to set to equal weights
     observeEvent(input$butEQw,{
       wdash <- w()
-      wts <- wdash[[lev1()]]
+      #wts <- wdash[[lev1()]]
       # update weights
-      wts <- rep(1,length(icodes()))
-      wdash[[lev1()]] <- wts
+      wdash$Weight[wdash$AgLevel == lev1()] <- rep(1,length(icodes()))
       w(wdash)
       # also update slider
       updateSliderInput(session, "wi",
                         label = acvar(),
-                        value = wts[icodes()==acvar()])
+                        value = wdash$Weight[wdash$Code==acvar()])
     })
 
     # dropdown to choose weight sets
@@ -301,9 +300,10 @@ rew8r <- function(COIN){
       # change weights
       w(COIN$Parameters$Weights[[input$wset]])
       # also update slider
+      wts <- w()
       updateSliderInput(session, "wi",
                         label = acvar(),
-                        value = w()[icodes()==acvar()])
+                        value = wts$Weight[wts$Code==acvar()])
     })
 
     # button to save weights
