@@ -35,8 +35,34 @@
 #' @export
 #'
 
-treat <- function(COIN, dset = "Raw", winmax = NULL, winchange = TRUE, deflog = "CTlog", boxlam = NULL,
-                       t_skew = 2, t_kurt = 3.5, individual = NULL, indiv_only = TRUE, bypass_all = FALSE){
+treat <- function(COIN, dset = NULL, winmax = NULL, winchange = NULL, deflog = NULL, boxlam = NULL,
+                       t_skew = NULL, t_kurt = NULL, individual = NULL, indiv_only = NULL, bypass_all = NULL){
+
+  # Check for dset. If not specified, exit.
+  if (is.null(dset) & !("data.frame" %in% class(COIN))){
+    stop("dset is NULL. Please specify which data set to operate on.")
+  }
+
+  ##----- SET DEFAULTS -------##
+  # Done here because otherwise if we use regen, this input could be input as NULL
+  if(is.null(winchange)){
+    winchange <- TRUE
+  }
+  if(is.null(deflog)){
+    deflog <- "CTlog"
+  }
+  if(is.null(t_skew)){
+    t_skew <- 2
+  }
+  if(is.null(t_kurt)){
+    t_kurt <- 3.5
+  }
+  if(is.null(indiv_only)){
+    indiv_only <- TRUE
+  }
+  if(is.null(bypass_all)){
+    bypass_all <- FALSE
+  }
 
   # First check object type and extract
   out <- getIn(COIN, dset = dset)
@@ -52,11 +78,12 @@ treat <- function(COIN, dset = "Raw", winmax = NULL, winchange = TRUE, deflog = 
     COIN$Method$treat$t_kurt <- t_kurt
     COIN$Method$treat$individual <- individual
     COIN$Method$treat$indiv_only <- indiv_only
+    COIN$Method$treat$bypass_all <- bypass_all
   }
 
   # if winmax not specified, default to 10% of units, rounded up
   if(is.null(winmax)){
-    winmax <- ceiling((COIN$Parameters$NUnit*0.1))
+    winmax <- ceiling((length(out$UnitCodes)*0.1))
   }
 
   # get basic data sets
