@@ -24,7 +24,7 @@
 #'
 #' @examples \dontrun{COINobj <- assemble(IndData, IndMeta, AggMeta)}
 #'
-#' @return A "COIN object" (list) formatted to the specifications of COINr.
+#' @return A "COIN" (list) formatted to the specifications of COINr.
 #' Note that the COIN object is just a tag. It doesn't impose restrictions on the structure of the list.
 #'
 #' @export
@@ -226,6 +226,25 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL, 
   }
   COINobj$Parameters$AggCodes <- AggCodeslist
 
+  # check for duplicates in aggmeta
+  if(anyDuplicated(AggMeta$Code) != 0){
+    stop("Duplicate codes found in AggMeta - please check.")
+  }
+
+  # run a check to make sure that each code is only assigned to ONE parent and not to multiple parents
+  fwk <- ind_meta %>% dplyr::select(.data$IndCode, dplyr::starts_with("Agg"))
+
+  for (ii in 1:(ncol(fwk)-1)){
+    # get aggregation col plus its parent column
+    child_parent <- fwk[c(ii, ii + 1)]
+    # remove any duplicates (full rows)
+    child_parent <- unique(child_parent)
+    # at this point, each CHILD should only be present once. Otherwise it is being assigned to multiple parents
+    if(anyDuplicated(child_parent[1]) != 0){
+      stop(paste0("You have assigned an indicator or aggregate to more than one parent. This was detected in Level ", ii, ". Please fix."))
+    }
+  }
+
   if (n_agg_levels > 0){
 
     message(paste("Number of aggregation levels =", n_agg_levels, "above indicator level."))
@@ -277,6 +296,10 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL, 
     cbind(AggMeta$Code, AggMeta$Name) ) %>% as.data.frame()
   colnames(COINobj$Parameters$Code2Name) <- c("AggCode", "AggName")
 
+  if(anyDuplicated(COINobj$Parameters$Code2Name$AggCode) != 0){
+    stop("Duplicate codes found between indicators and aggregates - please check.")
+  }
+
   #------- Last bits
 
   # record inclusion/exclusion choices
@@ -284,7 +307,7 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL, 
   COINobj$Method$assemble$exclude <- exclude0
   COINobj$Method$assemble$preagg <- preagg
 
-  class(COINobj) <- "COIN object" # assigns a "COIN object" class to the list. Helpful for later on.
+  class(COINobj) <- "COIN" # assigns a "COIN" class to the list. Helpful for later on.
 
   return(COINobj)
 
