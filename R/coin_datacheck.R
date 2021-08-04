@@ -36,7 +36,7 @@ checkData <- function(COIN, dset = NULL, ind_thresh = NULL, zero_thresh = NULL,
                       unit_screen = "none", Force = NULL, out2 = "COIN"){
 
   # Check input type. If not COIN, exit.
-  if (!("COIN object" %in% class(COIN))){ # COIN obj
+  if (!("COIN" %in% class(COIN))){ # COIN obj
     stop("This function currently only supports COINs as inputs.")
   }
   # Check for dset. If not specified, exit.

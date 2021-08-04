@@ -67,7 +67,7 @@ denominate <- function(obj, dset = NULL, specby = NULL, denomby = NULL, scaleden
   }
 
   # get denominator data frame and indicator data frame
-  if (("COIN object" %in% class(obj)) & is.null(denominators)){
+  if (("COIN" %in% class(obj)) & is.null(denominators)){
     # if input is COIN and no denominators are specified, look in COIN
     dfDenoms <- cbind(obj$Input$Denominators,"Ones"=1)
   } else {

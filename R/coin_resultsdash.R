@@ -307,7 +307,7 @@ iplotBar <- function(COIN, dset = "Raw", isel = NULL, usel = NULL, aglev = NULL,
                      stack_children = FALSE, from_group = NULL){
 
   # for a COIN we need to know the aggregation level to make things a bit easier later on
-  if(is.null(aglev) & (class(COIN) == "COIN object")){
+  if(is.null(aglev) & (class(COIN) == "COIN")){
     stop("aglev must be specified if a COIN is input.")
   }
 
