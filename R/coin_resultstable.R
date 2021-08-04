@@ -159,6 +159,137 @@ rankDF <- function(df){
 }
 
 
+#' Compare two data frames
+#'
+#' A custom function for comparing two data frames of indicator data, to see whether they match up, at a specified number of
+#' significant figures.
+#'
+#' This function compares numerical and non-numerical columns to see if they match. Rows and columns can be in any order. The function
+#' performs the following checks:
+#'
+#'   * Checks that the two data frames are the same size
+#'   * Checks that column names are the same, and that the matching column has the same entries
+#'   * Checks column by column that the elements are the same, after sorting according to the matching column
+#'
+#' It then returns summarises for each column whether there are any differences, and also what the differences are, if any.
+#'
+#' This is intended to cross-check results. For example, if you run something in COINr and want to check indicator results against
+#' external calculations.
+#'
+#' @param df1 A data frame
+#' @param df2 Another data frame
+#' @param matchcol A common column name that is used to match row order. E.g. this might be UnitCode.
+#' @param sigfigs The number of significant figures to use for matching numerical columns
+#'
+#' @examples \dontrun{"test")}
+#'
+#' @return A list with comparison results
+#'
+#' @export
+
+compareDF <- function(df1, df2, matchcol, sigfigs = 5){
+
+  # general checks
+  stopifnot(is.data.frame(df1),
+            is.data.frame(df2),
+            matchcol %in% colnames(df1),
+            matchcol %in% colnames(df2))
+
+  # check sizes
+  if(nrow(df1)!=nrow(df2)){
+    sameanswer <- FALSE
+    details("Different number of rows.")
+  }
+  if(ncol(df1)!=ncol(df2)){
+    sameanswer <- FALSE
+    details("Different number of columns.")
+  }
+
+  # check column names
+  if(!setequal(colnames(df1), colnames(df2))){
+    sameanswer <- FALSE
+    details("Column names not the same.")
+  }
+  # check row names same in matchcol
+  if(!setequal(df1[matchcol], df2[matchcol])){
+    sameanswer <- FALSE
+    details("Elements in matchcol are not the same.")
+  }
+
+  # From this point we should be fairly sure that the two dfs are the same size and contain the same cols and rows
+
+  # match col order
+  df2 <- df2[colnames(df1)]
+  # match row order
+  df2 <- df2[match(df1[[matchcol]], df2[[matchcol]]),]
+
+  # Now the dfs should be also in the same order of rows and cols. Remains to check the values.
+  details = data.frame(Column = colnames(df1),
+                       TheSame = NA,
+                       Comment = NA,
+                       NDifferent = NA)
+
+  diffs <- vector(mode = "list", length = 0)
+
+  # now loop over columns
+  for(ii in 1:length(colnames(df1))){
+
+    # get cols
+    x <- df1[[ii]]
+    y <- df2[[ii]]
+
+    # class check
+    if(class(x)!=class(y)){
+      details$TheSame[[ii]] <- FALSE
+      details$Comment[[ii]] <- "Class difference"
+      next
+    }
+
+    # now check depending on type
+    if(is.numeric(x)){
+
+      if(identical(signif(x, sigfigs), signif(y, sigfigs))){
+        details$TheSame[[ii]] <- TRUE
+        details$Comment[[ii]] <- paste0("Numerical and identical to ", sigfigs, " sf.")
+        details$NDifferent[[ii]] <- 0
+      } else {
+        details$TheSame[[ii]] <- FALSE
+        details$Comment[[ii]] <- paste0("Numerical and different at ", sigfigs, " sf.")
+        dfdiffs <- data.frame(MatchCol = df1[[matchcol]], df1 = x, df2 = y)
+        colnames(dfdiffs)[1] <- matchcol
+        diffrows <- signif(x, sigfigs) != signif(y, sigfigs)
+        diffrows[is.na(diffrows)] <- TRUE
+        dfdiffs <- dfdiffs[diffrows, ]
+        diffs[[colnames(df1)[ii]]] <- dfdiffs
+        details$NDifferent[[ii]] <- nrow(dfdiffs)
+      }
+
+    } else {
+
+      if(identical(x, y)){
+        details$TheSame[[ii]] <- TRUE
+        details$Comment[[ii]] <- paste0("Non-numerical and identical")
+        details$NDifferent[[ii]] <- 0
+      } else {
+        details$TheSame[[ii]] <- FALSE
+        details$Comment[[ii]] <- paste0("Non-numerical and different")
+        dfdiffs <- data.frame(MatchCol = df1[[matchcol]], df1 = x, df2 = y)
+        colnames(dfdiffs)[1] <- matchcol
+        dfdiffs <- dfdiffs[x != y, ]
+        diffs[[colnames(df1)[ii]]] <- dfdiffs
+        details$NDifferent[[ii]] <- nrow(dfdiffs)
+      }
+    }
+
+  }
+
+  return(list(Same = all(details$TheSame),
+              Details = details,
+              Differences = diffs))
+
+}
+
+
 #' Generate unit report
 #'
 #' Generates a scorecard for a given unit using an R Markdown template. Most likely you will want to customise the template
