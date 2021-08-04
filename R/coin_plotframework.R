@@ -61,7 +61,7 @@ plotframework <- function(COIN){
 effectiveWeight <- function(COIN){
 
   # the structure is in the metadata and framework data frames
-  if ("COIN object" %in% class(COIN)){ # COIN obj
+  if ("COIN" %in% class(COIN)){ # COIN obj
 
     metad<-COIN$Input$IndMeta
     fwk <- COIN$Input$AggMeta
@@ -132,16 +132,8 @@ effectiveWeight <- function(COIN){
       }
       wts <- c(wts,wts_level) # have to make sure weights add up to 1 at every level
 
-    }
+      if(any(is.na(wts_level))){browser()}
 
-    # now we have to go back through again to get the effective weights in the index...
-    wts_eff <- NULL # preallocate
-    for (jj in 1:ncol(agg_cols)){
-      # get level plus all parent levels
-      pcols <- dplyr::select(agg_cols,jj:ncol(agg_cols)) %>% unique()
-      # sust names for weights of each element
-      pcols_w <- purrr::map_dfr(pcols,~wts[match(.x,unique(lbls))])
-      wts_eff <- c(wts_eff,matrixStats::rowProds(as.matrix(pcols_w)))
     }
 
     # add parents
@@ -152,11 +144,23 @@ effectiveWeight <- function(COIN){
     }
   }
 
+  # now we have to go back through again to get the effective weights in the index...
+  wts_eff <- NULL # preallocate
+  for (jj in 1:ncol(agg_cols)){
+    # get level plus all parent levels
+    pcols <- dplyr::select(agg_cols,jj:ncol(agg_cols)) %>% unique()
+    # sust names for weights of each element: this is the agg cols but with names substituted with normalised weights
+    pcols_w <- purrr::map_dfr(pcols, ~wts[match(.x, unique(lbls))])
+    browser()
+    # get effective weights by multiplying columns
+    wts_eff <- c(wts_eff,matrixStats::rowProds(as.matrix(pcols_w)))
+  }
+
   lbls_prnts <- data.frame(Labels = lbls,
                            Parents = prnts) %>% unique() # remove repeated rows
 
   # also get effective weights as structured list, this is more useful outside of plotframework()
-  if ("COIN object" %in% class(COIN)){ # COIN obj
+  if ("COIN" %in% class(COIN)){ # COIN obj
 
     wts_eff_list <- COIN$Parameters$Weights$Original
     wts_eff_list$Weight <- wts_eff
