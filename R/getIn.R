@@ -45,7 +45,7 @@
 getIn <- function(obj, dset = "Raw", icodes = NULL, aglev = NULL, justnumeric = TRUE){
 
   # Check to see what kind of input we have.
-  if ("COIN object" %in% class(obj)){ # COIN obj
+  if ("COIN" %in% class(obj)){ # COIN obj
 
     otype <- "COINobj"
 
