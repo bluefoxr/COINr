@@ -19,6 +19,8 @@ build_ASEM <- function(){
   ASEM <- treat(ASEM, dset = "Imputed")
   ASEM <- normalise(ASEM, dset = "Treated")
   ASEM <- aggregate(ASEM, dset = "Normalised")
+  ASEM <- getResults(ASEM, tab_type = "Aggregates", use = "scores", out2 = "COIN")
+  ASEM <- getResults(ASEM, tab_type = "Aggregates", use = "ranks", out2 = "COIN")
   return(ASEM)
 
 }
