@@ -27,7 +27,7 @@ assemble(
 \item{preagg}{Set to TRUE if you want to assemble a COIN using pre-aggregated data (typically for ex-post analysis)}
 }
 \value{
-A "COIN object" (list) formatted to the specifications of COINr.
+A "COIN" (list) formatted to the specifications of COINr.
 Note that the COIN object is just a tag. It doesn't impose restrictions on the structure of the list.
 }
 \description{
