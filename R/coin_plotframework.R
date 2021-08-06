@@ -131,9 +131,6 @@ effectiveWeight <- function(COIN){
         wts_level <- c(wts_level,wgroup/sum(wgroup, na.rm = T)) # normalise to 1 and add to weight vector
       }
       wts <- c(wts,wts_level) # have to make sure weights add up to 1 at every level
-
-      if(any(is.na(wts_level))){browser()}
-
     }
 
     # add parents
@@ -151,7 +148,6 @@ effectiveWeight <- function(COIN){
     pcols <- dplyr::select(agg_cols,jj:ncol(agg_cols)) %>% unique()
     # sust names for weights of each element: this is the agg cols but with names substituted with normalised weights
     pcols_w <- purrr::map_dfr(pcols, ~wts[match(.x, unique(lbls))])
-    browser()
     # get effective weights by multiplying columns
     wts_eff <- c(wts_eff,matrixStats::rowProds(as.matrix(pcols_w)))
   }
