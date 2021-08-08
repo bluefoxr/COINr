@@ -259,8 +259,8 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL, 
 
       agg_names2 <- unique(agg_cols[[agg_no]]) # cross check to see if agg names match
 
-      if (length(setdiff(agg_names,agg_names2)) > 0){
-        stop("Aggregation codes in framework are not consistent with metadata")
+      if (!setequal(agg_names,agg_names2)){
+        stop(paste0("Aggregation codes in framework are not consistent with metadata - this occured in Level ", agg_no+1))
       }  else {
         message("Cross-check between metadata and framework = OK.")
       }
