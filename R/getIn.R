@@ -49,6 +49,13 @@ getIn <- function(obj, dset = "Raw", icodes = NULL, aglev = NULL, justnumeric = 
 
     otype <- "COINobj"
 
+    if(!is.null(aglev)){
+      if(aglev>1 & !(dset %in% c("Aggregated", "PreAggregated"))){
+        stop("Cannot select data from higher levels (aglev > 1) unless it is aggregated first. dset must be 'Aggregated' or 'PreAggregated'.")
+      }
+    }
+
+
     # The full table of indicator data
     # If looking for denominators, it is in a separate place
     if (dset=="Denominators"){
