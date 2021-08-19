@@ -16,5 +16,13 @@ and will be rescaled to sum to 1. If w is not specified, defaults to equal weigh
 Geometric mean
 }
 \description{
-Weighted geometric mean of a vector. NAs are skipped by default.
+Weighted geometric mean of a vector. NAs are skipped by default. This function is used inside
+\code{aggregate()}.
+}
+\examples{
+\dontrun{
+x <- 1:10
+w <- runif(10)
+geoMean(x,w)}
+
 }

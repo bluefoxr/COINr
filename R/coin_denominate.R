@@ -1,8 +1,10 @@
 #' Denominate indicator data sets
 #'
-#' Indicators can be denominated (divided) by other external indicators.
-#' Typically, the aim here is to convert extensive (size-related) variables into intensive variables
-#' (comparable between units of different sizes).
+#' Denominates (divides) indicators by other "denominator" indicators that are either input here or were attached as "Den_*" columns of
+#' `IndData` when assembling the COIN.
+#'
+#' Typically, the aim here is to convert extensive (size-related) variables into intensive variables(comparable between units
+#' of different sizes). There is also the option `scaledenoms` to scale denominators to avoid very small or very large numbers resulting.
 #'
 #' @param obj COIN object or a data frame of indicator data to be denominated. If a data frame, must include a UnitCode column.
 #' @param dset The data set to denominate (only if COIN used as input)
@@ -24,7 +26,10 @@
 #' otherwise if "df" outputs to data frame.
 #'
 #' @examples \dontrun{
-#' COIN <- denominate(COIN, specby="metadata", denomby = NULL)}
+#' # assemble ASEM COIN
+#' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+#' # denominate using specs present on assembly
+#' ASEM <- denominate(ASEM, dset = "Raw")}
 #'
 #' @return An updated COIN object, with new dataset .$Data$Denominated of denominated indicators.
 #'

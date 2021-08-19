@@ -1,6 +1,12 @@
 #' Treatment of outliers
 #'
-#' Takes the COIN object and Winsorises indicators where necessary or specified, or reverts to log transform.
+#' Takes the COIN object and Winsorises indicators where necessary or specified, or reverts to log transform or similar. This is done
+#' one indicator at a time.
+#'
+#' Outliers are identified according to skewness and kurtosis thresholds. The algorithm attempts to reduce the absolute skew and
+#' kurtosis by successively Winsorising points up to a specified limit. If this limit is reached, it applies a nonlinear transformation.
+#'
+#' The process is detailed in the [COINr online documentation](https://bluefoxr.github.io/COINrDoc/data-treatment.html#data-treatment-in-coinr).
 #'
 #' @param COIN The COIN object
 #' @param dset The data set to treat
@@ -29,6 +35,17 @@
 #' @importFrom dplyr pull
 #' @importFrom e1071 skewness kurtosis
 #' @importFrom tibble add_column
+#'
+#' @examples \dontrun{
+#' # assemble ASEM COIN
+#' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+#' # treat raw data set, Winsorise up to a maximum of five points
+#' ASEM <- treat(ASEM, dset = "Raw", winmax = 5)
+#' # inspect what was done
+#' ASEM$Analysis$Treated$TreatSummary}
+#'
+#' @seealso
+#' * [indDash()] Interactive app for checking indicator distributions. Useful for comparing before/after data treatment.
 #'
 #' @return A treated data set plus information about how the data was treated.
 #'
@@ -317,6 +334,11 @@ treat <- function(COIN, dset = NULL, winmax = NULL, winchange = NULL, deflog = N
 #'
 #' To be used inside treat() to avoid repetitions. Winsorises one column of data.
 #'
+#' Outliers are identified according to skewness and kurtosis thresholds. The algorithm attempts to reduce the absolute skew and
+#' kurtosis by successively Winsorising points up to a specified limit.
+#'
+#' The process is detailed in the [COINr online documentation](https://bluefoxr.github.io/COINrDoc/data-treatment.html#data-treatment-in-coinr).
+#'
 #' @param icol The vector of data to Winsorize
 #' @param winmax The maximum number of points to Winsorise for each indicator. If NA, will keep Winsorising until skew&kurt thresholds achieved (but it is likely this will cause errors)
 #' @param winchange Logical: if TRUE, Winsorisation can change direction from one iteration to the next. Otherwise if FALSE (default), no change.
@@ -324,9 +346,19 @@ treat <- function(COIN, dset = NULL, winmax = NULL, winchange = NULL, deflog = N
 #' @param t_kurt Kurtosis threshold (default 3.5)
 #' @param icode The indicator name - used for error messages.
 #'
+#' @examples \dontrun{
+#' # get a column of data with outliers
+#' x <- ASEMIndData$Tariff
+#' # Winsorise up to five points
+#' winlist <- coin_win(x, winmax = 5)
+#' }
+#'
+#' @seealso
+#' * [treat()] Outlier treatment
+#'
 #' @export
 
-coin_win <- function(icol, winmax, winchange, t_skew, t_kurt, icode = NULL){
+coin_win <- function(icol, winmax, winchange = TRUE, t_skew = 2, t_kurt = 3.5, icode = NULL){
 
   # first, check skew and kurtosis
   sk <- e1071::skewness(icol, na.rm = T, type = 2)
@@ -387,10 +419,21 @@ coin_win <- function(icol, winmax, winchange, t_skew, t_kurt, icode = NULL){
 #' Box Cox transformation
 #'
 #' Simple Box Cox, with no optimisation of lambda.
+#' See [COINr online documentation](https://bluefoxr.github.io/COINrDoc/data-treatment.html#transformation) for more details.
 #'
 #' @param x A vector or column of data to transform
 #' @param lambda The lambda parameter of the Box Cox transform
 #' @param makepos If TRUE (default) makes all values positive by subtracting the minimum and adding 1.
+#'
+#' @examples \dontrun{
+#' # get a column of data with outliers
+#' x <- ASEMIndData$Tariff
+#' # Apply Box Cox
+#' xBox <- BoxCox(x, lambda = 2)
+#' }
+#'
+#' @seealso
+#' * [treat()] Outlier treatment
 #'
 #' @export
 
@@ -419,6 +462,9 @@ BoxCox <- function(x, lambda, makepos = TRUE){
 #' @param x A vector or column of data to transform
 #' @param ltype The type of log transformation
 #' @param params Some extra params to pass
+#'
+#' @seealso
+#' * [treat()] Outlier treatment
 #'
 #' @export
 

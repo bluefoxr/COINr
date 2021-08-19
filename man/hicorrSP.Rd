@@ -2,9 +2,15 @@
 % Please edit documentation in R/coin_rew8r.R
 \name{hicorrSP}
 \alias{hicorrSP}
-\title{Highly correlated indicators in same sub pillar}
+\title{Highly correlated indicators in the same aggregation group}
 \usage{
-hicorrSP(COIN, dset = "Normalised", hicorval = 0.9, cortype = "pearson")
+hicorrSP(
+  COIN,
+  dset = "Normalised",
+  hicorval = 0.9,
+  cortype = "pearson",
+  grouplev = NULL
+)
 }
 \arguments{
 \item{COIN}{Data frame with first col indicator codes, second is weights, third is correlations}
@@ -14,11 +20,29 @@ hicorrSP(COIN, dset = "Normalised", hicorval = 0.9, cortype = "pearson")
 \item{hicorval}{A threshold to flag high correlation. Default 0.9.}
 
 \item{cortype}{The type of correlation, either "pearson" (default), "spearman" or "kendall"}
+
+\item{grouplev}{The level to group indicators in. E.g. if \code{grouplev = 2} it will look for high correlations between indicators that
+belong to the same group in Level 2.}
 }
 \value{
-A data frame with one entry for every indicator pair that is highly correlated within a sub-pillar.
+A data frame with one entry for every indicator pair that is highly correlated within the same group, at the specified level.
 Pairs are only reported once, i.e. only uses the upper triangle of the correlation matrix.
 }
 \description{
-This returns a data frame of any highly correlated indicators within the same sub-pillar.
+This returns a data frame of any highly correlated indicators within the same aggregation group. The level of the aggregation
+group can be controlled by the grouplev argument.
+}
+\examples{
+\dontrun{
+# Assemble ASEM COIN
+ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+# check for any within-pillar correlations of > 0.7
+hicorrSP(ASEM, dset = "Raw", hicorval = 0.7, , grouplev = 2)}
+
+}
+\seealso{
+\itemize{
+\item \code{\link[=rew8r]{rew8r()}} Interactive app for adjusting weights and seeing effects on correlations
+\item \code{\link[=getCorr]{getCorr()}} Get correlations between indicators/levels
+}
 }

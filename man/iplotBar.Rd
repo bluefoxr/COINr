@@ -36,10 +36,21 @@ Interactive bar chart.
 }
 \description{
 Generates an interactive bar chart. This function is simply a wrapper for
-the Plotly bar chart function, but accesses COIN object to get the relevant indicator.
-Also has click event data for Shiny.
+the \strong{plotly} bar chart function, but accesses the COIN object to get the relevant indicator.
+Also has click event data for Shiny. Allows construction of stacked bar charts which show underlying components (for aggregated
+data only), and plots of only specified groups.
 }
 \examples{
-\dontrun{iplotBar(ASEM, dset = "Raw", isel = "Flights")}
+\dontrun{
+# assemble ASEM COIN
+ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+# map Flights indicator
+iplotBar(ASEM, dset = "Raw", isel = "Flights")}
 
+}
+\seealso{
+\itemize{
+\item \code{\link[=iplotMap]{iplotMap()}} bar chart of indicator or aggregate
+\item \code{\link[=resultsDash]{resultsDash()}} interactive dashboard of indicator data
+}
 }

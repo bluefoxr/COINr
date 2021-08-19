@@ -29,13 +29,15 @@ rmd template includes interactive plots (e.g. the iplot functions from COINr), w
 defaults to COINr's inbuilt template example.}
 }
 \value{
-Markdown document rendered to Word.
+Markdown document rendered to HTML, pdf or Word.
 }
 \description{
-Generates a scorecard for a given unit using an R Markdown template. Most likely you will want to customise the template
-which can be found in the COINr installed package directory under /inst. Currently, a few examples are given, such as some charts and basic summary statistics.
+Generates a scorecard for a given unit using an R Markdown template.
 }
 \details{
+Most likely you will want to customise the template which can be found in the COINr installed package directory under /inst.
+Currently, a few examples are given, such as some charts and basic summary statistics.
+
 This function will render the unit report to either pdf, html or word doc. As mentioned below, if you have html widgets
 such as interactive plotly plots, or COINr iplot functions, you will need to install the webshot package to be able to
 render to pdf or word formats.
@@ -47,6 +49,10 @@ Note that this function is particularly useful for generating a large number of 
 all units at once using a for loop, purrr::map or apply or similar.
 }
 \examples{
-\dontrun{"test")}
+\dontrun{
+# build ASEM COIN up to aggregation
+ASEM <- build_ASEM()
+# generate a unit report for NZ
+getUnitReport(ASEM, usel = "NZL", out_type = ".html")}
 
 }

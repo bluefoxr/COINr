@@ -15,4 +15,19 @@ BoxCox(x, lambda, makepos = TRUE)
 }
 \description{
 Simple Box Cox, with no optimisation of lambda.
+See \href{https://bluefoxr.github.io/COINrDoc/data-treatment.html#transformation}{COINr online documentation} for more details.
+}
+\examples{
+\dontrun{
+# get a column of data with outliers
+x <- ASEMIndData$Tariff
+# Apply Box Cox
+xBox <- BoxCox(x, lambda = 2)
+}
+
+}
+\seealso{
+\itemize{
+\item \code{\link[=treat]{treat()}} Outlier treatment
+}
 }

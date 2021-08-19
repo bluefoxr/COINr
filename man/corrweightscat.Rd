@@ -31,5 +31,11 @@ A scatter plot, also outputs event data (the clicked indicator)
 }
 \description{
 Plots correlations on the x axis and weights on the y axis. Allows a selected highlighted point
-and a line showing low correlation boundary.
+and a line showing low correlation boundary. This function is intended for use inside \code{rew8r()}.
+}
+\seealso{
+\itemize{
+\item \code{\link[=rew8r]{rew8r()}} Interactive app for adjusting weights and seeing effects on correlations
+\item \code{\link[=getCorr]{getCorr()}} Get correlations between indicators/levels
+}
 }

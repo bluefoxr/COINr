@@ -19,7 +19,21 @@ A data frame summary table.
 \description{
 Generates a summary table for a single unit. This is mostly useful in unit reports.
 }
+\details{
+This returns the scores and ranks for each indicator/aggregate as specified in \code{aglevs}. It orders the table so that
+the highest aggregation levels are first. This means that if the index level is included, it will be first.
+}
 \examples{
-\dontrun{"test")}
+\dontrun{
+# build ASEM COIN up to aggregation
+ASEM <- build_ASEM()
+# generate unit summary for NZ - index and sub-indexes only
+getUnitSummary(ASEM, usel ="NZL", aglevs = c(4,3))}
 
+}
+\seealso{
+\itemize{
+\item \code{\link[=getUnitReport]{getUnitReport()}} Automatic unit report as html, pdf or Word
+\item \code{\link[=getStrengthNWeak]{getStrengthNWeak()}} Top N-ranking indicators for a given unit
+}
 }

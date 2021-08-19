@@ -16,3 +16,8 @@ loggish(x, ltype, params)
 \description{
 This applies various simple transformations, to be used by the treat() function.
 }
+\seealso{
+\itemize{
+\item \code{\link[=treat]{treat()}} Outlier treatment
+}
+}

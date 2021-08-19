@@ -1,4 +1,4 @@
-#' Perform PCA
+#' Perform PCA on a COIN
 #'
 #' Performs PCA on a specified data set and subset of indicators or aggregation groups. Returns weights
 #' corresponding to the first principal component, i.e the weights that maximise the variance explained
@@ -12,13 +12,21 @@
 #' an aggregation group name, and data will be subsetted accordingly. NOTE does not work with multiple aggregate group names.
 #' @param aglev The aggregation level to take indicator data from. Integer from 1 (indicator level)
 #' to N (top aggregation level, typically the index).
-#' @param out2 If the input is a COIN object, this controls where to send the output. If "obj", it
+#' @param nowarnings If FALSE (default), will give warnings where missing data are found. Set to TRUE to suppress these warnings.
+#' @param out2 If the input is a COIN object, this controls where to send the output. If "COIN", it
 #' sends the results to the COIN object, otherwise if "list", outputs to a separate list.
 #'
 #' @importFrom stats prcomp na.omit
 #' @importFrom rlang .data
 #'
-#' @examples \dontrun{PCAresults <- getPCA(COIN, dset = "Raw")}
+#' @examples \dontrun{
+#' # build ASEM COIN
+#' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta,
+#' AggMeta = ASEMAggMeta)
+#' # get PCA results for pillar groups inside "Conn" sub-index
+#' # (warnings about missing data are suppressed)
+#' PCAres <- getPCA(ASEM, dset = "Raw", icodes = "Sust",
+#' aglev = 1, nowarnings = TRUE, out2 = "list")}
 #'
 #' @return PCA data, plus PCA weights corresponding to the loadings of the first principle component.
 #' This should correspond to the linear combination of indicators that explains the most variance.
@@ -26,7 +34,7 @@
 #' @export
 #'
 
-getPCA <- function(COIN, dset = "Raw", icodes = NULL, aglev = NULL, out2 = "obj"){
+getPCA <- function(COIN, dset = "Raw", icodes = NULL, aglev = NULL, nowarnings = FALSE, out2 = "COIN"){
 
   # There is a catch here because we might want to do PCA weights across one level, but that level
   # may have multiple groups. This means we have to call PCA separately for each group.
@@ -45,8 +53,11 @@ getPCA <- function(COIN, dset = "Raw", icodes = NULL, aglev = NULL, out2 = "obj"
     # remove any rows with missing data
     if (nNA > 0){
       dat4PCA <- stats::na.omit(out$ind_data_only)
-      warning(paste0(nNA, " missing values found. Removing ", nrow(out$ind_data_only)-nrow(dat4PCA), " rows with missing values in order to perform
+      if(!nowarnings){
+        warning(paste0(nNA, " missing values found. Removing ", nrow(out$ind_data_only)-nrow(dat4PCA), " rows with missing values in order to perform
 PCA. You can also try imputing data first to avoid this."))
+      }
+
     } else {
       dat4PCA <- out$ind_data_only
     }
@@ -95,7 +106,7 @@ PCA. You can also try imputing data first to avoid this."))
   names(PCAlist) <- parents
 
   # write results
-  if( (out3$otype == "COINobj") & (out2 == "obj")){
+  if( (out3$otype == "COINobj") & (out2 == "COIN")){
     eval(parse(text=paste0("COIN$Parameters$Weights$PCA_",dset,"L",aglev,"<-wlist")))
     eval(parse(text=paste0("COIN$Analysis$",dset,"$PCA$L",aglev,"<- PCAlist")))
     return(COIN)

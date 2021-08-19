@@ -19,13 +19,29 @@ getStrengthNWeak(COIN, usel = NULL, topN = 5, bottomN = 5, withcodes = TRUE)
 in generating reports, where codes are not helpful.}
 }
 \value{
-A data frame
+A list containing a data frame of strengths, and a data frame of weaknesses.
 }
 \description{
-Generates a table of strengths and weaknesses for a selected unit, based on ranks. This currently only works
-at the indicator level. Indicators with NAs are ignored.
+Generates a table of strengths and weaknesses for a selected unit, based on ranks.
+}
+\details{
+This currently only works at the indicator level. Indicators with NA values for the selected unit are ignored.
+Strengths and weaknesses mean the top N-ranked indicators for the selected unit. Effectively, this takes the rank that the
+selected unit has in each indicator, sorts the ranks, and takes the top N highest and lowest.
+
+NOTE: this function currently requires data to be aggregated. This restriction may be relaxed at some point.
 }
 \examples{
-\dontrun{"test")}
+\dontrun{
+# build ASEM COIN up to aggregation
+ASEM <- build_ASEM()
+# generate top 5 strengths and weaknesses for GBR
+getStrengthNWeak(ASEM, usel = "GBR")}
 
+}
+\seealso{
+\itemize{
+\item \code{\link[=getUnitReport]{getUnitReport()}} Automatic unit report as html, pdf or Word
+\item \code{\link[=getUnitSummary]{getUnitSummary()}} Summary of scores for a given unit
+}
 }

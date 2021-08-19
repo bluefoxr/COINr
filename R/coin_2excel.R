@@ -1,13 +1,15 @@
 #' Write data to Excel
 #'
-#' Takes the COIN object and writes all main data tables and other things to an Excel file. At the moment this is just a placeholder to be developed further.
+#' Takes the COIN object and writes all main data tables and other things to an Excel file.
 #'
 #' @param COINobj A COIN object
 #' @param fname The file name to write to
 #'
 #' @importFrom openxlsx write.xlsx createWorkbook addWorksheet writeData saveWorkbook
 #'
-#' @examples \dontrun{coin2Excel(COINobj, fname="COINresults.xlsx")}
+#' @examples \dontrun{
+#' ASEM <- build_ASEM()
+#' coin2Excel(ASEM)}
 #'
 #' @return An Excel workbook with each table on a separate named tab.
 #'

@@ -1,9 +1,14 @@
 #' Static heatmaps of correlation matrices
 #'
-#' Generates heatmaps of correlation matrices using ggplot2. The
+#' Generates heatmaps of correlation matrices using **ggplot2**. This enables correlating any set of indicators against any other,
+#' and supports calling named aggregation groups of indicators. The `withparent` argument generates tables of correlations only with
+#' parents of each indicator. Also supports discrete colour maps using `flagcolours`, different types of correlation, and groups
+#' plots by higher aggregation levels.
+#'
+#' Note that this function can only call correlations within the same data set (i.e. only one data set in `.$Data`).
 #'
 #' @param COIN The COIN object
-#' @param dset The data set to treat
+#' @param dset The target data set.
 #' @param icodes An optional list of character vectors where the first entry specifies the indicator/agg
 #' codes to correlate against the second entry (also a specification of ind/agg codes)
 #' @param aglevs The aggregation levels to take the two groups of indicators from. See `getIn()` for details.
@@ -28,7 +33,13 @@
 #'
 #' @importFrom ggplot2 ggplot aes geom_tile
 #'
-#' @return A treated data set plus information about how the data was treated.
+#' @examples \dontrun{
+#' # build ASEM COIN
+#' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+#' # correlation map of indicators in connectivity sub-index, grouped by pillar
+#' plotCorr(ASEM, dset = "Raw", icodes = "Conn", aglevs = 1, showvals = F)}
+#'
+#' @return Plots generated with **ggplot2**. These can be edited further with **ggplot2** commands.
 #'
 #' @export
 
@@ -158,27 +169,47 @@ plotCorr <- function(COIN, dset = "Raw", icodes = NULL, aglevs = 1, cortype = "p
 
 #' Get different types of correlation matrices
 #'
-#' Helper function for plotting correlations between indicators. This retrieves subsets of correlation
+#' Helper function for getting correlations between indicators. This retrieves subsets of correlation
 #' matrices between different aggregation levels, in different formats.
 #'
+#' Note that this function can only call correlations within the same data set (i.e. only one data set in `.$Data`).
+#'
 #' @param COIN The COIN object
-#' @param dset The data set to treat
+#' @param dset The target data set
 #' @param icodes An optional list of character vectors where the first entry specifies the indicator/agg
 #' codes to correlate against the second entry (also a specification of ind/agg codes)
-#' @param aglevs The aggregation levels to take the two groups of indicators from. See `getIn()` for details.
+#' @param aglevs The aggregation levels to take the two groups of indicators from. See `getIn()` for details. Defaults to indicator level.
 #' @param cortype The type of correlation to calculate, either "pearson", "spearman", or "kendall".
 #' @param withparent If `TRUE`, and `aglev[1] != aglev[2]`, will only return correlations of each row with its parent.
 #' @param grouplev The aggregation level to group correlations by if `aglev[1] == aglev[2]`. By default, groups correlations into the
 #' aggregation level above. Set to 0 to disable grouping and return the full matrix.
-#' @param pval The significance level for including correlations. Correlations with p < pval will be shown,
-#' otherwise they will be plotted as white squares. Set to 0 to disable this.
+#' @param pval The significance level for including correlations. Correlations with p > pval will be returned as `NA`. Default 0.05. Set to 0 to disable this.
 #'
-#' @return A treated data set plus information about how the data was treated.
+#' @examples \dontrun{
+#' # build ASEM COIN
+#' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+#' # correlations of indicators in Political pillar
+#' getCorr(ASEM, dset = "Raw", icodes = "Political", aglevs = 1)}
+#'
+#' @return A data frame of correlation values in long format.
 #'
 #' @export
 
 getCorr <- function(COIN, dset, icodes = NULL, aglevs = NULL, cortype = "pearson",
                     pval = 0.05, withparent = TRUE, grouplev = NULL){
+
+  if(is.null(aglevs)){aglevs = 1}
+
+  if (length(icodes) == 1){
+    icodes = rep(icodes, 2)
+  }
+  if (length(aglevs) == 1){
+    aglevs = rep(aglevs, 2)
+  }
+  if (aglevs[2] > aglevs [1]){
+    aglevs <- rev(aglevs)
+    icodes <- rev(icodes)
+  }
 
   #- GET DATA AND CORR ---------------------------
 
@@ -290,7 +321,7 @@ getCorr <- function(COIN, dset, icodes = NULL, aglevs = NULL, cortype = "pearson
 #' of "consistency" of a data set, where a high value implies higher reliability/consistency.
 #'
 #' This function simply returns Cronbach's alpha. If you want a lot more details on reliability, psych::alpha
-#' provides a much more detailed analysis, for example.
+#' provides a much more detailed analysis.
 #'
 #' @param COIN A COIN or a data frame containing only numerical columns of data.
 #' @param dset The data set to check the consistency of.
@@ -300,12 +331,20 @@ getCorr <- function(COIN, dset, icodes = NULL, aglevs = NULL, cortype = "pearson
 #'
 #' @importFrom stats cov
 #'
+#' @examples \dontrun{
+#' # build ASEM COIN
+#' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+#' # get Cronbach of indicators in Physical pillar
+#' getCronbach(ASEM, dset = "Raw", icodes = "Physical", aglev = 1)}
+#'
 #' @return Cronbach alpha value
 #'
 #' @export
 
 getCronbach <- function(COIN, dset = "Raw", icodes = NULL,
                         aglev = NULL, use = "pairwise.complete.obs"){
+
+  if(is.null(aglev)){aglev = 1}
 
   # get data
   df <- getIn(COIN, dset = dset, icodes = icodes, aglev = aglev)$ind_data_only

@@ -24,3 +24,13 @@ Post process a sample to obtain sensitivity indices. This function takes a univa
 which is generated as a result of running a Monte Carlo sample from SA_sample() through a system.
 Then it estimates sensitivity indices using this sample.
 }
+\details{
+This function is built to be used inside \code{sensitivity()}. I don't provide an example because of the time taken to
+do a sensitivity analysis. See \href{https://bluefoxr.github.io/COINrDoc/sensitivity-analysis.html}{COINr online documentation} for more details.
+}
+\seealso{
+\itemize{
+\item \code{\link[=sensitivity]{sensitivity()}} Perform global sensitivity or uncertainty analysis on a COIN
+\item \code{\link[=SA_sample]{SA_sample()}} Input design for estimating sensitivity indices
+}
+}

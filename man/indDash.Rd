@@ -4,22 +4,23 @@
 \alias{indDash}
 \title{Indicator visualisation dashboard}
 \usage{
-indDash(COIN, icodes = NULL, dset = "Raw")
+indDash(COIN)
 }
 \arguments{
-\item{COIN}{The COIN object, or a data frame of indicator data.}
-
-\item{icodes}{A set of indicator codes to include. Defaults to all indicators.}
-
-\item{dset}{The data set to plot.}
+\item{COIN}{The COIN object}
 }
 \value{
 Interactive visualisation
 }
 \description{
 Generates an interactive visualisation of one or two indicators at a time. Requires Shiny and an active R session.
+This dashboard is useful for quickly exploring indicator data, and seeing the effects of e.g.
 }
 \examples{
-\dontrun{indDash(COIN, icodes = NULL, dset = "raw")}
+\dontrun{
+# build ASEM COIN
+ASEM <- build_ASEM()
+# view dashboard
+indDash(ASEM)}
 
 }

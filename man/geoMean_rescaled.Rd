@@ -16,11 +16,20 @@ and will be rescaled to sum to 1. If w is not specified, defaults to equal weigh
 Geometric mean
 }
 \description{
-Weighted geometric mean of a vector. Here, any zero or negative values are automatically dealt with
-by rescaling the data to be all positive, i.e. it shifts so that the minimum is equal to 0.1.
+\emph{NOTE this function is not really in use but is kept here for the moment. Not sure it is very useful.}
 }
 \details{
+Weighted geometric mean of a vector. Here, any zero or negative values are automatically dealt with
+by rescaling the data to be all positive, i.e. it shifts so that the minimum is equal to 0.1.
+
 Note that this could be better achieved by normalising first. However, following default normalisation
 between 0 and 100, this function offers a quick way to test the effect of a geometric mean, for example in
 a sensitivity analysis, and avoids bugs arising.
+}
+\examples{
+\dontrun{
+x <- 1:10
+w <- runif(10)
+geoMean_rescaled(x,w)}
+
 }

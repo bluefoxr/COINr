@@ -2,16 +2,28 @@
 #'
 #' Generates an interactive visualisation of results. Requires Shiny and an active R session.
 #'
-#' @param COIN The COIN object, or a data frame of indicator data.
-#' @param dset The data set to plot.
+#' This function provides a fast way to present and explore results in a COIN. It plots interactive bar charts of any indicator
+#' or aggregate, and maps if the unit codes are ISO alpha-3 country codes. It also includes an interactive results table, and the
+#' possibility to quickly compare units on a radar chart.
+#'
+#' @param COIN The COIN object
+#' @param dset The initial data set to explore.
 #'
 #' @import shiny
 #' @importFrom plotly plot_ly plotlyOutput layout add_trace renderPlotly
 #' @importFrom reactable reactable renderReactable
 #'
-#' @examples \dontrun{coin_indicatordash(COIN, icodes = NULL, dset = "raw")}
+#' @examples \dontrun{
+#' # build ASEM up to results
+#' ASEM <- build_ASEM()
+#' # launch results dashboard
+#' resultsDash(ASEM)}
 #'
-#' @return Interactive visualisation
+#' @return Interactive app for exploring results
+#'
+#' @seealso
+#' * [indDash()] shiny dashboard for exploring indicator distributions
+#' * [rew8r()] shiny dashboard for altering weights and visualising correlations
 #'
 #' @export
 
@@ -230,8 +242,8 @@ resultsDash <- function(COIN, dset = "Aggregated"){
 #'
 #' Generates an interactive choropleth map of specified indicator data. Only works on national
 #' level data (i.e. one point per country), with countries labeled by ISO alpha-3 codes. See e.g.
-#' https://www.iso.org/iso-3166-country-codes.html. This function is simply a wrapper for
-#' the Plotly choropleth map function.
+#' https://www.iso.org/iso-3166-country-codes.html. This function is simply a quick wrapper for
+#' the **plotly** choropleth map function.
 #'
 #' @param COIN The COIN object, or a data frame of indicator data.
 #' @param dset The data set to plot.
@@ -239,9 +251,17 @@ resultsDash <- function(COIN, dset = "Aggregated"){
 #'
 #' @importFrom plotly plot_ly layout colorbar
 #'
-#' @examples \dontrun{coin_indicatordash(COIN, dset = "Raw")}
+#' @examples \dontrun{
+#' # assemble ASEM COIN
+#' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+#' # map CO2 indicator
+#' iplotMap(ASEM, dset = "Raw", isel = "CO2")}
 #'
 #' @return Interactive map
+#'
+#' @seealso
+#' * [iplotBar()] bar chart of indicator or aggregate
+#' * [resultsDash()] interactive dashboard of indicator data
 #'
 #' @export
 
@@ -282,8 +302,9 @@ iplotMap <- function(COIN, dset = "Raw", isel){
 #' Bar chart
 #'
 #' Generates an interactive bar chart. This function is simply a wrapper for
-#' the Plotly bar chart function, but accesses COIN object to get the relevant indicator.
-#' Also has click event data for Shiny.
+#' the **plotly** bar chart function, but accesses the COIN object to get the relevant indicator.
+#' Also has click event data for Shiny. Allows construction of stacked bar charts which show underlying components (for aggregated
+#' data only), and plots of only specified groups.
 #'
 #' @param COIN The COIN object, or a data frame of indicator data.
 #' @param dset The data set to plot.
@@ -297,7 +318,15 @@ iplotMap <- function(COIN, dset = "Raw", isel){
 #'
 #' @importFrom plotly plot_ly layout
 #'
-#' @examples \dontrun{iplotBar(ASEM, dset = "Raw", isel = "Flights")}
+#' @examples \dontrun{
+#' # assemble ASEM COIN
+#' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+#' # map Flights indicator
+#' iplotBar(ASEM, dset = "Raw", isel = "Flights")}
+#'
+#' @seealso
+#' * [iplotMap()] bar chart of indicator or aggregate
+#' * [resultsDash()] interactive dashboard of indicator data
 #'
 #' @return Interactive bar chart.
 #'
@@ -453,6 +482,10 @@ iplotBar <- function(COIN, dset = "Raw", isel = NULL, usel = NULL, aglev = NULL,
 #'
 #' Generates an interactive table of data. For use in e.g. Shiny or html documents.
 #'
+#' This function is a wrapper for the **reactable** package and offers a fast way to make interactive tables. It also applies
+#' conditional formatting (colouring by cell value), and sorts by the first column by default. Like other **COINr** functions,
+#' it can target subsets of indicators.
+#'
 #' @param COIN The COIN object, or a data frame of indicator data.
 #' @param dset The data set to use in the table
 #' @param isel The selected indicator codes (default all in dset)
@@ -462,7 +495,16 @@ iplotBar <- function(COIN, dset = "Raw", isel = NULL, usel = NULL, aglev = NULL,
 #'
 #' @importFrom reactable reactable
 #'
-#' @examples \dontrun{iplotTable(COIN, dset = "Aggregated", isel = NULL)}
+#' @examples \dontrun{
+#' # assemble ASEM COIN
+#' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+#' # table of indicators in "Poltical" pillar
+#' iplotTable(ASEM, dset = "Raw", isel = "Political", aglev = 1)}
+#'
+#' @seealso
+#' * [colourTable()] Conditionally-formatted table for any data frame
+#' * [resultsDash()] interactive dashboard of indicator data
+#' * [getResults()] results summary tables
 #'
 #' @return Interactive table
 #'
@@ -497,7 +539,7 @@ iplotTable <- function(COIN, dset = "Raw", isel = NULL, aglev = NULL, nround = 1
 #' Conditionally formatted table
 #'
 #' Given a data frame, generates a conditionally-formatted html table using reactable. This function is used by
-#' iplotTable().
+#' iplotTable(). It is a quick wrapper for `reactable::reactable`.
 #'
 #' @param df The COIN object, or a data frame of indicator data.
 #' @param freeze1 If TRUE (default), freezes the first column. This may be for example the unit name or code.
@@ -512,6 +554,9 @@ iplotTable <- function(COIN, dset = "Raw", isel = NULL, aglev = NULL, nround = 1
 #' @importFrom reactable reactable
 #'
 #' @examples \dontrun{colourTable(as.data.frame(matrix(runif(12), 3, 4)))}
+#'
+#' @seealso
+#' * [iplotTable()] Interactive table of indicator data (from a COIN)
 #'
 #' @return Interactive table
 #'
@@ -602,7 +647,11 @@ colourTable <- function(df, freeze1 = TRUE, sortcol = NULL, sortorder = "desc", 
 
 #' Radar chart
 #'
-#' Generates an interactive radar chart for a specified unit.
+#' Generates an interactive radar chart for a specified unit or set of units.
+#'
+#' This function uses **plotly** to generate a radar chart for showing one or more units, compared using a specified set of indicators.
+#' Optionally, you can add mean/median or group mean/median as an extra trace. The point being to show how a particular unit compares to
+#' its peers.
 #'
 #' @param COIN The COIN object, or a data frame of indicator data.
 #' @param dset The data set to use in the table
@@ -621,10 +670,16 @@ colourTable <- function(df, freeze1 = TRUE, sortcol = NULL, sortorder = "desc", 
 #' @importFrom plotly plot_ly add_trace
 #'
 #' @examples \dontrun{
-#' iplotRadar(ASEM, dset = "Aggregated", usel = c("AUT", "CHN"), isel = "Physical", aglev = 1)
+#' # build ASEM COIN up to aggregation
+#' ASEM <- build_ASEM()
+#' # radar chart of Austria vs. China in Political indicators
+#' iplotRadar(ASEM, dset = "Aggregated", usel = c("AUT", "CHN"), isel = "Political", aglev = 1)
 #' }
 #'
-#' @return Interactive table
+#' @return Interactive radar chart
+#'
+#'  @seealso
+#' * [resultsDash()] Interactive results dashboard
 #'
 #' @export
 

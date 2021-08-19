@@ -28,7 +28,7 @@ assemble(
 }
 \value{
 A "COIN" (list) formatted to the specifications of COINr.
-Note that the COIN object is just a tag. It doesn't impose restrictions on the structure of the list.
+Note that the COIN object is an S3 class. It doesn't impose restrictions on the structure of the list.
 }
 \description{
 This takes the raw data provided by the user and puts it into an list format (COIN object) that is recognised by COINr.
@@ -37,6 +37,8 @@ or include indicators using the "include" and "exclude" arguments. Note that if 
 BOTH include and exclude, it will be excluded.
 }
 \examples{
-\dontrun{COINobj <- assemble(IndData, IndMeta, AggMeta)}
+\dontrun{
+# build the ASEM COIN
+ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta}
 
 }

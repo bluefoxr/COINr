@@ -1,25 +1,29 @@
 #' Indicator visualisation dashboard
 #'
 #' Generates an interactive visualisation of one or two indicators at a time. Requires Shiny and an active R session.
+#' This dashboard is useful for quickly exploring indicator data, and seeing the effects of e.g.
 #'
-#' @param COIN The COIN object, or a data frame of indicator data.
-#' @param icodes A set of indicator codes to include. Defaults to all indicators.
-#' @param dset The data set to plot.
+#' @param COIN The COIN object
 #'
 #' @import shiny
 #' @importFrom plotly plot_ly plotlyOutput layout add_trace renderPlotly
 #' @importFrom reactable reactable renderReactable
 #'
-#' @examples \dontrun{indDash(COIN, icodes = NULL, dset = "raw")}
+#' @examples \dontrun{
+#' # build ASEM COIN
+#' ASEM <- build_ASEM()
+#' # view dashboard
+#' indDash(ASEM)}
 #'
 #' @return Interactive visualisation
 #'
 #' @export
 
-indDash <- function(COIN, icodes = NULL, dset = "Raw"){
+indDash <- function(COIN){
 
   # first, get the indicator data from input object
-  out <- getIn(COIN, dset, icodes)
+  out <- getIn(COIN)
+  if(out$otype != "COINobj"){stop("indDash() only supports COINs as inputs.")}
   ind_data_only <- out$ind_data_only
   ind_data <- out$ind_data
   ind_codes <- out$IndCodes
@@ -43,10 +47,10 @@ indDash <- function(COIN, icodes = NULL, dset = "Raw"){
       h2("Indicator Viewer"),
       hr(),
       h4("Indicator 1"),
-      selectInput("dset1", "Data set", choices= dsetnames, selected =  dset),
+      selectInput("dset1", "Data set", choices= dsetnames),
       selectInput("vr1", "Indicator", choices=colnames(ind_data_only)),
       h4("Indicator 2"),
-      selectInput("dset2", "Data set", choices= dsetnames, selected =  dset),
+      selectInput("dset2", "Data set", choices= dsetnames),
       selectInput("vr2", "Indicator", choices=colnames(ind_data_only)),
       checkboxInput(inputId = "vrmatch", label = "Match indicators (select using indicator 1)", value = FALSE),
       textOutput("info"),
@@ -137,14 +141,14 @@ indDash <- function(COIN, icodes = NULL, dset = "Raw"){
 
     # update data set 1 to selected one plus codes
     observeEvent(input$dset1,{
-      out1 <- getIn(COIN, input$dset1, icodes)
+      out1 <- getIn(COIN, input$dset1)
       idata1(out1$ind_data)
       icodes1(out1$IndCodes)
     })
 
     # update data set 2 to selected one
     observeEvent(input$dset2,{
-      out2 <- getIn(COIN, input$dset2, icodes)
+      out2 <- getIn(COIN, input$dset2)
       idata2(out2$ind_data)
       icodes2(out2$IndCodes)
     })
@@ -336,13 +340,13 @@ indDash <- function(COIN, icodes = NULL, dset = "Raw"){
     # Update dropdown menu of indicator selection based on data set 1
     observeEvent(input$dset1,{
       updateSelectInput(session = session, inputId = "vr1",
-                        choices = getIn(COIN,input$dset1,icodes)$IndCodes)
+                        choices = getIn(COIN,input$dset1)$IndCodes)
     })
 
     # Update dropdown menu of indicator selection based on data set 2
     observeEvent(input$dset2,{
       updateSelectInput(session = session, inputId = "vr2",
-                        choices = getIn(COIN,input$dset2,icodes)$IndCodes)
+                        choices = getIn(COIN,input$dset2)$IndCodes)
     })
 
     # Update selected indicator in dropdown 2

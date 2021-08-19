@@ -22,7 +22,7 @@ plotCorr(
 \arguments{
 \item{COIN}{The COIN object}
 
-\item{dset}{The data set to treat}
+\item{dset}{The target data set.}
 
 \item{icodes}{An optional list of character vectors where the first entry specifies the indicator/agg
 codes to correlate against the second entry (also a specification of ind/agg codes)}
@@ -56,8 +56,22 @@ returns the correlation matrix in wide form. The last option here is probably us
 present a table of the data in a report.}
 }
 \value{
-A treated data set plus information about how the data was treated.
+Plots generated with \strong{ggplot2}. These can be edited further with \strong{ggplot2} commands.
 }
 \description{
-Generates heatmaps of correlation matrices using ggplot2. The
+Generates heatmaps of correlation matrices using \strong{ggplot2}. This enables correlating any set of indicators against any other,
+and supports calling named aggregation groups of indicators. The \code{withparent} argument generates tables of correlations only with
+parents of each indicator. Also supports discrete colour maps using \code{flagcolours}, different types of correlation, and groups
+plots by higher aggregation levels.
+}
+\details{
+Note that this function can only call correlations within the same data set (i.e. only one data set in \code{.$Data}).
+}
+\examples{
+\dontrun{
+# build ASEM COIN
+ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+# correlation map of indicators in connectivity sub-index, grouped by pillar
+plotCorr(ASEM, dset = "Raw", icodes = "Conn", aglevs = 1, showvals = F)}
+
 }

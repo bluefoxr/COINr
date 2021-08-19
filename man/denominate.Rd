@@ -44,12 +44,18 @@ otherwise if "df" outputs to data frame.}
 An updated COIN object, with new dataset .$Data$Denominated of denominated indicators.
 }
 \description{
-Indicators can be denominated (divided) by other external indicators.
-Typically, the aim here is to convert extensive (size-related) variables into intensive variables
-(comparable between units of different sizes).
+Denominates (divides) indicators by other "denominator" indicators that are either input here or were attached as "Den_*" columns of
+\code{IndData} when assembling the COIN.
+}
+\details{
+Typically, the aim here is to convert extensive (size-related) variables into intensive variables(comparable between units
+of different sizes). There is also the option \code{scaledenoms} to scale denominators to avoid very small or very large numbers resulting.
 }
 \examples{
 \dontrun{
-COIN <- denominate(COIN, specby="metadata", denomby = NULL)}
+# assemble ASEM COIN
+ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+# denominate using specs present on assembly
+ASEM <- denominate(ASEM, dset = "Raw")}
 
 }

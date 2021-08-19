@@ -10,7 +10,7 @@ build_ASEM()
 COIN object of ASEM index.
 }
 \description{
-A short cut for building the ASEM index. Mainly used in development.
+A short cut function for building the ASEM COIN. Useful for testing.
 }
 \examples{
 \dontrun{ASEM <- build_ASEM()}

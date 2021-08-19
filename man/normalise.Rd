@@ -42,12 +42,26 @@ The name of each sublist should be the indicator code. The the list elements are
 otherwise if "df" outputs to data frame.}
 }
 \value{
-An updated COIN object with .$Data$Normalised added.
+An updated COIN object with .$Data$Normalised added, or a normalised data frame.
 }
 \description{
 A dataset of indicators is normalised using one of several methods. This function also supports custom normalisation.
 }
+\details{
+Normalisation refers to the operation of bringing variables (indicators) onto a common scale. This is typically done by matching
+one or more indicator statistics. For example, the \emph{min-max} method operates a linear transformation to make the minimum and
+maximum values of each indicator to be equal. The \emph{z-score} method makes the standard deviation and variance equal. And so on.
+
+This function supports a range of normalisation methods - see \code{ntype}. Some of these require supporting parameters or similar -
+to see full details check the \href{https://bluefoxr.github.io/COINrDoc/normalisation.html}{online documentation}.
+
+Indicators can also be each normalised by a different method. See \code{individual}.
+}
 \examples{
-\dontrun{df_norm <- normalise(COIN, ntype="minmax", npara = list(minmax = c(0,1)))}
+\dontrun{
+# build ASEM COIN
+ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+# directly normalise raw data using min-max, onto 0-10 interval
+ASEM <- normalise(ASEM, dset = "Raw", ntype = "minmax", npara = list(minmax = c(0,10)))}
 
 }

@@ -31,9 +31,20 @@ if "RankChange", sorts by rank change, and if "AbsRankChange" sorts by absolute 
 A data frame with ranks and rank changes
 }
 \description{
-Takes two COINs, and generates a rank comparison between specified indicator/aggregate
+Takes two COINs, and generates a rank comparison between specified indicator/aggregates. COINs must share at least some common
+unit codes, and the indicator selected by \code{isel}.
 }
 \examples{
-\dontrun{coin_indicatordash(COINobj, inames = NULL, dset = "raw")}
+\dontrun{
+ASEM <- build_ASEM()
+# Make a copy
+ASEMAltNorm <- ASEM
+# Edit .$Method
+ASEMAltNorm$Method$normalise$ntype <- "borda"
+# Regenerate
+ASEMAltNorm <- COINr::regen(ASEMAltNorm, quietly = TRUE)
+# compare
+compTable(ASEM, ASEMAltNorm, dset = "Aggregated", isel = "Index")
+}
 
 }

@@ -4,7 +4,14 @@
 \alias{coin_win}
 \title{Winsorisation helper function}
 \usage{
-coin_win(icol, winmax, winchange, t_skew, t_kurt, icode = NULL)
+coin_win(
+  icol,
+  winmax,
+  winchange = TRUE,
+  t_skew = 2,
+  t_kurt = 3.5,
+  icode = NULL
+)
 }
 \arguments{
 \item{icol}{The vector of data to Winsorize}
@@ -21,4 +28,24 @@ coin_win(icol, winmax, winchange, t_skew, t_kurt, icode = NULL)
 }
 \description{
 To be used inside treat() to avoid repetitions. Winsorises one column of data.
+}
+\details{
+Outliers are identified according to skewness and kurtosis thresholds. The algorithm attempts to reduce the absolute skew and
+kurtosis by successively Winsorising points up to a specified limit.
+
+The process is detailed in the \href{https://bluefoxr.github.io/COINrDoc/data-treatment.html#data-treatment-in-coinr}{COINr online documentation}.
+}
+\examples{
+\dontrun{
+# get a column of data with outliers
+x <- ASEMIndData$Tariff
+# Winsorise up to five points
+winlist <- coin_win(x, winmax = 5)
+}
+
+}
+\seealso{
+\itemize{
+\item \code{\link[=treat]{treat()}} Outlier treatment
+}
 }

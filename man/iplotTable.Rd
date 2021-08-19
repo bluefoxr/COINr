@@ -32,7 +32,23 @@ Interactive table
 \description{
 Generates an interactive table of data. For use in e.g. Shiny or html documents.
 }
+\details{
+This function is a wrapper for the \strong{reactable} package and offers a fast way to make interactive tables. It also applies
+conditional formatting (colouring by cell value), and sorts by the first column by default. Like other \strong{COINr} functions,
+it can target subsets of indicators.
+}
 \examples{
-\dontrun{iplotTable(COIN, dset = "Aggregated", isel = NULL)}
+\dontrun{
+# assemble ASEM COIN
+ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+# table of indicators in "Poltical" pillar
+iplotTable(ASEM, dset = "Raw", isel = "Political", aglev = 1)}
 
+}
+\seealso{
+\itemize{
+\item \code{\link[=colourTable]{colourTable()}} Conditionally-formatted table for any data frame
+\item \code{\link[=resultsDash]{resultsDash()}} interactive dashboard of indicator data
+\item \code{\link[=getResults]{getResults()}} results summary tables
+}
 }

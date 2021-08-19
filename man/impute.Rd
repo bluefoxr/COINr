@@ -38,9 +38,14 @@ otherwise if "df" outputs to data frame.}
 A dataframe of normalised indicators.
 }
 \description{
-Imputation of data sets using a variety of methods.
+Imputation of missing data data sets using a variety of methods (see \code{imtype}). This also includes the possibility of imputing
+by grouping variables, i.e. columns of \code{IndData} that are prefaced by "Group_".
 }
 \examples{
-\dontrun{COIN <- coin_impute(COIN, imtype = "ind_mean", dset = "raw")}
+\dontrun{
+# assemble the COIN
+ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+# impute data using Asia/Europe group mean
+ASEM <- impute(ASEM, dset = "Denominated", imtype = "indgroup_mean", groupvar = "Group_EurAsia")}
 
 }

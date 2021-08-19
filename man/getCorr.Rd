@@ -18,17 +18,16 @@ getCorr(
 \arguments{
 \item{COIN}{The COIN object}
 
-\item{dset}{The data set to treat}
+\item{dset}{The target data set}
 
 \item{icodes}{An optional list of character vectors where the first entry specifies the indicator/agg
 codes to correlate against the second entry (also a specification of ind/agg codes)}
 
-\item{aglevs}{The aggregation levels to take the two groups of indicators from. See \code{getIn()} for details.}
+\item{aglevs}{The aggregation levels to take the two groups of indicators from. See \code{getIn()} for details. Defaults to indicator level.}
 
 \item{cortype}{The type of correlation to calculate, either "pearson", "spearman", or "kendall".}
 
-\item{pval}{The significance level for including correlations. Correlations with p < pval will be shown,
-otherwise they will be plotted as white squares. Set to 0 to disable this.}
+\item{pval}{The significance level for including correlations. Correlations with p > pval will be returned as \code{NA}. Default 0.05. Set to 0 to disable this.}
 
 \item{withparent}{If \code{TRUE}, and \code{aglev[1] != aglev[2]}, will only return correlations of each row with its parent.}
 
@@ -36,9 +35,20 @@ otherwise they will be plotted as white squares. Set to 0 to disable this.}
 aggregation level above. Set to 0 to disable grouping and return the full matrix.}
 }
 \value{
-A treated data set plus information about how the data was treated.
+A data frame of correlation values in long format.
 }
 \description{
-Helper function for plotting correlations between indicators. This retrieves subsets of correlation
+Helper function for getting correlations between indicators. This retrieves subsets of correlation
 matrices between different aggregation levels, in different formats.
+}
+\details{
+Note that this function can only call correlations within the same data set (i.e. only one data set in \code{.$Data}).
+}
+\examples{
+\dontrun{
+# build ASEM COIN
+ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+# correlations of indicators in Political pillar
+getCorr(ASEM, dset = "Raw", icodes = "Political", aglevs = 1)}
+
 }

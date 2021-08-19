@@ -2,6 +2,15 @@
 #'
 #' A dataset of indicators is normalised using one of several methods. This function also supports custom normalisation.
 #'
+#' Normalisation refers to the operation of bringing variables (indicators) onto a common scale. This is typically done by matching
+#' one or more indicator statistics. For example, the *min-max* method operates a linear transformation to make the minimum and
+#' maximum values of each indicator to be equal. The *z-score* method makes the standard deviation and variance equal. And so on.
+#'
+#' This function supports a range of normalisation methods - see `ntype`. Some of these require supporting parameters or similar -
+#' to see full details check the [online documentation](https://bluefoxr.github.io/COINrDoc/normalisation.html).
+#'
+#' Indicators can also be each normalised by a different method. See `individual`.
+#'
 #' @param COIN Either the COIN object, or a data frame of indicator data
 #' @param ntype The type of normalisation method. Either "minmax", "zscore", "scaled", "rank", "borda", "prank", "fracmax", "dist2targ", "dist2ref", "dist2max", "custom" or "none".
 #' @param npara Supporting object for ntype. This is a list of the form list(ntype = parameters_for_ntype). So,
@@ -23,9 +32,13 @@
 #' @importFrom purrr "map2"
 #' @importFrom purrr "modify"
 #'
-#' @examples \dontrun{df_norm <- normalise(COIN, ntype="minmax", npara = list(minmax = c(0,1)))}
+#' @examples \dontrun{
+#' # build ASEM COIN
+#' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+#' # directly normalise raw data using min-max, onto 0-10 interval
+#' ASEM <- normalise(ASEM, dset = "Raw", ntype = "minmax", npara = list(minmax = c(0,10)))}
 #'
-#' @return An updated COIN object with .$Data$Normalised added.
+#' @return An updated COIN object with .$Data$Normalised added, or a normalised data frame.
 #'
 #' @export
 

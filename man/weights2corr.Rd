@@ -16,7 +16,7 @@ weights2corr(
 \arguments{
 \item{COIN}{COIN object}
 
-\item{w}{Full list of weights for each level}
+\item{w}{Full data frame of weights for each level}
 
 \item{aglevs}{A 2-length vector with two aggregation levels to correlate against each other}
 
@@ -33,4 +33,23 @@ A list with .$cr is a vector of correlations between each indicator and the inde
 \description{
 This is a short cut function which takes a new set of indicator weights, and recalculates the COIN results
 based on these weights. It returns a summary of rankings and the correlations between indicators and index.
+}
+\details{
+This function is principally used inside \code{rew8r()}. The \code{w} argument should be a data frame of weights, of the same format
+as the data frames found in \code{.$Parameters$Weights}.
+}
+\examples{
+\dontrun{
+# build ASEM COIN up to aggregation
+ASEM <- build_ASEM()
+# get correlations between pillars (level 2) and index (level 4)
+# original weights used just for demonstration, normally you would alter first.
+weights2corr(ASEM, ASEM$Parameters$Weights$Original, aglevs = c(2,4))}
+
+}
+\seealso{
+\itemize{
+\item \code{\link[=rew8r]{rew8r()}} Interactive app for adjusting weights and seeing effects on correlations
+\item \code{\link[=getCorr]{getCorr()}} Get correlations between indicators/levels
+}
 }

@@ -57,5 +57,27 @@ is useful for sensitivity analysis and comparing the effects of turning data tre
 A treated data set plus information about how the data was treated.
 }
 \description{
-Takes the COIN object and Winsorises indicators where necessary or specified, or reverts to log transform.
+Takes the COIN object and Winsorises indicators where necessary or specified, or reverts to log transform or similar. This is done
+one indicator at a time.
+}
+\details{
+Outliers are identified according to skewness and kurtosis thresholds. The algorithm attempts to reduce the absolute skew and
+kurtosis by successively Winsorising points up to a specified limit. If this limit is reached, it applies a nonlinear transformation.
+
+The process is detailed in the \href{https://bluefoxr.github.io/COINrDoc/data-treatment.html#data-treatment-in-coinr}{COINr online documentation}.
+}
+\examples{
+\dontrun{
+# assemble ASEM COIN
+ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+# treat raw data set, Winsorise up to a maximum of five points
+ASEM <- treat(ASEM, dset = "Raw", winmax = 5)
+# inspect what was done
+ASEM$Analysis$Treated$TreatSummary}
+
+}
+\seealso{
+\itemize{
+\item \code{\link[=indDash]{indDash()}} Interactive app for checking indicator distributions. Useful for comparing before/after data treatment.
+}
 }

@@ -39,7 +39,7 @@ unit_screen != "none" outputs a new data set .$Data$Screened.
 otherwise if "df" outputs to data frame.}
 }
 \value{
-An updated COIN object with tables showing missing data, and a filtered list of countries to include in subsequent calculations.
+An updated COIN with tables showing missing data, and a filtered list of countries to include in subsequent calculations.
 }
 \description{
 Gives detailed tables of data availability, and optionally screens units based on a data
@@ -54,6 +54,10 @@ Each unit is flagged as having low data or too many zeros based on thresholds.
 This function currently only supports COINs as inputs, not data frames.
 }
 \examples{
-\dontrun{checkData(COIN)}
+\dontrun{
+# build ASEM COIN
+ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+# return stats to the COIN
+ASEM <- checkData(ASEM, dset = "Raw", unit_screen = TRUE)}
 
 }

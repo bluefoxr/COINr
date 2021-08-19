@@ -15,9 +15,11 @@ coin2Excel(COINobj, fname = "COINresults.xlsx")
 An Excel workbook with each table on a separate named tab.
 }
 \description{
-Takes the COIN object and writes all main data tables and other things to an Excel file. At the moment this is just a placeholder to be developed further.
+Takes the COIN object and writes all main data tables and other things to an Excel file.
 }
 \examples{
-\dontrun{coin2Excel(COINobj, fname="COINresults.xlsx")}
+\dontrun{
+ASEM <- build_ASEM()
+coin2Excel(ASEM)}
 
 }

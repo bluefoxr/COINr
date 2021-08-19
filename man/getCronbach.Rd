@@ -32,5 +32,13 @@ of "consistency" of a data set, where a high value implies higher reliability/co
 }
 \details{
 This function simply returns Cronbach's alpha. If you want a lot more details on reliability, psych::alpha
-provides a much more detailed analysis, for example.
+provides a much more detailed analysis.
+}
+\examples{
+\dontrun{
+# build ASEM COIN
+ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+# get Cronbach of indicators in Physical pillar
+getCronbach(ASEM, dset = "Raw", icodes = "Physical", aglev = 1)}
+
 }

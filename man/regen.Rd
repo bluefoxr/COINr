@@ -12,10 +12,21 @@ regen(COINold, quietly = FALSE)
 \item{quietly}{Logical: if TRUE suppresses all messages from COINr functions (warnings may still occur though)}
 }
 \value{
-An updated COIN object, recalculated
+An updated COIN object, with all data sets recalculated. Weight sets will be passed through.
 }
 \description{
 Function to regenerate the results of the COIN, using the methodological parameters stored in
 .$Method. This function calls the construction functions of COINr in the order that they are
 found in .$Method, along with any custom code found in .$Method$Custom.
+}
+\details{
+Note that while sets of weights will be passed to the regenerated COIN, anything in \code{.$Analysis} will be removed and will have to be recalculated.
+
+For more details on regeneration of COINs, comparisons and adjustments, see the \href{https://bluefoxr.github.io/COINrDoc/adjustments-and-comparisons.html}{online documentation}.
+}
+\seealso{
+\itemize{
+\item \code{\link[=compTable]{compTable()}} compare two different COINs
+\item \code{\link[=compTableMulti]{compTableMulti()}} compare multiple COINs
+}
 }

@@ -1,6 +1,8 @@
 #' Aggregate indicators
 #'
-#' Takes indicator data and a specified structure and hierarchically aggregates to a single index (or whatever the structure specified)
+#' Takes indicator data and a specified structure and hierarchically aggregates according to the structure
+#' specified in `IndMeta`. Uses a variety of aggregation methods as specified by `agtype`, which can be different for
+#' each level of aggregation (see `agtype_by_level`).
 #'
 #' @param COIN COIN object
 #' @param agtype The type of aggregation method.
@@ -27,7 +29,10 @@
 #' @importFrom dplyr "c_across"
 #' @importFrom tibble as_tibble
 #'
-#' @examples \dontrun{COINlist <- aggregate(COINlist, agtype="arith_mean", dset = "normalised")}
+#' @examples \dontrun{
+#' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+#' ASEM <- normalise(ASEM, dset = "Raw")
+#' ASEM <- COINr::aggregate(ASEM, agtype="arith_mean", dset = "Normalised")}
 #'
 #' @return An updated COIN object containing the new aggregated data set.
 #'
@@ -170,11 +175,17 @@ aggregate <- function(COIN, agtype = "arith_mean", agweights = NULL, dset = NULL
 
 #' Weighted geometric mean
 #'
-#' Weighted geometric mean of a vector. NAs are skipped by default.
+#' Weighted geometric mean of a vector. NAs are skipped by default. This function is used inside
+#' `aggregate()`.
 #'
 #' @param x A numeric vector of positive values.
 #' @param w A vector of weights, which should have length equal to length(x). Weights are relative
 #' and will be rescaled to sum to 1. If w is not specified, defaults to equal weights.
+#'
+#' @examples \dontrun{
+#' x <- 1:10
+#' w <- runif(10)
+#' geoMean(x,w)}
 #'
 #' @return Geometric mean
 #'
@@ -202,13 +213,14 @@ geoMean <- function(x, w = NULL){
   } else {
     gm <- NA
   }
-  message("ding")
 
   return(gm)
 
 }
 
 #' Rescaled weighted geometric mean
+#'
+#' *NOTE this function is not really in use but is kept here for the moment. Not sure it is very useful.*
 #'
 #' Weighted geometric mean of a vector. Here, any zero or negative values are automatically dealt with
 #' by rescaling the data to be all positive, i.e. it shifts so that the minimum is equal to 0.1.
@@ -220,6 +232,11 @@ geoMean <- function(x, w = NULL){
 #' @param x A numeric vector of positive values.
 #' @param w A vector of weights, which should have length equal to length(x). Weights are relative
 #' and will be rescaled to sum to 1. If w is not specified, defaults to equal weights.
+#'
+#' @examples \dontrun{
+#' x <- 1:10
+#' w <- runif(10)
+#' geoMean_rescaled(x,w)}
 #'
 #' @return Geometric mean
 #'
@@ -257,11 +274,17 @@ geoMean_rescaled <- function(x, w = NULL){
 
 #' Weighted harmonic mean
 #'
-#' Weighted harmonic mean of a vector. NAs are skipped by default.
+#' Weighted harmonic mean of a vector. NAs are skipped by default. This function is used inside
+#' `aggregate()`.
 #'
 #' @param x A numeric vector of positive values.
 #' @param w A vector of weights, which should have length equal to length(x). Weights are relative
 #' and will be rescaled to sum to 1. If w is not specified, defaults to equal weights.
+#'
+#' @examples \dontrun{
+#' x <- 1:10
+#' w <- runif(10)
+#' harMean(x,w)}
 #'
 #' @return Harmonic mean
 #'
@@ -296,12 +319,19 @@ harMean <- function(x, w = NULL){
 
 #' Outranking matrix
 #'
-#' Constructs an outranking matrix based on a data frame of indicator data and corresponding weights
+#' Constructs an outranking matrix based on a data frame of indicator data and corresponding weights. This function is used inside
+#' `aggregate()`.
 #'
 #' @param ind_data A data frame or matrix of indicator data, with observations as rows and indicators
 #' as columns. No other columns should be present (e.g. label columns).
 #' @param w A vector of weights, which should have length equal to ncol(ind_data). Weights are relative
 #' and will be rescaled to sum to 1. If w is not specified, defaults to equal weights.
+#'
+#' @examples \dontrun{
+#' # get a sample of a few indicators
+#' ind_data <- ASEMIndData[12:16]
+#' # calculate outranking matrix
+#' outrankMatrix(ind_data)}
 #'
 #' @return Outranking matrix
 #'
@@ -355,12 +385,21 @@ outrankMatrix <- function(ind_data, w = NULL){
 
 #' Copeland scores
 #'
-#' Aggregates a data frame of indicator values into a single column using the Copeland method.
+#' Aggregates a data frame of indicator values into a single column using the Copeland method. This function is used inside
+#' `aggregate()`.
 #'
 #' @param ind_data A data frame or matrix of indicator data, with observations as rows and indicators
 #' as columns. No other columns should be present (e.g. label columns).
 #' @param w A vector of weights, which should have length equal to ncol(ind_data). Weights are relative
 #' and will be rescaled to sum to 1. If w is not specified, defaults to equal weights.
+#'
+#' @examples \dontrun{
+#' # get a sample of a few indicators
+#' ind_data <- ASEMIndData[12:16]
+#' # calculate outranking matrix
+#' cop_results <- copeland(ind_data)
+#' # inspect
+#' cop_results$Scores}
 #'
 #' @return Numeric vector of Copeland scores.
 #'

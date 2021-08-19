@@ -4,10 +4,18 @@
 #' .$Method. This function calls the construction functions of COINr in the order that they are
 #' found in .$Method, along with any custom code found in .$Method$Custom.
 #'
+#' Note that while sets of weights will be passed to the regenerated COIN, anything in `.$Analysis` will be removed and will have to be recalculated.
+#'
+#' For more details on regeneration of COINs, comparisons and adjustments, see the [online documentation](https://bluefoxr.github.io/COINrDoc/adjustments-and-comparisons.html).
+#'
 #' @param COINold COIN object containing specs on how to regenerate
 #' @param quietly Logical: if TRUE suppresses all messages from COINr functions (warnings may still occur though)
 #'
-#' @return An updated COIN object, recalculated
+#' @return An updated COIN object, with all data sets recalculated. Weight sets will be passed through.
+#'
+#' @seealso
+#' * [compTable()] compare two different COINs
+#' * [compTableMulti()] compare multiple COINs
 #'
 #' @export
 

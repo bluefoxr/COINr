@@ -31,13 +31,17 @@ using labels in normalise.}
 \item{npara}{Optional parameters to pass to normalise if normalisation required.}
 }
 \value{
-Nice plots
+Plots generated with \strong{ggplot2}. These can be edited further with \strong{ggplot2} commands.
 }
 \description{
 Plots indicator distributions using box plots, dot plots, violin plots, violin-dot plots, and histograms.
 Supports plotting multiple indicators by calling aggregation groups.
 }
 \examples{
-\dontrun{plotIndDist(ASEM, type = "Box", icodes = "Physical")}
+\dontrun{
+# build ASEM COIN
+ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+# plot indicators in Physical pillar
+plotIndDist(ASEM, type = "Box", dset = "Raw", icodes = "Physical")}
 
 }

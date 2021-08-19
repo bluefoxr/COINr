@@ -33,7 +33,23 @@ Results table as data frame or updated COIN.
 \description{
 Generates fast results tables, either attached to the COIN or as a data frame.
 }
+\details{
+Although results are available in a COIN in \code{.$Data}, the format makes it difficult to quickly present results. This function
+generates results tables that are suitable for immediate presentation, i.e. sorted by index or other indicators, and only including
+relevant columns. Scores are also rounded by default, and there is the option to present scores or ranks.
+}
 \examples{
-\dontrun{"test")}
+\dontrun{
+# build ASEM COIN up to aggregation
+ASEM <- build_ASEM()
+# results table of scores for index and aggregates (excluding indicator scores)
+getResults(ASEM, tab_type = "Aggregates")
+}
 
+}
+\seealso{
+\itemize{
+\item \code{\link[=resultsDash]{resultsDash()}} Interactive results dashboard
+\item \code{\link[=coin2Excel]{coin2Excel()}} Export results to Excel
+}
 }

@@ -42,12 +42,19 @@ getStats(
 \item{IQR_coef}{Interquartile range coefficient, used for identifying outliers}
 }
 \value{
-If the input is a COIN object, returns an updated COIN object with relevant tables. If the input is a data frame, returns a table as a data frame.
+Either an updated COIN object with relevant tables, or a list.
 }
 \description{
-Takes a COIN object, or data frame and returns a table of statistics, including max, min, median, mean, std, kurtosis, etc. Flags indicators with possible outliers.
+Takes a COIN , or data frame and returns a table of statistics, including max, min, median, mean, std, kurtosis, etc.
+Flags indicators with possible outliers, and checks for collinearity with other indicators and denominators (if any).
+Also checks number of unique values and percentage of zeros. Also returns correlation matrices and a table of outliers,
+as a list.
 }
 \examples{
-\dontrun{df_norm <- getStats(COINobj, dset = "Raw")}
+\dontrun{
+# build ASEM COIN
+ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+# get list of stats from raw data set
+stat_list <- getStats(ASEM, dset = "Raw", out2 = "list")}
 
 }

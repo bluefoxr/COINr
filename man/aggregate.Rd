@@ -40,9 +40,14 @@ otherwise if "df" outputs to data frame.}
 An updated COIN object containing the new aggregated data set.
 }
 \description{
-Takes indicator data and a specified structure and hierarchically aggregates to a single index (or whatever the structure specified)
+Takes indicator data and a specified structure and hierarchically aggregates according to the structure
+specified in \code{IndMeta}. Uses a variety of aggregation methods as specified by \code{agtype}, which can be different for
+each level of aggregation (see \code{agtype_by_level}).
 }
 \examples{
-\dontrun{COINlist <- aggregate(COINlist, agtype="arith_mean", dset = "normalised")}
+\dontrun{
+ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+ASEM <- normalise(ASEM, dset = "Raw")
+ASEM <- COINr::aggregate(ASEM, agtype="arith_mean", dset = "Normalised")}
 
 }

@@ -9,7 +9,7 @@
 #' or aggregation groups, and can call multiple groups.
 #'
 #' You can also specify which aggregation level to target, using the "aglev" argument. See examples
-#' below, and the COINr vignette.
+#' below, and in particular the [COINr online documentation](https://bluefoxr.github.io/COINrDoc/helper-functions.html#selecting-data-sets-and-indicators).
 #'
 #' @param obj An input object. The function can handle either the COIN object, or a data frame.
 #' The data frame should have each column as an indicator, and optional columns "UnitCode" and "UnitName" which
@@ -27,9 +27,10 @@
 #'
 #' @examples
 #' \dontrun{
-#'
-#' # Get data from indicators "Ind1" and "Ind5", from the "Raw" data set
-#' out <- getIn(obj, dset = "Raw", icodes = c("Ind1", "Ind5"))
+#' # assemble ASEM COIN
+#' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+#' # get indicator data from Social pillar
+#' SocData <- getIn(ASEM, dset = "Raw", icodes = "Social", aglev = 1)
 #' }
 #'
 #' @return A list with the following entries:
@@ -186,13 +187,14 @@ getIn <- function(obj, dset = "Raw", icodes = NULL, aglev = NULL, justnumeric = 
 #'
 #' Tiny function just to round down a data frame for display in a table.
 #'
-#'
-#'
 #' @param df A data frame to input
 #' @param decimals The number of decimal places to round to (default 2)
 #'
 #' @examples
 #' \dontrun{ df <- roundDF( as.data.frame(matrix(runif(20),10,2)) )}
+#'
+#' @seealso
+#' * [rankDF()] Replace df numbers with ranks
 #'
 #' @return A data frame, with any numeric columns rounded to the specified amount
 #'

@@ -31,12 +31,20 @@ performs the following checks:
 \item Checks column by column that the elements are the same, after sorting according to the matching column
 }
 
-It then returns summarises for each column whether there are any differences, and also what the differences are, if any.
+It then summarises for each column whether there are any differences, and also what the differences are, if any.
 
 This is intended to cross-check results. For example, if you run something in COINr and want to check indicator results against
 external calculations.
 }
 \examples{
-\dontrun{"test")}
+\dontrun{
+# take a sample of indicator data (including the UnitCode column)
+data1 <- ASEMIndData[c(2,12:15)]
+# copy the data
+data2 <- data1
+# make a change: replace one value in data2 by NA
+data2[1,2] <- NA
+# compare data frames
+compareDF(data1, data2, matchcol = "UnitCode")}
 
 }

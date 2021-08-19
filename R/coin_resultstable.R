@@ -2,6 +2,10 @@
 #'
 #' Generates fast results tables, either attached to the COIN or as a data frame.
 #'
+#' Although results are available in a COIN in `.$Data`, the format makes it difficult to quickly present results. This function
+#' generates results tables that are suitable for immediate presentation, i.e. sorted by index or other indicators, and only including
+#' relevant columns. Scores are also rounded by default, and there is the option to present scores or ranks.
+#'
 #' @param COIN The COIN object, or a data frame of indicator data
 #' @param tab_type The type of table to generate. Either "Summary", "Aggregates", "Full", or "FullWithDenoms".
 #' @param use Either "scores" (default) or "ranks".
@@ -10,9 +14,18 @@
 #' @param nround The number of decimal places to round numerical values to. Defaults to 2.
 #' @param out2 If "df", outputs a data frame (tibble). Else if "COIN" attaches to .$Results in an updated COIN.
 #'
-#' @examples \dontrun{"test")}
+#' @examples \dontrun{
+#' # build ASEM COIN up to aggregation
+#' ASEM <- build_ASEM()
+#' # results table of scores for index and aggregates (excluding indicator scores)
+#' getResults(ASEM, tab_type = "Aggregates")
+#' }
 #'
 #' @return Results table as data frame or updated COIN.
+#'
+#' @seealso
+#' * [resultsDash()] Interactive results dashboard
+#' * [coin2Excel()] Export results to Excel
 #'
 #' @export
 
@@ -139,13 +152,20 @@ getResults <- function(COIN, tab_type = "Summary", use = "scores", order_by = NU
 #' Convert a data frame to ranks
 #'
 #' Replaces all numerical columns of a data frame with their ranks. Uses sport ranking, i.e. ties
-#' share the highest rank place.
+#' share the highest rank place. Ignores non-numerical columns.
 #'
 #' @param df A data frame
 #'
-#' @examples \dontrun{"test")}
+#' @examples \dontrun{
+#' # some random data
+#' df <- as.data.frame(matrix(runif(20), 5, 4))
+#' # convert to ranks
+#' rankDF(df)}
 #'
 #' @return Data frame with ranks
+#'
+#' @seealso
+#' * [roundDF()] Round a data frame to a specified number of decimals
 #'
 #' @export
 
@@ -171,7 +191,7 @@ rankDF <- function(df){
 #'   * Checks that column names are the same, and that the matching column has the same entries
 #'   * Checks column by column that the elements are the same, after sorting according to the matching column
 #'
-#' It then returns summarises for each column whether there are any differences, and also what the differences are, if any.
+#' It then summarises for each column whether there are any differences, and also what the differences are, if any.
 #'
 #' This is intended to cross-check results. For example, if you run something in COINr and want to check indicator results against
 #' external calculations.
@@ -181,7 +201,15 @@ rankDF <- function(df){
 #' @param matchcol A common column name that is used to match row order. E.g. this might be UnitCode.
 #' @param sigfigs The number of significant figures to use for matching numerical columns
 #'
-#' @examples \dontrun{"test")}
+#' @examples \dontrun{
+#' # take a sample of indicator data (including the UnitCode column)
+#' data1 <- ASEMIndData[c(2,12:15)]
+#' # copy the data
+#' data2 <- data1
+#' # make a change: replace one value in data2 by NA
+#' data2[1,2] <- NA
+#' # compare data frames
+#' compareDF(data1, data2, matchcol = "UnitCode")}
 #'
 #' @return A list with comparison results
 #'
@@ -292,8 +320,10 @@ compareDF <- function(df1, df2, matchcol, sigfigs = 5){
 
 #' Generate unit report
 #'
-#' Generates a scorecard for a given unit using an R Markdown template. Most likely you will want to customise the template
-#' which can be found in the COINr installed package directory under /inst. Currently, a few examples are given, such as some charts and basic summary statistics.
+#' Generates a scorecard for a given unit using an R Markdown template.
+#'
+#' Most likely you will want to customise the template which can be found in the COINr installed package directory under /inst.
+#' Currently, a few examples are given, such as some charts and basic summary statistics.
 #'
 #' This function will render the unit report to either pdf, html or word doc. As mentioned below, if you have html widgets
 #' such as interactive plotly plots, or COINr iplot functions, you will need to install the webshot package to be able to
@@ -316,9 +346,13 @@ compareDF <- function(df1, df2, matchcol, sigfigs = 5){
 #' @param rmd_template A character string specifying the full file path to an rmd template which is used to generate the report. If this is not specified,
 #' defaults to COINr's inbuilt template example.
 #'
-#' @examples \dontrun{"test")}
+#' @examples \dontrun{
+#' # build ASEM COIN up to aggregation
+#' ASEM <- build_ASEM()
+#' # generate a unit report for NZ
+#' getUnitReport(ASEM, usel = "NZL", out_type = ".html")}
 #'
-#' @return Markdown document rendered to Word.
+#' @return Markdown document rendered to HTML, pdf or Word.
 #'
 #' @export
 
@@ -368,11 +402,22 @@ COINr documentation and the help file of this function for more details.")
 #'
 #' Generates a summary table for a single unit. This is mostly useful in unit reports.
 #'
+#' This returns the scores and ranks for each indicator/aggregate as specified in `aglevs`. It orders the table so that
+#' the highest aggregation levels are first. This means that if the index level is included, it will be first.
+#'
 #' @param COIN A COIN
 #' @param usel A selected unit code
 #' @param aglevs The aggregation levels to display results from.
 #'
-#' @examples \dontrun{"test")}
+#' @examples \dontrun{
+#' # build ASEM COIN up to aggregation
+#' ASEM <- build_ASEM()
+#' # generate unit summary for NZ - index and sub-indexes only
+#' getUnitSummary(ASEM, usel ="NZL", aglevs = c(4,3))}
+#'
+#' @seealso
+#' * [getUnitReport()] Automatic unit report as html, pdf or Word
+#' * [getStrengthNWeak()] Top N-ranking indicators for a given unit
 #'
 #' @return A data frame summary table.
 #'
@@ -411,8 +456,13 @@ getUnitSummary <- function(COIN, usel, aglevs){
 
 #' Generate strengths and weaknesses for a specified unit
 #'
-#' Generates a table of strengths and weaknesses for a selected unit, based on ranks. This currently only works
-#' at the indicator level. Indicators with NAs are ignored.
+#' Generates a table of strengths and weaknesses for a selected unit, based on ranks.
+#'
+#' This currently only works at the indicator level. Indicators with NA values for the selected unit are ignored.
+#' Strengths and weaknesses mean the top N-ranked indicators for the selected unit. Effectively, this takes the rank that the
+#' selected unit has in each indicator, sorts the ranks, and takes the top N highest and lowest.
+#'
+#' NOTE: this function currently requires data to be aggregated. This restriction may be relaxed at some point.
 #'
 #' @param COIN A COIN
 #' @param usel A selected unit code
@@ -421,9 +471,17 @@ getUnitSummary <- function(COIN, usel, aglevs){
 #' @param withcodes If TRUE (default), also includes a column of indicator codes. Setting to FALSE may be more useful
 #' in generating reports, where codes are not helpful.
 #'
-#' @examples \dontrun{"test")}
+#' @examples \dontrun{
+#' # build ASEM COIN up to aggregation
+#' ASEM <- build_ASEM()
+#' # generate top 5 strengths and weaknesses for GBR
+#' getStrengthNWeak(ASEM, usel = "GBR")}
 #'
-#' @return A data frame
+#' @seealso
+#' * [getUnitReport()] Automatic unit report as html, pdf or Word
+#' * [getUnitSummary()] Summary of scores for a given unit
+#'
+#' @return A list containing a data frame of strengths, and a data frame of weaknesses.
 #'
 #' @export
 
@@ -445,7 +503,7 @@ getStrengthNWeak <- function(COIN, usel = NULL, topN = 5, bottomN = 5, withcodes
   rnks_usel <- rnks_usel[,!is.na(rnks_usel[1,])]
 
   # sort by row values
-  rnks_usel <- rnks_usel[ ,order(rnks_usel[1,])]
+  rnks_usel <- rnks_usel[ ,order(as.numeric(rnks_usel[1,]))]
 
   # get strengths and weaknesses
   Scodes <- colnames(rnks_usel)[1:topN]

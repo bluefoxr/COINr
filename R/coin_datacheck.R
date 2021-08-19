@@ -27,9 +27,13 @@
 #'
 #' @importFrom dplyr select starts_with pull mutate filter
 #'
-#' @examples \dontrun{checkData(COIN)}
+#' @examples \dontrun{
+#' # build ASEM COIN
+#' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+#' # return stats to the COIN
+#' ASEM <- checkData(ASEM, dset = "Raw", unit_screen = TRUE)}
 #'
-#' @return An updated COIN object with tables showing missing data, and a filtered list of countries to include in subsequent calculations.
+#' @return An updated COIN with tables showing missing data, and a filtered list of countries to include in subsequent calculations.
 #' @export
 
 checkData <- function(COIN, dset = NULL, ind_thresh = NULL, zero_thresh = NULL,

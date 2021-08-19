@@ -22,10 +22,12 @@
 #' @importFrom purrr "map_lgl"
 #' @importFrom stats "na.omit"
 #'
-#' @examples \dontrun{COINobj <- assemble(IndData, IndMeta, AggMeta)}
+#' @examples \dontrun{
+#' # build the ASEM COIN
+#' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta}
 #'
 #' @return A "COIN" (list) formatted to the specifications of COINr.
-#' Note that the COIN object is just a tag. It doesn't impose restrictions on the structure of the list.
+#' Note that the COIN object is an S3 class. It doesn't impose restrictions on the structure of the list.
 #'
 #' @export
 

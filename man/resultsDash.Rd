@@ -7,17 +7,32 @@
 resultsDash(COIN, dset = "Aggregated")
 }
 \arguments{
-\item{COIN}{The COIN object, or a data frame of indicator data.}
+\item{COIN}{The COIN object}
 
-\item{dset}{The data set to plot.}
+\item{dset}{The initial data set to explore.}
 }
 \value{
-Interactive visualisation
+Interactive app for exploring results
 }
 \description{
 Generates an interactive visualisation of results. Requires Shiny and an active R session.
 }
+\details{
+This function provides a fast way to present and explore results in a COIN. It plots interactive bar charts of any indicator
+or aggregate, and maps if the unit codes are ISO alpha-3 country codes. It also includes an interactive results table, and the
+possibility to quickly compare units on a radar chart.
+}
 \examples{
-\dontrun{coin_indicatordash(COIN, icodes = NULL, dset = "raw")}
+\dontrun{
+# build ASEM up to results
+ASEM <- build_ASEM()
+# launch results dashboard
+resultsDash(ASEM)}
 
+}
+\seealso{
+\itemize{
+\item \code{\link[=indDash]{indDash()}} shiny dashboard for exploring indicator distributions
+\item \code{\link[=rew8r]{rew8r()}} shiny dashboard for altering weights and visualising correlations
+}
 }

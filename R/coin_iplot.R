@@ -1,8 +1,8 @@
 #' Interactive indicator distribution plots
 #'
-#' Generates a javascript distribution plot of a single indicator, using Plotly. Plot can be embedded e.g. in
+#' Generates a javascript distribution plot of a single indicator, using **plotly**. Plot can be embedded e.g. in
 #' HTML documents, websites, etc, or used for more interactive data exploration. This only plots one
-#' indicator at a time - for multiple plots you can use plotIndDist()
+#' indicator at a time - for multiple plots you can use `plotIndDist()`.
 #'
 #' @param COIN The COIN object, or a data frame of indicator data
 #' @param dset The source data set to use for indicator data (if input is COIN object)
@@ -13,9 +13,13 @@
 #'
 #' @importFrom plotly plot_ly layout
 #'
-#' @examples \dontrun{plotIndDist(ASEM, type = "Box", icodes = "Physical")}
+#' @examples \dontrun{
+#' # build ASEM COIN
+#' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+#' # plot renewable energy indicator
+#' iplotIndDist(ASEM, "Raw", "Renew", ptype = "Violin")}
 #'
-#' @return Nice plots
+#' @return Plots generated with **plotly**. These can be edited further with **plotly** commands.
 #'
 #' @export
 
@@ -102,9 +106,13 @@ iplotIndDist <- function(COIN, dset = "Raw", icodes = NULL, ptype = "Violin", ag
 #'
 #' @importFrom plotly plot_ly
 #'
-#' @examples \dontrun{plotIndDist(ASEM, type = "Box", icodes = "Physical")}
+#' @examples \dontrun{
+#' # build ASEM COIN
+#' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+#' # plot CO2 against renewable energy indicator
+#' iplotIndDist2(ASEM, dsets = "Raw", icodes = c("Renew", "CO2"))}
 #'
-#' @return Nice plots
+#' @return Plots generated with **plotly**. These can be edited further with **plotly** commands.
 #'
 #' @export
 

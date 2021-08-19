@@ -32,7 +32,7 @@ scrs <- COIN$Results$FullScores
 ```{r barchart}
 library(COINr)
 # plot bar chart
-iplotBar(COIN, dset = "Aggregated", isel = "Index", usel = usel)
+iplotBar(COIN, dset = "Aggregated", isel = "Index", usel = usel, aglev = 4)
 ```
 
 `r iname` is ranked `r rnks$Index[rnks$UnitCode == usel]` out of `r nrow(rnks)` in the overall index. At the pillar level, its scores are summarised as follows:

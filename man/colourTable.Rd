@@ -38,9 +38,14 @@ Interactive table
 }
 \description{
 Given a data frame, generates a conditionally-formatted html table using reactable. This function is used by
-iplotTable().
+iplotTable(). It is a quick wrapper for \code{reactable::reactable}.
 }
 \examples{
 \dontrun{colourTable(as.data.frame(matrix(runif(12), 3, 4)))}
 
+}
+\seealso{
+\itemize{
+\item \code{\link[=iplotTable]{iplotTable()}} Interactive table of indicator data (from a COIN)
+}
 }

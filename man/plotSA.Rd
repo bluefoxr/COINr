@@ -13,5 +13,16 @@ plotSA(SAresults, ptype = "bar")
 }
 \description{
 Plots sensitivity indices as bar or pie charts.
-To use this function you first need to run sensitivity().
+}
+\details{
+To use this function you first need to run sensitivity(). Then enter the resulting list as the
+\code{SAresults} argument here. I haven't provided an example because of the time required for performing
+a sensitivity analysis.
+See \href{https://bluefoxr.github.io/COINrDoc/sensitivity-analysis.html}{COINr online documentation} for more details.
+}
+\seealso{
+\itemize{
+\item \code{\link[=sensitivity]{sensitivity()}} Perform global sensitivity or uncertainty analysis on a COIN
+\item \code{\link[=plotSARanks]{plotSARanks()}} Plot confidence intervals on ranks following a sensitivity analysis
+}
 }

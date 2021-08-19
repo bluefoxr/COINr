@@ -47,9 +47,40 @@ If this is not specified, bootstrapping is not applied. Ignored if SA_type = "UA
 Sensitivity analysis results
 }
 \description{
-Performs uncertainty and sensitivity analysis
+Performs global uncertainty and sensitivity analysis on a COIN.
+}
+\details{
+To perform a sensitivity or uncertainty analysis, you must specify \emph{which} parameters/assumptions to vary and \emph{what} their alternative
+values are. This is the \code{SA_specs} argument below. To understand how this works, please see the \href{https://bluefoxr.github.io/COINrDoc/sensitivity-analysis.html#sensitivity-in-coinr}{COINr online documentation}.
 }
 \examples{
-\dontrun{SAresults <- sensitivity(COIN, v_targ = "Index")}
+\dontrun{
 
+# build ASEM COIN up to aggregation
+ASEM <- build_ASEM()
+
+# define noise to be applied to weights
+nspecs <- data.frame(AgLevel = c(2,3), NoiseFactor = c(0.25,0.25))
+
+# create list specifying assumptions to vary and alternatives
+SAspecs <- list(
+  impute = list(imtype = c("indgroup_mean", "ind_mean", "none")),
+  normalise = list(ntype = c("minmax", "rank", "dist2max")),
+  weights = list(NoiseSpecs = nspecs, Nominal = "Original")
+)
+
+# run uncertainty analysis
+SAresults <- sensitivity(ASEM, v_targ = "Index",
+                         SA_specs = SAspecs,
+                         N = 100,
+                         SA_type = "UA")
+
+# to run a sensitivity analysis set SA_type = "SA" (takes longer)}
+
+}
+\seealso{
+\itemize{
+\item \code{\link[=plotSARanks]{plotSARanks()}} Plot confidence intervals of ranks following UA or SA
+\item \code{\link[=plotSA]{plotSA()}} Plot sensitivity indices following a sensitivity analysis
+}
 }

@@ -3,6 +3,10 @@
 #' This provides a direct interface for reading a COIN Tool input deck and converting it to COINr.
 #' You need to provide a COIN Tool file, with the "Database" sheet properly compiled.
 #'
+#' The [COIN Tool](https://knowledge4policy.ec.europa.eu/composite-indicators/coin-tool_en) is an Excel-based tool for building composite indicators.
+#'
+#' See [COINr online documentation](https://bluefoxr.github.io/COINrDoc/helper-functions.html#r-interfaces) for more details and an example.
+#'
 #' @param fname The file name and path to read, e.g. "C:/Documents/COINToolFile.xlsx"
 #' @param makecodes Logical: if TRUE, will generate short indicator codes based on indicator names,
 #' otherwise if FALSE, will use COIN Tool indicator codes "Ind.01", etc. Currently only does this
@@ -15,8 +19,8 @@
 #' @importFrom purrr map_lgl
 #' @importFrom dplyr filter
 #'
-#' @examples \dontrun{
-#' out <- coinToolIn("C:/Documents/COINToolFile.xlsx")}
+#' @seealso
+#' * [coin2Excel()] Export COIN contents to Excel
 #'
 #' @return A list
 #'
@@ -135,7 +139,11 @@ COINToolIn <- function(fname, makecodes = FALSE, oldtool = FALSE){
 #' @importFrom stringr str_to_title
 #'
 #' @examples \dontrun{
-#' shortcode <- names2Codes("Renewable energy expenditure")}
+#' # generate codes for indicators in the ASEM data set (first five only)
+#' names2Codes(ASEMIndMeta$IndName[1:5], maxlet = 3)}
+#'
+#' @seealso
+#' * [COINToolIn()] Import data from the COIN Tool (Excel)
 #'
 #' @return A corresponding character vector, but with short codes, and no duplicates.
 #'

@@ -45,13 +45,29 @@ specify a subset of these and the others will revert to defaults.}
 \item{useweights}{An optional list of weights to use (this is used mainly in the rew8r app)}
 }
 \value{
-A correlation map
+A \strong{plotly} correlation map
 }
 \description{
 Plots an interactive heatmap of a correlation matrix. Currently this only works with the
 aggregated data set, i.e. you need to have aggregated the data first before using this.
 }
+\details{
+This is a slightly involved wrapper for \strong{plotly}. It allows plotting any level against any other, and outputs correlation
+heat maps as HTML widgets. It has some flexibility regarding grouping of indicators, colouring, treatment of insignificant correlations,
+and the correlation type. Explore the arguments and see.
+}
 \examples{
-\dontrun{flags <- iplotCorr(COIN, aglevs = c(2,3))}
+\dontrun{
+# build ASEM COIN up to aggregation
+ASEM <- build_ASEM()
+# correlation heatmap of pillars against sub-indexes
+iplotCorr(ASEM, aglevs = c(2,3))}
 
+}
+\seealso{
+\itemize{
+\item \code{\link[=plotCorr]{plotCorr()}} Static correlation heat maps
+\item \code{\link[=rew8r]{rew8r()}} Interactive app for adjusting weights and seeing effects on correlations
+\item \code{\link[=getCorr]{getCorr()}} Get correlations between indicators/levels
+}
 }

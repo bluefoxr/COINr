@@ -1,6 +1,9 @@
 #' Get table of indicator statistics for any data set
 #'
-#' Takes a COIN object, or data frame and returns a table of statistics, including max, min, median, mean, std, kurtosis, etc. Flags indicators with possible outliers.
+#' Takes a COIN , or data frame and returns a table of statistics, including max, min, median, mean, std, kurtosis, etc.
+#' Flags indicators with possible outliers, and checks for collinearity with other indicators and denominators (if any).
+#' Also checks number of unique values and percentage of zeros. Also returns correlation matrices and a table of outliers,
+#' as a list.
 #'
 #' @param COINobj A list of indicator data, stuctured using the COIN_assemble function
 #' @param icodes A character vector of indicator names to analyse. Defaults to all indicators.
@@ -21,9 +24,13 @@
 #' @importFrom tibble tibble add_column
 #' @importFrom stats IQR cor median sd
 #'
-#' @examples \dontrun{df_norm <- getStats(COINobj, dset = "Raw")}
+#' @examples \dontrun{
+#' # build ASEM COIN
+#' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+#' # get list of stats from raw data set
+#' stat_list <- getStats(ASEM, dset = "Raw", out2 = "list")}
 #'
-#' @return If the input is a COIN object, returns an updated COIN object with relevant tables. If the input is a data frame, returns a table as a data frame.
+#' @return Either an updated COIN object with relevant tables, or a list.
 #'
 #' @export
 

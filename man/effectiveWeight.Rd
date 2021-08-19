@@ -16,9 +16,13 @@ sunburst plot.
 \description{
 This calculates the effective weights of each element in the indicator hierarchy. This is
 useful for understanding e.g. the true weight of each indicator in the framework and is also
-used in plotframework().
+used in \code{plotframework()}.
 }
 \examples{
-\dontrun{effectiveWeight(COIN)}
+\dontrun{
+# build ASEM COIN
+ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+# get effective weights
+effwts <- effectiveWeight(ASEM)}
 
 }

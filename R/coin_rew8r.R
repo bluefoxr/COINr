@@ -2,12 +2,38 @@
 #'
 #' Interactive gadget which lets you adjust weights and see the effects. Weights can be saved with new names to the COIN object.
 #'
+#' Correlations between indicators, and between indicators and index, can inform about how well the composite indicator is conveying
+#' information in the underlying indicators. For example, a correlation of zero between an indicator and the index shows that knowing
+#' the index ranks, you have no indication of what the ranks of the underlying indicator are. Since one of the objectives of a composite
+#' indicator is to summarise the information in its underlying indicators, this can be a problem.
+#'
+#' The correlation between indicators and index (and other levels) can be adjusted by changing weights. But the effect of changing weights
+#' can be hard to gauge. The `rew8r()` app allows you to play around with the weights at any level, and to see what happens to the resulting
+#' correlations of interest. It also demonstrates what happens to the results. Rather than changing weights and manually regenerating the
+#' results, the `rew8r()` app does all this for you. If you find a set or sets of weights that you like, you can also save it/them back to the COIN
+#' as a new weight-set(s). To do this, click "Save", and then at the end of the session, "Close app".
+#'
+#' Consider that changing weights to "fix" correlations may result in unusual sets of weights that are hard to justify. This tool may
+#' be more useful as a curiosity, as part of a "what-if" analysis, or simply to better understand what is going on inside your index.
+#'
+#' NOTE that you need to have aggregated your data first before using this.
+#'
 #' @param COIN COIN object
 #'
 #' @importFrom plotly plot_ly plotlyOutput layout add_trace renderPlotly add_segments
 #' @importFrom reactable renderReactable reactableOutput
 #'
-#' @return An updated COIN object with additional sets of weights.
+#' @examples \dontrun{
+#' # build ASEM COIN up to aggregation
+#' ASEM <- build_ASEM()
+#' # launch app
+#' ASEM <- rew8r(ASEM)}
+#'
+#' @seealso
+#' * [weightOpt()] Correlation-optimised weights
+#' * [plotCorr()] Correlation plots
+#'
+#' @return An updated COIN object with additional sets of weights, if specified.
 #'
 #' @export
 
@@ -340,8 +366,11 @@ rew8r <- function(COIN){
 #' This is a short cut function which takes a new set of indicator weights, and recalculates the COIN results
 #' based on these weights. It returns a summary of rankings and the correlations between indicators and index.
 #'
+#' This function is principally used inside `rew8r()`. The `w` argument should be a data frame of weights, of the same format
+#' as the data frames found in `.$Parameters$Weights`.
+#'
 #' @param COIN COIN object
-#' @param w Full list of weights for each level
+#' @param w Full data frame of weights for each level
 #' @param aglevs A 2-length vector with two aggregation levels to correlate against each other
 #' @param icodes List of two character vectors of indicator codes, corresponding to the two aggregation levels
 #' @param cortype Correlation type. Either "pearson" (default), "kendall" or "spearman".
@@ -352,6 +381,17 @@ rew8r <- function(COIN){
 #'
 #' @return A list with .$cr is a vector of correlations between each indicator and the index, and
 #' .$dat is a data frame of rankings, with unit code, and index, input and output scores
+#'
+#' @examples \dontrun{
+#' # build ASEM COIN up to aggregation
+#' ASEM <- build_ASEM()
+#' # get correlations between pillars (level 2) and index (level 4)
+#' # original weights used just for demonstration, normally you would alter first.
+#' weights2corr(ASEM, ASEM$Parameters$Weights$Original, aglevs = c(2,4))}
+#'
+#' @seealso
+#' * [rew8r()] Interactive app for adjusting weights and seeing effects on correlations
+#' * [getCorr()] Get correlations between indicators/levels
 #'
 #' @export
 
@@ -421,7 +461,7 @@ weights2corr <- function(COIN, w, aglevs = NULL, icodes = NULL,
 #' Scatter plot of correlations against weights
 #'
 #' Plots correlations on the x axis and weights on the y axis. Allows a selected highlighted point
-#' and a line showing low correlation boundary.
+#' and a line showing low correlation boundary. This function is intended for use inside `rew8r()`.
 #'
 #' @param dat Data frame with first col indicator codes, second is weights, third is correlations
 #' @param facet Logical: if TRUE creates subplots.
@@ -431,6 +471,10 @@ weights2corr <- function(COIN, w, aglevs = NULL, icodes = NULL,
 #' @param hicorval x value of high correlation line
 #'
 #' @importFrom rlang .data
+#'
+#' @seealso
+#' * [rew8r()] Interactive app for adjusting weights and seeing effects on correlations
+#' * [getCorr()] Get correlations between indicators/levels
 #'
 #' @return A scatter plot, also outputs event data (the clicked indicator)
 #'
@@ -562,30 +606,46 @@ corrweightscat <- function(dat, facet = FALSE, acvar = NULL, linesw = FALSE,
 }
 
 
-#' Highly correlated indicators in same sub pillar
+#' Highly correlated indicators in the same aggregation group
 #'
-#' This returns a data frame of any highly correlated indicators within the same sub-pillar.
+#' This returns a data frame of any highly correlated indicators within the same aggregation group. The level of the aggregation
+#' group can be controlled by the grouplev argument.
 #'
 #' @param COIN Data frame with first col indicator codes, second is weights, third is correlations
 #' @param dset The data set to use for correlations.
 #' @param hicorval A threshold to flag high correlation. Default 0.9.
+#' @param grouplev The level to group indicators in. E.g. if `grouplev = 2` it will look for high correlations between indicators that
+#' belong to the same group in Level 2.
 #' @param cortype The type of correlation, either "pearson" (default), "spearman" or "kendall"
 #'
 #' @importFrom reshape2 melt
 #'
-#' @return A data frame with one entry for every indicator pair that is highly correlated within a sub-pillar.
+#' @examples \dontrun{
+#' # Assemble ASEM COIN
+#' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+#' # check for any within-pillar correlations of > 0.7
+#' hicorrSP(ASEM, dset = "Raw", hicorval = 0.7, , grouplev = 2)}
+#'
+#' @seealso
+#' * [rew8r()] Interactive app for adjusting weights and seeing effects on correlations
+#' * [getCorr()] Get correlations between indicators/levels
+#'
+#' @return A data frame with one entry for every indicator pair that is highly correlated within the same group, at the specified level.
 #' Pairs are only reported once, i.e. only uses the upper triangle of the correlation matrix.
 #'
 #' @export
 
-hicorrSP <- function(COIN, dset = "Normalised", hicorval = 0.9, cortype = "pearson"){
+hicorrSP <- function(COIN, dset = "Normalised", hicorval = 0.9, cortype = "pearson",
+                     grouplev = NULL){
 
-  out1 <- getIn(COIN, dset = "Normalised")
+  if(is.null(grouplev)){grouplev <- 2}
+
+  out1 <- getIn(COIN, dset = dset)
 
   corr_ind <- stats::cor(out1$ind_data_only,
                          method = cortype, use = "pairwise.complete.obs") %>% round(2)
 
-  subpill <- dplyr::select(COIN$Input$IndMeta, dplyr::starts_with("Agg"))[[1]]
+  subpill <- dplyr::select(COIN$Input$IndMeta, dplyr::starts_with("Agg"))[[grouplev-1]]
 
   samepill <- matrix(FALSE, nrow = nrow(corr_ind), ncol = ncol(corr_ind))
 
@@ -599,7 +659,7 @@ hicorrSP <- function(COIN, dset = "Normalised", hicorval = 0.9, cortype = "pears
   corr_ind[lower.tri(corr_ind)] <- NA
   hicorr <- reshape2::melt(corr_ind)
   colnames(hicorr) <- c("Ind1", "Ind2", "Corr")
-  hicorr <- cbind(SubPill = rep(subpill,nrow(corr_ind)), hicorr)
+  hicorr <- cbind(AggGroup = rep(subpill,nrow(corr_ind)), hicorr)
   hicorr <- hicorr[!is.na(hicorr$Corr),]
   hicorr <- hicorr[hicorr$Corr>hicorval,]
 
@@ -611,6 +671,10 @@ hicorrSP <- function(COIN, dset = "Normalised", hicorval = 0.9, cortype = "pears
 #'
 #' Plots an interactive heatmap of a correlation matrix. Currently this only works with the
 #' aggregated data set, i.e. you need to have aggregated the data first before using this.
+#'
+#' This is a slightly involved wrapper for **plotly**. It allows plotting any level against any other, and outputs correlation
+#' heat maps as HTML widgets. It has some flexibility regarding grouping of indicators, colouring, treatment of insignificant correlations,
+#' and the correlation type. Explore the arguments and see.
 #'
 #' @param COIN The COIN object
 #' @param aglevs A two length vector specifying which level to plot against which level. E.g. c(2,4) for
@@ -632,9 +696,18 @@ hicorrSP <- function(COIN, dset = "Normalised", hicorval = 0.9, cortype = "pears
 #' @importFrom reshape2 melt
 #' @importFrom rlang .data
 #'
-#' @examples \dontrun{flags <- iplotCorr(COIN, aglevs = c(2,3))}
+#' @examples \dontrun{
+#' # build ASEM COIN up to aggregation
+#' ASEM <- build_ASEM()
+#' # correlation heatmap of pillars against sub-indexes
+#' iplotCorr(ASEM, aglevs = c(2,3))}
 #'
-#' @return A correlation map
+#' @seealso
+#' * [plotCorr()] Static correlation heat maps
+#' * [rew8r()] Interactive app for adjusting weights and seeing effects on correlations
+#' * [getCorr()] Get correlations between indicators/levels
+#'
+#' @return A **plotly** correlation map
 #' @export
 
 iplotCorr <- function(COIN, aglevs = NULL, insig = FALSE, levs = TRUE, grouprects = TRUE,
@@ -906,8 +979,13 @@ iplotCorr <- function(COIN, aglevs = NULL, insig = FALSE, levs = TRUE, grouprect
 
 #' Weight optimisation
 #'
-#' This function provides optimised weights to agree with a pre-specified vector of
-#' "target importances"
+#' This function provides optimised weights to agree with a pre-specified vector of "target importances".
+#'
+#' This is a linear version of the weight optimisation proposed in [this paper](https://doi.org/10.1016/j.ecolind.2017.03.056).
+#' Weights are optimised to agree with a pre-specified vector of "importances". The optimised weights are returned back to the COIN.
+#'
+#' See the [chapter in the COINr online documentation](https://bluefoxr.github.io/COINrDoc/weighting-1.html#automatic-re-weighting)
+#' for more details.
 #'
 #' @param COIN COIN object
 #' @param itarg a vector of (relative) target importances. For example, c(1,2,1) would specify that the second
@@ -923,6 +1001,16 @@ iplotCorr <- function(COIN, aglevs = NULL, insig = FALSE, levs = TRUE, grouprect
 #' creating a new list of weights in .$Parameters$Weights. Otherwise if "list" outputs to a list (default).
 #'
 #' @importFrom stats optim
+#'
+#' @examples \dontrun{
+#' # build ASEM COIN up to aggregation
+#' ASEM <- build_ASEM()
+#' # optimise sub-pillar weights to give equal correlations with index
+#' ASEM <- weightOpt(ASEM, itarg = "equal", aglev = 3, out2 = "COIN")}
+#'
+#' @seealso
+#' * [rew8r()] Interactive app for adjusting weights and seeing effects on correlations
+#' * [getPCA()] PCA, including weights from PCA
 #'
 #' @return An updated object with optimised weights
 #'

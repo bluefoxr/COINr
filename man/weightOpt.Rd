@@ -40,6 +40,26 @@ creating a new list of weights in .$Parameters$Weights. Otherwise if "list" outp
 An updated object with optimised weights
 }
 \description{
-This function provides optimised weights to agree with a pre-specified vector of
-"target importances"
+This function provides optimised weights to agree with a pre-specified vector of "target importances".
+}
+\details{
+This is a linear version of the weight optimisation proposed in \href{https://doi.org/10.1016/j.ecolind.2017.03.056}{this paper}.
+Weights are optimised to agree with a pre-specified vector of "importances". The optimised weights are returned back to the COIN.
+
+See the \href{https://bluefoxr.github.io/COINrDoc/weighting-1.html#automatic-re-weighting}{chapter in the COINr online documentation}
+for more details.
+}
+\examples{
+\dontrun{
+# build ASEM COIN up to aggregation
+ASEM <- build_ASEM()
+# optimise sub-pillar weights to give equal correlations with index
+ASEM <- weightOpt(ASEM, itarg = "equal", aglev = 3, out2 = "COIN")}
+
+}
+\seealso{
+\itemize{
+\item \code{\link[=rew8r]{rew8r()}} Interactive app for adjusting weights and seeing effects on correlations
+\item \code{\link[=getPCA]{getPCA()}} PCA, including weights from PCA
+}
 }

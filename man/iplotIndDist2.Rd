@@ -27,13 +27,17 @@ c("Raw", "Treated").}
 be specified as a vector if the two indicators are from different levels.}
 }
 \value{
-Nice plots
+Plots generated with \strong{plotly}. These can be edited further with \strong{plotly} commands.
 }
 \description{
 Generates a javascript distribution plot of two indicators, using Plotly. Plot can be embedded e.g. in
 HTML documents, websites, etc, or used for more interactive data exploration.
 }
 \examples{
-\dontrun{plotIndDist(ASEM, type = "Box", icodes = "Physical")}
+\dontrun{
+# build ASEM COIN
+ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+# plot CO2 against renewable energy indicator
+iplotIndDist2(ASEM, dsets = "Raw", icodes = c("Renew", "CO2"))}
 
 }

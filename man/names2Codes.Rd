@@ -22,6 +22,12 @@ Intended for use when importing from the COIN Tool.
 }
 \examples{
 \dontrun{
-shortcode <- names2Codes("Renewable energy expenditure")}
+# generate codes for indicators in the ASEM data set (first five only)
+names2Codes(ASEMIndMeta$IndName[1:5], maxlet = 3)}
 
+}
+\seealso{
+\itemize{
+\item \code{\link[=COINToolIn]{COINToolIn()}} Import data from the COIN Tool (Excel)
+}
 }

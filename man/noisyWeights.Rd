@@ -34,3 +34,21 @@ while the NoiseFactor refers to the size of the perturbation. If e.g. a row is A
 NoiseFactor = 0.2, this will allow the weights in aggregation level 1 to deviate by +/- 20\% of their
 nominal values (the values in w).
 }
+\examples{
+\dontrun{
+
+# build ASEM COIN
+ASEM <- ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta,
+AggMeta = ASEMAggMeta)
+
+# generate 2 sets of weights based on original ASEM weights,
+# perturbed by +/-20\% only at indicator level
+wlist <- noisyWeights(ASEM$Parameters$Weights$Original,
+noise_specs = data.frame(AgLevel = 1, NoiseFactor = 0.2), Nrep = 2)}
+
+}
+\seealso{
+\itemize{
+\item \code{\link[=sensitivity]{sensitivity()}} Perform global sensitivity or uncertainty analysis on a COIN
+}
+}

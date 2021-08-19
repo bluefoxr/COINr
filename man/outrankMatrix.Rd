@@ -17,5 +17,14 @@ and will be rescaled to sum to 1. If w is not specified, defaults to equal weigh
 Outranking matrix
 }
 \description{
-Constructs an outranking matrix based on a data frame of indicator data and corresponding weights
+Constructs an outranking matrix based on a data frame of indicator data and corresponding weights. This function is used inside
+\code{aggregate()}.
+}
+\examples{
+\dontrun{
+# get a sample of a few indicators
+ind_data <- ASEMIndData[12:16]
+# calculate outranking matrix
+outrankMatrix(ind_data)}
+
 }

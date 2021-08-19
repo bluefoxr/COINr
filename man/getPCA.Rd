@@ -2,9 +2,16 @@
 % Please edit documentation in R/coin_PCA.R
 \name{getPCA}
 \alias{getPCA}
-\title{Perform PCA}
+\title{Perform PCA on a COIN}
 \usage{
-getPCA(COIN, dset = "Raw", icodes = NULL, aglev = NULL, out2 = "obj")
+getPCA(
+  COIN,
+  dset = "Raw",
+  icodes = NULL,
+  aglev = NULL,
+  nowarnings = FALSE,
+  out2 = "COIN"
+)
 }
 \arguments{
 \item{COIN}{An input object. The function can handle either the COIN object, or a data frame.
@@ -19,7 +26,9 @@ an aggregation group name, and data will be subsetted accordingly. NOTE does not
 \item{aglev}{The aggregation level to take indicator data from. Integer from 1 (indicator level)
 to N (top aggregation level, typically the index).}
 
-\item{out2}{If the input is a COIN object, this controls where to send the output. If "obj", it
+\item{nowarnings}{If FALSE (default), will give warnings where missing data are found. Set to TRUE to suppress these warnings.}
+
+\item{out2}{If the input is a COIN object, this controls where to send the output. If "COIN", it
 sends the results to the COIN object, otherwise if "list", outputs to a separate list.}
 }
 \value{
@@ -32,6 +41,13 @@ corresponding to the first principal component, i.e the weights that maximise th
 by the linear combination of indicators.
 }
 \examples{
-\dontrun{PCAresults <- getPCA(COIN, dset = "Raw")}
+\dontrun{
+# build ASEM COIN
+ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta,
+AggMeta = ASEMAggMeta)
+# get PCA results for pillar groups inside "Conn" sub-index
+# (warnings about missing data are suppressed)
+PCAres <- getPCA(ASEM, dset = "Raw", icodes = "Sust",
+aglev = 1, nowarnings = TRUE, out2 = "list")}
 
 }

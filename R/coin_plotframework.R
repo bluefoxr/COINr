@@ -1,11 +1,11 @@
 #' Interactive sunburst plot of index structure
 #'
-#' Plots the structure of the index using a sunburst plot. Output can be used as an interactive plot
+#' Plots the structure of the index using a sunburst plot using **plotly**. Output can be used as an interactive plot
 #' in html documents, e.g. via R Markdown.
 #'
 #' Note that this plot is sensitive to the *order* of the elements. If you use assemble() and input
 #' a COIN, this plot should work automatically. If you input a list, you should make sure that the indicator metadata
-#' is ordered by descending order of the hierarchy (i.e. highest level, working downwards)
+#' is ordered by descending order of the hierarchy (i.e. highest level, working downwards).
 #'
 #' @param COIN COIN object, or list with first entry is the indicator metadata, second entry is the aggregation metadata
 #'
@@ -14,9 +14,13 @@
 #' @importFrom matrixStats rowProds
 #' @importFrom purrr map_dfr
 #'
-#' @examples \dontrun{plotframework(COIN)}
+#' @examples \dontrun{
+#' # build ASEM COIN
+#' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+#' # plot framework
+#' plotframework(ASEM)}
 #'
-#' @return Interactive sunburst plot.
+#' @return Interactive sunburst plot. This can be edited further with **plotly** commands.
 #'
 #' @export
 
@@ -42,7 +46,7 @@ plotframework <- function(COIN){
 #'
 #' This calculates the effective weights of each element in the indicator hierarchy. This is
 #' useful for understanding e.g. the true weight of each indicator in the framework and is also
-#' used in plotframework().
+#' used in `plotframework()`.
 #'
 #' @param COIN COIN object, or list with first entry is the indicator metadata, second entry is the aggregation metadata
 #'
@@ -51,7 +55,11 @@ plotframework <- function(COIN){
 #' @importFrom matrixStats rowProds
 #' @importFrom purrr map_dfr
 #'
-#' @examples \dontrun{effectiveWeight(COIN)}
+#' @examples \dontrun{
+#' # build ASEM COIN
+#' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+#' # get effective weights
+#' effwts <- effectiveWeight(ASEM)}
 #'
 #' @return A list with effective weights, as well as a data frame with labels and parents for the
 #' sunburst plot.

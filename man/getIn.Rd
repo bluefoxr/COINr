@@ -43,13 +43,14 @@ named "Ind1" and "Ind5" (if they exist), in the format described below. icodes c
 or aggregation groups, and can call multiple groups.
 
 You can also specify which aggregation level to target, using the "aglev" argument. See examples
-below, and the COINr vignette.
+below, and in particular the \href{https://bluefoxr.github.io/COINrDoc/helper-functions.html#selecting-data-sets-and-indicators}{COINr online documentation}.
 }
 \examples{
 \dontrun{
-
-# Get data from indicators "Ind1" and "Ind5", from the "Raw" data set
-out <- getIn(obj, dset = "Raw", icodes = c("Ind1", "Ind5"))
+# assemble ASEM COIN
+ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+# get indicator data from Social pillar
+SocData <- getIn(ASEM, dset = "Raw", icodes = "Social", aglev = 1)
 }
 
 }

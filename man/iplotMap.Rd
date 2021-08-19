@@ -19,10 +19,20 @@ Interactive map
 \description{
 Generates an interactive choropleth map of specified indicator data. Only works on national
 level data (i.e. one point per country), with countries labeled by ISO alpha-3 codes. See e.g.
-https://www.iso.org/iso-3166-country-codes.html. This function is simply a wrapper for
-the Plotly choropleth map function.
+https://www.iso.org/iso-3166-country-codes.html. This function is simply a quick wrapper for
+the \strong{plotly} choropleth map function.
 }
 \examples{
-\dontrun{coin_indicatordash(COIN, dset = "Raw")}
+\dontrun{
+# assemble ASEM COIN
+ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+# map CO2 indicator
+iplotMap(ASEM, dset = "Raw", isel = "CO2")}
 
+}
+\seealso{
+\itemize{
+\item \code{\link[=iplotBar]{iplotBar()}} bar chart of indicator or aggregate
+\item \code{\link[=resultsDash]{resultsDash()}} interactive dashboard of indicator data
+}
 }

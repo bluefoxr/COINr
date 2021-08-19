@@ -17,5 +17,16 @@ and will be rescaled to sum to 1. If w is not specified, defaults to equal weigh
 Numeric vector of Copeland scores.
 }
 \description{
-Aggregates a data frame of indicator values into a single column using the Copeland method.
+Aggregates a data frame of indicator values into a single column using the Copeland method. This function is used inside
+\code{aggregate()}.
+}
+\examples{
+\dontrun{
+# get a sample of a few indicators
+ind_data <- ASEMIndData[12:16]
+# calculate outranking matrix
+cop_results <- copeland(ind_data)
+# inspect
+cop_results$Scores}
+
 }

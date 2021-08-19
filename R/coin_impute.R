@@ -1,6 +1,7 @@
 #' Impute missing data
 #'
-#' Imputation of data sets using a variety of methods.
+#' Imputation of missing data data sets using a variety of methods (see `imtype`). This also includes the possibility of imputing
+#' by grouping variables, i.e. columns of `IndData` that are prefaced by "Group_".
 #'
 #' @param COIN A COIN or a data frame
 #' @param imtype The type of imputation method. Either "agg_mean" (the mean of normalised indicators inside the aggregation group),
@@ -23,7 +24,11 @@
 #' @importFrom rlang .data
 #' @importFrom Amelia amelia
 #'
-#' @examples \dontrun{COIN <- coin_impute(COIN, imtype = "ind_mean", dset = "raw")}
+#' @examples \dontrun{
+#' # assemble the COIN
+#' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+#' # impute data using Asia/Europe group mean
+#' ASEM <- impute(ASEM, dset = "Denominated", imtype = "indgroup_mean", groupvar = "Group_EurAsia")}
 #'
 #' @return A dataframe of normalised indicators.
 #'

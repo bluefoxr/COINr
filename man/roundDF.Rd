@@ -21,3 +21,8 @@ Tiny function just to round down a data frame for display in a table.
 \dontrun{ df <- roundDF( as.data.frame(matrix(runif(20),10,2)) )}
 
 }
+\seealso{
+\itemize{
+\item \code{\link[=rankDF]{rankDF()}} Replace df numbers with ranks
+}
+}
