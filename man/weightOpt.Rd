@@ -43,7 +43,7 @@ An updated object with optimised weights
 This function provides optimised weights to agree with a pre-specified vector of "target importances".
 }
 \details{
-This is a linear version of the weight optimisation proposed in \href{https://doi.org/10.1016/j.ecolind.2017.03.056}{this paper}.
+This is a linear version of the weight optimisation proposed in this paper: \doi{10.1016/j.ecolind.2017.03.056}.
 Weights are optimised to agree with a pre-specified vector of "importances". The optimised weights are returned back to the COIN.
 
 See the \href{https://bluefoxr.github.io/COINrDoc/weighting-1.html#automatic-re-weighting}{chapter in the COINr online documentation}

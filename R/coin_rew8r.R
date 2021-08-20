@@ -981,7 +981,7 @@ iplotCorr <- function(COIN, aglevs = NULL, insig = FALSE, levs = TRUE, grouprect
 #'
 #' This function provides optimised weights to agree with a pre-specified vector of "target importances".
 #'
-#' This is a linear version of the weight optimisation proposed in [this paper](https://doi.org/10.1016/j.ecolind.2017.03.056).
+#' This is a linear version of the weight optimisation proposed in this paper: \doi{10.1016/j.ecolind.2017.03.056}.
 #' Weights are optimised to agree with a pre-specified vector of "importances". The optimised weights are returned back to the COIN.
 #'
 #' See the [chapter in the COINr online documentation](https://bluefoxr.github.io/COINrDoc/weighting-1.html#automatic-re-weighting)
