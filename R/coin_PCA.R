@@ -1,20 +1,20 @@
 #' Perform PCA on a COIN
 #'
-#' Performs PCA on a specified data set and subset of indicators or aggregation groups. Returns weights
+#' Performs Principle Component Analysis (PCA) on a specified data set and subset of indicators or aggregation groups. Returns weights
 #' corresponding to the first principal component, i.e the weights that maximise the variance explained
 #' by the linear combination of indicators.
 #'
 #' @param COIN An input object. The function can handle either the COIN object, or a data frame.
-#' The data frame should have each column as an indicator, and an optional column "UnitCode" which
+#' The data frame should have each column as an indicator, and an optional column `"UnitCode"` which
 #' specifies the code (or name) of each unit. Any other type of object will return an error.
-#' @param dset If input is a COIN object, this specifies which data set in .$Data to use.
+#' @param dset If input is a COIN object, this specifies which data set in `.$Data` to use.
 #' @param icodes An optional character vector of indicator codes to subset the indicator data. Usefully, can also refer to
-#' an aggregation group name, and data will be subsetted accordingly. NOTE does not work with multiple aggregate group names.
+#' an aggregation group name, and data will be sub-setted accordingly. NOTE does not work with multiple aggregate group names.
 #' @param aglev The aggregation level to take indicator data from. Integer from 1 (indicator level)
 #' to N (top aggregation level, typically the index).
-#' @param nowarnings If FALSE (default), will give warnings where missing data are found. Set to TRUE to suppress these warnings.
-#' @param out2 If the input is a COIN object, this controls where to send the output. If "COIN", it
-#' sends the results to the COIN object, otherwise if "list", outputs to a separate list.
+#' @param nowarnings If `FALSE` (default), will give warnings where missing data are found. Set to `TRUE` to suppress these warnings.
+#' @param out2 If the input is a COIN object, this controls where to send the output. If `"COIN"`, it
+#' sends the results to the COIN object, otherwise if `"list"`, outputs to a separate list.
 #'
 #' @importFrom stats prcomp na.omit
 #' @importFrom rlang .data

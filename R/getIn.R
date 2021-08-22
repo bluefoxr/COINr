@@ -4,22 +4,22 @@
 #' First, it checks to see what kind of input object is input. Then, it selects the indicator data
 #' according to the specs supplied.
 #'
-#' For example, specifying dset = "Raw" and icodes = c("Ind1", "Ind5"), it will the indicator columns
-#' named "Ind1" and "Ind5" (if they exist), in the format described below. icodes can be indicators
+#' For example, specifying `dset = "Raw"` and `icodes = c("Ind1", "Ind5")`, it will return the indicator columns
+#' named `"Ind1" and "Ind5"` (if they exist), in the format described below. `icodes` can be indicators
 #' or aggregation groups, and can call multiple groups.
 #'
-#' You can also specify which aggregation level to target, using the "aglev" argument. See examples
+#' You can also specify which aggregation level to target, using the `aglev` argument. See examples
 #' below, and in particular the [COINr online documentation](https://bluefoxr.github.io/COINrDoc/helper-functions.html#selecting-data-sets-and-indicators).
 #'
 #' @param obj An input object. The function can handle either the COIN object, or a data frame.
-#' The data frame should have each column as an indicator, and optional columns "UnitCode" and "UnitName" which
+#' The data frame should have each column as an indicator, and optional columns `UnitCode` and `UnitName` which
 #' specify the code (or name) of each unit. Any columns except these latter two will be treated as indicators. Any other type of object will return an error.
-#' @param dset If input is a COIN object, this specifies which data set in .$Data to use.
+#' @param dset If input is a COIN object, this specifies which data set in `.$Data` to use.
 #' @param icodes An optional character vector of indicator codes to subset the indicator data. Usefully, can also refer to
 #' an aggregation group name, and data will be subsetted accordingly. NOTE does not work with multiple aggregate group names.
 #' @param aglev The aggregation level to take indicator data from. Integer from 1 (indicator level)
 #' to N (top aggregation level, typically the index).
-#' @param justnumeric Logical: if TRUE, removes any non-numeric columns from ind_data_only. Otherwise keeps all except those
+#' @param justnumeric Logical: if `TRUE`, removes any non-numeric columns from `ind_data_only`. Otherwise keeps all except those.
 #'
 #' @importFrom magrittr extract
 #' @importFrom dplyr select starts_with ends_with
@@ -34,12 +34,12 @@
 #' }
 #'
 #' @return A list with the following entries:
-#' * .$IndCodes  The indicator codes
-#' * .$IndNames  The indicator names (if a COIN object is input)
-#' * .$ind_data A data frame of indicator data, according to the input specifications, including any unit codes, names and groups
-#' * .$ind_data_only A data frame, as above, but without unit codes, names, groups
-#' * .$UnitCodes Unit codes of selected data set
-#' * .$otype Object type (a string: either "COINobj" or "df")
+#' * `.$IndCodes`  The indicator codes
+#' * `.$IndNames`  The indicator names (if a COIN object is input)
+#' * `.$ind_data` A data frame of indicator data, according to the input specifications, including any unit codes, names and groups
+#' * `.$ind_data_only` A data frame, as above, but without unit codes, names, groups.
+#' * `.$UnitCodes` Unit codes of selected data set.
+#' * `.$otype` Object type (a string: either `"COINobj"` or `"df"`).
 #'
 #' @export
 
@@ -194,9 +194,9 @@ getIn <- function(obj, dset = "Raw", icodes = NULL, aglev = NULL, justnumeric = 
 #' \dontrun{ df <- roundDF( as.data.frame(matrix(runif(20),10,2)) )}
 #'
 #' @seealso
-#' * [rankDF()] Replace df numbers with ranks
+#' * [rankDF()] Replace data frame numbers with ranks.
 #'
-#' @return A data frame, with any numeric columns rounded to the specified amount
+#' @return A data frame, with any numeric columns rounded to the specified amount.
 #'
 #' @export
 

@@ -12,22 +12,25 @@
 #' Indicators can also be each normalised by a different method. See `individual`.
 #'
 #' @param COIN Either the COIN object, or a data frame of indicator data
-#' @param ntype The type of normalisation method. Either "minmax", "zscore", "scaled", "rank", "borda", "prank", "fracmax", "dist2targ", "dist2ref", "dist2max", "custom" or "none".
-#' @param npara Supporting object for ntype. This is a list of the form list(ntype = parameters_for_ntype). So,
-#' if ntype = "minmax", npara could be list(minmax = c(0, 100)) to scale into the 0 to 100 interval
-#' If ntype = "zscore", npara could be list(zscore = c(0, 1)) to scale to mean zero and std 1.
+#' @param ntype The type of normalisation method. Either `"minmax"`, `"zscore"`, `"scaled"`, `"rank"`, `"borda"`, `"prank"`,
+#' `"fracmax"`, `"dist2targ"`, `"dist2ref"`, `"dist2max"`, `"custom"` or `"none"`.
+#' See the [online documentation](https://bluefoxr.github.io/COINrDoc/normalisation.html).
+#' @param npara Supporting object for `ntype`. This is a list of the form `list(ntype = parameters_for_ntype)`. So,
+#' if `ntype = "minmax"`, `npara` could be `list(minmax = c(0, 100))` to scale into the 0 to 100 interval.
+#' If `ntype = "zscore"`, `npara` could be `list(zscore = c(0, 1))` to scale to mean zero and standard deviation 1.
 #' This means you can store parameters for more than one normalisation type side by side, which helps in
 #' comparisons, adjustments, and sensitivity analyses.
-#' @param dset The data set to normalise
+#' @param dset The data set to normalise.
 #' @param directions A vector specifying the direction assigned to each indicator.
-#' Needs to be the same length as the number of indicators, or the number of indicators in icodes, if specified.
-#' @param individual A list of named lists specifiying individual normalisation to apply to specific indicators. Should be structured as follows:
-#' The name of each sublist should be the indicator code. The the list elements are:
-#' .$ntype is the type of normalisation to apply
-#' .$npara is a corresponding object or parameters that are used by ntype, in the same format as npara above.
-#' @param indiv_only Logical: if FALSE (default), indicators not specified in individual are subjected to default normalisation. Otherwise if TRUE they are not normalised.
-#' @param out2 Where to output the results. If "COIN" (default for COIN input), appends to updated COIN,
-#' otherwise if "df" outputs to data frame.
+#' Needs to be the same length as the number of indicators, or the number of indicators in `icodes`, if specified.
+#' @param individual A list of named lists specifying individual normalisation to apply to specific indicators. Should be structured as follows:
+#' The name of each sub-list should be the indicator code. The the list elements are:
+#' * .`$ntype` is the type of normalisation to apply
+#' * .`$npara` is a corresponding object or parameters that are used by `ntype`, in the same format as `npara` above.
+#' @param indiv_only Logical: if `FALSE` (default), indicators not specified in individual are subjected to default normalisation.
+#' Otherwise if `TRUE` they are not normalised.
+#' @param out2 Where to output the results. If `"COIN"` (default for COIN input), appends to updated COIN,
+#' otherwise if `"df"` outputs to data frame.
 #'
 #' @importFrom purrr "map2"
 #' @importFrom purrr "modify"
@@ -38,7 +41,7 @@
 #' # directly normalise raw data using min-max, onto 0-10 interval
 #' ASEM <- normalise(ASEM, dset = "Raw", ntype = "minmax", npara = list(minmax = c(0,10)))}
 #'
-#' @return An updated COIN object with .$Data$Normalised added, or a normalised data frame.
+#' @return An updated COIN object with `.$Data$Normalised` added, or a normalised data frame.
 #'
 #' @export
 

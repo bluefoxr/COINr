@@ -2,15 +2,15 @@
 #'
 #' This takes the raw data provided by the user and puts it into an list format (COIN object) that is recognised by COINr.
 #' It also checks whether there are any syntax errors in the data provided. Optionally, you can exclude
-#' or include indicators using the "include" and "exclude" arguments. Note that if an indicator is specified in
-#' BOTH include and exclude, it will be excluded.
+#' or include indicators using the `include` and `exclude` arguments. Note that if an indicator is specified in
+#' BOTH `include` and `exclude`, it will be excluded.
 #'
-#' @param IndData A dataframe of indicator data.
-#' @param IndMeta A dataframe containing auxilliary information for each indicator
-#' @param AggMeta A dataframe specifying the names and weights of each aggregation group
+#' @param IndData A data frame of indicator data.
+#' @param IndMeta A data frame containing auxiliary information for each indicator
+#' @param AggMeta A data frame specifying the names and weights of each aggregation group
 #' @param include Optional argument specifying a subset of indicator codes to include (default all indicators included)
 #' @param exclude Optional argument specifying a subset of indicator codes to exclude (default none excluded)
-#' @param preagg Set to TRUE if you want to assemble a COIN using pre-aggregated data (typically for ex-post analysis)
+#' @param preagg Set to `TRUE` if you want to assemble a COIN using pre-aggregated data (typically for ex-post analysis)
 #'
 #' @importFrom magrittr "%>%"
 #' @importFrom dplyr "select"

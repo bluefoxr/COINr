@@ -7,17 +7,17 @@
 #' @param COIN COIN object
 #' @param agtype The type of aggregation method.
 #' @param agweights The weights to use in the aggregation. This can either be:
-#' NULL, in which case it will use the weights that were attached to IndMeta and AggMeta in GII_assemble (if they exist), or
-#' A character string which corresponds to a named list of weights stored in .$Parameters$Weights. You can either add these manually or through rew8r.
-#' E.g. entering agweights = "Original" will use the original weights read in on assembly. This is equivalent to agweights = NULL.
+#' `NULL`, in which case it will use the weights that were attached to `IndMeta` and `AggMeta` in [assemble()] (if they exist), or
+#' A character string which corresponds to a named list of weights stored in `.$Parameters$Weights`. You can either add these manually or through [rew8r()].
+#' E.g. entering `agweights = "Original"` will use the original weights read in on assembly. This is equivalent to `agweights = NULL`.
 #' Or, a data frame of weights to use in the aggregation.
 #' @param dset Which data set (contained in COIN object) to use
 #' @param agtype_bylevel A character vector with aggregation types for each level
-#' @param agfunc A custom function to use for aggregation if agtype = "custom", of the type y = f(x,w),
-#' where y is a scalar aggregated value and x and w are vectors of indicator values and weights respectively.
-#' Ensure that NAs are handled (e.g. set na.rm = T) if your data has missing values.
-#' @param out2 Where to output the results. If "COIN" (default for COIN input), appends to updated COIN,
-#' otherwise if "df" outputs to data frame.
+#' @param agfunc A custom function to use for aggregation if `agtype = "custom"`, of the type \eqn{y = f(x,w)},
+#' where \eqn{y} is a scalar aggregated value and \eqn{x} and \eqn{w} are vectors of indicator values and weights respectively.
+#' Ensure that `NA`s are handled (e.g. set `na.rm = T`) if your data has missing values.
+#' @param out2 Where to output the results. If `"COIN"` (default for COIN input), appends to updated COIN,
+#' otherwise if `"df"` outputs to data frame.
 #'
 #' @importFrom dplyr "all_of"
 #' @importFrom dplyr "rowwise"
@@ -175,12 +175,12 @@ aggregate <- function(COIN, agtype = "arith_mean", agweights = NULL, dset = NULL
 
 #' Weighted geometric mean
 #'
-#' Weighted geometric mean of a vector. NAs are skipped by default. This function is used inside
-#' `aggregate()`.
+#' Weighted geometric mean of a vector. `NA` are skipped by default. This function is used inside
+#' [aggregate()].
 #'
 #' @param x A numeric vector of positive values.
-#' @param w A vector of weights, which should have length equal to length(x). Weights are relative
-#' and will be rescaled to sum to 1. If w is not specified, defaults to equal weights.
+#' @param w A vector of weights, which should have length equal to `length(x)`. Weights are relative
+#' and will be re-scaled to sum to 1. If `w` is not specified, defaults to equal weights.
 #'
 #' @examples \dontrun{
 #' x <- 1:10
@@ -223,22 +223,22 @@ geoMean <- function(x, w = NULL){
 #' *NOTE this function is not really in use but is kept here for the moment. Not sure it is very useful.*
 #'
 #' Weighted geometric mean of a vector. Here, any zero or negative values are automatically dealt with
-#' by rescaling the data to be all positive, i.e. it shifts so that the minimum is equal to 0.1.
+#' by re-scaling the data to be all positive, i.e. it shifts so that the minimum is equal to 0.1.
 #'
 #' Note that this could be better achieved by normalising first. However, following default normalisation
 #' between 0 and 100, this function offers a quick way to test the effect of a geometric mean, for example in
 #' a sensitivity analysis, and avoids bugs arising.
 #'
 #' @param x A numeric vector of positive values.
-#' @param w A vector of weights, which should have length equal to length(x). Weights are relative
-#' and will be rescaled to sum to 1. If w is not specified, defaults to equal weights.
+#' @param w A vector of weights, which should have length equal to `length(x)`. Weights are relative
+#' and will be re-scaled to sum to 1. If `w` is not specified, defaults to equal weights.
 #'
 #' @examples \dontrun{
 #' x <- 1:10
 #' w <- runif(10)
 #' geoMean_rescaled(x,w)}
 #'
-#' @return Geometric mean
+#' @return Geometric mean (scalar value)
 #'
 #' @export
 
@@ -274,19 +274,19 @@ geoMean_rescaled <- function(x, w = NULL){
 
 #' Weighted harmonic mean
 #'
-#' Weighted harmonic mean of a vector. NAs are skipped by default. This function is used inside
-#' `aggregate()`.
+#' Weighted harmonic mean of a vector. `NA` are skipped by default. This function is used inside
+#' [aggregate()].
 #'
 #' @param x A numeric vector of positive values.
-#' @param w A vector of weights, which should have length equal to length(x). Weights are relative
-#' and will be rescaled to sum to 1. If w is not specified, defaults to equal weights.
+#' @param w A vector of weights, which should have length equal to `length(x)`. Weights are relative
+#' and will be re-scaled to sum to 1. If `w` is not specified, defaults to equal weights.
 #'
 #' @examples \dontrun{
 #' x <- 1:10
 #' w <- runif(10)
 #' harMean(x,w)}
 #'
-#' @return Harmonic mean
+#' @return Harmonic mean (scalar value)
 #'
 #' @export
 
@@ -320,12 +320,12 @@ harMean <- function(x, w = NULL){
 #' Outranking matrix
 #'
 #' Constructs an outranking matrix based on a data frame of indicator data and corresponding weights. This function is used inside
-#' `aggregate()`.
+#' [aggregate()].
 #'
 #' @param ind_data A data frame or matrix of indicator data, with observations as rows and indicators
 #' as columns. No other columns should be present (e.g. label columns).
-#' @param w A vector of weights, which should have length equal to ncol(ind_data). Weights are relative
-#' and will be rescaled to sum to 1. If w is not specified, defaults to equal weights.
+#' @param w A vector of weights, which should have length equal to `ncol(ind_data)`. Weights are relative
+#' and will be re-scaled to sum to 1. If `w` is not specified, defaults to equal weights.
 #'
 #' @examples \dontrun{
 #' # get a sample of a few indicators
@@ -386,12 +386,12 @@ outrankMatrix <- function(ind_data, w = NULL){
 #' Copeland scores
 #'
 #' Aggregates a data frame of indicator values into a single column using the Copeland method. This function is used inside
-#' `aggregate()`.
+#' [aggregate()].
 #'
 #' @param ind_data A data frame or matrix of indicator data, with observations as rows and indicators
 #' as columns. No other columns should be present (e.g. label columns).
-#' @param w A vector of weights, which should have length equal to ncol(ind_data). Weights are relative
-#' and will be rescaled to sum to 1. If w is not specified, defaults to equal weights.
+#' @param w A vector of weights, which should have length equal to `ncol(ind_data)`. Weights are relative
+#' and will be re-scaled to sum to 1. If `w` is not specified, defaults to equal weights.
 #'
 #' @examples \dontrun{
 #' # get a sample of a few indicators

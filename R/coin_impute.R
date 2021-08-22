@@ -1,22 +1,23 @@
 #' Impute missing data
 #'
 #' Imputation of missing data data sets using a variety of methods (see `imtype`). This also includes the possibility of imputing
-#' by grouping variables, i.e. columns of `IndData` that are prefaced by "Group_".
+#' by grouping variables, i.e. columns of `IndData` that are prefaced by `"Group_"`.
 #'
 #' @param COIN A COIN or a data frame
-#' @param imtype The type of imputation method. Either "agg_mean" (the mean of normalised indicators inside the aggregation group),
-#' "agg_median" (the median of normalised indicators inside the aggregation group),
-#' "ind_mean" (the mean of all the other units in the indicator),
-#' "ind_median" (the median of all the other units in the indicator),
-#' "indgroup_mean" (the mean of all the other units in the indicator, in the same group),
-#' "indgroup_median" (the median of all the other units in the indicator, in the same group),
-#' "EM" (expectation maximisation algorithm via AMELIA package, currently without bootstrapping)
-#' "none" (no imputation, returns original data set)
-#' @param dset The data set in .$Data to impute
-#' @param groupvar The name of the column to use for by-group imputation. Only applies when imtype is set to a group option.
-#' @param EMaglev The aggregation level to use if imtype = "EM".
-#' @param out2 Where to output the results. If "COIN" (default for COIN input), appends to updated COIN,
-#' otherwise if "df" outputs to data frame.
+#' @param imtype The type of imputation method. Either:
+#' * `"agg_mean"` (the mean of normalised indicators inside the aggregation group),
+#' * `"agg_median"` (the median of normalised indicators inside the aggregation group),
+#' * `"ind_mean"` (the mean of all the other units in the indicator),
+#' * `"ind_median"` (the median of all the other units in the indicator),
+#' * `"indgroup_mean"` (the mean of all the other units in the indicator, in the same group),
+#' * `"indgroup_median"` (the median of all the other units in the indicator, in the same group),
+#' * `"EM"` (expectation maximisation algorithm via AMELIA package, currently without bootstrapping)
+#' * `"none"` (no imputation, returns original data set)
+#' @param dset The data set in `.$Data` to impute
+#' @param groupvar The name of the column to use for by-group imputation. Only applies when `imtype` is set to a group option.
+#' @param EMaglev The aggregation level to use if `imtype = "EM"`.
+#' @param out2 Where to output the results. If `"COIN"` (default for COIN input), appends to updated COIN,
+#' otherwise if `"df"` outputs to data frame.
 #'
 #' @importFrom tidyr replace_na
 #' @importFrom stringr str_subset
@@ -30,7 +31,7 @@
 #' # impute data using Asia/Europe group mean
 #' ASEM <- impute(ASEM, dset = "Denominated", imtype = "indgroup_mean", groupvar = "Group_EurAsia")}
 #'
-#' @return A dataframe of normalised indicators.
+#' @return A data frame of normalised indicators.
 #'
 #' @export
 

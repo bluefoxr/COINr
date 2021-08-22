@@ -1,21 +1,21 @@
 #' Get table of indicator statistics for any data set
 #'
-#' Takes a COIN , or data frame and returns a table of statistics, including max, min, median, mean, std, kurtosis, etc.
+#' Takes a COIN , or data frame and returns a table of statistics, including max, min, median, mean, standard deviation, kurtosis, etc.
 #' Flags indicators with possible outliers, and checks for collinearity with other indicators and denominators (if any).
 #' Also checks number of unique values and percentage of zeros. Also returns correlation matrices and a table of outliers,
 #' as a list.
 #'
-#' @param COINobj A list of indicator data, stuctured using the COIN_assemble function
+#' @param COIN A COIN object or data frame of indicator data
 #' @param icodes A character vector of indicator names to analyse. Defaults to all indicators.
-#' @param dset The data set to analyse
-#' @param out2 Where to output the results: if "COIN" (default), outputs to the COIN, otherwise if "list", outputs to a separate list.
-#' @param cortype The type of correlation to calculate, either "pearson", "spearman", or "kendall".
-#' @param t_skew Skewness threshold
-#' @param t_kurt Kurtosis threshold
-#' @param t_colin Collinearity threshold (absolute value of correlation)
-#' @param t_denom High correlation with denominator threshold
-#' @param t_missing Missing data threshold, in percent
-#' @param IQR_coef Interquartile range coefficient, used for identifying outliers
+#' @param dset The data set to analyse.
+#' @param out2 Where to output the results: if `"COIN"` (default), outputs to the COIN, otherwise if `"list"`, outputs to a separate list.
+#' @param cortype The type of correlation to calculate, either `"pearson"`, `"spearman"`, or `"kendall"`. See [stats::cor].
+#' @param t_skew Skewness threshold.
+#' @param t_kurt Kurtosis threshold.
+#' @param t_colin Collinearity threshold (absolute value of correlation).
+#' @param t_denom High correlation with denominator threshold.
+#' @param t_missing Missing data threshold, in percent.
+#' @param IQR_coef Interquartile range coefficient, used for identifying outliers.
 #'
 #' @importFrom e1071 skewness kurtosis
 #' @importFrom purrr map_dbl
@@ -34,12 +34,12 @@
 #'
 #' @export
 
-getStats <- function(COINobj, icodes = NULL, dset = "Raw", out2 = "COIN", cortype = "pearson",
+getStats <- function(COIN, icodes = NULL, dset = "Raw", out2 = "COIN", cortype = "pearson",
                             t_skew = 2, t_kurt = 3.5, t_colin = 0.9, t_denom = 0.7,
                             t_missing = 65, IQR_coef = 1.5){
 
   # First. check to see what kind of input we have and get relevant data
-  checkout <- getIn(obj = COINobj, dset = dset, icodes = icodes)
+  checkout <- getIn(obj = COIN, dset = dset, icodes = icodes)
   # Check input is a COIN
   if (checkout$otype != "COINobj"){
     stop("This function only supports a COIN as an input.")
@@ -118,9 +118,9 @@ getStats <- function(COINobj, icodes = NULL, dset = "Raw", out2 = "COIN", cortyp
   message(paste("Number of signficant negative indicator correlations = ",sum(signegs)))
 
   # Check if any denominators exist
-  if (exists("Denominators", COINobj$Input)){
+  if (exists("Denominators", COIN$Input)){
     # isolate relevant data
-    den_data_only <- COINobj$Input$Denominators
+    den_data_only <- COIN$Input$Denominators
     # filter for only unit codes in selected data (in case we have dropped some)
     den_data_only <- den_data_only[den_data_only$UnitCode %in% checkout$UnitCodes,]
     den_data_only <- select(den_data_only, starts_with("Den_"))
@@ -150,7 +150,7 @@ getStats <- function(COINobj, icodes = NULL, dset = "Raw", out2 = "COIN", cortyp
       Correlations = corr_ind
     )
 
-    if (exists("Denominators", COINobj$Input)){
+    if (exists("Denominators", COIN$Input)){
       lout$DenomCorrelations = corr_denom
     }
     return(lout)
@@ -159,14 +159,14 @@ getStats <- function(COINobj, icodes = NULL, dset = "Raw", out2 = "COIN", cortyp
 
     # write to the COIN
 
-    eval(parse(text=paste0("COINobj$Analysis$",dset,"$StatTable<- ind_stats")))
-    eval(parse(text=paste0("COINobj$Analysis$",dset,"$Outliers<- out_flag")))
-    eval(parse(text=paste0("COINobj$Analysis$",dset,"$Correlations<- corr_ind")))
-    if (exists("Denominators", COINobj$Input)){
-      eval(parse(text=paste0("COINobj$Analysis$",dset,"$DenomCorrelations<- corr_denom")))
+    eval(parse(text=paste0("COIN$Analysis$",dset,"$StatTable<- ind_stats")))
+    eval(parse(text=paste0("COIN$Analysis$",dset,"$Outliers<- out_flag")))
+    eval(parse(text=paste0("COIN$Analysis$",dset,"$Correlations<- corr_ind")))
+    if (exists("Denominators", COIN$Input)){
+      eval(parse(text=paste0("COIN$Analysis$",dset,"$DenomCorrelations<- corr_denom")))
     }
 
-    return(COINobj)
+    return(COIN)
   } else {
     stop("out2 not recognised, should be either COIN or list")
   }

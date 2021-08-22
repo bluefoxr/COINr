@@ -7,12 +7,12 @@
 #' relevant columns. Scores are also rounded by default, and there is the option to present scores or ranks.
 #'
 #' @param COIN The COIN object, or a data frame of indicator data
-#' @param tab_type The type of table to generate. Either "Summary", "Aggregates", "Full", or "FullWithDenoms".
-#' @param use Either "scores" (default) or "ranks".
+#' @param tab_type The type of table to generate. Either `"Summary"`, `"Aggregates"`, `"Full"`, or `"FullWithDenoms"`.
+#' @param use Either `"scores"` (default) or `"ranks"`.
 #' @param order_by A code of the indicator or aggregate to sort the table by. If not specified, defaults to the highest
 #' aggregate level, i.e. the index in most cases.
 #' @param nround The number of decimal places to round numerical values to. Defaults to 2.
-#' @param out2 If "df", outputs a data frame (tibble). Else if "COIN" attaches to .$Results in an updated COIN.
+#' @param out2 If `"df"`, outputs a data frame (tibble). Else if `"COIN"` attaches to `.$Results` in an updated COIN.
 #'
 #' @examples \dontrun{
 #' # build ASEM COIN up to aggregation
@@ -152,7 +152,7 @@ getResults <- function(COIN, tab_type = "Summary", use = "scores", order_by = NU
 #' Convert a data frame to ranks
 #'
 #' Replaces all numerical columns of a data frame with their ranks. Uses sport ranking, i.e. ties
-#' share the highest rank place. Ignores non-numerical columns.
+#' share the highest rank place. Ignores non-numerical columns. See [rank()].
 #'
 #' @param df A data frame
 #'
@@ -165,7 +165,7 @@ getResults <- function(COIN, tab_type = "Summary", use = "scores", order_by = NU
 #' @return Data frame with ranks
 #'
 #' @seealso
-#' * [roundDF()] Round a data frame to a specified number of decimals
+#' * [roundDF()] Round a data frame to a specified number of decimals.
 #'
 #' @export
 
@@ -198,7 +198,7 @@ rankDF <- function(df){
 #'
 #' @param df1 A data frame
 #' @param df2 Another data frame
-#' @param matchcol A common column name that is used to match row order. E.g. this might be UnitCode.
+#' @param matchcol A common column name that is used to match row order. E.g. this might be `UnitCode`.
 #' @param sigfigs The number of significant figures to use for matching numerical columns
 #'
 #' @examples \dontrun{
@@ -322,28 +322,28 @@ compareDF <- function(df1, df2, matchcol, sigfigs = 5){
 #'
 #' Generates a scorecard for a given unit using an R Markdown template.
 #'
-#' Most likely you will want to customise the template which can be found in the COINr installed package directory under /inst.
+#' Most likely you will want to customise the template which can be found in the COINr installed package directory under `/UnitReport`.
 #' Currently, a few examples are given, such as some charts and basic summary statistics.
 #'
-#' This function will render the unit report to either pdf, html or word doc. As mentioned below, if you have html widgets
-#' such as interactive plotly plots, or COINr iplot functions, you will need to install the webshot package to be able to
+#' This function will render the unit report to either pdf, html or word doc. As mentioned below, if you have HTML widgets
+#' such as interactive plotly plots, or COINr `iplot()` functions, you will need to install the webshot package to be able to
 #' render to pdf or word formats.
 #'
-#' To customise the template, copy the .rmd template found in /inst and alter it, then point the rmd_template argument to
+#' To customise the template, copy the `.rmd` template found in `/UnitReport` and alter it, then point the `rmd_template` argument to
 #' your new template.
 #'
 #' Note that this function is particularly useful for generating a large number of reports, e.g. we can generate reports for
-#' all units at once using a for loop, purrr::map or apply or similar.
+#' all units at once using a `for` loop, [purrr::map] or [apply()] or similar.
 #'
 #' @param COIN A COIN
-#' @param usel A selected unit code, or a character vector of unit codes (for multiple reports)
-#' @param out_type A string specifying the output type. Can be either ".docx" (Word), ".pdf" or ".html". IMPORTANT: if the
-#' rmd template includes interactive plots (e.g. the iplot functions from COINr), writing to docx or pdf will not work
+#' @param usel A selected unit code, or a character vector of unit codes (for multiple reports).
+#' @param out_type A string specifying the output type. Can be either `".docx"` (Word), `".pdf"` or `".html"`. IMPORTANT: if the
+#' template includes interactive plots (e.g. the `iplot()` functions from COINr), writing to `.docx` or `.pdf` will not work
 #' *unless* you have installed the webshot package. To do this, run:
 #' `install.packages("webshot")`
 #' `webshot::install_phantomjs()`
 #' @param outdir Character string specifying the output directory (defaults to current working directory).
-#' @param rmd_template A character string specifying the full file path to an rmd template which is used to generate the report. If this is not specified,
+#' @param rmd_template A character string specifying the full file path to an R Markdown template which is used to generate the report. If this is not specified,
 #' defaults to COINr's inbuilt template example.
 #'
 #' @examples \dontrun{
@@ -468,7 +468,7 @@ getUnitSummary <- function(COIN, usel, aglevs){
 #' @param usel A selected unit code
 #' @param topN The top N indicators to report
 #' @param bottomN The bottom N indicators to report
-#' @param withcodes If TRUE (default), also includes a column of indicator codes. Setting to FALSE may be more useful
+#' @param withcodes If `TRUE` (default), also includes a column of indicator codes. Setting to `FALSE` may be more useful
 #' in generating reports, where codes are not helpful.
 #'
 #' @examples \dontrun{

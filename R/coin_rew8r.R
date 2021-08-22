@@ -1,4 +1,4 @@
-#' Reweight indicators
+#' Re-weight indicators
 #'
 #' Interactive gadget which lets you adjust weights and see the effects. Weights can be saved with new names to the COIN object.
 #'
@@ -8,9 +8,9 @@
 #' indicator is to summarise the information in its underlying indicators, this can be a problem.
 #'
 #' The correlation between indicators and index (and other levels) can be adjusted by changing weights. But the effect of changing weights
-#' can be hard to gauge. The `rew8r()` app allows you to play around with the weights at any level, and to see what happens to the resulting
+#' can be hard to gauge. The [rew8r()] app allows you to play around with the weights at any level, and to see what happens to the resulting
 #' correlations of interest. It also demonstrates what happens to the results. Rather than changing weights and manually regenerating the
-#' results, the `rew8r()` app does all this for you. If you find a set or sets of weights that you like, you can also save it/them back to the COIN
+#' results, the [rew8r()] app does all this for you. If you find a set or sets of weights that you like, you can also save it/them back to the COIN
 #' as a new weight-set(s). To do this, click "Save", and then at the end of the session, "Close app".
 #'
 #' Consider that changing weights to "fix" correlations may result in unusual sets of weights that are hard to justify. This tool may
@@ -38,11 +38,6 @@
 #' @export
 
 rew8r <- function(COIN){
-
-  #stop("Sorry, rew8r is out of action for a bit until I get some updates sorted. Back soon.")
-
-  # NOTE I need to make this compatible with the new weight format. Easiest may be to simply copy
-  # GII version over which also has other small updates...
 
   # aggregate names for dropdown lists
   agnames <- paste0("Level ", 1:COIN$Parameters$Nlevels)
@@ -366,21 +361,21 @@ rew8r <- function(COIN){
 #' This is a short cut function which takes a new set of indicator weights, and recalculates the COIN results
 #' based on these weights. It returns a summary of rankings and the correlations between indicators and index.
 #'
-#' This function is principally used inside `rew8r()`. The `w` argument should be a data frame of weights, of the same format
+#' This function is principally used inside [rew8r()]. The `w` argument should be a data frame of weights, of the same format
 #' as the data frames found in `.$Parameters$Weights`.
 #'
 #' @param COIN COIN object
 #' @param w Full data frame of weights for each level
 #' @param aglevs A 2-length vector with two aggregation levels to correlate against each other
 #' @param icodes List of two character vectors of indicator codes, corresponding to the two aggregation levels
-#' @param cortype Correlation type. Either "pearson" (default), "kendall" or "spearman".
-#' @param withparent Logical: if TRUE, only correlates with the parent, e.g. sub-pillars are only correlated with their parent pillars and not others.
+#' @param cortype Correlation type. Either `"pearson"` (default), `"kendall"` or `"spearman"`. See [stats::cor].
+#' @param withparent Logical: if `TRUE`, only correlates with the parent, e.g. sub-pillars are only correlated with their parent pillars and not others.
 #'
 #' @importFrom reshape2 melt
 #' @importFrom dplyr inner_join
 #'
-#' @return A list with .$cr is a vector of correlations between each indicator and the index, and
-#' .$dat is a data frame of rankings, with unit code, and index, input and output scores
+#' @return A list with `.$cr` is a vector of correlations between each indicator and the index, and
+#' `.$dat` is a data frame of rankings, with unit code, and index, input and output scores
 #'
 #' @examples \dontrun{
 #' # build ASEM COIN up to aggregation
@@ -461,10 +456,10 @@ weights2corr <- function(COIN, w, aglevs = NULL, icodes = NULL,
 #' Scatter plot of correlations against weights
 #'
 #' Plots correlations on the x axis and weights on the y axis. Allows a selected highlighted point
-#' and a line showing low correlation boundary. This function is intended for use inside `rew8r()`.
+#' and a line showing low correlation boundary. This function is intended for use inside [rew8r()].
 #'
 #' @param dat Data frame with first col indicator codes, second is weights, third is correlations
-#' @param facet Logical: if TRUE creates subplots.
+#' @param facet Logical: if `TRUE` creates subplots.
 #' @param acvar Active variable to highlight (one of the indicator codes)
 #' @param linesw Whether to plot a vertical line showing low correlation boundary
 #' @param locorval x value of low correlation line
@@ -476,7 +471,7 @@ weights2corr <- function(COIN, w, aglevs = NULL, icodes = NULL,
 #' * [rew8r()] Interactive app for adjusting weights and seeing effects on correlations
 #' * [getCorr()] Get correlations between indicators/levels
 #'
-#' @return A scatter plot, also outputs event data (the clicked indicator)
+#' @return A scatter plot, also outputs event data (the clicked indicator).
 #'
 #' @export
 
@@ -609,14 +604,14 @@ corrweightscat <- function(dat, facet = FALSE, acvar = NULL, linesw = FALSE,
 #' Highly correlated indicators in the same aggregation group
 #'
 #' This returns a data frame of any highly correlated indicators within the same aggregation group. The level of the aggregation
-#' group can be controlled by the grouplev argument.
+#' group can be controlled by the `grouplev` argument.
 #'
 #' @param COIN Data frame with first col indicator codes, second is weights, third is correlations
 #' @param dset The data set to use for correlations.
 #' @param hicorval A threshold to flag high correlation. Default 0.9.
 #' @param grouplev The level to group indicators in. E.g. if `grouplev = 2` it will look for high correlations between indicators that
 #' belong to the same group in Level 2.
-#' @param cortype The type of correlation, either "pearson" (default), "spearman" or "kendall"
+#' @param cortype The type of correlation, either `"pearson"` (default), `"spearman"` or `"kendall"`. See [stats::cor].
 #'
 #' @importFrom reshape2 melt
 #'
@@ -677,21 +672,20 @@ hicorrSP <- function(COIN, dset = "Normalised", hicorval = 0.9, cortype = "pears
 #' and the correlation type. Explore the arguments and see.
 #'
 #' @param COIN The COIN object
-#' @param aglevs A two length vector specifying which level to plot against which level. E.g. c(2,4) for
-#' COIN plots sub-pillars against sub-indexes. If NULL, plots everything against everything.
-#' @param insig Logical: if TRUE, all correlation values are plotted; if FALSE (default), does not plot insignificant correlations.
-#' @param levs Logical: if TRUE, plots lines showing the division between different levels. Only works if aglevs = NULL.
-#' @param grouprects Logical: if TRUE, plots rectangles showing aggregation groups
-#' @param flagcolours If TRUE uses a discrete colour scale specified by corthresh. Otherwise if "continuous"
-#' uses a continuous colour map.
-#' @param corthresh A named list specifying the colour thresholds to use if flagcolours = "thresholds". Entries should
-#' specify correlation thresholds and can specify any of clow, cmid and chi. Anything below clow will be
-#' coloured red. Anything between clow and cmid will be grey. Anything between cmid and chigh will be blue.
-#' Anything above chigh will be green. Default is list(clow = -0.4, cmid = 0.4, chigh = 0.85). You can
+#' @param aglevs A two length vector specifying which level to plot against which level. E.g. `c(2,4)` for
+#' COIN plots sub-pillars against sub-indexes. If `NULL`, plots everything against everything.
+#' @param insig Logical: if `TRUE`, all correlation values are plotted; if `FALSE` (default), does not plot insignificant correlations.
+#' @param levs Logical: if `TRUE`, plots lines showing the division between different levels. Only works if `aglevs = NULL`.
+#' @param grouprects Logical: if `TRUE`, plots rectangles showing aggregation groups.
+#' @param flagcolours If `TRUE` uses a discrete colour scale specified by `corthresh`. Otherwise uses a continuous colour map.
+#' @param corthresh A named list specifying the colour thresholds to use if `flagcolours = TRUE`. Entries should
+#' specify correlation thresholds and can specify any of `clow`, `cmid` and `chi`. Anything below `clow` will be
+#' coloured red. Anything between `clow` and `cmid` will be grey. Anything between `cmid` and `chigh` will be blue.
+#' Anything above `chigh` will be green. Default is `list(clow = -0.4, cmid = 0.4, chigh = 0.85)`. You can
 #' specify a subset of these and the others will revert to defaults.
-#' @param showvals Logical: if TRUE, overlays correlation values on each square.
-#' @param cortype The type of correlation: either "pearson" (default), "spearman" or "kendall"
-#' @param useweights An optional list of weights to use (this is used mainly in the rew8r app)
+#' @param showvals Logical: if `TRUE`, overlays correlation values on each square.
+#' @param cortype The type of correlation: either `"pearson"` (default), `"spearman"` or `"kendall"`. See [stats::cor].
+#' @param useweights An optional list of weights to use (this is used mainly in the [rew8r()] app).
 #'
 #' @importFrom reshape2 melt
 #' @importFrom rlang .data
@@ -707,7 +701,7 @@ hicorrSP <- function(COIN, dset = "Normalised", hicorval = 0.9, cortype = "pears
 #' * [rew8r()] Interactive app for adjusting weights and seeing effects on correlations
 #' * [getCorr()] Get correlations between indicators/levels
 #'
-#' @return A **plotly** correlation map
+#' @return A **plotly** correlation map.
 #' @export
 
 iplotCorr <- function(COIN, aglevs = NULL, insig = FALSE, levs = TRUE, grouprects = TRUE,
@@ -988,17 +982,17 @@ iplotCorr <- function(COIN, aglevs = NULL, insig = FALSE, levs = TRUE, grouprect
 #' for more details.
 #'
 #' @param COIN COIN object
-#' @param itarg a vector of (relative) target importances. For example, c(1,2,1) would specify that the second
+#' @param itarg a vector of (relative) target importances. For example, `c(1,2,1)` would specify that the second
 #' indicator should be twice as "important" as the other two.
 #' @param aglev The aggregation level to apply the weight adjustment to.
-#' @param cortype The type of correlation to use - can be either "pearson", "spearman" or "kendall".
-#' @param optype The optimisation type. Either "balance", which aims to balance correlations
-#' according to a vector of "importances" specified by itarg (default), or "infomax" which aims to maximise
-#' overall correlations. This latter option is experimental and may not yet work very well.
+#' @param cortype The type of correlation to use - can be either `"pearson"`, `"spearman"` or `"kendall"`. See [stats::cor].
+#' @param optype The optimisation type. Either `"balance"`, which aims to balance correlations
+#' according to a vector of "importances" specified by `itarg` (default), or `"infomax"` which aims to maximise
+#' overall correlations. *This latter option is experimental and may not yet work very well*.
 #' @param toler Tolerance for convergence. Defaults to 0.001 (decrease for more accuracy, increase if convergence problems).
 #' @param maxiter Maximum number of iterations. Default 500.
-#' @param out2 Where to output the results. If "COIN" (default for COIN input), appends to updated COIN,
-#' creating a new list of weights in .$Parameters$Weights. Otherwise if "list" outputs to a list (default).
+#' @param out2 Where to output the results. If `"COIN"` (default for COIN input), appends to updated COIN,
+#' creating a new list of weights in `.$Parameters$Weights`. Otherwise if `"list"` outputs to a list (default).
 #'
 #' @importFrom stats optim
 #'
@@ -1012,7 +1006,7 @@ iplotCorr <- function(COIN, aglevs = NULL, insig = FALSE, levs = TRUE, grouprect
 #' * [rew8r()] Interactive app for adjusting weights and seeing effects on correlations
 #' * [getPCA()] PCA, including weights from PCA
 #'
-#' @return An updated object with optimised weights
+#' @return An updated object with optimised weights.
 #'
 #' @export
 

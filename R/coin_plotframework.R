@@ -3,7 +3,7 @@
 #' Plots the structure of the index using a sunburst plot using **plotly**. Output can be used as an interactive plot
 #' in html documents, e.g. via R Markdown.
 #'
-#' Note that this plot is sensitive to the *order* of the elements. If you use assemble() and input
+#' Note that this plot is sensitive to the *order* of the elements. If you use [assemble()] and input
 #' a COIN, this plot should work automatically. If you input a list, you should make sure that the indicator metadata
 #' is ordered by descending order of the hierarchy (i.e. highest level, working downwards).
 #'
@@ -46,7 +46,7 @@ plotframework <- function(COIN){
 #'
 #' This calculates the effective weights of each element in the indicator hierarchy. This is
 #' useful for understanding e.g. the true weight of each indicator in the framework and is also
-#' used in `plotframework()`.
+#' used in [plotframework()].
 #'
 #' @param COIN COIN object, or list with first entry is the indicator metadata, second entry is the aggregation metadata
 #'

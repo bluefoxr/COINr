@@ -1,15 +1,15 @@
 #' Regenerate COIN object
 #'
 #' Function to regenerate the results of the COIN, using the methodological parameters stored in
-#' .$Method. This function calls the construction functions of COINr in the order that they are
-#' found in .$Method, along with any custom code found in .$Method$Custom.
+#' `.$Method`. This function calls the construction functions of COINr in the order that they are
+#' found in `.$Method`, along with any custom code found in `.$Method$Custom`.
 #'
 #' Note that while sets of weights will be passed to the regenerated COIN, anything in `.$Analysis` will be removed and will have to be recalculated.
 #'
 #' For more details on regeneration of COINs, comparisons and adjustments, see the [online documentation](https://bluefoxr.github.io/COINrDoc/adjustments-and-comparisons.html).
 #'
-#' @param COINold COIN object containing specs on how to regenerate
-#' @param quietly Logical: if TRUE suppresses all messages from COINr functions (warnings may still occur though)
+#' @param COINold COIN object containing specifications on how to regenerate.
+#' @param quietly Logical: if `TRUE` suppresses all messages from COINr functions (warnings may still occur though).
 #'
 #' @return An updated COIN object, with all data sets recalculated. Weight sets will be passed through.
 #'
@@ -342,20 +342,23 @@ regen <- function(COINold, quietly = FALSE){
 #' A shortcut function to add and remove indicators. This will make the relevant changes
 #' and recalculate the index if asked. Adding and removing is done relative to the current set of
 #' indicators used in calculating the index results. Any indicators that are added must of course be
-#' present in .$Input$Original (in both IndData and IndMeta).
+#' present in `.$Input$Original` (in both `IndData` and `IndMeta`).
 #'
-#' @param COIN COIN object (assumed to be fully built)
+#' @param COIN COIN object
 #' @param add A character vector of indicator codes to add (must be present in the original input data)
 #' @param drop A character vector of indicator codes to remove (must be present in the original input data)
-#' @param regen Logical (default): if TRUE, automatically regenerates the results based on the new specs
-#' Otherwise, just updates the .$Method$assemble parameters. This latter might be useful if you want to
-#' Make other changes before re-running using the regen function.
+#' @param regen Logical (default): if `TRUE`, automatically regenerates the results based on the new specs
+#' Otherwise, just updates the `.$Method$assemble` parameters. This latter might be useful if you want to
+#' Make other changes before re-running using the [regen()] function.
 #'
 #' @importFrom magrittr "%>%"
 #'
 #' @examples \dontrun{COIN <- indChange(COIN, add = "Ind1", drop = "Ind3")}
 #'
-#' @return An updated COIN, with regenerated results if regen = TRUE
+#' @seealso
+#' * [regen()] regenerate a COIN
+#'
+#' @return An updated COIN, with regenerated results if `regen = TRUE`.
 #'
 #' @export
 

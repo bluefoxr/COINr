@@ -1,15 +1,15 @@
-#' Rank comparison table between 2 COINs
+#' Rank comparison table between two COINs
 #'
 #' Takes two COINs, and generates a rank comparison between specified indicator/aggregates. COINs must share at least some common
 #' unit codes, and the indicator selected by `isel`.
 #'
-#' @param COIN1 First COIN obj
-#' @param COIN2 Second COIN obj
+#' @param COIN1 First COIN
+#' @param COIN2 Second COIN
 #' @param dset The data set of interest
-#' @param isel The indicator/col of interest
-#' @param COINnames An optional character vector of the names of COIN1 and COIN2, to be used in the table headers.
-#' @param sort_by If "RankCOIN1", sorts by the indicator values of COIN1, if "RankCOIN2", sorts by COIN2,
-#' if "RankChange", sorts by rank change, and if "AbsRankChange" sorts by absolute rank change.
+#' @param isel The indicator/column of interest
+#' @param COINnames An optional character vector of the names of `COIN1` and `COIN2`, to be used in the table headers.
+#' @param sort_by If `"RankCOIN1"`, sorts by the indicator values of COIN1, if `"RankCOIN2"`, sorts by `COIN2`,
+#' if `"RankChange"`, sorts by rank change, and if `"AbsRankChange"` sorts by absolute rank change.
 #'
 #' @examples \dontrun{
 #' ASEM <- build_ASEM()
@@ -63,13 +63,13 @@ compTable <- function(COIN1, COIN2, dset = "Raw", isel, COINnames = NULL, sort_b
 #' Takes multiple COINs, and generates a rank comparison for a single indicator or aggregate.
 #'
 #' @param COINs A list of COINs
-#' @param dset The data set to extract the indicator from (must be present in each COIN). Default "Aggregated".
+#' @param dset The data set to extract the indicator from (must be present in each COIN). Default `"Aggregated"`.
 #' @param isel Code of the indicator or aggregate to extract from each COIN (must be present in the specified
-#' data set of each COIN). Default "Index".
-#' @param tabtype The type of table to generate - "Ranks", "Diffs", or "AbsDiffs".
+#' data set of each COIN). Default `"Index"`.
+#' @param tabtype The type of table to generate - `"Ranks"`, `"Diffs"`, or `"AbsDiffs"`.
 #' @param ibase The index of the COIN to use as a base comparison
-#' @param sort_table If TRUE, sorts by the base COIN (ibase), if "change" (default).
-#' @param extra_cols A character vector of any extra columns to include from the COIN referenced by ibase. For example,
+#' @param sort_table If TRUE, sorts by the base COIN (`ibase`) (default).
+#' @param extra_cols A character vector of any extra columns to include from the COIN referenced by `ibase`. For example,
 #' this could include group columns.
 #'
 #' @importFrom purrr modify_if

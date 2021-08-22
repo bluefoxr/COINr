@@ -7,19 +7,19 @@
 #'
 #' @param COIN A COIN (this function does not support data frame input)
 #' @param v_targ The target variable to perform SA or UA on. Currently just supports one variable, which
-#' should be an indicator/aggregate code present in .$Data$Aggregated.
+#' should be an indicator/aggregate code present in `.$Data$Aggregated`.
 #' @param SA_specs A list which specifies which variables to perturb, and which alternatives/distributions to use
-#' @param N The number of Monte Carlo replications
-#' @param SA_type The type of analysis to run. "UA" runs an uncertainty analysis.
+#' @param N The number of Monte Carlo replications.
+#' @param SA_type The type of analysis to run. `"UA"` runs an uncertainty analysis. `"SA"` runs a sensitivity analysis (which anyway includes an uncertainty analysis).
 #' @param NrepWeights The number of weight-replications to generate. Default 1000.
 #' @param store_results Which results to store
-#'   * "onlyresults" only stores scores, ranks and rank statistics (e.g. mean, median, quantiles)
-#'   * "results+params" (default) stores all of the above, plus a record of the parameter values used for each replication
-#'   * "results+method" stores all of the above, plus the full .$Method list of each replication
-#'   * "results+COIN" stores all results and the complete COIN of each replication
+#'   * `"onlyresults"` only stores scores, ranks and rank statistics (e.g. mean, median, quantiles)
+#'   * `"results+params"` (default) stores all of the above, plus a record of the parameter values used for each replication
+#'   * `"results+method"` stores all of the above, plus the full `.$Method` list of each replication
+#'   * `"results+COIN"` stores all results and the complete COIN of each replication (this could result in a very large list).
 #' @param Nboot Number of bootstrap draws for estimates of confidence intervals on sensitivity indices.
-#' If this is not specified, bootstrapping is not applied. Ignored if SA_type = "UA".
-#' @param quietly If FALSE (default), gives progress messages. Set TRUE to suppress these.
+#' If this is not specified, bootstrapping is not applied. Ignored if `SA_type = "UA"`.
+#' @param quietly If `FALSE` (default), gives progress messages. Set `TRUE` to suppress these.
 #'
 #' @importFrom purrr flatten
 #' @importFrom stats median quantile runif
@@ -403,19 +403,19 @@ sensitivity <- function(COIN, v_targ, SA_specs, N, SA_type = "UA", NrepWeights =
 #' Given a set of weights, this function returns multiple replicates of the weights, with added
 #' noise. This is intended for use in uncertainty and sensitivity analysis.
 #'
-#' Weights are expected to be in a long data frame format with columns Aglevel, Code and Weight, as
+#' Weights are expected to be in a long data frame format with columns `Aglevel`, `Code` and `Weight`, as
 #' used inside COINs.
 #'
-#' Noise is added using the noise_specs argument, which is specified by a data frame with columns
-#' AgLevel and NoiseFactor. The aggregation level refers to number of the aggregation level to target
-#' while the NoiseFactor refers to the size of the perturbation. If e.g. a row is AgLevel = 1 and
-#' NoiseFactor = 0.2, this will allow the weights in aggregation level 1 to deviate by +/- 20% of their
-#' nominal values (the values in w).
+#' Noise is added using the `noise_specs` argument, which is specified by a data frame with columns
+#' `AgLevel` and `NoiseFactor`. The aggregation level refers to number of the aggregation level to target
+#' while the `NoiseFactor` refers to the size of the perturbation. If e.g. a row is `AgLevel = 1` and
+#' `NoiseFactor = 0.2`, this will allow the weights in aggregation level 1 to deviate by +/- 20% of their
+#' nominal values (the values in `w`).
 #'
-#' @param w A data frame of weights, in the format found in .$Parameters$Weights
+#' @param w A data frame of weights, in the format found in `.$Parameters$Weights`.
 #' @param noise_specs a data frame with columns:
-#'  * AgLevel: The aggregation level to apply noise to
-#'  * NoiseFactor. The size of the perturbation: setting e.g. 0.2 peturbs by +/- 20% of nominal values
+#'  * `AgLevel`: The aggregation level to apply noise to
+#'  * `NoiseFactor`: The size of the perturbation: setting e.g. 0.2 perturbs by +/- 20% of nominal values.
 #' @param Nrep The number of weight replications to generate.
 #'
 #' @examples \dontrun{
@@ -429,7 +429,7 @@ sensitivity <- function(COIN, v_targ, SA_specs, N, SA_type = "UA", NrepWeights =
 #' wlist <- noisyWeights(ASEM$Parameters$Weights$Original,
 #' noise_specs = data.frame(AgLevel = 1, NoiseFactor = 0.2), Nrep = 2)}
 #'
-#' @return A list of sets of weights (data frames)
+#' @return A list of `Nrep` sets of weights (data frames).
 #'
 #' @seealso
 #' * [sensitivity()] Perform global sensitivity or uncertainty analysis on a COIN
@@ -473,20 +473,22 @@ noisyWeights <- function(w, noise_specs, Nrep){
 #' Plots the ranks resulting from an uncertainty and sensitivity analysis, in particular plots
 #' the median, and 5th/95th percentiles of ranks.
 #'
-#' To use this function you first need to run sensitivity(). Then enter the resulting list as the
+#' To use this function you first need to run [sensitivity()]. Then enter the resulting list as the
 #' `SAresults` argument here. I haven't provided an example because of the time required for performing
 #' a sensitivity analysis. See [COINr online documentation](https://bluefoxr.github.io/COINrDoc/sensitivity-analysis.html) for more details.
 #'
-#' @param SAresults A list of sensitivity/uncertainty analysis results from COINr::sensitivity().
+#' @param SAresults A list of sensitivity/uncertainty analysis results from [sensitivity()].
 #' @param plot_units A character vector of units to plot. Defaults to all units. You can also set
-#' to "top10" to only plot top 10 units, and "bottom10" for bottom ten.
-#' @param order_by If set to "nominal", orders the rank plot by nominal ranks
-#' (i.e. the original ranks prior to the sensitivity analysis). Otherwise if "median", orders by
+#' to `"top10"` to only plot top 10 units, and `"bottom10"` for bottom ten.
+#' @param order_by If set to `"nominal"`, orders the rank plot by nominal ranks
+#' (i.e. the original ranks prior to the sensitivity analysis). Otherwise if `"median"`, orders by
 #' median ranks.
 #'
 #' @seealso
 #' * [sensitivity()] Perform global sensitivity or uncertainty analysis on a COIN
 #' * [plotSA()] Plot sensitivity indices following a sensitivity analysis.
+#'
+#' @return A plot of rank confidence intervals, generated by 'ggplot2'.
 #'
 #' @export
 
@@ -550,7 +552,7 @@ plotSARanks <- function(SAresults, plot_units = NULL, order_by = "nominal"){
 #' Generate sample for sensitivity analysis
 #'
 #' Generates an input sample for a Monte Carlo estimation of global sensitivity indices. Used in
-#' the sensitivity() function. The total sample size will be N(d+2).
+#' the [sensitivity()] function. The total sample size will be \eqn{N(d+2)}.
 #'
 #' This function generates a Monte Carlo sample as described e.g. in the [Global Sensitivity Analysis: The Primer book](https://onlinelibrary.wiley.com/doi/book/10.1002/9780470725184).
 #' See also [COINr online documentation](https://bluefoxr.github.io/COINrDoc/sensitivity-analysis.html).
@@ -562,7 +564,7 @@ plotSARanks <- function(SAresults, plot_units = NULL, order_by = "nominal"){
 #' X <- SA_sample(100, 3)}
 #'
 #' @seealso
-#' * [sensitivity()] Perform global sensitivity or uncertainty analysis on a COIN
+#' * [sensitivity()] Perform global sensitivity or uncertainty analysis on a COIN.
 #' * [SA_estimate()] Estimate sensitivity indices from system output, as a result of input design from SA_sample().
 #'
 #' @export
@@ -592,13 +594,13 @@ SA_sample <- function(N, d){
 #' Estimate sensitivity indices
 #'
 #' Post process a sample to obtain sensitivity indices. This function takes a univariate output
-#' which is generated as a result of running a Monte Carlo sample from SA_sample() through a system.
+#' which is generated as a result of running a Monte Carlo sample from [SA_sample()] through a system.
 #' Then it estimates sensitivity indices using this sample.
 #'
-#' This function is built to be used inside `sensitivity()`. I don't provide an example because of the time taken to
+#' This function is built to be used inside [sensitivity()]. I don't provide an example because of the time taken to
 #' do a sensitivity analysis. See [COINr online documentation](https://bluefoxr.github.io/COINrDoc/sensitivity-analysis.html) for more details.
 #'
-#' @param yy A vector of model output values, as a result of a N(d+2) Monte Carlo design.
+#' @param yy A vector of model output values, as a result of a \eqn{N(d+2)} Monte Carlo design.
 #' @param N The number of sample points per dimension.
 #' @param d The dimensionality of the sample
 #' @param Nboot Number of bootstrap draws for estimates of confidence intervals on sensitivity indices.
@@ -694,13 +696,13 @@ SA_estimate <- function(yy, N, d, Nboot = NULL){
 #'
 #' Plots sensitivity indices as bar or pie charts.
 #'
-#' To use this function you first need to run sensitivity(). Then enter the resulting list as the
+#' To use this function you first need to run [sensitivity()]. Then enter the resulting list as the
 #' `SAresults` argument here. I haven't provided an example because of the time required for performing
 #' a sensitivity analysis.
 #' See [COINr online documentation](https://bluefoxr.github.io/COINrDoc/sensitivity-analysis.html) for more details.
 #'
-#' @param SAresults A list of sensitivity/uncertainty analysis results from COINr::sensitivity().
-#' @param ptype Type of plot to generate - either "bar", "pie" or "box"
+#' @param SAresults A list of sensitivity/uncertainty analysis results from [sensitivity()].
+#' @param ptype Type of plot to generate - either `"bar"`, `"pie"` or `"box"`.
 #'
 #' @seealso
 #' * [sensitivity()] Perform global sensitivity or uncertainty analysis on a COIN

@@ -10,26 +10,29 @@
 #'
 #' @param COIN The COIN object
 #' @param dset The data set to treat
-#' @param winmax The maximum number of points to Winsorise for each indicator. If NA, will keep Winsorising until skew&kurt thresholds achieved (but it is likely this will cause errors)
-#' @param winchange Logical: if TRUE (default), Winsorisation can change direction from one iteration to the next. Otherwise if FALSE, no change.
-#' @param deflog The type of transformation to apply if Winsorisation fails. If "log", use simple ln(x) as log transform (note: indicators containing negative values
-#' will be skipped). If "CTlog", will do ln(x-min(x) + a), where a = 0.01*(max(x)-min(x)), similar to that used in the COIN Tool.
-#' If "CTlog_orig", this is exactly the COIN Tool log transformation, which is ln(x-min(x) + 1).
-#' If "GIIlog", use GII log transformation.
-#' If "boxcox", performs a Box Cox transformation. In this latter case, you should also specify boxlam. Finally, if "none", will
+#' @param winmax The maximum number of points to Winsorise for each indicator. If `NA`, will keep Winsorising until skewness and kurtosis thresholds
+#' achieved (but it is likely this will cause errors).
+#' @param winchange Logical: if `TRUE` (default), Winsorisation can change direction from one iteration to the next. Otherwise if `FALSE`, no change.
+#' @param deflog The type of transformation to apply if Winsorisation fails. If `"log"`, use simple `log(x)` as log transform
+#' (note: indicators containing negative values will be skipped). If `"CTlog"`, will do `log(x-min(x) + a)`, where `a <- 0.01*(max(x)-min(x))`, similar to that used in the COIN Tool.
+#' If `"CTlog_orig"`, this is exactly the COIN Tool log transformation, which is `log(x-min(x) + 1)`.
+#' If `"GIIlog"`, use GII log transformation.
+#' If "`boxcox"`, performs a Box-Cox transformation. In this latter case, you should also specify `boxlam`. Finally, if `"none"`, will
 #' return the indicator untreated.
-#' @param boxlam The lambda parameter of the Box Cox transform.
+#' @param boxlam The lambda parameter of the Box-Cox transform.
 #' @param t_skew Absolute skew threshold (default 2)
 #' @param t_kurt Kurtosis threshold (default 3.5)
-#' @param individual A data frame specifying individual treatment for each indicator, with each row correspoding to one indicator to be treated. Rows are:
-#' "IndCode" The code of the indicator to be treated
-#' "Treat" The type of treatment to apply, one of "win" (Winsorise), "log" (log), "GIIlog" (GII log), "CTlog" (COIN Tool log), "boxcox" (Box Cox), or "None" (no treatment)
-#' "Winmax" The maximum number of points to Winsorise. Ignored if the corresponding entry in "Treat" is not "win"
-#' "Thresh" Either NA, which means that Winsorisation will continue up to winmax with no checks on skew and kurtosis, or "thresh", which uses the skew and kurtosis thresholds specified in t_skew and t_kurt.
-#' "boxlam" Lambda parameter for the Box Cox transformation
-#' @param indiv_only Logical: if TRUE, only the indicators specified in "individual" are treated.
-#' If false, all indicators are treated: any outside of "individual" will get default treatment.
-#' @param bypass_all Logical: if TRUE, bypasses all data treatment and returns the original data. This
+#' @param individual A data frame specifying individual treatment for each indicator, with each row corresponding to one indicator to be treated. Columns are:
+#' * `IndCode` The code of the indicator to be treated.
+#' * `Treat` The type of treatment to apply, one of `"win"` (Winsorise), `"log"` (log), `"GIIlog"` (GII log), `"CTlog"` (COIN Tool log),
+#' `"boxcox"` (Box Cox), or `"None"` (no treatment).
+#' * `Winmax` The maximum number of points to Winsorise. Ignored if the corresponding entry in `"Treat"` is not `"win"`.
+#' * `Thresh` Either `NA`, which means that Winsorisation will continue up to `winmax` with no checks on skew and kurtosis, or `"thresh"`,
+#' which uses the skew and kurtosis thresholds specified in `t_skew` and `t_kurt`.
+#' * `boxlam` Lambda parameter for the Box Cox transformation
+#' @param indiv_only Logical: if `TRUE`, only the indicators specified in `"individual"` are treated.
+#' If `FALSE`, all indicators are treated: any outside of `individual` will get default treatment.
+#' @param bypass_all Logical: if `TRUE`, bypasses all data treatment and returns the original data. This
 #' is useful for sensitivity analysis and comparing the effects of turning data treatment on and off.
 #'
 #' @importFrom dplyr pull
@@ -332,19 +335,20 @@ treat <- function(COIN, dset = NULL, winmax = NULL, winchange = NULL, deflog = N
 
 #' Winsorisation helper function
 #'
-#' To be used inside treat() to avoid repetitions. Winsorises one column of data.
+#' To be used inside [treat()] to avoid repetitions. Winsorises a numerical vector of data.
 #'
 #' Outliers are identified according to skewness and kurtosis thresholds. The algorithm attempts to reduce the absolute skew and
 #' kurtosis by successively Winsorising points up to a specified limit.
 #'
 #' The process is detailed in the [COINr online documentation](https://bluefoxr.github.io/COINrDoc/data-treatment.html#data-treatment-in-coinr).
 #'
-#' @param icol The vector of data to Winsorize
-#' @param winmax The maximum number of points to Winsorise for each indicator. If NA, will keep Winsorising until skew&kurt thresholds achieved (but it is likely this will cause errors)
-#' @param winchange Logical: if TRUE, Winsorisation can change direction from one iteration to the next. Otherwise if FALSE (default), no change.
-#' @param t_skew Absolute skew threshold (default 2)
-#' @param t_kurt Kurtosis threshold (default 3.5)
-#' @param icode The indicator name - used for error messages.
+#' @param icol The vector of data to Winsorise
+#' @param winmax The maximum number of points to Winsorise for each indicator. If `NA`, will keep Winsorising until skewness and kurtosis
+#' thresholds achieved (but it is likely this will cause errors).
+#' @param winchange Logical: if `TRUE`, Winsorisation can change direction from one iteration to the next. Otherwise if `FALSE` (default), no change.
+#' @param t_skew Absolute skew threshold (default 2).
+#' @param t_kurt Kurtosis threshold (default 3.5).
+#' @param icode The indicator name - used for error messages in [treat()].
 #'
 #' @examples \dontrun{
 #' # get a column of data with outliers
@@ -423,7 +427,7 @@ coin_win <- function(icol, winmax, winchange = TRUE, t_skew = 2, t_kurt = 3.5, i
 #'
 #' @param x A vector or column of data to transform
 #' @param lambda The lambda parameter of the Box Cox transform
-#' @param makepos If TRUE (default) makes all values positive by subtracting the minimum and adding 1.
+#' @param makepos If `TRUE` (default) makes all values positive by subtracting the minimum and adding 1.
 #'
 #' @examples \dontrun{
 #' # get a column of data with outliers
@@ -457,11 +461,13 @@ BoxCox <- function(x, lambda, makepos = TRUE){
 
 #' Log-type transformation of a vector
 #'
-#' This applies various simple transformations, to be used by the treat() function.
+#' This applies various simple transformations, to be used by the [treat()] function.
+#' This function is probably not very useful on its own because it requires `params`,
+#' a list of parameters which are used to output the type and status of treatment applied.
 #'
 #' @param x A vector or column of data to transform
-#' @param ltype The type of log transformation
-#' @param params Some extra params to pass
+#' @param ltype The type of log transformation - see `deflog` in [treat()].
+#' @param params Some extra parameters to pass
 #'
 #' @seealso
 #' * [treat()] Outlier treatment

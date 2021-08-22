@@ -5,29 +5,31 @@
 #' parents of each indicator. Also supports discrete colour maps using `flagcolours`, different types of correlation, and groups
 #' plots by higher aggregation levels.
 #'
+#' This function calls [getCorr()].
+#'
 #' Note that this function can only call correlations within the same data set (i.e. only one data set in `.$Data`).
 #'
 #' @param COIN The COIN object
 #' @param dset The target data set.
-#' @param icodes An optional list of character vectors where the first entry specifies the indicator/agg
-#' codes to correlate against the second entry (also a specification of ind/agg codes)
-#' @param aglevs The aggregation levels to take the two groups of indicators from. See `getIn()` for details.
-#' @param cortype The type of correlation to calculate, either "pearson", "spearman", or "kendall".
-#' @param withparent If `aglev[1] != aglev[2]`, and equal "parent" will only plot correlations of each row with its parent (default).
-#' If "family", plots the lowest aggregation level in aglev against all its parent levels.
-#' If "none" plots the full correlation matrix.
+#' @param icodes An optional list of character vectors where the first entry specifies the indicator/aggregate
+#' codes to correlate against the second entry (also a specification of indicator/aggregate codes)
+#' @param aglevs The aggregation levels to take the two groups of indicators from. See [getIn()] for details.
+#' @param cortype The type of correlation to calculate, either `"pearson"`, `"spearman"`, or `"kendall"` (see [stats::cor()]).
+#' @param withparent If `aglev[1] != aglev[2]`, and equal `"parent"` will only plot correlations of each row with its parent (default).
+#' If `"family"`, plots the lowest aggregation level in `aglevs` against all its parent levels.
+#' If `"none"` plots the full correlation matrix.
 #' @param grouplev The aggregation level to group correlations by if `aglev[1] == aglev[2]`. By default, groups correlations into the
 #' aggregation level above. Set to 0 to disable grouping and plot the full matrix.
-#' @param showvals If TRUE, shows correlation values. If FALSE, no values shown.
-#' @param flagcolours If TRUE, uses discrete colour map with thresholds defined by flagthresh. If FALSE uses continuous colour map.
+#' @param showvals If `TRUE`, shows correlation values. If `FALSE`, no values shown.
+#' @param flagcolours If `TRUE`, uses discrete colour map with thresholds defined by `flagthresh`. If `FALSE` uses continuous colour map.
 #' @param flagthresh A 3-length vector of thresholds for highlighting correlations, if `flagcolours = TRUE`.
 #' `flagthresh[1]` is the negative threshold. Below this value, values will be flagged red.
 #' `flagthresh[2]` is the "weak" threshold. Values between `flagthresh[1]` and `flagthresh[2]` are coloured grey.
 #' `flagthresh[3]` is the "high" threshold. Anything between `flagthresh[2]` and `flagthresh[3]` is flagged "OK",
 #' and anything above `flagthresh[3]` is flagged "high".
-#' @param pval The significance level for plotting correlations. Correlations with p < pval will be shown,
+#' @param pval The significance level for plotting correlations. Correlations with \eqn{p < pval} will be shown,
 #' otherwise they will be plotted as white squares. Set to 0 to disable this.
-#' @param out2 If "fig" returns a plot, if "dflong" returns the correlation matrix in long form, if "dfwide",
+#' @param out2 If `"fig"` returns a plot, if `"dflong"` returns the correlation matrix in long form, if `"dfwide"`,
 #' returns the correlation matrix in wide form. The last option here is probably useful if you want to
 #' present a table of the data in a report.
 #'
@@ -176,14 +178,15 @@ plotCorr <- function(COIN, dset = "Raw", icodes = NULL, aglevs = 1, cortype = "p
 #'
 #' @param COIN The COIN object
 #' @param dset The target data set
-#' @param icodes An optional list of character vectors where the first entry specifies the indicator/agg
-#' codes to correlate against the second entry (also a specification of ind/agg codes)
-#' @param aglevs The aggregation levels to take the two groups of indicators from. See `getIn()` for details. Defaults to indicator level.
-#' @param cortype The type of correlation to calculate, either "pearson", "spearman", or "kendall".
+#' @param icodes An optional list of character vectors where the first entry specifies the indicator/aggregate
+#' codes to correlate against the second entry (also a specification of indicator/aggregate codes).
+#' @param aglevs The aggregation levels to take the two groups of indicators from. See [getIn()] for details. Defaults to indicator level.
+#' @param cortype The type of correlation to calculate, either `"pearson"`, `"spearman"`, or `"kendall"`.
 #' @param withparent If `TRUE`, and `aglev[1] != aglev[2]`, will only return correlations of each row with its parent.
 #' @param grouplev The aggregation level to group correlations by if `aglev[1] == aglev[2]`. By default, groups correlations into the
 #' aggregation level above. Set to 0 to disable grouping and return the full matrix.
-#' @param pval The significance level for including correlations. Correlations with p > pval will be returned as `NA`. Default 0.05. Set to 0 to disable this.
+#' @param pval The significance level for including correlations. Correlations with \eqn{p > pval} will be returned as `NA`.
+#' Default 0.05. Set to 0 to disable this.
 #'
 #' @examples \dontrun{
 #' # build ASEM COIN
@@ -320,14 +323,14 @@ getCorr <- function(COIN, dset, icodes = NULL, aglevs = NULL, cortype = "pearson
 #' Calculates Cronbach's alpha, a measure of statistical reliability. Cronbach's alpha is a simple measure
 #' of "consistency" of a data set, where a high value implies higher reliability/consistency.
 #'
-#' This function simply returns Cronbach's alpha. If you want a lot more details on reliability, psych::alpha
-#' provides a much more detailed analysis.
+#' This function simply returns Cronbach's alpha. If you want a lot more details on reliability, the psych package has
+#' a much more detailed analysis.
 #'
 #' @param COIN A COIN or a data frame containing only numerical columns of data.
 #' @param dset The data set to check the consistency of.
-#' @param icodes Indicator codes if a subset of dset is requested
-#' @param aglev The aggregation level to take icodes from (see getIn() for details)
-#' @param use Argument to pass to stats::cor to calculate the covariance matrix. Default "pairwise.complete.obs".
+#' @param icodes Indicator codes if a subset of `dset` is requested
+#' @param aglev The aggregation level to take `icodes` from (see [getIn()] for details)
+#' @param use Argument to pass to [stats::cor] to calculate the covariance matrix. Default `"pairwise.complete.obs"`.
 #'
 #' @importFrom stats cov
 #'

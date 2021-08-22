@@ -1,13 +1,13 @@
 #' Interactive indicator distribution plots
 #'
-#' Generates a javascript distribution plot of a single indicator, using **plotly**. Plot can be embedded e.g. in
+#' Generates a JavaScript distribution plot of a single indicator, using **plotly**. Plot can be embedded e.g. in
 #' HTML documents, websites, etc, or used for more interactive data exploration. This only plots one
-#' indicator at a time - for multiple plots you can use `plotIndDist()`.
+#' indicator at a time - for multiple plots you can use [plotIndDist()].
 #'
 #' @param COIN The COIN object, or a data frame of indicator data
 #' @param dset The source data set to use for indicator data (if input is COIN object)
 #' @param icodes A character vector of a single indicator name or aggregate name to plot.
-#' @param ptype The type of plot to produce. Currently supports "Violin" and "Histogram".
+#' @param ptype The type of plot to produce. Currently supports `"Violin"` and `"Histogram"`.
 #' @param aglev The aggregation level to extract the indicator data from. Defaults to indicator level (1)
 #' @param axlims Optional parameter specifying axis limits. Useful mainly for matching with another plot.
 #'
@@ -92,15 +92,15 @@ iplotIndDist <- function(COIN, dset = "Raw", icodes = NULL, ptype = "Violin", ag
 
 #' Interactive indicator distribution plots for two indicators simultaneously
 #'
-#' Generates a javascript distribution plot of two indicators, using Plotly. Plot can be embedded e.g. in
+#' Generates a JavaScript distribution plot of two indicators, using Plotly. Plot can be embedded e.g. in
 #' HTML documents, websites, etc, or used for more interactive data exploration.
 #'
 #' @param COIN The COIN, or a data frame of indicator data
 #' @param dsets The source data sets to use for indicator data (if input is COIN object). If the source
 #' data sets are the same, this can be a single character string, otherwise, a character vector, e.g.
-#' c("Raw", "Treated").
-#' @param icodes A character vector of two indicator codes to plot (corresponding to the two dsets specified)
-#' @param ptype The type of plot to produce. Currently supports "Histogram" and "Scatter".
+#' `c("Raw", "Treated")`.
+#' @param icodes A character vector of two indicator codes to plot (corresponding to the two `dset`s specified)
+#' @param ptype The type of plot to produce. Currently supports `"Histogram"` and `"Scatter"`.
 #' @param aglevs The aggregation level to extract the indicator data from. Defaults to indicator level (1). This also can
 #' be specified as a vector if the two indicators are from different levels.
 #'

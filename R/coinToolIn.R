@@ -7,11 +7,11 @@
 #'
 #' See [COINr online documentation](https://bluefoxr.github.io/COINrDoc/helper-functions.html#r-interfaces) for more details and an example.
 #'
-#' @param fname The file name and path to read, e.g. "C:/Documents/COINToolFile.xlsx"
-#' @param makecodes Logical: if TRUE, will generate short indicator codes based on indicator names,
-#' otherwise if FALSE, will use COIN Tool indicator codes "Ind.01", etc. Currently only does this
+#' @param fname The file name and path to read, e.g. `"C:/Documents/COINToolFile.xlsx"`.
+#' @param makecodes Logical: if `TRUE`, will generate short indicator codes based on indicator names,
+#' otherwise if `FALSE`, will use COIN Tool indicator codes `"Ind.01"`, etc. Currently only does this
 #' for indicators, not aggregation groups.
-#' @param oldtool Logical: if TRUE, compatible with old COIN Tool (pre-release, early 2019 or earlier).
+#' @param oldtool Logical: if `TRUE`, compatible with old COIN Tool (pre-release, early 2019 or earlier).
 #' There are some minor differences on where the elements are found.
 #'
 #' @importFrom readxl read_excel cell_limits
@@ -143,7 +143,7 @@ COINToolIn <- function(fname, makecodes = FALSE, oldtool = FALSE){
 #' names2Codes(ASEMIndMeta$IndName[1:5], maxlet = 3)}
 #'
 #' @seealso
-#' * [COINToolIn()] Import data from the COIN Tool (Excel)
+#' * [COINToolIn()] Import data from the COIN Tool (Excel).
 #'
 #' @return A corresponding character vector, but with short codes, and no duplicates.
 #'

@@ -3,14 +3,19 @@
 #' Plots indicator distributions using box plots, dot plots, violin plots, violin-dot plots, and histograms.
 #' Supports plotting multiple indicators by calling aggregation groups.
 #'
+#' This function also optionally normalises indicators so they can be compared more easily side by side. For this
+#' purpose it calls [normalise()] - see `ntype` and `npara` arguments.
+#'
+#' See [COINr online documentation](https://bluefoxr.github.io/COINrDoc/initial-visualisation-and-analysis.html#distributions) and [getIn()] for more information on accessing/plotting groups.
+#'
 #' @param COINobj The COIN object, or a data frame of indicator data
 #' @param dset The source data set to use for indicator data (if input is COIN object)
 #' @param icodes A character vector of indicator names to plot. Defaults to all indicators.
-#' @param aglev The aggregation level to extract the indicator data from. Defaults to indicator level (1)
-#' @param type The type of plot. Currently supported "Box", "Dot", "Violin", "Violindot", "Histogram".
-#' @param ntype The type of nomalisation to apply. If NULL, no normalisation applied, otherwise specify
-#' using labels in normalise.
-#' @param npara Optional parameters to pass to normalise if normalisation required.
+#' @param aglev The aggregation level to extract the indicator data from. Defaults to indicator level (1).
+#' @param type The type of plot. Currently supported `"Box"`, `"Dot"`, `"Violin"`, `"Violindot"`, `"Histogram"`.
+#' @param ntype The type of normalisation to apply. If `NULL`, no normalisation applied, otherwise specify
+#' using `ntype` options in [normalise()].
+#' @param npara Optional parameters to pass to [normalise()] if normalisation required.
 #'
 #' @importFrom reshape2 melt
 #' @importFrom ggplot2 ggplot aes geom_boxplot theme_light geom_dotplot geom_violin geom_histogram labs facet_wrap

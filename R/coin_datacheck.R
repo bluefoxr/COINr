@@ -4,26 +4,26 @@
 #' availability threshold and presence of zeros. Units can be optionally "forced" to be included or excluded, making
 #' exceptions for the data availability threshold.
 #'
-#' The two main criteria of interest are NA values, and zeros. The summary table gives percentages of
-#' NA values for each unit, across indicators, and percentage zero values (*as a percentage of non-NA values*).
+#' The two main criteria of interest are `NA` values, and zeros. The summary table gives percentages of
+#' `NA` values for each unit, across indicators, and percentage zero values (*as a percentage of non-`NA` values*).
 #' Each unit is flagged as having low data or too many zeros based on thresholds.
 #'
 #' This function currently only supports COINs as inputs, not data frames.
 #'
 #' @param COIN The COIN object
 #' @param dset The data set to be checked/screened
-#' @param ind_thresh A data availability threshold used for flagging low data and screening units if unit_screen != "none". Default 0.66. Specify as a fraction.
+#' @param ind_thresh A data availability threshold used for flagging low data and screening units if `unit_screen != "none"`. Default 0.66. Specify as a fraction.
 #' @param zero_thresh As ind_thresh but for non-zero values. Defaults to 0.05, i.e. it will flag any units with less than 5% non-zero values (equivalently more than 95% zero values).
 #' @param unit_screen Specifies whether and how to screen units based on data availability or zero values.
-#' * If set to "none" (default), does not screen any units.
-#' * If set to "byNA", screens units with data availability below ind_thresh
-#' * If set to "byzeros", screens units with non-zero values below zero_thresh
-#' * If set to "byNAandzeros", screens units based on either of the previous two criteria being true.
-#' * If you simply want to force a unit or units to be excluded (without any other screening), use the Force argument and set unit_screen = TRUE.
-#' unit_screen != "none" outputs a new data set .$Data$Screened.
-#' @param Force A data frame with any additional countries to force inclusion or exclusion. First column is "UnitCode". Second column "Status" either "Include" or "Exclude" for each country to force.
-#' @param out2 Where to output the results. If "COIN" (default for COIN input), appends to updated COIN,
-#' otherwise if "df" outputs to data frame.
+#' * If set to `"none"` (default), does not screen any units.
+#' * If set to `"byNA"`, screens units with data availability below `ind_thresh`
+#' * If set to `"byzeros"`, screens units with non-zero values below `zero_thresh`
+#' * If set to `"byNAandzeros"`, screens units based on either of the previous two criteria being true.
+#' * If you simply want to force a unit or units to be excluded (without any other screening), use the `Force` argument and set `unit_screen = TRUE`.
+#' `unit_screen != "none"` outputs a new data set .$Data$Screened.
+#' @param Force A data frame with any additional countries to force inclusion or exclusion. First column is `"UnitCode"`. Second column `"Status"` either `"Include"` or `"Exclude"` for each country to force.
+#' @param out2 Where to output the results. If `"COIN"` (default for COIN input), appends to updated COIN,
+#' otherwise if `"df"` outputs to data frame.
 #'
 #' @importFrom dplyr select starts_with pull mutate filter
 #'
