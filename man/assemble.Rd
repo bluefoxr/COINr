@@ -14,17 +14,17 @@ assemble(
 )
 }
 \arguments{
-\item{IndData}{A dataframe of indicator data.}
+\item{IndData}{A data frame of indicator data.}
 
-\item{IndMeta}{A dataframe containing auxilliary information for each indicator}
+\item{IndMeta}{A data frame containing auxiliary information for each indicator}
 
-\item{AggMeta}{A dataframe specifying the names and weights of each aggregation group}
+\item{AggMeta}{A data frame specifying the names and weights of each aggregation group}
 
 \item{include}{Optional argument specifying a subset of indicator codes to include (default all indicators included)}
 
 \item{exclude}{Optional argument specifying a subset of indicator codes to exclude (default none excluded)}
 
-\item{preagg}{Set to TRUE if you want to assemble a COIN using pre-aggregated data (typically for ex-post analysis)}
+\item{preagg}{Set to \code{TRUE} if you want to assemble a COIN using pre-aggregated data (typically for ex-post analysis)}
 }
 \value{
 A "COIN" (list) formatted to the specifications of COINr.
@@ -33,8 +33,8 @@ Note that the COIN object is an S3 class. It doesn't impose restrictions on the 
 \description{
 This takes the raw data provided by the user and puts it into an list format (COIN object) that is recognised by COINr.
 It also checks whether there are any syntax errors in the data provided. Optionally, you can exclude
-or include indicators using the "include" and "exclude" arguments. Note that if an indicator is specified in
-BOTH include and exclude, it will be excluded.
+or include indicators using the \code{include} and \code{exclude} arguments. Note that if an indicator is specified in
+BOTH \code{include} and \code{exclude}, it will be excluded.
 }
 \examples{
 \dontrun{

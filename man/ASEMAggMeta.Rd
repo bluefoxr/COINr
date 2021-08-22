@@ -14,6 +14,9 @@ A data frame with 8 rows and 9 variables:
 ASEMAggMeta
 }
 \description{
-This contains all the metadata for the aggregate groups, including the names, weights and codes.
+This contains all the metadata for the aggregate groups, including the names, weights and codes. See the ASEM Portal
+for further information and detailed description of each indicator, and
+\href{https://bluefoxr.github.io/COINrDoc/coins-the-currency-of-coinr.html#indicator-data}{COINr documentation} for the formatting
+of this data set.
 }
 \keyword{datasets}

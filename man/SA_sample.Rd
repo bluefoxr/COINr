@@ -13,7 +13,7 @@ SA_sample(N, d)
 }
 \description{
 Generates an input sample for a Monte Carlo estimation of global sensitivity indices. Used in
-the sensitivity() function. The total sample size will be N(d+2).
+the \code{\link[=sensitivity]{sensitivity()}} function. The total sample size will be \eqn{N(d+2)}.
 }
 \details{
 This function generates a Monte Carlo sample as described e.g. in the \href{https://onlinelibrary.wiley.com/doi/book/10.1002/9780470725184}{Global Sensitivity Analysis: The Primer book}.
@@ -26,7 +26,7 @@ X <- SA_sample(100, 3)}
 }
 \seealso{
 \itemize{
-\item \code{\link[=sensitivity]{sensitivity()}} Perform global sensitivity or uncertainty analysis on a COIN
+\item \code{\link[=sensitivity]{sensitivity()}} Perform global sensitivity or uncertainty analysis on a COIN.
 \item \code{\link[=SA_estimate]{SA_estimate()}} Estimate sensitivity indices from system output, as a result of input design from SA_sample().
 }
 }

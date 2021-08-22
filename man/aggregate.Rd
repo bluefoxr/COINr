@@ -20,21 +20,21 @@ aggregate(
 \item{agtype}{The type of aggregation method.}
 
 \item{agweights}{The weights to use in the aggregation. This can either be:
-NULL, in which case it will use the weights that were attached to IndMeta and AggMeta in GII_assemble (if they exist), or
-A character string which corresponds to a named list of weights stored in .$Parameters$Weights. You can either add these manually or through rew8r.
-E.g. entering agweights = "Original" will use the original weights read in on assembly. This is equivalent to agweights = NULL.
+\code{NULL}, in which case it will use the weights that were attached to \code{IndMeta} and \code{AggMeta} in \code{\link[=assemble]{assemble()}} (if they exist), or
+A character string which corresponds to a named list of weights stored in \code{.$Parameters$Weights}. You can either add these manually or through \code{\link[=rew8r]{rew8r()}}.
+E.g. entering \code{agweights = "Original"} will use the original weights read in on assembly. This is equivalent to \code{agweights = NULL}.
 Or, a data frame of weights to use in the aggregation.}
 
 \item{dset}{Which data set (contained in COIN object) to use}
 
 \item{agtype_bylevel}{A character vector with aggregation types for each level}
 
-\item{agfunc}{A custom function to use for aggregation if agtype = "custom", of the type y = f(x,w),
-where y is a scalar aggregated value and x and w are vectors of indicator values and weights respectively.
-Ensure that NAs are handled (e.g. set na.rm = T) if your data has missing values.}
+\item{agfunc}{A custom function to use for aggregation if \code{agtype = "custom"}, of the type \eqn{y = f(x,w)},
+where \eqn{y} is a scalar aggregated value and \eqn{x} and \eqn{w} are vectors of indicator values and weights respectively.
+Ensure that \code{NA}s are handled (e.g. set \code{na.rm = T}) if your data has missing values.}
 
-\item{out2}{Where to output the results. If "COIN" (default for COIN input), appends to updated COIN,
-otherwise if "df" outputs to data frame.}
+\item{out2}{Where to output the results. If \code{"COIN"} (default for COIN input), appends to updated COIN,
+otherwise if \code{"df"} outputs to data frame.}
 }
 \value{
 An updated COIN object containing the new aggregated data set.

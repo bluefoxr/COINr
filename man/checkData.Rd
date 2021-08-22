@@ -19,24 +19,24 @@ checkData(
 
 \item{dset}{The data set to be checked/screened}
 
-\item{ind_thresh}{A data availability threshold used for flagging low data and screening units if unit_screen != "none". Default 0.66. Specify as a fraction.}
+\item{ind_thresh}{A data availability threshold used for flagging low data and screening units if \code{unit_screen != "none"}. Default 0.66. Specify as a fraction.}
 
 \item{zero_thresh}{As ind_thresh but for non-zero values. Defaults to 0.05, i.e. it will flag any units with less than 5\% non-zero values (equivalently more than 95\% zero values).}
 
 \item{unit_screen}{Specifies whether and how to screen units based on data availability or zero values.
 \itemize{
-\item If set to "none" (default), does not screen any units.
-\item If set to "byNA", screens units with data availability below ind_thresh
-\item If set to "byzeros", screens units with non-zero values below zero_thresh
-\item If set to "byNAandzeros", screens units based on either of the previous two criteria being true.
-\item If you simply want to force a unit or units to be excluded (without any other screening), use the Force argument and set unit_screen = TRUE.
-unit_screen != "none" outputs a new data set .$Data$Screened.
+\item If set to \code{"none"} (default), does not screen any units.
+\item If set to \code{"byNA"}, screens units with data availability below \code{ind_thresh}
+\item If set to \code{"byzeros"}, screens units with non-zero values below \code{zero_thresh}
+\item If set to \code{"byNAandzeros"}, screens units based on either of the previous two criteria being true.
+\item If you simply want to force a unit or units to be excluded (without any other screening), use the \code{Force} argument and set \code{unit_screen = TRUE}.
+\code{unit_screen != "none"} outputs a new data set .$Data$Screened.
 }}
 
-\item{Force}{A data frame with any additional countries to force inclusion or exclusion. First column is "UnitCode". Second column "Status" either "Include" or "Exclude" for each country to force.}
+\item{Force}{A data frame with any additional countries to force inclusion or exclusion. First column is \code{"UnitCode"}. Second column \code{"Status"} either \code{"Include"} or \code{"Exclude"} for each country to force.}
 
-\item{out2}{Where to output the results. If "COIN" (default for COIN input), appends to updated COIN,
-otherwise if "df" outputs to data frame.}
+\item{out2}{Where to output the results. If \code{"COIN"} (default for COIN input), appends to updated COIN,
+otherwise if \code{"df"} outputs to data frame.}
 }
 \value{
 An updated COIN with tables showing missing data, and a filtered list of countries to include in subsequent calculations.
@@ -47,8 +47,8 @@ availability threshold and presence of zeros. Units can be optionally "forced" t
 exceptions for the data availability threshold.
 }
 \details{
-The two main criteria of interest are NA values, and zeros. The summary table gives percentages of
-NA values for each unit, across indicators, and percentage zero values (\emph{as a percentage of non-NA values}).
+The two main criteria of interest are \code{NA} values, and zeros. The summary table gives percentages of
+\code{NA} values for each unit, across indicators, and percentage zero values (\emph{as a percentage of non-\code{NA} values}).
 Each unit is flagged as having low data or too many zeros based on thresholds.
 
 This function currently only supports COINs as inputs, not data frames.

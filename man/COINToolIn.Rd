@@ -7,13 +7,13 @@
 COINToolIn(fname, makecodes = FALSE, oldtool = FALSE)
 }
 \arguments{
-\item{fname}{The file name and path to read, e.g. "C:/Documents/COINToolFile.xlsx"}
+\item{fname}{The file name and path to read, e.g. \code{"C:/Documents/COINToolFile.xlsx"}.}
 
-\item{makecodes}{Logical: if TRUE, will generate short indicator codes based on indicator names,
-otherwise if FALSE, will use COIN Tool indicator codes "Ind.01", etc. Currently only does this
+\item{makecodes}{Logical: if \code{TRUE}, will generate short indicator codes based on indicator names,
+otherwise if \code{FALSE}, will use COIN Tool indicator codes \code{"Ind.01"}, etc. Currently only does this
 for indicators, not aggregation groups.}
 
-\item{oldtool}{Logical: if TRUE, compatible with old COIN Tool (pre-release, early 2019 or earlier).
+\item{oldtool}{Logical: if \code{TRUE}, compatible with old COIN Tool (pre-release, early 2019 or earlier).
 There are some minor differences on where the elements are found.}
 }
 \value{

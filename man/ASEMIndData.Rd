@@ -5,7 +5,7 @@
 \alias{ASEMIndData}
 \title{ASEM raw indicator data}
 \format{
-A data frame with 51 rows and 60 variables:
+A data frame with 51 rows and 60 variables.
 }
 \source{
 \url{https://composite-indicators.jrc.ec.europa.eu/asem-sustainable-connectivity/repository}
@@ -14,8 +14,9 @@ A data frame with 51 rows and 60 variables:
 ASEMIndData
 }
 \description{
-A dataset containing raw values of indicators for 51 countries, groups and denominators. See the ASEM Portal
-for further information and detailed description of each indicator, and COINr documentation for the formatting
+A data set containing raw values of indicators for 51 countries, groups and denominators. See the ASEM Portal
+for further information and detailed description of each indicator, and
+\href{https://bluefoxr.github.io/COINrDoc/coins-the-currency-of-coinr.html#indicator-data}{COINr documentation} for the formatting
 of this data set.
 }
 \keyword{datasets}

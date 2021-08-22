@@ -7,7 +7,7 @@
 SA_estimate(yy, N, d, Nboot = NULL)
 }
 \arguments{
-\item{yy}{A vector of model output values, as a result of a N(d+2) Monte Carlo design.}
+\item{yy}{A vector of model output values, as a result of a \eqn{N(d+2)} Monte Carlo design.}
 
 \item{N}{The number of sample points per dimension.}
 
@@ -21,11 +21,11 @@ A list with variance, first order and total order sensitivity indices.
 }
 \description{
 Post process a sample to obtain sensitivity indices. This function takes a univariate output
-which is generated as a result of running a Monte Carlo sample from SA_sample() through a system.
+which is generated as a result of running a Monte Carlo sample from \code{\link[=SA_sample]{SA_sample()}} through a system.
 Then it estimates sensitivity indices using this sample.
 }
 \details{
-This function is built to be used inside \code{sensitivity()}. I don't provide an example because of the time taken to
+This function is built to be used inside \code{\link[=sensitivity]{sensitivity()}}. I don't provide an example because of the time taken to
 do a sensitivity analysis. See \href{https://bluefoxr.github.io/COINrDoc/sensitivity-analysis.html}{COINr online documentation} for more details.
 }
 \seealso{

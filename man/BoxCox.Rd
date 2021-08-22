@@ -11,7 +11,7 @@ BoxCox(x, lambda, makepos = TRUE)
 
 \item{lambda}{The lambda parameter of the Box Cox transform}
 
-\item{makepos}{If TRUE (default) makes all values positive by subtracting the minimum and adding 1.}
+\item{makepos}{If \code{TRUE} (default) makes all values positive by subtracting the minimum and adding 1.}
 }
 \description{
 Simple Box Cox, with no optimisation of lambda.
