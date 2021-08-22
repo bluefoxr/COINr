@@ -18,26 +18,26 @@ weightOpt(
 \arguments{
 \item{COIN}{COIN object}
 
-\item{itarg}{a vector of (relative) target importances. For example, c(1,2,1) would specify that the second
+\item{itarg}{a vector of (relative) target importances. For example, \code{c(1,2,1)} would specify that the second
 indicator should be twice as "important" as the other two.}
 
 \item{aglev}{The aggregation level to apply the weight adjustment to.}
 
-\item{cortype}{The type of correlation to use - can be either "pearson", "spearman" or "kendall".}
+\item{cortype}{The type of correlation to use - can be either \code{"pearson"}, \code{"spearman"} or \code{"kendall"}. See \link[stats:cor]{stats::cor}.}
 
-\item{optype}{The optimisation type. Either "balance", which aims to balance correlations
-according to a vector of "importances" specified by itarg (default), or "infomax" which aims to maximise
-overall correlations. This latter option is experimental and may not yet work very well.}
+\item{optype}{The optimisation type. Either \code{"balance"}, which aims to balance correlations
+according to a vector of "importances" specified by \code{itarg} (default), or \code{"infomax"} which aims to maximise
+overall correlations. \emph{This latter option is experimental and may not yet work very well}.}
 
 \item{toler}{Tolerance for convergence. Defaults to 0.001 (decrease for more accuracy, increase if convergence problems).}
 
 \item{maxiter}{Maximum number of iterations. Default 500.}
 
-\item{out2}{Where to output the results. If "COIN" (default for COIN input), appends to updated COIN,
-creating a new list of weights in .$Parameters$Weights. Otherwise if "list" outputs to a list (default).}
+\item{out2}{Where to output the results. If \code{"COIN"} (default for COIN input), appends to updated COIN,
+creating a new list of weights in \code{.$Parameters$Weights}. Otherwise if \code{"list"} outputs to a list (default).}
 }
 \value{
-An updated object with optimised weights
+An updated object with optimised weights.
 }
 \description{
 This function provides optimised weights to agree with a pre-specified vector of "target importances".

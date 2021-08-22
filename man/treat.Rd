@@ -23,34 +23,39 @@ treat(
 
 \item{dset}{The data set to treat}
 
-\item{winmax}{The maximum number of points to Winsorise for each indicator. If NA, will keep Winsorising until skew&kurt thresholds achieved (but it is likely this will cause errors)}
+\item{winmax}{The maximum number of points to Winsorise for each indicator. If \code{NA}, will keep Winsorising until skewness and kurtosis thresholds
+achieved (but it is likely this will cause errors).}
 
-\item{winchange}{Logical: if TRUE (default), Winsorisation can change direction from one iteration to the next. Otherwise if FALSE, no change.}
+\item{winchange}{Logical: if \code{TRUE} (default), Winsorisation can change direction from one iteration to the next. Otherwise if \code{FALSE}, no change.}
 
-\item{deflog}{The type of transformation to apply if Winsorisation fails. If "log", use simple ln(x) as log transform (note: indicators containing negative values
-will be skipped). If "CTlog", will do ln(x-min(x) + a), where a = 0.01*(max(x)-min(x)), similar to that used in the COIN Tool.
-If "CTlog_orig", this is exactly the COIN Tool log transformation, which is ln(x-min(x) + 1).
-If "GIIlog", use GII log transformation.
-If "boxcox", performs a Box Cox transformation. In this latter case, you should also specify boxlam. Finally, if "none", will
+\item{deflog}{The type of transformation to apply if Winsorisation fails. If \code{"log"}, use simple \code{log(x)} as log transform
+(note: indicators containing negative values will be skipped). If \code{"CTlog"}, will do \code{log(x-min(x) + a)}, where \code{a <- 0.01*(max(x)-min(x))}, similar to that used in the COIN Tool.
+If \code{"CTlog_orig"}, this is exactly the COIN Tool log transformation, which is \code{log(x-min(x) + 1)}.
+If \code{"GIIlog"}, use GII log transformation.
+If "\verb{boxcox"}, performs a Box-Cox transformation. In this latter case, you should also specify \code{boxlam}. Finally, if \code{"none"}, will
 return the indicator untreated.}
 
-\item{boxlam}{The lambda parameter of the Box Cox transform.}
+\item{boxlam}{The lambda parameter of the Box-Cox transform.}
 
 \item{t_skew}{Absolute skew threshold (default 2)}
 
 \item{t_kurt}{Kurtosis threshold (default 3.5)}
 
-\item{individual}{A data frame specifying individual treatment for each indicator, with each row correspoding to one indicator to be treated. Rows are:
-"IndCode" The code of the indicator to be treated
-"Treat" The type of treatment to apply, one of "win" (Winsorise), "log" (log), "GIIlog" (GII log), "CTlog" (COIN Tool log), "boxcox" (Box Cox), or "None" (no treatment)
-"Winmax" The maximum number of points to Winsorise. Ignored if the corresponding entry in "Treat" is not "win"
-"Thresh" Either NA, which means that Winsorisation will continue up to winmax with no checks on skew and kurtosis, or "thresh", which uses the skew and kurtosis thresholds specified in t_skew and t_kurt.
-"boxlam" Lambda parameter for the Box Cox transformation}
+\item{individual}{A data frame specifying individual treatment for each indicator, with each row corresponding to one indicator to be treated. Columns are:
+\itemize{
+\item \code{IndCode} The code of the indicator to be treated.
+\item \code{Treat} The type of treatment to apply, one of \code{"win"} (Winsorise), \code{"log"} (log), \code{"GIIlog"} (GII log), \code{"CTlog"} (COIN Tool log),
+\code{"boxcox"} (Box Cox), or \code{"None"} (no treatment).
+\item \code{Winmax} The maximum number of points to Winsorise. Ignored if the corresponding entry in \code{"Treat"} is not \code{"win"}.
+\item \code{Thresh} Either \code{NA}, which means that Winsorisation will continue up to \code{winmax} with no checks on skew and kurtosis, or \code{"thresh"},
+which uses the skew and kurtosis thresholds specified in \code{t_skew} and \code{t_kurt}.
+\item \code{boxlam} Lambda parameter for the Box Cox transformation
+}}
 
-\item{indiv_only}{Logical: if TRUE, only the indicators specified in "individual" are treated.
-If false, all indicators are treated: any outside of "individual" will get default treatment.}
+\item{indiv_only}{Logical: if \code{TRUE}, only the indicators specified in \code{"individual"} are treated.
+If \code{FALSE}, all indicators are treated: any outside of \code{individual} will get default treatment.}
 
-\item{bypass_all}{Logical: if TRUE, bypasses all data treatment and returns the original data. This
+\item{bypass_all}{Logical: if \code{TRUE}, bypasses all data treatment and returns the original data. This
 is useful for sensitivity analysis and comparing the effects of turning data treatment on and off.}
 }
 \value{

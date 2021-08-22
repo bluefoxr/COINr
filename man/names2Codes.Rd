@@ -28,6 +28,6 @@ names2Codes(ASEMIndMeta$IndName[1:5], maxlet = 3)}
 }
 \seealso{
 \itemize{
-\item \code{\link[=COINToolIn]{COINToolIn()}} Import data from the COIN Tool (Excel)
+\item \code{\link[=COINToolIn]{COINToolIn()}} Import data from the COIN Tool (Excel).
 }
 }

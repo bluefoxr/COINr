@@ -2,7 +2,7 @@
 % Please edit documentation in R/coin_rew8r.R
 \name{rew8r}
 \alias{rew8r}
-\title{Reweight indicators}
+\title{Re-weight indicators}
 \usage{
 rew8r(COIN)
 }
@@ -22,9 +22,9 @@ the index ranks, you have no indication of what the ranks of the underlying indi
 indicator is to summarise the information in its underlying indicators, this can be a problem.
 
 The correlation between indicators and index (and other levels) can be adjusted by changing weights. But the effect of changing weights
-can be hard to gauge. The \code{rew8r()} app allows you to play around with the weights at any level, and to see what happens to the resulting
+can be hard to gauge. The \code{\link[=rew8r]{rew8r()}} app allows you to play around with the weights at any level, and to see what happens to the resulting
 correlations of interest. It also demonstrates what happens to the results. Rather than changing weights and manually regenerating the
-results, the \code{rew8r()} app does all this for you. If you find a set or sets of weights that you like, you can also save it/them back to the COIN
+results, the \code{\link[=rew8r]{rew8r()}} app does all this for you. If you find a set or sets of weights that you like, you can also save it/them back to the COIN
 as a new weight-set(s). To do this, click "Save", and then at the end of the session, "Close app".
 
 Consider that changing weights to "fix" correlations may result in unusual sets of weights that are hard to justify. This tool may

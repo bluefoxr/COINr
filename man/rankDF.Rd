@@ -14,7 +14,7 @@ Data frame with ranks
 }
 \description{
 Replaces all numerical columns of a data frame with their ranks. Uses sport ranking, i.e. ties
-share the highest rank place. Ignores non-numerical columns.
+share the highest rank place. Ignores non-numerical columns. See \code{\link[=rank]{rank()}}.
 }
 \examples{
 \dontrun{
@@ -26,6 +26,6 @@ rankDF(df)}
 }
 \seealso{
 \itemize{
-\item \code{\link[=roundDF]{roundDF()}} Round a data frame to a specified number of decimals
+\item \code{\link[=roundDF]{roundDF()}} Round a data frame to a specified number of decimals.
 }
 }

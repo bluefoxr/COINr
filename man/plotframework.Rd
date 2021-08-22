@@ -17,7 +17,7 @@ Plots the structure of the index using a sunburst plot using \strong{plotly}. Ou
 in html documents, e.g. via R Markdown.
 }
 \details{
-Note that this plot is sensitive to the \emph{order} of the elements. If you use assemble() and input
+Note that this plot is sensitive to the \emph{order} of the elements. If you use \code{\link[=assemble]{assemble()}} and input
 a COIN, this plot should work automatically. If you input a list, you should make sure that the indicator metadata
 is ordered by descending order of the hierarchy (i.e. highest level, working downwards).
 }

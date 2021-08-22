@@ -24,23 +24,23 @@ plotCorr(
 
 \item{dset}{The target data set.}
 
-\item{icodes}{An optional list of character vectors where the first entry specifies the indicator/agg
-codes to correlate against the second entry (also a specification of ind/agg codes)}
+\item{icodes}{An optional list of character vectors where the first entry specifies the indicator/aggregate
+codes to correlate against the second entry (also a specification of indicator/aggregate codes)}
 
-\item{aglevs}{The aggregation levels to take the two groups of indicators from. See \code{getIn()} for details.}
+\item{aglevs}{The aggregation levels to take the two groups of indicators from. See \code{\link[=getIn]{getIn()}} for details.}
 
-\item{cortype}{The type of correlation to calculate, either "pearson", "spearman", or "kendall".}
+\item{cortype}{The type of correlation to calculate, either \code{"pearson"}, \code{"spearman"}, or \code{"kendall"} (see \code{\link[stats:cor]{stats::cor()}}).}
 
-\item{withparent}{If \code{aglev[1] != aglev[2]}, and equal "parent" will only plot correlations of each row with its parent (default).
-If "family", plots the lowest aggregation level in aglev against all its parent levels.
-If "none" plots the full correlation matrix.}
+\item{withparent}{If \code{aglev[1] != aglev[2]}, and equal \code{"parent"} will only plot correlations of each row with its parent (default).
+If \code{"family"}, plots the lowest aggregation level in \code{aglevs} against all its parent levels.
+If \code{"none"} plots the full correlation matrix.}
 
 \item{grouplev}{The aggregation level to group correlations by if \code{aglev[1] == aglev[2]}. By default, groups correlations into the
 aggregation level above. Set to 0 to disable grouping and plot the full matrix.}
 
-\item{showvals}{If TRUE, shows correlation values. If FALSE, no values shown.}
+\item{showvals}{If \code{TRUE}, shows correlation values. If \code{FALSE}, no values shown.}
 
-\item{flagcolours}{If TRUE, uses discrete colour map with thresholds defined by flagthresh. If FALSE uses continuous colour map.}
+\item{flagcolours}{If \code{TRUE}, uses discrete colour map with thresholds defined by \code{flagthresh}. If \code{FALSE} uses continuous colour map.}
 
 \item{flagthresh}{A 3-length vector of thresholds for highlighting correlations, if \code{flagcolours = TRUE}.
 \code{flagthresh[1]} is the negative threshold. Below this value, values will be flagged red.
@@ -48,10 +48,10 @@ aggregation level above. Set to 0 to disable grouping and plot the full matrix.}
 \code{flagthresh[3]} is the "high" threshold. Anything between \code{flagthresh[2]} and \code{flagthresh[3]} is flagged "OK",
 and anything above \code{flagthresh[3]} is flagged "high".}
 
-\item{pval}{The significance level for plotting correlations. Correlations with p < pval will be shown,
+\item{pval}{The significance level for plotting correlations. Correlations with \eqn{p < pval} will be shown,
 otherwise they will be plotted as white squares. Set to 0 to disable this.}
 
-\item{out2}{If "fig" returns a plot, if "dflong" returns the correlation matrix in long form, if "dfwide",
+\item{out2}{If \code{"fig"} returns a plot, if \code{"dflong"} returns the correlation matrix in long form, if \code{"dfwide"},
 returns the correlation matrix in wide form. The last option here is probably useful if you want to
 present a table of the data in a report.}
 }
@@ -65,6 +65,8 @@ parents of each indicator. Also supports discrete colour maps using \code{flagco
 plots by higher aggregation levels.
 }
 \details{
+This function calls \code{\link[=getCorr]{getCorr()}}.
+
 Note that this function can only call correlations within the same data set (i.e. only one data set in \code{.$Data}).
 }
 \examples{

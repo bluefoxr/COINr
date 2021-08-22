@@ -70,7 +70,7 @@ It is easier to outline existing tools and packages available for building compo
 In Matlab, there are some packages addressing specific parts of index development. The [CIAO package](http://dx.doi.org/10.13140/RG.2.2.14335.66729) uses 
 a nonlinear regression and optimisation approach to tune weights to agree with expert opinions, accounting for the complexities of correlations. However, this package only deals with weights.
 
-In R there is an existing package for composite indicator development, called [compind](https://cran.r-project.org/web/packages/Compind/index.html). This has some sophisticated tools for weighting, particularly relating to data envelopment analysis approaches, as well as a number of aggregation functions. However, this is arguably more a toolbox of useful functions for constructing composite indicators, and gives no special consideration to heirarchical structures, uncertainty and sensitivity analysis, and so on.
+In R there is an existing package for composite indicator development, called [compind](https://cran.r-project.org/package=Compind). This has some sophisticated tools for weighting, particularly relating to data envelopment analysis approaches, as well as a number of aggregation functions. However, this is arguably more a toolbox of useful functions for constructing composite indicators, and gives no special consideration to hierarchical structures, uncertainty and sensitivity analysis, and so on.
 
 In Python there is a library called [CIF](https://github.com/LenkaV/CIF) which gives a number of tools for building composite indicators, from loading data to aggregation and visualisation. This is focused in particular on Business Cycle Analysis.
 
@@ -181,9 +181,9 @@ The other important advantage of using COINs is that they are self-contained and
 
 2. All arguments to the function are recorded in the `.$Method` sub-list. For example, calling `COIN <- normalise(COIN, function_options)` will record each of the `function_options` as an element of `.$Method$normalise`.
 
-Construction functions are the core functions that are used to build a composite indicator, from assembling from the original data, up to aggregation. These are explained in more detail in Section \@ref(Sec:Building). 
+Construction functions are the core functions that are used to build a composite indicator, from assembling from the original data, up to aggregation. These are explained in more detail in [Building a composite indicator]. 
 
-The reason that the function arguments are recorded in `.$Method` is that (a) it gives a record of how the COIN was constructed, but more importantly (b) it allows COINs to be regenerated from scratch with a single command. *COINr*'s `regen()` function rebuilds the COIN from the beginning using the original data (stored in `.$Input`) and the construction specifications (stored in `.$Method`). This allows fast changes to the composite indicator and comparison of multiple alternative versions (e.g. including or excluding indicators, changing construction methods, weights, and so on). This is explained in more detail in Section \@ref(Sec:Adjustments).
+The reason that the function arguments are recorded in `.$Method` is that (a) it gives a record of how the COIN was constructed, but more importantly (b) it allows COINs to be regenerated from scratch with a single command. *COINr*'s `regen()` function rebuilds the COIN from the beginning using the original data (stored in `.$Input`) and the construction specifications (stored in `.$Method`). This allows fast changes to the composite indicator and comparison of multiple alternative versions (e.g. including or excluding indicators, changing construction methods, weights, and so on). This is explained in more detail in [Adjustments and comparisons].
 
 Although *COINr* functions are specifically built for use on COINs, many will also work on data frames. For example, normalisation, imputation, data treatment, and other operations can take data frames of indicator data is inputs. This means that *COINr* can also be used as accessory functions without necessarily having to work with COINs.
 
@@ -260,7 +260,7 @@ head(COINr::ASEMAggMeta)
 
 This data frame simply consists of four columns:
 
-* `AgLevel` [**required**] The aggregation level (where 1 is indicator level, 2 is the first aggregation level, and so on -- see Section \@ref(Sec:ContructingCIs))
+* `AgLevel` [**required**] The aggregation level (where 1 is indicator level, 2 is the first aggregation level, and so on -- see [Constructing composite indicators].
 * `Code` [**required**] The aggregation group codes. These codes must match the codes in the corresponding column in the indicator metadata aggregation columns.
 * `Name` [**required**] The aggregation group names.
 * `Weight` [**required**] The aggregation group weights. These weights can be changed later on if needed.
@@ -283,7 +283,7 @@ This outputs a "COIN" which you can name as you want (here we have called it "AS
 * It returns some basic information about the data that was input, such as the number of indicators, the number of units, the number of aggregation levels and the groups in each level. This is done so you can check what you have entered, and that it agrees with your expectations. This has been suppressed here for reasons of space.
 * It gives the option to include or exclude indicators from the input data set - this can be useful for producing alternative versions with different indicator sets, without having to alter the input data.
 
-In short, the aim is to trap any mis-specifications early on at the assembly phase; `COINr::assemble()` gives informative error messages where discrepancies are found.
+In short, the aim is to trap any misspecifications early on at the assembly phase; `COINr::assemble()` gives informative error messages where discrepancies are found.
 
 # Building a composite indicator {#Sec:Building}
 
@@ -367,7 +367,7 @@ To impute in *COINr* the `impute()` function is called. The types of imputation 
 * The indicator mean, either across all units or within a specified unit group
 * The indicator median, either across all units or within a specified unit group
 * The mean or median, within the aggregation group
-* The expectation maximisation algorithm, via the \pkg{Amelia} package
+* The expectation maximisation algorithm, via the 'Amelia' package
 
 As an example, the data will be imputed using the median of the GDP group.
 
@@ -629,7 +629,7 @@ ASEMAltNorm$Method$normalise$ntype <- "borda"
 ASEMAltNorm <- COINr::regen(ASEMAltNorm, quietly = TRUE)
 ```
 
-Here a copy of the ASEM index is made. Then the normalisation method is changed by changing the `normalise$ntype` argument to "borda". Finally, the new results are generated by calling `COINr::regen()`, which reruns the construction functions and regenerates the COIN data sets according the specifications in `.$Method`. Importantly, `COINr::regen()` reruns all functions that are recorded in the `.$Method` folder *in the order they appear in the folder*.
+Here a copy of the ASEM index is made. Then the normalisation method is changed by changing the `normalise$ntype` argument to `"borda"`. Finally, the new results are generated by calling `COINr::regen()`, which reruns the construction functions and regenerates the COIN data sets according the specifications in `.$Method`. Importantly, `COINr::regen()` reruns all functions that are recorded in the `.$Method` folder *in the order they appear in the folder*.
 
 Next, the two alternative COINs can be compared using `COINr::compTable()`.
 
@@ -655,9 +655,9 @@ where
 
 $$ V_i= V[E(y|x_i)], \\ V_{i,j}=V[E(y|x_i,x_j)] - V[E(y|x_i)]-V[E(y|x_j)] $$
 
-and so on for higher terms. Here, $V(\cdot)$ denotes the variance operator, $E(\cdot)$ the expected value, and these terms are used directly as *sensitivity indices*, e.g. the \emph{first order sensitivity index} $S_{i}=V_i/V(y)$ measures the contribution of the input $x_i$ to $V(y)$, without including interactions with other inputs. Since they are standardised by $V(y)$, each sensitivity index measures the *fraction of the variance* caused by each input (or interactions between inputs), and therefore the *fraction of the uncertainty*.
+and so on for higher terms. Here, $V(\cdot)$ denotes the variance operator, $E(\cdot)$ the expected value, and these terms are used directly as *sensitivity indices*, e.g. the *first order sensitivity index* $S_{i}=V_i/V(y)$ measures the contribution of the input $x_i$ to $V(y)$, without including interactions with other inputs. Since they are standardised by $V(y)$, each sensitivity index measures the *fraction of the variance* caused by each input (or interactions between inputs), and therefore the *fraction of the uncertainty*.
 
-In *COINr*, variance-based sensitivity analysis can be applied to a wide range of methodological assumptions and parameters used to construct a COIN. In theory, any argument of any of the construction functions given in Table \@ref(tab:constfuncs) can be automatically perturbed. The function `COINr::sensitivity()` essentially performs a (structured) Monte Carlo analysis of the composite indicator following the methodology used in \cite{Saisana-al05}. In practice, this is done by altering construction function arguments stored in the COIN's `.$Method` folder and calling `COINr::regen()` to regenerate the results.
+In *COINr*, variance-based sensitivity analysis can be applied to a wide range of methodological assumptions and parameters used to construct a COIN. In theory, any argument of any of the construction functions given [Building a composite indicator] can be automatically perturbed. The function `COINr::sensitivity()` essentially performs a (structured) Monte Carlo analysis of the composite indicator following the methodology used in \cite{Saisana-al05}. In practice, this is done by altering construction function arguments stored in the COIN's `.$Method` folder and calling `COINr::regen()` to regenerate the results.
 
 To specify a sensitivity analysis, *COINr* needs to know which parameters to perturb, and what the alternative values should be. This is done by creating a named list which is input as an argument to `COINr::sensitivity()`. The following gives an example of this list, perturbing three assumptions (imputation method, normalisation method and weights).
 
@@ -737,7 +737,7 @@ COINr::plotSA(SAresults, ptype = "box") +
   ggplot2::theme(text = ggplot2::element_text(size = 8))
 ```
 
-These plots, show the same information but in a different format. In particular, the box plot shows the bootstapped confidence intervals on sensitivity indices.
+These plots, show the same information but in a different format. In particular, the box plot shows the bootstrapped confidence intervals on sensitivity indices.
 
 # Further features {#Sec:FurtherFeats}
 
@@ -802,4 +802,4 @@ Clearly, the template can be customised by editing the example that fits your re
 
 Some plans are already in the pipeline for future releases. In the first place, readers may notice that there is no mention of panel data, i.e. observations of units and indicators for various points in time.  At the moment, *COINr* does not have an explicit feature for dealing with panel data. One reason for this is that typically, the methodology and the indicators (and units) included or excluded in a composite indicator vary from one year to the next. For now, our recommendation is to construct separate COINs for each year of data and arrange them in a list or data frame, then use `apply()` or *purrr*-style operations to simultaneously apply construction functions to the set of COINs. In future *COINr* releases, the intention is to adapt at least some *COINr* functions to deal with panel data automatically, e.g. `COINr::assemble()` would automatically create a set of COINs from a single set of panel data; and construction functions, as well as some plotting and results functions, can handle COIN-sets automatically.
 
-The same can be said for unit groups. Currently, the grouping columns of indicator data are only used by a few functions, such as `COINr::impute()` and some plotting functions. *COINr* aims to gradually increase the support for groups, so that e.g. aggregation and normalisation can be perfomed on groups - this would allow, for example, developing separate indexes for each group -- some composite indicators already group by unit size, see e.g. the [Cultural and Creative Cities Monitor](https://composite-indicators.jrc.ec.europa.eu/cultural-creative-cities-monitor).
+The same can be said for unit groups. Currently, the grouping columns of indicator data are only used by a few functions, such as `COINr::impute()` and some plotting functions. *COINr* aims to gradually increase the support for groups, so that e.g. aggregation and normalisation can be performed on groups - this would allow, for example, developing separate indexes for each group -- some composite indicators already group by unit size, see e.g. the [Cultural and Creative Cities Monitor](https://composite-indicators.jrc.ec.europa.eu/cultural-creative-cities-monitor).

@@ -7,32 +7,32 @@
 noisyWeights(w, noise_specs, Nrep)
 }
 \arguments{
-\item{w}{A data frame of weights, in the format found in .$Parameters$Weights}
+\item{w}{A data frame of weights, in the format found in \code{.$Parameters$Weights}.}
 
 \item{noise_specs}{a data frame with columns:
 \itemize{
-\item AgLevel: The aggregation level to apply noise to
-\item NoiseFactor. The size of the perturbation: setting e.g. 0.2 peturbs by +/- 20\% of nominal values
+\item \code{AgLevel}: The aggregation level to apply noise to
+\item \code{NoiseFactor}: The size of the perturbation: setting e.g. 0.2 perturbs by +/- 20\% of nominal values.
 }}
 
 \item{Nrep}{The number of weight replications to generate.}
 }
 \value{
-A list of sets of weights (data frames)
+A list of \code{Nrep} sets of weights (data frames).
 }
 \description{
 Given a set of weights, this function returns multiple replicates of the weights, with added
 noise. This is intended for use in uncertainty and sensitivity analysis.
 }
 \details{
-Weights are expected to be in a long data frame format with columns Aglevel, Code and Weight, as
+Weights are expected to be in a long data frame format with columns \code{Aglevel}, \code{Code} and \code{Weight}, as
 used inside COINs.
 
-Noise is added using the noise_specs argument, which is specified by a data frame with columns
-AgLevel and NoiseFactor. The aggregation level refers to number of the aggregation level to target
-while the NoiseFactor refers to the size of the perturbation. If e.g. a row is AgLevel = 1 and
-NoiseFactor = 0.2, this will allow the weights in aggregation level 1 to deviate by +/- 20\% of their
-nominal values (the values in w).
+Noise is added using the \code{noise_specs} argument, which is specified by a data frame with columns
+\code{AgLevel} and \code{NoiseFactor}. The aggregation level refers to number of the aggregation level to target
+while the \code{NoiseFactor} refers to the size of the perturbation. If e.g. a row is \code{AgLevel = 1} and
+\code{NoiseFactor = 0.2}, this will allow the weights in aggregation level 1 to deviate by +/- 20\% of their
+nominal values (the values in \code{w}).
 }
 \examples{
 \dontrun{

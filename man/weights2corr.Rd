@@ -22,20 +22,20 @@ weights2corr(
 
 \item{icodes}{List of two character vectors of indicator codes, corresponding to the two aggregation levels}
 
-\item{cortype}{Correlation type. Either "pearson" (default), "kendall" or "spearman".}
+\item{cortype}{Correlation type. Either \code{"pearson"} (default), \code{"kendall"} or \code{"spearman"}. See \link[stats:cor]{stats::cor}.}
 
-\item{withparent}{Logical: if TRUE, only correlates with the parent, e.g. sub-pillars are only correlated with their parent pillars and not others.}
+\item{withparent}{Logical: if \code{TRUE}, only correlates with the parent, e.g. sub-pillars are only correlated with their parent pillars and not others.}
 }
 \value{
-A list with .$cr is a vector of correlations between each indicator and the index, and
-.$dat is a data frame of rankings, with unit code, and index, input and output scores
+A list with \code{.$cr} is a vector of correlations between each indicator and the index, and
+\code{.$dat} is a data frame of rankings, with unit code, and index, input and output scores
 }
 \description{
 This is a short cut function which takes a new set of indicator weights, and recalculates the COIN results
 based on these weights. It returns a summary of rankings and the correlations between indicators and index.
 }
 \details{
-This function is principally used inside \code{rew8r()}. The \code{w} argument should be a data frame of weights, of the same format
+This function is principally used inside \code{\link[=rew8r]{rew8r()}}. The \code{w} argument should be a data frame of weights, of the same format
 as the data frames found in \code{.$Parameters$Weights}.
 }
 \examples{

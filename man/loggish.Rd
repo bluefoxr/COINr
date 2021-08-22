@@ -9,12 +9,14 @@ loggish(x, ltype, params)
 \arguments{
 \item{x}{A vector or column of data to transform}
 
-\item{ltype}{The type of log transformation}
+\item{ltype}{The type of log transformation - see \code{deflog} in \code{\link[=treat]{treat()}}.}
 
-\item{params}{Some extra params to pass}
+\item{params}{Some extra parameters to pass}
 }
 \description{
-This applies various simple transformations, to be used by the treat() function.
+This applies various simple transformations, to be used by the \code{\link[=treat]{treat()}} function.
+This function is probably not very useful on its own because it requires \code{params},
+a list of parameters which are used to output the type and status of treatment applied.
 }
 \seealso{
 \itemize{

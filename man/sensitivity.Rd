@@ -20,28 +20,28 @@ sensitivity(
 \item{COIN}{A COIN (this function does not support data frame input)}
 
 \item{v_targ}{The target variable to perform SA or UA on. Currently just supports one variable, which
-should be an indicator/aggregate code present in .$Data$Aggregated.}
+should be an indicator/aggregate code present in \code{.$Data$Aggregated}.}
 
 \item{SA_specs}{A list which specifies which variables to perturb, and which alternatives/distributions to use}
 
-\item{N}{The number of Monte Carlo replications}
+\item{N}{The number of Monte Carlo replications.}
 
-\item{SA_type}{The type of analysis to run. "UA" runs an uncertainty analysis.}
+\item{SA_type}{The type of analysis to run. \code{"UA"} runs an uncertainty analysis. \code{"SA"} runs a sensitivity analysis (which anyway includes an uncertainty analysis).}
 
 \item{NrepWeights}{The number of weight-replications to generate. Default 1000.}
 
 \item{store_results}{Which results to store
 \itemize{
-\item "onlyresults" only stores scores, ranks and rank statistics (e.g. mean, median, quantiles)
-\item "results+params" (default) stores all of the above, plus a record of the parameter values used for each replication
-\item "results+method" stores all of the above, plus the full .$Method list of each replication
-\item "results+COIN" stores all results and the complete COIN of each replication
+\item \code{"onlyresults"} only stores scores, ranks and rank statistics (e.g. mean, median, quantiles)
+\item \code{"results+params"} (default) stores all of the above, plus a record of the parameter values used for each replication
+\item \code{"results+method"} stores all of the above, plus the full \code{.$Method} list of each replication
+\item \code{"results+COIN"} stores all results and the complete COIN of each replication (this could result in a very large list).
 }}
 
 \item{Nboot}{Number of bootstrap draws for estimates of confidence intervals on sensitivity indices.
-If this is not specified, bootstrapping is not applied. Ignored if SA_type = "UA".}
+If this is not specified, bootstrapping is not applied. Ignored if \code{SA_type = "UA"}.}
 
-\item{quietly}{If FALSE (default), gives progress messages. Set TRUE to suppress these.}
+\item{quietly}{If \code{FALSE} (default), gives progress messages. Set \code{TRUE} to suppress these.}
 }
 \value{
 Sensitivity analysis results

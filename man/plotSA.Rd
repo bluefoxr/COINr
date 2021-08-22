@@ -7,15 +7,15 @@
 plotSA(SAresults, ptype = "bar")
 }
 \arguments{
-\item{SAresults}{A list of sensitivity/uncertainty analysis results from COINr::sensitivity().}
+\item{SAresults}{A list of sensitivity/uncertainty analysis results from \code{\link[=sensitivity]{sensitivity()}}.}
 
-\item{ptype}{Type of plot to generate - either "bar", "pie" or "box"}
+\item{ptype}{Type of plot to generate - either \code{"bar"}, \code{"pie"} or \code{"box"}.}
 }
 \description{
 Plots sensitivity indices as bar or pie charts.
 }
 \details{
-To use this function you first need to run sensitivity(). Then enter the resulting list as the
+To use this function you first need to run \code{\link[=sensitivity]{sensitivity()}}. Then enter the resulting list as the
 \code{SAresults} argument here. I haven't provided an example because of the time required for performing
 a sensitivity analysis.
 See \href{https://bluefoxr.github.io/COINrDoc/sensitivity-analysis.html}{COINr online documentation} for more details.

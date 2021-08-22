@@ -12,7 +12,7 @@ roundDF(df, decimals = 2)
 \item{decimals}{The number of decimal places to round to (default 2)}
 }
 \value{
-A data frame, with any numeric columns rounded to the specified amount
+A data frame, with any numeric columns rounded to the specified amount.
 }
 \description{
 Tiny function just to round down a data frame for display in a table.
@@ -23,6 +23,6 @@ Tiny function just to round down a data frame for display in a table.
 }
 \seealso{
 \itemize{
-\item \code{\link[=rankDF]{rankDF()}} Replace df numbers with ranks
+\item \code{\link[=rankDF]{rankDF()}} Replace data frame numbers with ranks.
 }
 }

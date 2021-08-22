@@ -21,14 +21,14 @@ plotIndDist(
 
 \item{icodes}{A character vector of indicator names to plot. Defaults to all indicators.}
 
-\item{aglev}{The aggregation level to extract the indicator data from. Defaults to indicator level (1)}
+\item{aglev}{The aggregation level to extract the indicator data from. Defaults to indicator level (1).}
 
-\item{type}{The type of plot. Currently supported "Box", "Dot", "Violin", "Violindot", "Histogram".}
+\item{type}{The type of plot. Currently supported \code{"Box"}, \code{"Dot"}, \code{"Violin"}, \code{"Violindot"}, \code{"Histogram"}.}
 
-\item{ntype}{The type of nomalisation to apply. If NULL, no normalisation applied, otherwise specify
-using labels in normalise.}
+\item{ntype}{The type of normalisation to apply. If \code{NULL}, no normalisation applied, otherwise specify
+using \code{ntype} options in \code{\link[=normalise]{normalise()}}.}
 
-\item{npara}{Optional parameters to pass to normalise if normalisation required.}
+\item{npara}{Optional parameters to pass to \code{\link[=normalise]{normalise()}} if normalisation required.}
 }
 \value{
 Plots generated with \strong{ggplot2}. These can be edited further with \strong{ggplot2} commands.
@@ -36,6 +36,12 @@ Plots generated with \strong{ggplot2}. These can be edited further with \strong{
 \description{
 Plots indicator distributions using box plots, dot plots, violin plots, violin-dot plots, and histograms.
 Supports plotting multiple indicators by calling aggregation groups.
+}
+\details{
+This function also optionally normalises indicators so they can be compared more easily side by side. For this
+purpose it calls \code{\link[=normalise]{normalise()}} - see \code{ntype} and \code{npara} arguments.
+
+See \href{https://bluefoxr.github.io/COINrDoc/initial-visualisation-and-analysis.html#distributions}{COINr online documentation} and \code{\link[=getIn]{getIn()}} for more information on accessing/plotting groups.
 }
 \examples{
 \dontrun{

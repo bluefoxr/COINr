@@ -7,17 +7,17 @@
 regen(COINold, quietly = FALSE)
 }
 \arguments{
-\item{COINold}{COIN object containing specs on how to regenerate}
+\item{COINold}{COIN object containing specifications on how to regenerate.}
 
-\item{quietly}{Logical: if TRUE suppresses all messages from COINr functions (warnings may still occur though)}
+\item{quietly}{Logical: if \code{TRUE} suppresses all messages from COINr functions (warnings may still occur though).}
 }
 \value{
 An updated COIN object, with all data sets recalculated. Weight sets will be passed through.
 }
 \description{
 Function to regenerate the results of the COIN, using the methodological parameters stored in
-.$Method. This function calls the construction functions of COINr in the order that they are
-found in .$Method, along with any custom code found in .$Method$Custom.
+\code{.$Method}. This function calls the construction functions of COINr in the order that they are
+found in \code{.$Method}, along with any custom code found in \code{.$Method$Custom}.
 }
 \details{
 Note that while sets of weights will be passed to the regenerated COIN, anything in \code{.$Analysis} will be removed and will have to be recalculated.

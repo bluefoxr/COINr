@@ -18,31 +18,36 @@ normalise(
 \arguments{
 \item{COIN}{Either the COIN object, or a data frame of indicator data}
 
-\item{ntype}{The type of normalisation method. Either "minmax", "zscore", "scaled", "rank", "borda", "prank", "fracmax", "dist2targ", "dist2ref", "dist2max", "custom" or "none".}
+\item{ntype}{The type of normalisation method. Either \code{"minmax"}, \code{"zscore"}, \code{"scaled"}, \code{"rank"}, \code{"borda"}, \code{"prank"},
+\code{"fracmax"}, \code{"dist2targ"}, \code{"dist2ref"}, \code{"dist2max"}, \code{"custom"} or \code{"none"}.
+See the \href{https://bluefoxr.github.io/COINrDoc/normalisation.html}{online documentation}.}
 
-\item{npara}{Supporting object for ntype. This is a list of the form list(ntype = parameters_for_ntype). So,
-if ntype = "minmax", npara could be list(minmax = c(0, 100)) to scale into the 0 to 100 interval
-If ntype = "zscore", npara could be list(zscore = c(0, 1)) to scale to mean zero and std 1.
+\item{npara}{Supporting object for \code{ntype}. This is a list of the form \code{list(ntype = parameters_for_ntype)}. So,
+if \code{ntype = "minmax"}, \code{npara} could be \code{list(minmax = c(0, 100))} to scale into the 0 to 100 interval.
+If \code{ntype = "zscore"}, \code{npara} could be \code{list(zscore = c(0, 1))} to scale to mean zero and standard deviation 1.
 This means you can store parameters for more than one normalisation type side by side, which helps in
 comparisons, adjustments, and sensitivity analyses.}
 
-\item{dset}{The data set to normalise}
+\item{dset}{The data set to normalise.}
 
 \item{directions}{A vector specifying the direction assigned to each indicator.
-Needs to be the same length as the number of indicators, or the number of indicators in icodes, if specified.}
+Needs to be the same length as the number of indicators, or the number of indicators in \code{icodes}, if specified.}
 
-\item{individual}{A list of named lists specifiying individual normalisation to apply to specific indicators. Should be structured as follows:
-The name of each sublist should be the indicator code. The the list elements are:
-.$ntype is the type of normalisation to apply
-.$npara is a corresponding object or parameters that are used by ntype, in the same format as npara above.}
+\item{individual}{A list of named lists specifying individual normalisation to apply to specific indicators. Should be structured as follows:
+The name of each sub-list should be the indicator code. The the list elements are:
+\itemize{
+\item .\verb{$ntype} is the type of normalisation to apply
+\item .\verb{$npara} is a corresponding object or parameters that are used by \code{ntype}, in the same format as \code{npara} above.
+}}
 
-\item{indiv_only}{Logical: if FALSE (default), indicators not specified in individual are subjected to default normalisation. Otherwise if TRUE they are not normalised.}
+\item{indiv_only}{Logical: if \code{FALSE} (default), indicators not specified in individual are subjected to default normalisation.
+Otherwise if \code{TRUE} they are not normalised.}
 
-\item{out2}{Where to output the results. If "COIN" (default for COIN input), appends to updated COIN,
-otherwise if "df" outputs to data frame.}
+\item{out2}{Where to output the results. If \code{"COIN"} (default for COIN input), appends to updated COIN,
+otherwise if \code{"df"} outputs to data frame.}
 }
 \value{
-An updated COIN object with .$Data$Normalised added, or a normalised data frame.
+An updated COIN object with \code{.$Data$Normalised} added, or a normalised data frame.
 }
 \description{
 A dataset of indicators is normalised using one of several methods. This function also supports custom normalisation.

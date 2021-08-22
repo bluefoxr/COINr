@@ -12,7 +12,7 @@ resultsDash(COIN, dset = "Aggregated")
 \item{dset}{The initial data set to explore.}
 }
 \value{
-Interactive app for exploring results
+Interactive app for exploring results.
 }
 \description{
 Generates an interactive visualisation of results. Requires Shiny and an active R session.

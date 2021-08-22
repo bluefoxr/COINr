@@ -17,11 +17,11 @@ iplotIndDist2(
 
 \item{dsets}{The source data sets to use for indicator data (if input is COIN object). If the source
 data sets are the same, this can be a single character string, otherwise, a character vector, e.g.
-c("Raw", "Treated").}
+\code{c("Raw", "Treated")}.}
 
-\item{icodes}{A character vector of two indicator codes to plot (corresponding to the two dsets specified)}
+\item{icodes}{A character vector of two indicator codes to plot (corresponding to the two \code{dset}s specified)}
 
-\item{ptype}{The type of plot to produce. Currently supports "Histogram" and "Scatter".}
+\item{ptype}{The type of plot to produce. Currently supports \code{"Histogram"} and \code{"Scatter"}.}
 
 \item{aglevs}{The aggregation level to extract the indicator data from. Defaults to indicator level (1). This also can
 be specified as a vector if the two indicators are from different levels.}
@@ -30,7 +30,7 @@ be specified as a vector if the two indicators are from different levels.}
 Plots generated with \strong{plotly}. These can be edited further with \strong{plotly} commands.
 }
 \description{
-Generates a javascript distribution plot of two indicators, using Plotly. Plot can be embedded e.g. in
+Generates a JavaScript distribution plot of two indicators, using Plotly. Plot can be embedded e.g. in
 HTML documents, websites, etc, or used for more interactive data exploration.
 }
 \examples{

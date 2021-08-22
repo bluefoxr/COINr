@@ -27,23 +27,18 @@ where 1 is the base indicator level, and 2, 3 etc are higher aggregation levels}
 
 \item{isel}{The indicator or aggregation code(s) to plot}
 
-\item{addstat}{Adds the statistic of the scores in each dimension as a separate trace. If "mean" adds the overall
-mean for each dimension/indicator. If "median" adds the overall median. If "groupmean" or "groupmedian", adds the
-group mean or median respectively of the first unit specified in usel, using the group specified by statgroup. Default "none", i.e. no extra trace.
+\item{addstat}{Adds the statistic of the scores in each dimension as a separate trace. If \code{"mean"} adds the overall
+mean for each dimension/indicator. If \code{"median"} adds the overall median. If \code{"groupmean"} or \code{"groupmedian"}, adds the
+group mean or median respectively of the first unit specified in \code{usel}, using the group specified by \code{statgroup}. Default \code{"none"}, i.e. no extra trace.
 Using a group mean or median won't make sense unless all of selected units are from the same group.}
 
-\item{statgroup}{A grouping variable (must be present in dset) if addstat = "groupmean" or "groupmedian"}
+\item{statgroup}{A grouping variable (must be present in \code{dset}) if \code{addstat = "groupmean"} or \code{"groupmedian"}}
 
-\item{statgroup_name}{An optional name to display for statgroup. In the legend this will appear as e.g. "statgroup_name group mean".
-Defaults to statgroup.}
+\item{statgroup_name}{An optional name to display for \code{statgroup.} In the legend this will appear as e.g. \code{"statgroup_name group mean"}.
+Defaults to \code{statgroup}.}
 }
 \value{
 Interactive radar chart
-
-@seealso
-\itemize{
-\item \code{\link[=resultsDash]{resultsDash()}} Interactive results dashboard
-}
 }
 \description{
 Generates an interactive radar chart for a specified unit or set of units.
@@ -61,4 +56,9 @@ ASEM <- build_ASEM()
 iplotRadar(ASEM, dset = "Aggregated", usel = c("AUT", "CHN"), isel = "Political", aglev = 1)
 }
 
+}
+\seealso{
+\itemize{
+\item \code{\link[=resultsDash]{resultsDash()}} Interactive results dashboard.
+}
 }
