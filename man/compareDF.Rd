@@ -11,7 +11,7 @@ compareDF(df1, df2, matchcol, sigfigs = 5)
 
 \item{df2}{Another data frame}
 
-\item{matchcol}{A common column name that is used to match row order. E.g. this might be UnitCode.}
+\item{matchcol}{A common column name that is used to match row order. E.g. this might be \code{UnitCode}.}
 
 \item{sigfigs}{The number of significant figures to use for matching numerical columns}
 }

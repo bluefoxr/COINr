@@ -16,7 +16,7 @@ sunburst plot.
 \description{
 This calculates the effective weights of each element in the indicator hierarchy. This is
 useful for understanding e.g. the true weight of each indicator in the framework and is also
-used in \code{plotframework()}.
+used in \code{\link[=plotframework]{plotframework()}}.
 }
 \examples{
 \dontrun{

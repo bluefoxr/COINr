@@ -17,18 +17,18 @@ compTableMulti(
 \arguments{
 \item{COINs}{A list of COINs}
 
-\item{dset}{The data set to extract the indicator from (must be present in each COIN). Default "Aggregated".}
+\item{dset}{The data set to extract the indicator from (must be present in each COIN). Default \code{"Aggregated"}.}
 
 \item{isel}{Code of the indicator or aggregate to extract from each COIN (must be present in the specified
-data set of each COIN). Default "Index".}
+data set of each COIN). Default \code{"Index"}.}
 
-\item{tabtype}{The type of table to generate - "Ranks", "Diffs", or "AbsDiffs".}
+\item{tabtype}{The type of table to generate - \code{"Ranks"}, \code{"Diffs"}, or \code{"AbsDiffs"}.}
 
 \item{ibase}{The index of the COIN to use as a base comparison}
 
-\item{sort_table}{If TRUE, sorts by the base COIN (ibase), if "change" (default).}
+\item{sort_table}{If TRUE, sorts by the base COIN (\code{ibase}) (default).}
 
-\item{extra_cols}{A character vector of any extra columns to include from the COIN referenced by ibase. For example,
+\item{extra_cols}{A character vector of any extra columns to include from the COIN referenced by \code{ibase}. For example,
 this could include group columns.}
 }
 \value{

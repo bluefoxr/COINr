@@ -2,7 +2,7 @@
 % Please edit documentation in R/coin_compare.R
 \name{compTable}
 \alias{compTable}
-\title{Rank comparison table between 2 COINs}
+\title{Rank comparison table between two COINs}
 \usage{
 compTable(
   COIN1,
@@ -14,18 +14,18 @@ compTable(
 )
 }
 \arguments{
-\item{COIN1}{First COIN obj}
+\item{COIN1}{First COIN}
 
-\item{COIN2}{Second COIN obj}
+\item{COIN2}{Second COIN}
 
 \item{dset}{The data set of interest}
 
-\item{isel}{The indicator/col of interest}
+\item{isel}{The indicator/column of interest}
 
-\item{COINnames}{An optional character vector of the names of COIN1 and COIN2, to be used in the table headers.}
+\item{COINnames}{An optional character vector of the names of \code{COIN1} and \code{COIN2}, to be used in the table headers.}
 
-\item{sort_by}{If "RankCOIN1", sorts by the indicator values of COIN1, if "RankCOIN2", sorts by COIN2,
-if "RankChange", sorts by rank change, and if "AbsRankChange" sorts by absolute rank change.}
+\item{sort_by}{If \code{"RankCOIN1"}, sorts by the indicator values of COIN1, if \code{"RankCOIN2"}, sorts by \code{COIN2},
+if \code{"RankChange"}, sorts by rank change, and if \code{"AbsRankChange"} sorts by absolute rank change.}
 }
 \value{
 A data frame with ranks and rank changes

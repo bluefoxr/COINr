@@ -16,7 +16,7 @@ corrweightscat(
 \arguments{
 \item{dat}{Data frame with first col indicator codes, second is weights, third is correlations}
 
-\item{facet}{Logical: if TRUE creates subplots.}
+\item{facet}{Logical: if \code{TRUE} creates subplots.}
 
 \item{acvar}{Active variable to highlight (one of the indicator codes)}
 
@@ -27,11 +27,11 @@ corrweightscat(
 \item{hicorval}{x value of high correlation line}
 }
 \value{
-A scatter plot, also outputs event data (the clicked indicator)
+A scatter plot, also outputs event data (the clicked indicator).
 }
 \description{
 Plots correlations on the x axis and weights on the y axis. Allows a selected highlighted point
-and a line showing low correlation boundary. This function is intended for use inside \code{rew8r()}.
+and a line showing low correlation boundary. This function is intended for use inside \code{\link[=rew8r]{rew8r()}}.
 }
 \seealso{
 \itemize{

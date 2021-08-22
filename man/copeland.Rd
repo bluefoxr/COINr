@@ -10,15 +10,15 @@ copeland(ind_data, w = NULL)
 \item{ind_data}{A data frame or matrix of indicator data, with observations as rows and indicators
 as columns. No other columns should be present (e.g. label columns).}
 
-\item{w}{A vector of weights, which should have length equal to ncol(ind_data). Weights are relative
-and will be rescaled to sum to 1. If w is not specified, defaults to equal weights.}
+\item{w}{A vector of weights, which should have length equal to \code{ncol(ind_data)}. Weights are relative
+and will be re-scaled to sum to 1. If \code{w} is not specified, defaults to equal weights.}
 }
 \value{
 Numeric vector of Copeland scores.
 }
 \description{
 Aggregates a data frame of indicator values into a single column using the Copeland method. This function is used inside
-\code{aggregate()}.
+\code{\link[=aggregate]{aggregate()}}.
 }
 \examples{
 \dontrun{

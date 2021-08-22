@@ -15,36 +15,38 @@ denominate(
 )
 }
 \arguments{
-\item{obj}{COIN object or a data frame of indicator data to be denominated. If a data frame, must include a UnitCode column.}
+\item{obj}{COIN object or a data frame of indicator data to be denominated. If a data frame, must include a \code{UnitCode} column.}
 
 \item{dset}{The data set to denominate (only if COIN used as input)}
 
 \item{specby}{Selects the source of the specifications for denomination.
-If "metadata", uses the denominator column in .$metadata.
-If "user", takes a character vector of denominator codes (one for each indicator, with NA for indicators that should not be denominated, and in the same order as the indicators).}
+\itemize{
+\item If \code{"metadata"}, uses the denominator column in \code{.$metadata}.
+\item If \code{"user"}, takes a character vector of denominator codes (one for each indicator, with \code{NA} for indicators that should not be denominated, and in the same order as the indicators).
+}}
 
 \item{denomby}{Character vector specifying which denominators to use for each indicator. Only used if
-specby = "user". For indicators with no denomination, set elements to NA. Elements must be column names
+\code{specby = "user"}. For indicators with no denomination, set elements to \code{NA.} Elements must be column names
 of denominators.}
 
-\item{scaledenoms}{This allows the possibility to scale denominators if needed. For example, if GDP is a denominator and is meausured in
+\item{scaledenoms}{This allows the possibility to scale denominators if needed. For example, if GDP is a denominator and is measured in
 dollars, dividing will create very small numbers (order 1e-10 and smaller) which could cause problems with numerical precision. This should be
 a named list of the form e.g. \code{list(Den_GDP = 1e-9)}, where the name is the denominator to be scaled, and the entry is a factor to multiply
 the denominator values by. In the example, this would multiply GDP values by 1e-9, which (if the original values are in dollars) would
 scale them to billions of dollars. The list can include more than one entry, corresponding to any denominators that are present.}
 
 \item{denominators}{A data frame of denominator data. Columns should be denominator data, with column names corresponding
-to entries in denomby. This must also include a UnitCode column to match units (ordering is unimportant, this is done inside the function).
+to entries in \code{denomby}. This must also include a \code{UnitCode} column to match units (ordering is unimportant, this is done inside the function).
 Ensure that the unit codes correspond to the unit codes in the indicator data.}
 
-\item{out2}{Where to output the results. If "COIN" (default for COIN input), appends to updated COIN,
-otherwise if "df" outputs to data frame.}
+\item{out2}{Where to output the results. If \code{"COIN"} (default for COIN input), appends to updated COIN,
+otherwise if \code{"df"} outputs to data frame.}
 }
 \value{
-An updated COIN object, with new dataset .$Data$Denominated of denominated indicators.
+An updated COIN object, with new dataset \code{.$Data$Denominated} of denominated indicators.
 }
 \description{
-Denominates (divides) indicators by other "denominator" indicators that are either input here or were attached as "Den_*" columns of
+Denominates (divides) indicators by other "denominator" indicators that are either input here or were attached as \code{"Den_*"} columns of
 \code{IndData} when assembling the COIN.
 }
 \details{

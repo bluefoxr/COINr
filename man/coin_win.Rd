@@ -14,20 +14,21 @@ coin_win(
 )
 }
 \arguments{
-\item{icol}{The vector of data to Winsorize}
+\item{icol}{The vector of data to Winsorise}
 
-\item{winmax}{The maximum number of points to Winsorise for each indicator. If NA, will keep Winsorising until skew&kurt thresholds achieved (but it is likely this will cause errors)}
+\item{winmax}{The maximum number of points to Winsorise for each indicator. If \code{NA}, will keep Winsorising until skewness and kurtosis
+thresholds achieved (but it is likely this will cause errors).}
 
-\item{winchange}{Logical: if TRUE, Winsorisation can change direction from one iteration to the next. Otherwise if FALSE (default), no change.}
+\item{winchange}{Logical: if \code{TRUE}, Winsorisation can change direction from one iteration to the next. Otherwise if \code{FALSE} (default), no change.}
 
-\item{t_skew}{Absolute skew threshold (default 2)}
+\item{t_skew}{Absolute skew threshold (default 2).}
 
-\item{t_kurt}{Kurtosis threshold (default 3.5)}
+\item{t_kurt}{Kurtosis threshold (default 3.5).}
 
-\item{icode}{The indicator name - used for error messages.}
+\item{icode}{The indicator name - used for error messages in \code{\link[=treat]{treat()}}.}
 }
 \description{
-To be used inside treat() to avoid repetitions. Winsorises one column of data.
+To be used inside \code{\link[=treat]{treat()}} to avoid repetitions. Winsorises a numerical vector of data.
 }
 \details{
 Outliers are identified according to skewness and kurtosis thresholds. The algorithm attempts to reduce the absolute skew and
