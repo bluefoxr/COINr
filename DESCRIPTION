@@ -2,9 +2,17 @@ Package: COINr
 Type: Package
 Title: Composite Indicator Construction and Analysis
 Version: 0.5.2
-Author: William Becker
 Maintainer: William Becker <william.becker@bluefoxdata.eu>
-Description: A comprehensive high-level package for composite indicator construction and analysis.
+Description: A comprehensive high-level package for composite indicator construction and analysis. It is a "development environment"
+    for composite indicators and scoreboards, which includes utilities for construction (indicator selection, denomination, imputation,
+    data treatment, normalisation, weighting and aggregation) and analysis (multivariate analysis, correlation plotting, short cuts for
+    principle component analysis, global sensitivity analysis, and more). A composite indicator is completely encapsulated inside a single
+    hierarchical list called a "COIN". This allows a fast and efficient work flow, as well as making quick copies, testing methodological variations and making comparisons.
+    It also includes many plotting options, both statistical (scatter plots, distribution plots) as well as for presenting results (maps,
+    bar charts, radar charts, and more).
+    Finally, three Shiny apps are available which enable fast data exploration, results presentation, and checking the effects of
+    altering weights.
+    Full documentation is found in the online book at <https://bluefoxr.github.io/COINrDoc/>, as well as the vignette.
 License: MIT + file LICENSE
 Encoding: UTF-8
 URL: https://bluefoxr.github.io/COINrDoc/
@@ -34,7 +42,11 @@ Imports:
 Depends: 
     R (>= 3.5.0)
 Suggests: 
+    spelling,
     knitr,
     rmarkdown
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
+Language: en-GB
+Authors@R: person("William", "Becker", email = "william.becker@bluefoxdata.eu",
+  role = c("aut", "cre", "cph"), comment = c(ORCID = "0000-0002-6467-4472"))
