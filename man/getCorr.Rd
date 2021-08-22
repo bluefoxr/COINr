@@ -20,14 +20,15 @@ getCorr(
 
 \item{dset}{The target data set}
 
-\item{icodes}{An optional list of character vectors where the first entry specifies the indicator/agg
-codes to correlate against the second entry (also a specification of ind/agg codes)}
+\item{icodes}{An optional list of character vectors where the first entry specifies the indicator/aggregate
+codes to correlate against the second entry (also a specification of indicator/aggregate codes).}
 
-\item{aglevs}{The aggregation levels to take the two groups of indicators from. See \code{getIn()} for details. Defaults to indicator level.}
+\item{aglevs}{The aggregation levels to take the two groups of indicators from. See \code{\link[=getIn]{getIn()}} for details. Defaults to indicator level.}
 
-\item{cortype}{The type of correlation to calculate, either "pearson", "spearman", or "kendall".}
+\item{cortype}{The type of correlation to calculate, either \code{"pearson"}, \code{"spearman"}, or \code{"kendall"}.}
 
-\item{pval}{The significance level for including correlations. Correlations with p > pval will be returned as \code{NA}. Default 0.05. Set to 0 to disable this.}
+\item{pval}{The significance level for including correlations. Correlations with \eqn{p > pval} will be returned as \code{NA}.
+Default 0.05. Set to 0 to disable this.}
 
 \item{withparent}{If \code{TRUE}, and \code{aglev[1] != aglev[2]}, will only return correlations of each row with its parent.}
 

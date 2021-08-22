@@ -16,30 +16,33 @@ impute(
 \arguments{
 \item{COIN}{A COIN or a data frame}
 
-\item{imtype}{The type of imputation method. Either "agg_mean" (the mean of normalised indicators inside the aggregation group),
-"agg_median" (the median of normalised indicators inside the aggregation group),
-"ind_mean" (the mean of all the other units in the indicator),
-"ind_median" (the median of all the other units in the indicator),
-"indgroup_mean" (the mean of all the other units in the indicator, in the same group),
-"indgroup_median" (the median of all the other units in the indicator, in the same group),
-"EM" (expectation maximisation algorithm via AMELIA package, currently without bootstrapping)
-"none" (no imputation, returns original data set)}
+\item{imtype}{The type of imputation method. Either:
+\itemize{
+\item \code{"agg_mean"} (the mean of normalised indicators inside the aggregation group),
+\item \code{"agg_median"} (the median of normalised indicators inside the aggregation group),
+\item \code{"ind_mean"} (the mean of all the other units in the indicator),
+\item \code{"ind_median"} (the median of all the other units in the indicator),
+\item \code{"indgroup_mean"} (the mean of all the other units in the indicator, in the same group),
+\item \code{"indgroup_median"} (the median of all the other units in the indicator, in the same group),
+\item \code{"EM"} (expectation maximisation algorithm via AMELIA package, currently without bootstrapping)
+\item \code{"none"} (no imputation, returns original data set)
+}}
 
-\item{dset}{The data set in .$Data to impute}
+\item{dset}{The data set in \code{.$Data} to impute}
 
-\item{groupvar}{The name of the column to use for by-group imputation. Only applies when imtype is set to a group option.}
+\item{groupvar}{The name of the column to use for by-group imputation. Only applies when \code{imtype} is set to a group option.}
 
-\item{EMaglev}{The aggregation level to use if imtype = "EM".}
+\item{EMaglev}{The aggregation level to use if \code{imtype = "EM"}.}
 
-\item{out2}{Where to output the results. If "COIN" (default for COIN input), appends to updated COIN,
-otherwise if "df" outputs to data frame.}
+\item{out2}{Where to output the results. If \code{"COIN"} (default for COIN input), appends to updated COIN,
+otherwise if \code{"df"} outputs to data frame.}
 }
 \value{
-A dataframe of normalised indicators.
+A data frame of normalised indicators.
 }
 \description{
 Imputation of missing data data sets using a variety of methods (see \code{imtype}). This also includes the possibility of imputing
-by grouping variables, i.e. columns of \code{IndData} that are prefaced by "Group_".
+by grouping variables, i.e. columns of \code{IndData} that are prefaced by \code{"Group_"}.
 }
 \examples{
 \dontrun{

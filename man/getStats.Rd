@@ -5,7 +5,7 @@
 \title{Get table of indicator statistics for any data set}
 \usage{
 getStats(
-  COINobj,
+  COIN,
   icodes = NULL,
   dset = "Raw",
   out2 = "COIN",
@@ -19,33 +19,33 @@ getStats(
 )
 }
 \arguments{
-\item{COINobj}{A list of indicator data, stuctured using the COIN_assemble function}
+\item{COIN}{A COIN object or data frame of indicator data}
 
 \item{icodes}{A character vector of indicator names to analyse. Defaults to all indicators.}
 
-\item{dset}{The data set to analyse}
+\item{dset}{The data set to analyse.}
 
-\item{out2}{Where to output the results: if "COIN" (default), outputs to the COIN, otherwise if "list", outputs to a separate list.}
+\item{out2}{Where to output the results: if \code{"COIN"} (default), outputs to the COIN, otherwise if \code{"list"}, outputs to a separate list.}
 
-\item{cortype}{The type of correlation to calculate, either "pearson", "spearman", or "kendall".}
+\item{cortype}{The type of correlation to calculate, either \code{"pearson"}, \code{"spearman"}, or \code{"kendall"}. See \link[stats:cor]{stats::cor}.}
 
-\item{t_skew}{Skewness threshold}
+\item{t_skew}{Skewness threshold.}
 
-\item{t_kurt}{Kurtosis threshold}
+\item{t_kurt}{Kurtosis threshold.}
 
-\item{t_colin}{Collinearity threshold (absolute value of correlation)}
+\item{t_colin}{Collinearity threshold (absolute value of correlation).}
 
-\item{t_denom}{High correlation with denominator threshold}
+\item{t_denom}{High correlation with denominator threshold.}
 
-\item{t_missing}{Missing data threshold, in percent}
+\item{t_missing}{Missing data threshold, in percent.}
 
-\item{IQR_coef}{Interquartile range coefficient, used for identifying outliers}
+\item{IQR_coef}{Interquartile range coefficient, used for identifying outliers.}
 }
 \value{
 Either an updated COIN object with relevant tables, or a list.
 }
 \description{
-Takes a COIN , or data frame and returns a table of statistics, including max, min, median, mean, std, kurtosis, etc.
+Takes a COIN , or data frame and returns a table of statistics, including max, min, median, mean, standard deviation, kurtosis, etc.
 Flags indicators with possible outliers, and checks for collinearity with other indicators and denominators (if any).
 Also checks number of unique values and percentage of zeros. Also returns correlation matrices and a table of outliers,
 as a list.

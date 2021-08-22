@@ -15,17 +15,17 @@ getUnitReport(
 \arguments{
 \item{COIN}{A COIN}
 
-\item{usel}{A selected unit code, or a character vector of unit codes (for multiple reports)}
+\item{usel}{A selected unit code, or a character vector of unit codes (for multiple reports).}
 
-\item{out_type}{A string specifying the output type. Can be either ".docx" (Word), ".pdf" or ".html". IMPORTANT: if the
-rmd template includes interactive plots (e.g. the iplot functions from COINr), writing to docx or pdf will not work
+\item{out_type}{A string specifying the output type. Can be either \code{".docx"} (Word), \code{".pdf"} or \code{".html"}. IMPORTANT: if the
+template includes interactive plots (e.g. the \code{iplot()} functions from COINr), writing to \code{.docx} or \code{.pdf} will not work
 \emph{unless} you have installed the webshot package. To do this, run:
 \code{install.packages("webshot")}
 \code{webshot::install_phantomjs()}}
 
 \item{outdir}{Character string specifying the output directory (defaults to current working directory).}
 
-\item{rmd_template}{A character string specifying the full file path to an rmd template which is used to generate the report. If this is not specified,
+\item{rmd_template}{A character string specifying the full file path to an R Markdown template which is used to generate the report. If this is not specified,
 defaults to COINr's inbuilt template example.}
 }
 \value{
@@ -35,18 +35,18 @@ Markdown document rendered to HTML, pdf or Word.
 Generates a scorecard for a given unit using an R Markdown template.
 }
 \details{
-Most likely you will want to customise the template which can be found in the COINr installed package directory under /inst.
+Most likely you will want to customise the template which can be found in the COINr installed package directory under \verb{/UnitReport}.
 Currently, a few examples are given, such as some charts and basic summary statistics.
 
-This function will render the unit report to either pdf, html or word doc. As mentioned below, if you have html widgets
-such as interactive plotly plots, or COINr iplot functions, you will need to install the webshot package to be able to
+This function will render the unit report to either pdf, html or word doc. As mentioned below, if you have HTML widgets
+such as interactive plotly plots, or COINr \code{iplot()} functions, you will need to install the webshot package to be able to
 render to pdf or word formats.
 
-To customise the template, copy the .rmd template found in /inst and alter it, then point the rmd_template argument to
+To customise the template, copy the \code{.rmd} template found in \verb{/UnitReport} and alter it, then point the \code{rmd_template} argument to
 your new template.
 
 Note that this function is particularly useful for generating a large number of reports, e.g. we can generate reports for
-all units at once using a for loop, purrr::map or apply or similar.
+all units at once using a \code{for} loop, \link[purrr:map]{purrr::map} or \code{\link[=apply]{apply()}} or similar.
 }
 \examples{
 \dontrun{

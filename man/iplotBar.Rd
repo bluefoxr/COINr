@@ -25,11 +25,11 @@ iplotBar(
 
 \item{aglev}{The aggregation level to collect the indicator data from (this needs to be specified)}
 
-\item{stack_children}{If TRUE, produces a stacked bar chart with any children of isel. In this case, usel is ignored.
-This only works if dset = "Aggregated" and aglev > 1.}
+\item{stack_children}{If \code{TRUE}, produces a stacked bar chart with any children of \code{isel.} In this case, \code{usel} is ignored.
+This only works if \code{dset = "Aggregated"} and \code{aglev > 1}.}
 
 \item{from_group}{Filters the bar chart to a specified group using a group column that is present in the specified
-data set. Specified as list(group_variable = selected_group).}
+data set. Specified as \code{list(group_variable = selected_group)}.}
 }
 \value{
 Interactive bar chart.

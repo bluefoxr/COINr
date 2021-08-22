@@ -20,7 +20,7 @@ iplotIndDist(
 
 \item{icodes}{A character vector of a single indicator name or aggregate name to plot.}
 
-\item{ptype}{The type of plot to produce. Currently supports "Violin" and "Histogram".}
+\item{ptype}{The type of plot to produce. Currently supports \code{"Violin"} and \code{"Histogram"}.}
 
 \item{aglev}{The aggregation level to extract the indicator data from. Defaults to indicator level (1)}
 
@@ -30,9 +30,9 @@ iplotIndDist(
 Plots generated with \strong{plotly}. These can be edited further with \strong{plotly} commands.
 }
 \description{
-Generates a javascript distribution plot of a single indicator, using \strong{plotly}. Plot can be embedded e.g. in
+Generates a JavaScript distribution plot of a single indicator, using \strong{plotly}. Plot can be embedded e.g. in
 HTML documents, websites, etc, or used for more interactive data exploration. This only plots one
-indicator at a time - for multiple plots you can use \code{plotIndDist()}.
+indicator at a time - for multiple plots you can use \code{\link[=plotIndDist]{plotIndDist()}}.
 }
 \examples{
 \dontrun{

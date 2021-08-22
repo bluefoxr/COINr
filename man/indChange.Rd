@@ -7,26 +7,31 @@
 indChange(COIN, add = NULL, drop = NULL, regen = FALSE)
 }
 \arguments{
-\item{COIN}{COIN object (assumed to be fully built)}
+\item{COIN}{COIN object}
 
 \item{add}{A character vector of indicator codes to add (must be present in the original input data)}
 
 \item{drop}{A character vector of indicator codes to remove (must be present in the original input data)}
 
-\item{regen}{Logical (default): if TRUE, automatically regenerates the results based on the new specs
-Otherwise, just updates the .$Method$assemble parameters. This latter might be useful if you want to
-Make other changes before re-running using the regen function.}
+\item{regen}{Logical (default): if \code{TRUE}, automatically regenerates the results based on the new specs
+Otherwise, just updates the \code{.$Method$assemble} parameters. This latter might be useful if you want to
+Make other changes before re-running using the \code{\link[=regen]{regen()}} function.}
 }
 \value{
-An updated COIN, with regenerated results if regen = TRUE
+An updated COIN, with regenerated results if \code{regen = TRUE}.
 }
 \description{
 A shortcut function to add and remove indicators. This will make the relevant changes
 and recalculate the index if asked. Adding and removing is done relative to the current set of
 indicators used in calculating the index results. Any indicators that are added must of course be
-present in .$Input$Original (in both IndData and IndMeta).
+present in \code{.$Input$Original} (in both \code{IndData} and \code{IndMeta}).
 }
 \examples{
 \dontrun{COIN <- indChange(COIN, add = "Ind1", drop = "Ind3")}
 
+}
+\seealso{
+\itemize{
+\item \code{\link[=regen]{regen()}} regenerate a COIN
+}
 }

@@ -10,11 +10,12 @@ indDash(COIN)
 \item{COIN}{The COIN object}
 }
 \value{
-Interactive visualisation
+Interactive app. This app is purely exploratory and does not return anything back to R.
 }
 \description{
 Generates an interactive visualisation of one or two indicators at a time. Requires Shiny and an active R session.
-This dashboard is useful for quickly exploring indicator data, and seeing the effects of e.g.
+This dashboard is useful for quickly exploring indicator data, and seeing e.g. an untreated indicator distribution
+against its treated equivalent.
 }
 \examples{
 \dontrun{

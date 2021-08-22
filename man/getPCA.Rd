@@ -15,28 +15,28 @@ getPCA(
 }
 \arguments{
 \item{COIN}{An input object. The function can handle either the COIN object, or a data frame.
-The data frame should have each column as an indicator, and an optional column "UnitCode" which
+The data frame should have each column as an indicator, and an optional column \code{"UnitCode"} which
 specifies the code (or name) of each unit. Any other type of object will return an error.}
 
-\item{dset}{If input is a COIN object, this specifies which data set in .$Data to use.}
+\item{dset}{If input is a COIN object, this specifies which data set in \code{.$Data} to use.}
 
 \item{icodes}{An optional character vector of indicator codes to subset the indicator data. Usefully, can also refer to
-an aggregation group name, and data will be subsetted accordingly. NOTE does not work with multiple aggregate group names.}
+an aggregation group name, and data will be sub-setted accordingly. NOTE does not work with multiple aggregate group names.}
 
 \item{aglev}{The aggregation level to take indicator data from. Integer from 1 (indicator level)
 to N (top aggregation level, typically the index).}
 
-\item{nowarnings}{If FALSE (default), will give warnings where missing data are found. Set to TRUE to suppress these warnings.}
+\item{nowarnings}{If \code{FALSE} (default), will give warnings where missing data are found. Set to \code{TRUE} to suppress these warnings.}
 
-\item{out2}{If the input is a COIN object, this controls where to send the output. If "COIN", it
-sends the results to the COIN object, otherwise if "list", outputs to a separate list.}
+\item{out2}{If the input is a COIN object, this controls where to send the output. If \code{"COIN"}, it
+sends the results to the COIN object, otherwise if \code{"list"}, outputs to a separate list.}
 }
 \value{
 PCA data, plus PCA weights corresponding to the loadings of the first principle component.
 This should correspond to the linear combination of indicators that explains the most variance.
 }
 \description{
-Performs PCA on a specified data set and subset of indicators or aggregation groups. Returns weights
+Performs Principle Component Analysis (PCA) on a specified data set and subset of indicators or aggregation groups. Returns weights
 corresponding to the first principal component, i.e the weights that maximise the variance explained
 by the linear combination of indicators.
 }

@@ -20,32 +20,31 @@ iplotCorr(
 \arguments{
 \item{COIN}{The COIN object}
 
-\item{aglevs}{A two length vector specifying which level to plot against which level. E.g. c(2,4) for
-COIN plots sub-pillars against sub-indexes. If NULL, plots everything against everything.}
+\item{aglevs}{A two length vector specifying which level to plot against which level. E.g. \code{c(2,4)} for
+COIN plots sub-pillars against sub-indexes. If \code{NULL}, plots everything against everything.}
 
-\item{insig}{Logical: if TRUE, all correlation values are plotted; if FALSE (default), does not plot insignificant correlations.}
+\item{insig}{Logical: if \code{TRUE}, all correlation values are plotted; if \code{FALSE} (default), does not plot insignificant correlations.}
 
-\item{levs}{Logical: if TRUE, plots lines showing the division between different levels. Only works if aglevs = NULL.}
+\item{levs}{Logical: if \code{TRUE}, plots lines showing the division between different levels. Only works if \code{aglevs = NULL}.}
 
-\item{grouprects}{Logical: if TRUE, plots rectangles showing aggregation groups}
+\item{grouprects}{Logical: if \code{TRUE}, plots rectangles showing aggregation groups.}
 
-\item{flagcolours}{If TRUE uses a discrete colour scale specified by corthresh. Otherwise if "continuous"
-uses a continuous colour map.}
+\item{flagcolours}{If \code{TRUE} uses a discrete colour scale specified by \code{corthresh}. Otherwise uses a continuous colour map.}
 
-\item{corthresh}{A named list specifying the colour thresholds to use if flagcolours = "thresholds". Entries should
-specify correlation thresholds and can specify any of clow, cmid and chi. Anything below clow will be
-coloured red. Anything between clow and cmid will be grey. Anything between cmid and chigh will be blue.
-Anything above chigh will be green. Default is list(clow = -0.4, cmid = 0.4, chigh = 0.85). You can
+\item{corthresh}{A named list specifying the colour thresholds to use if \code{flagcolours = TRUE}. Entries should
+specify correlation thresholds and can specify any of \code{clow}, \code{cmid} and \code{chi}. Anything below \code{clow} will be
+coloured red. Anything between \code{clow} and \code{cmid} will be grey. Anything between \code{cmid} and \code{chigh} will be blue.
+Anything above \code{chigh} will be green. Default is \code{list(clow = -0.4, cmid = 0.4, chigh = 0.85)}. You can
 specify a subset of these and the others will revert to defaults.}
 
-\item{showvals}{Logical: if TRUE, overlays correlation values on each square.}
+\item{showvals}{Logical: if \code{TRUE}, overlays correlation values on each square.}
 
-\item{cortype}{The type of correlation: either "pearson" (default), "spearman" or "kendall"}
+\item{cortype}{The type of correlation: either \code{"pearson"} (default), \code{"spearman"} or \code{"kendall"}. See \link[stats:cor]{stats::cor}.}
 
-\item{useweights}{An optional list of weights to use (this is used mainly in the rew8r app)}
+\item{useweights}{An optional list of weights to use (this is used mainly in the \code{\link[=rew8r]{rew8r()}} app).}
 }
 \value{
-A \strong{plotly} correlation map
+A \strong{plotly} correlation map.
 }
 \description{
 Plots an interactive heatmap of a correlation matrix. Currently this only works with the

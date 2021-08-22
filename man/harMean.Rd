@@ -9,15 +9,15 @@ harMean(x, w = NULL)
 \arguments{
 \item{x}{A numeric vector of positive values.}
 
-\item{w}{A vector of weights, which should have length equal to length(x). Weights are relative
-and will be rescaled to sum to 1. If w is not specified, defaults to equal weights.}
+\item{w}{A vector of weights, which should have length equal to \code{length(x)}. Weights are relative
+and will be re-scaled to sum to 1. If \code{w} is not specified, defaults to equal weights.}
 }
 \value{
-Harmonic mean
+Harmonic mean (scalar value)
 }
 \description{
-Weighted harmonic mean of a vector. NAs are skipped by default. This function is used inside
-\code{aggregate()}.
+Weighted harmonic mean of a vector. \code{NA} are skipped by default. This function is used inside
+\code{\link[=aggregate]{aggregate()}}.
 }
 \examples{
 \dontrun{

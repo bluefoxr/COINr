@@ -19,7 +19,7 @@ hicorrSP(
 
 \item{hicorval}{A threshold to flag high correlation. Default 0.9.}
 
-\item{cortype}{The type of correlation, either "pearson" (default), "spearman" or "kendall"}
+\item{cortype}{The type of correlation, either \code{"pearson"} (default), \code{"spearman"} or \code{"kendall"}. See \link[stats:cor]{stats::cor}.}
 
 \item{grouplev}{The level to group indicators in. E.g. if \code{grouplev = 2} it will look for high correlations between indicators that
 belong to the same group in Level 2.}
@@ -30,7 +30,7 @@ Pairs are only reported once, i.e. only uses the upper triangle of the correlati
 }
 \description{
 This returns a data frame of any highly correlated indicators within the same aggregation group. The level of the aggregation
-group can be controlled by the grouplev argument.
+group can be controlled by the \code{grouplev} argument.
 }
 \examples{
 \dontrun{

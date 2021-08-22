@@ -15,7 +15,7 @@ getStrengthNWeak(COIN, usel = NULL, topN = 5, bottomN = 5, withcodes = TRUE)
 
 \item{bottomN}{The bottom N indicators to report}
 
-\item{withcodes}{If TRUE (default), also includes a column of indicator codes. Setting to FALSE may be more useful
+\item{withcodes}{If \code{TRUE} (default), also includes a column of indicator codes. Setting to \code{FALSE} may be more useful
 in generating reports, where codes are not helpful.}
 }
 \value{

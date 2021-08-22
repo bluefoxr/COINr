@@ -17,11 +17,11 @@ getCronbach(
 
 \item{dset}{The data set to check the consistency of.}
 
-\item{icodes}{Indicator codes if a subset of dset is requested}
+\item{icodes}{Indicator codes if a subset of \code{dset} is requested}
 
-\item{aglev}{The aggregation level to take icodes from (see getIn() for details)}
+\item{aglev}{The aggregation level to take \code{icodes} from (see \code{\link[=getIn]{getIn()}} for details)}
 
-\item{use}{Argument to pass to stats::cor to calculate the covariance matrix. Default "pairwise.complete.obs".}
+\item{use}{Argument to pass to \link[stats:cor]{stats::cor} to calculate the covariance matrix. Default \code{"pairwise.complete.obs"}.}
 }
 \value{
 Cronbach alpha value
@@ -31,8 +31,8 @@ Calculates Cronbach's alpha, a measure of statistical reliability. Cronbach's al
 of "consistency" of a data set, where a high value implies higher reliability/consistency.
 }
 \details{
-This function simply returns Cronbach's alpha. If you want a lot more details on reliability, psych::alpha
-provides a much more detailed analysis.
+This function simply returns Cronbach's alpha. If you want a lot more details on reliability, the psych package has
+a much more detailed analysis.
 }
 \examples{
 \dontrun{

@@ -16,16 +16,16 @@ getResults(
 \arguments{
 \item{COIN}{The COIN object, or a data frame of indicator data}
 
-\item{tab_type}{The type of table to generate. Either "Summary", "Aggregates", "Full", or "FullWithDenoms".}
+\item{tab_type}{The type of table to generate. Either \code{"Summary"}, \code{"Aggregates"}, \code{"Full"}, or \code{"FullWithDenoms"}.}
 
-\item{use}{Either "scores" (default) or "ranks".}
+\item{use}{Either \code{"scores"} (default) or \code{"ranks"}.}
 
 \item{order_by}{A code of the indicator or aggregate to sort the table by. If not specified, defaults to the highest
 aggregate level, i.e. the index in most cases.}
 
 \item{nround}{The number of decimal places to round numerical values to. Defaults to 2.}
 
-\item{out2}{If "df", outputs a data frame (tibble). Else if "COIN" attaches to .$Results in an updated COIN.}
+\item{out2}{If \code{"df"}, outputs a data frame (tibble). Else if \code{"COIN"} attaches to \code{.$Results} in an updated COIN.}
 }
 \value{
 Results table as data frame or updated COIN.

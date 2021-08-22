@@ -8,10 +8,10 @@ getIn(obj, dset = "Raw", icodes = NULL, aglev = NULL, justnumeric = TRUE)
 }
 \arguments{
 \item{obj}{An input object. The function can handle either the COIN object, or a data frame.
-The data frame should have each column as an indicator, and optional columns "UnitCode" and "UnitName" which
+The data frame should have each column as an indicator, and optional columns \code{UnitCode} and \code{UnitName} which
 specify the code (or name) of each unit. Any columns except these latter two will be treated as indicators. Any other type of object will return an error.}
 
-\item{dset}{If input is a COIN object, this specifies which data set in .$Data to use.}
+\item{dset}{If input is a COIN object, this specifies which data set in \code{.$Data} to use.}
 
 \item{icodes}{An optional character vector of indicator codes to subset the indicator data. Usefully, can also refer to
 an aggregation group name, and data will be subsetted accordingly. NOTE does not work with multiple aggregate group names.}
@@ -19,17 +19,17 @@ an aggregation group name, and data will be subsetted accordingly. NOTE does not
 \item{aglev}{The aggregation level to take indicator data from. Integer from 1 (indicator level)
 to N (top aggregation level, typically the index).}
 
-\item{justnumeric}{Logical: if TRUE, removes any non-numeric columns from ind_data_only. Otherwise keeps all except those}
+\item{justnumeric}{Logical: if \code{TRUE}, removes any non-numeric columns from \code{ind_data_only}. Otherwise keeps all except those.}
 }
 \value{
 A list with the following entries:
 \itemize{
-\item .$IndCodes  The indicator codes
-\item .$IndNames  The indicator names (if a COIN object is input)
-\item .$ind_data A data frame of indicator data, according to the input specifications, including any unit codes, names and groups
-\item .$ind_data_only A data frame, as above, but without unit codes, names, groups
-\item .$UnitCodes Unit codes of selected data set
-\item .$otype Object type (a string: either "COINobj" or "df")
+\item \code{.$IndCodes}  The indicator codes
+\item \code{.$IndNames}  The indicator names (if a COIN object is input)
+\item \code{.$ind_data} A data frame of indicator data, according to the input specifications, including any unit codes, names and groups
+\item \code{.$ind_data_only} A data frame, as above, but without unit codes, names, groups.
+\item \code{.$UnitCodes} Unit codes of selected data set.
+\item \code{.$otype} Object type (a string: either \code{"COINobj"} or \code{"df"}).
 }
 }
 \description{
@@ -38,11 +38,11 @@ First, it checks to see what kind of input object is input. Then, it selects the
 according to the specs supplied.
 }
 \details{
-For example, specifying dset = "Raw" and icodes = c("Ind1", "Ind5"), it will the indicator columns
-named "Ind1" and "Ind5" (if they exist), in the format described below. icodes can be indicators
+For example, specifying \code{dset = "Raw"} and \code{icodes = c("Ind1", "Ind5")}, it will return the indicator columns
+named \verb{"Ind1" and "Ind5"} (if they exist), in the format described below. \code{icodes} can be indicators
 or aggregation groups, and can call multiple groups.
 
-You can also specify which aggregation level to target, using the "aglev" argument. See examples
+You can also specify which aggregation level to target, using the \code{aglev} argument. See examples
 below, and in particular the \href{https://bluefoxr.github.io/COINrDoc/helper-functions.html#selecting-data-sets-and-indicators}{COINr online documentation}.
 }
 \examples{
