@@ -38,10 +38,23 @@ In short, COINr aims to allow composite indicators to be developed and prototype
 
 # Installation
 
-COINr is not yet on CRAN but can be installed via Github. First, install the `devtools` package if you don't already have it, then run:
+COINr should be on CRAN soon, but for now can anyway be installed via GitHub. First, install the 'devtools' package if you don't already have it, then run:
 
 ```{r InstallCOINr, eval=FALSE}
 devtools::install_github("bluefoxr/COINr")
 ```
 
 This should directly install the package from Github, without any other steps. You may be asked to update packages. This might not be strictly necessary, so you can also skip this step.
+
+# Getting started
+
+COINr needs a little reading and learning to understand properly. But once you have done that, it can be very powerful
+for developing composite indicators.
+
+A good place to get started is COINr's  "Overview" vignette. Try `vignette(package = "COINr")`.
+
+The most thorough documentation is available at [COINr's online documentation](https://bluefoxr.github.io/COINrDoc/), which is a little long but quite comprehensive. If you want to dive straight in, I would recommend looking in particular at:
+
+The [Example on building a composite indicator](https://bluefoxr.github.io/COINrDoc/appendix-building-a-composite-indicator-example.html).
+
+The [Example on analysing a composite indicator](https://bluefoxr.github.io/COINrDoc/appendix-analysing-a-composite-indicator-example.html).
