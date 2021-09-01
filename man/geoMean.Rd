@@ -13,16 +13,18 @@ geoMean(x, w = NULL)
 and will be re-scaled to sum to 1. If \code{w} is not specified, defaults to equal weights.}
 }
 \value{
-Geometric mean
+The geometric mean, as a numeric value.
 }
 \description{
 Weighted geometric mean of a vector. \code{NA} are skipped by default. This function is used inside
 \code{\link[=aggregate]{aggregate()}}.
 }
 \examples{
-\dontrun{
+# a vector of values
 x <- 1:10
+# a vector of weights
 w <- runif(10)
-geoMean(x,w)}
+# weighted geometric mean
+geoMean(x,w)
 
 }

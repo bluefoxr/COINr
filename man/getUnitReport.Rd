@@ -49,10 +49,17 @@ Note that this function is particularly useful for generating a large number of 
 all units at once using a \code{for} loop, \link[purrr:map]{purrr::map} or \code{\link[=apply]{apply()}} or similar.
 }
 \examples{
-\dontrun{
 # build ASEM COIN up to aggregation
 ASEM <- build_ASEM()
-# generate a unit report for NZ
-getUnitReport(ASEM, usel = "NZL", out_type = ".html")}
+# Generate a unit report for NZ
+# This is written to the temporary directory to avoid polluting other directories
+# during automated testing.
+# It will be deleted at the end of the R session.
+# Normally you would set the directory to somewhere else to save the resulting files
+getUnitReport(ASEM, usel = "NZL", out_type = ".html", outdir = tempdir())
+# You can find this file in the temporary directory:
+print(tempdir())
+# We will now delete the file to keep things tidy in testing
+unlink(paste0(tempdir(),"\\\\NZL_report.html"))
 
 }

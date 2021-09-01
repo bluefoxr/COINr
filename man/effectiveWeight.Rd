@@ -19,10 +19,9 @@ useful for understanding e.g. the true weight of each indicator in the framework
 used in \code{\link[=plotframework]{plotframework()}}.
 }
 \examples{
-\dontrun{
 # build ASEM COIN
 ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 # get effective weights
-effwts <- effectiveWeight(ASEM)}
+effwts <- effectiveWeight(ASEM)
 
 }

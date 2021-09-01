@@ -44,13 +44,17 @@ or aggregation groups, and can call multiple groups.
 
 You can also specify which aggregation level to target, using the \code{aglev} argument. See examples
 below, and in particular the \href{https://bluefoxr.github.io/COINrDoc/helper-functions.html#selecting-data-sets-and-indicators}{COINr online documentation}.
+
+\code{\link[=getIn]{getIn()}} is used by many COINr functions for plotting, accessing and reporting subsets of indicator data.
 }
 \examples{
-\dontrun{
 # assemble ASEM COIN
 ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 # get indicator data from Social pillar
 SocData <- getIn(ASEM, dset = "Raw", icodes = "Social", aglev = 1)
-}
+# Indicator codes
+SocData$IndCodes
+# Indicator data (no other columns)
+SocData$ind_data_only
 
 }

@@ -25,7 +25,7 @@ getStats(
 
 \item{dset}{The data set to analyse.}
 
-\item{out2}{Where to output the results: if \code{"COIN"} (default), outputs to the COIN, otherwise if \code{"list"}, outputs to a separate list.}
+\item{out2}{Where to output the results: if \code{"COIN"} (default), appends to the COIN, otherwise if \code{"list"}, outputs to a separate list.}
 
 \item{cortype}{The type of correlation to calculate, either \code{"pearson"}, \code{"spearman"}, or \code{"kendall"}. See \link[stats:cor]{stats::cor}.}
 
@@ -42,19 +42,25 @@ getStats(
 \item{IQR_coef}{Interquartile range coefficient, used for identifying outliers.}
 }
 \value{
-Either an updated COIN object with relevant tables, or a list.
+If \code{out2 = "COIN"} (default), results are appended to the COIN in \code{.$Analysis}, otherwise if \code{out2 = "list"}, outputs to a separate list.
+In both cases, the result is a list containing:
+\itemize{
+\item A data frame of statistics for each indicator column
+\item A data frame indicating which points may be considered outliers according to the interquartile range
+\item A data frame of correlations between indicators
+\item A data frame of correlations between indicators and any denominators present in \code{.$Input$Denominators}
+}
 }
 \description{
-Takes a COIN , or data frame and returns a table of statistics, including max, min, median, mean, standard deviation, kurtosis, etc.
+Takes a COIN or data frame and returns a table of statistics for each column, including max, min, median, mean, standard deviation, kurtosis, etc.
 Flags indicators with possible outliers, and checks for collinearity with other indicators and denominators (if any).
 Also checks number of unique values and percentage of zeros. Also returns correlation matrices and a table of outliers,
 as a list.
 }
 \examples{
-\dontrun{
 # build ASEM COIN
 ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 # get list of stats from raw data set
-stat_list <- getStats(ASEM, dset = "Raw", out2 = "list")}
+stat_list <- getStats(ASEM, dset = "Raw", out2 = "list")
 
 }

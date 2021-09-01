@@ -36,7 +36,7 @@ Default 0.05. Set to 0 to disable this.}
 aggregation level above. Set to 0 to disable grouping and return the full matrix.}
 }
 \value{
-A data frame of correlation values in long format.
+A data frame of correlation values in long format. Correlations with \eqn{p > pval} will be returned as \code{NA}.
 }
 \description{
 Helper function for getting correlations between indicators. This retrieves subsets of correlation
@@ -46,10 +46,14 @@ matrices between different aggregation levels, in different formats.
 Note that this function can only call correlations within the same data set (i.e. only one data set in \code{.$Data}).
 }
 \examples{
-\dontrun{
 # build ASEM COIN
 ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 # correlations of indicators in Political pillar
-getCorr(ASEM, dset = "Raw", icodes = "Political", aglevs = 1)}
+corrs <- getCorr(ASEM, dset = "Raw", icodes = "Political", aglevs = 1)
 
+}
+\seealso{
+\itemize{
+\item \code{\link[=plotCorr]{plotCorr()}} Plot correlation matrices of indicator subsets
+}
 }

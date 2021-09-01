@@ -24,21 +24,20 @@ getCronbach(
 \item{use}{Argument to pass to \link[stats:cor]{stats::cor} to calculate the covariance matrix. Default \code{"pairwise.complete.obs"}.}
 }
 \value{
-Cronbach alpha value
+Cronbach alpha as a numerical value.
 }
 \description{
 Calculates Cronbach's alpha, a measure of statistical reliability. Cronbach's alpha is a simple measure
 of "consistency" of a data set, where a high value implies higher reliability/consistency.
 }
 \details{
-This function simply returns Cronbach's alpha. If you want a lot more details on reliability, the psych package has
+This function simply returns Cronbach's alpha. If you want a lot more details on reliability, the 'psych' package has
 a much more detailed analysis.
 }
 \examples{
-\dontrun{
 # build ASEM COIN
 ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 # get Cronbach of indicators in Physical pillar
-getCronbach(ASEM, dset = "Raw", icodes = "Physical", aglev = 1)}
+getCronbach(ASEM, dset = "Raw", icodes = "Physical", aglev = 1)
 
 }

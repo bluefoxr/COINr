@@ -43,21 +43,39 @@ Ensure that the unit codes correspond to the unit codes in the indicator data.}
 otherwise if \code{"df"} outputs to data frame.}
 }
 \value{
-An updated COIN object, with new dataset \code{.$Data$Denominated} of denominated indicators.
+If \code{out2 = COIN} and \code{obj} is a COIN, returns an updated COIN object, with new dataset \code{.$Data$Denominated} of denominated indicators.
+Otherwise returns a data frame of denominated indicator data.
 }
 \description{
 Denominates (divides) indicators by other "denominator" indicators that are either input here or were attached as \code{"Den_*"} columns of
-\code{IndData} when assembling the COIN.
+\code{IndData} when assembling the COIN. This function can work either on COINs or on data frames.
 }
 \details{
 Typically, the aim here is to convert extensive (size-related) variables into intensive variables(comparable between units
 of different sizes). There is also the option \code{scaledenoms} to scale denominators to avoid very small or very large numbers resulting.
+
+This function expects that \code{denominators$UnitCode} contains all unit codes found in the data frame to be denominated. Unused
+unit codes (rows) in \code{denominators} will be ignored. Note that some national-level denominator data is available inside COINr at \code{COINr::WorldDenoms}.
+
+See \href{https://bluefoxr.github.io/COINrDoc/denomination.html}{online documentation} for further details and examples.
 }
 \examples{
-\dontrun{
 # assemble ASEM COIN
 ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 # denominate using specs present on assembly
-ASEM <- denominate(ASEM, dset = "Raw")}
+ASEM <- denominate(ASEM, dset = "Raw")
 
+# OR, use function on data frame
+# Get a sample of indicator data (note must be indicators plus a "UnitCode" column)
+IndData <- ASEMIndData[c("UnitCode", "Goods", "Services", "FDI")]
+# Also get some denominator data
+Denoms <- ASEMIndData[c("UnitCode", "Den_Pop", "Den_GDP")]
+# Denominate one by the other
+IndDataDenom <- denominate(IndData, denomby = c("Den_GDP", NA, "Den_Pop"), denominators = Denoms)
+
+}
+\seealso{
+\itemize{
+\item \link{WorldDenoms} A data set of some common national-level denominators.
+}
 }

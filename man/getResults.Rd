@@ -28,7 +28,8 @@ aggregate level, i.e. the index in most cases.}
 \item{out2}{If \code{"df"}, outputs a data frame (tibble). Else if \code{"COIN"} attaches to \code{.$Results} in an updated COIN.}
 }
 \value{
-Results table as data frame or updated COIN.
+If \code{out2 = "df"}, the results table is returned as a data frame. If \code{out2 = "COIN"}, this function returns an updated
+COIN with the results table attached to \code{.$Results}.
 }
 \description{
 Generates fast results tables, either attached to the COIN or as a data frame.
@@ -39,12 +40,10 @@ generates results tables that are suitable for immediate presentation, i.e. sort
 relevant columns. Scores are also rounded by default, and there is the option to present scores or ranks.
 }
 \examples{
-\dontrun{
 # build ASEM COIN up to aggregation
 ASEM <- build_ASEM()
 # results table of scores for index and aggregates (excluding indicator scores)
-getResults(ASEM, tab_type = "Aggregates")
-}
+dfResults <- getResults(ASEM, tab_type = "Aggregates", out2 = "df")
 
 }
 \seealso{

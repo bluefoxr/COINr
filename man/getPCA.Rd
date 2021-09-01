@@ -32,22 +32,37 @@ to N (top aggregation level, typically the index).}
 sends the results to the COIN object, otherwise if \code{"list"}, outputs to a separate list.}
 }
 \value{
-PCA data, plus PCA weights corresponding to the loadings of the first principle component.
-This should correspond to the linear combination of indicators that explains the most variance.
+If \code{out2 = "COIN"}, results are appended to the COIN object. Specifically:
+\itemize{
+\item A new set of PCA weights is added to .$Parameters$Weights
+\item A list is added to \code{.$Analysis} containing PCA weights (loadings) of the first principle component, and the output of \link[stats:prcomp]{stats::prcomp}, for each
+aggregation group found in the targeted level.
+If \code{out2 = "list"} the same outputs are contained in a list.
+}
 }
 \description{
 Performs Principle Component Analysis (PCA) on a specified data set and subset of indicators or aggregation groups. Returns weights
 corresponding to the first principal component, i.e the weights that maximise the variance explained
 by the linear combination of indicators.
 }
+\details{
+Note that \code{getPCA()} is simply a quick wrapper for \code{\link[stats:prcomp]{stats::prcomp()}} which makes PCA on COINs quicker.
+See \href{https://bluefoxr.github.io/COINrDoc/multivariate-analysis.html#pca}{COINr online documentation} for more details and examples.
+}
 \examples{
-\dontrun{
 # build ASEM COIN
 ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta,
 AggMeta = ASEMAggMeta)
-# get PCA results for pillar groups inside "Conn" sub-index
+# get PCA results for pillar groups inside "Sust" (sustainability) sub-index
 # (warnings about missing data are suppressed)
 PCAres <- getPCA(ASEM, dset = "Raw", icodes = "Sust",
-aglev = 1, nowarnings = TRUE, out2 = "list")}
+aglev = 1, nowarnings = TRUE, out2 = "list")
+# summarise PCA results for Social pillar
+summary(PCAres$PCAresults$Social$PCAres)
 
+}
+\seealso{
+\itemize{
+\item \link[stats:prcomp]{stats::prcomp} Principle component analysis
+}
 }

@@ -13,7 +13,7 @@ geoMean_rescaled(x, w = NULL)
 and will be re-scaled to sum to 1. If \code{w} is not specified, defaults to equal weights.}
 }
 \value{
-Geometric mean (scalar value)
+Rescaled weighted geometric mean, as a numeric value.
 }
 \description{
 \emph{NOTE this function is not really in use but is kept here for the moment. Not sure it is very useful.}
@@ -27,9 +27,11 @@ between 0 and 100, this function offers a quick way to test the effect of a geom
 a sensitivity analysis, and avoids bugs arising.
 }
 \examples{
-\dontrun{
+# a vector of values
 x <- 1:10
+# a vector of weights
 w <- runif(10)
-geoMean_rescaled(x,w)}
+# rescaled weighted geometric mean
+geoMean_rescaled(x,w)
 
 }

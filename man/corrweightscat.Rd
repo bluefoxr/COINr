@@ -27,11 +27,14 @@ corrweightscat(
 \item{hicorval}{x value of high correlation line}
 }
 \value{
-A scatter plot, also outputs event data (the clicked indicator).
+A scatter plot generated using plotly, also outputs event data (the clicked indicator).
 }
 \description{
 Plots correlations on the x axis and weights on the y axis. Allows a selected highlighted point
 and a line showing low correlation boundary. This function is intended for use inside \code{\link[=rew8r]{rew8r()}}.
+}
+\details{
+Since this plot is really only intended for use inside \code{\link[=rew8r]{rew8r()}} no example is provided.
 }
 \seealso{
 \itemize{
