@@ -19,10 +19,35 @@
 #' @importFrom purrr map_lgl
 #' @importFrom dplyr filter
 #'
+#' @examples
+#' \dontrun{
+#' ## This example downloads a COIN Tool spreadsheet containing example data,
+#' ## saves it to a temporary directory, unzips, and reads into R. Finally it
+#' ## assembles it into a COIN.
+#'
+#' # Make temp zip filename in temporary directory
+#' tmpz <- tempfile(fileext = ".zip")
+#' # Download an example COIN Tool file to temporary directory
+#' # NOTE: the download.file() command may need its "method" option set to a
+#' # specific value depending on the platform you run this on. You can also
+#' # choose to download/unzip this file manually.
+#' download.file("https://knowledge4policy.ec.europa.eu/sites/default/
+#' files/coin_tool_v1_lite_exampledata.zip", tmpz)
+#' # Unzip
+#' CTpath <- unzip(tmpz, exdir = tempdir())
+#' # Read COIN Tool into R
+#' l <- COINToolIn(CTpath, makecodes = TRUE)
+#' # We can finish by assembling it
+#' CT_exampleCOIN <- assemble(l$IndData, l$IndMeta, l$AggMeta)
+#' }
+#'
 #' @seealso
 #' * [coin2Excel()] Export COIN contents to Excel
 #'
-#' @return A list
+#' @return A list containing:
+#' * `.$IndData` A data frame of imported indicator data to be input as the `IndData` argument in [assemble()].
+#' * `.$IndMeta` A data frame of imported indicator metadata to be input as the `IndMeta` argument in [assemble()].
+#' * `.$AggMeta` A data frame of imported aggregation metadata to be input as the `AggMeta` argument in [assemble()].
 #'
 #' @export
 
@@ -138,9 +163,9 @@ COINToolIn <- function(fname, makecodes = FALSE, oldtool = FALSE){
 #'
 #' @importFrom stringr str_to_title
 #'
-#' @examples \dontrun{
+#' @examples
 #' # generate codes for indicators in the ASEM data set (first five only)
-#' names2Codes(ASEMIndMeta$IndName[1:5], maxlet = 3)}
+#' names2Codes(ASEMIndMeta$IndName[1:5], maxlet = 3)
 #'
 #' @seealso
 #' * [COINToolIn()] Import data from the COIN Tool (Excel).
