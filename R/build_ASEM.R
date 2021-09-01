@@ -1,13 +1,17 @@
 #' Builds ASEM example
 #'
-#' A short cut function for building the ASEM COIN. Useful for testing.
+#' A short cut function for building the ASEM COIN. This builds the ASEM COIN up to and including aggregated results. See
+#' the [ASEM Portal](https://composite-indicators.jrc.ec.europa.eu/asem-sustainable-connectivity/repository) for the underlying
+#' data set and [online documentation](https://bluefoxr.github.io/COINrDoc/coins-the-currency-of-coinr.html) for more information on COINs.
 #'
 #' @importFrom magrittr extract
 #' @importFrom dplyr select starts_with
 #'
-#' @examples \dontrun{ASEM <- build_ASEM()}
+#' @examples
+#' # Build the ASEM COIN
+#' ASEM <- build_ASEM()
 #'
-#' @return COIN object of ASEM index.
+#' @return COIN class object (a list) of the ASEM index, as well as information printed to the console - see [assemble()].
 #'
 #' @export
 
