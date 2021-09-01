@@ -11,7 +11,16 @@
 #' @param COINold COIN object containing specifications on how to regenerate.
 #' @param quietly Logical: if `TRUE` suppresses all messages from COINr functions (warnings may still occur though).
 #'
-#' @return An updated COIN object, with all data sets recalculated. Weight sets will be passed through.
+#' @return An updated COIN object, with all data sets recalculated according to specifications in `.$Method`. Weight sets will be passed through.
+#'
+#' @examples
+#' ASEM <- build_ASEM()
+#' # Make a copy
+#' ASEMAltNorm <- ASEM
+#' # Edit .$Method
+#' ASEMAltNorm$Method$normalise$ntype <- "borda"
+#' # Regenerate
+#' ASEMAltNorm <- regen(ASEMAltNorm, quietly = TRUE)
 #'
 #' @seealso
 #' * [compTable()] compare two different COINs
@@ -20,6 +29,10 @@
 #' @export
 
 regen <- function(COINold, quietly = FALSE){
+
+  if(!is.coin(COINold)){
+    stop("This function only works on a COIN.")
+  }
 
   if (quietly){
     # Assemble always comes first.
@@ -353,10 +366,18 @@ regen <- function(COINold, quietly = FALSE){
 #'
 #' @importFrom magrittr "%>%"
 #'
-#' @examples \dontrun{COIN <- indChange(COIN, add = "Ind1", drop = "Ind3")}
+#' @examples
+#' # build ASEM example
+#' ASEM <- build_ASEM()
+#' # remove one indicator and regenerate results
+#' ASEM2 <- indChange(ASEM, drop = "UNVote", regen = TRUE)
+#' # compare the differences
+#' CT <- compTable(ASEM, ASEM2, dset = "Aggregated", isel = "Index")
 #'
 #' @seealso
 #' * [regen()] regenerate a COIN
+#' * [compTable()] compare two different COINs
+#' * [compTableMulti()] compare multiple COINs
 #'
 #' @return An updated COIN, with regenerated results if `regen = TRUE`.
 #'

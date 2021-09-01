@@ -1,6 +1,6 @@
 #' Get table of indicator statistics for any data set
 #'
-#' Takes a COIN , or data frame and returns a table of statistics, including max, min, median, mean, standard deviation, kurtosis, etc.
+#' Takes a COIN or data frame and returns a table of statistics for each column, including max, min, median, mean, standard deviation, kurtosis, etc.
 #' Flags indicators with possible outliers, and checks for collinearity with other indicators and denominators (if any).
 #' Also checks number of unique values and percentage of zeros. Also returns correlation matrices and a table of outliers,
 #' as a list.
@@ -8,7 +8,7 @@
 #' @param COIN A COIN object or data frame of indicator data
 #' @param icodes A character vector of indicator names to analyse. Defaults to all indicators.
 #' @param dset The data set to analyse.
-#' @param out2 Where to output the results: if `"COIN"` (default), outputs to the COIN, otherwise if `"list"`, outputs to a separate list.
+#' @param out2 Where to output the results: if `"COIN"` (default), appends to the COIN, otherwise if `"list"`, outputs to a separate list.
 #' @param cortype The type of correlation to calculate, either `"pearson"`, `"spearman"`, or `"kendall"`. See [stats::cor].
 #' @param t_skew Skewness threshold.
 #' @param t_kurt Kurtosis threshold.
@@ -24,13 +24,19 @@
 #' @importFrom tibble tibble add_column
 #' @importFrom stats IQR cor median sd
 #'
-#' @examples \dontrun{
+#' @examples
 #' # build ASEM COIN
 #' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 #' # get list of stats from raw data set
-#' stat_list <- getStats(ASEM, dset = "Raw", out2 = "list")}
+#' stat_list <- getStats(ASEM, dset = "Raw", out2 = "list")
 #'
-#' @return Either an updated COIN object with relevant tables, or a list.
+#' @return
+#' If `out2 = "COIN"` (default), results are appended to the COIN in `.$Analysis`, otherwise if `out2 = "list"`, outputs to a separate list.
+#' In both cases, the result is a list containing:
+#' * A data frame of statistics for each indicator column
+#' * A data frame indicating which points may be considered outliers according to the interquartile range
+#' * A data frame of correlations between indicators
+#' * A data frame of correlations between indicators and any denominators present in `.$Input$Denominators`
 #'
 #' @export
 

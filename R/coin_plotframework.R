@@ -14,13 +14,13 @@
 #' @importFrom matrixStats rowProds
 #' @importFrom purrr map_dfr
 #'
-#' @examples \dontrun{
+#' @examples
 #' # build ASEM COIN
 #' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 #' # plot framework
-#' plotframework(ASEM)}
+#' plotframework(ASEM)
 #'
-#' @return Interactive sunburst plot. This can be edited further with **plotly** commands.
+#' @return Interactive sunburst plot built using **plotly**. This can be edited further with **plotly** commands.
 #'
 #' @export
 
@@ -55,11 +55,11 @@ plotframework <- function(COIN){
 #' @importFrom matrixStats rowProds
 #' @importFrom purrr map_dfr
 #'
-#' @examples \dontrun{
+#' @examples
 #' # build ASEM COIN
 #' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 #' # get effective weights
-#' effwts <- effectiveWeight(ASEM)}
+#' effwts <- effectiveWeight(ASEM)
 #'
 #' @return A list with effective weights, as well as a data frame with labels and parents for the
 #' sunburst plot.
@@ -181,6 +181,3 @@ effectiveWeight <- function(COIN){
   }
 
 }
-
-
-

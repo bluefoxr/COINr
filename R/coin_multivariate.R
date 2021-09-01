@@ -35,13 +35,21 @@
 #'
 #' @importFrom ggplot2 ggplot aes geom_tile
 #'
-#' @examples \dontrun{
+#' @examples
 #' # build ASEM COIN
 #' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
-#' # correlation map of indicators in connectivity sub-index, grouped by pillar
-#' plotCorr(ASEM, dset = "Raw", icodes = "Conn", aglevs = 1, showvals = F)}
+#' # correlation data frame of indicators in connectivity sub-index, grouped by pillar
+#' corrs <- plotCorr(ASEM, dset = "Raw", icodes = "Conn", aglevs = 1,
+#' showvals = F, out2 = "dflong")
+#' # NOTE to create a plot instead set out2 = "fig"
 #'
-#' @return Plots generated with **ggplot2**. These can be edited further with **ggplot2** commands.
+#' @return If `out2 = "fig"` returns a plot generated with **ggplot2**. These can be edited further with **ggplot2** commands.
+#' If `out2 = "dflong"` returns the correlation matrix as a data frame in long form, if `out2 = "dfwide"`,
+#' returns the correlation matrix in wide form. The last option here is probably useful if you want to
+#' present a table of the data in a report.
+#'
+#' @seealso
+#' * [getCorr()] Getting correlation matrices of indicator subsets
 #'
 #' @export
 
@@ -188,13 +196,16 @@ plotCorr <- function(COIN, dset = "Raw", icodes = NULL, aglevs = 1, cortype = "p
 #' @param pval The significance level for including correlations. Correlations with \eqn{p > pval} will be returned as `NA`.
 #' Default 0.05. Set to 0 to disable this.
 #'
-#' @examples \dontrun{
+#' @examples
 #' # build ASEM COIN
 #' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 #' # correlations of indicators in Political pillar
-#' getCorr(ASEM, dset = "Raw", icodes = "Political", aglevs = 1)}
+#' corrs <- getCorr(ASEM, dset = "Raw", icodes = "Political", aglevs = 1)
 #'
-#' @return A data frame of correlation values in long format.
+#' @return A data frame of correlation values in long format. Correlations with \eqn{p > pval} will be returned as `NA`.
+#'
+#' @seealso
+#' * [plotCorr()] Plot correlation matrices of indicator subsets
 #'
 #' @export
 
@@ -323,7 +334,7 @@ getCorr <- function(COIN, dset, icodes = NULL, aglevs = NULL, cortype = "pearson
 #' Calculates Cronbach's alpha, a measure of statistical reliability. Cronbach's alpha is a simple measure
 #' of "consistency" of a data set, where a high value implies higher reliability/consistency.
 #'
-#' This function simply returns Cronbach's alpha. If you want a lot more details on reliability, the psych package has
+#' This function simply returns Cronbach's alpha. If you want a lot more details on reliability, the 'psych' package has
 #' a much more detailed analysis.
 #'
 #' @param COIN A COIN or a data frame containing only numerical columns of data.
@@ -334,13 +345,13 @@ getCorr <- function(COIN, dset, icodes = NULL, aglevs = NULL, cortype = "pearson
 #'
 #' @importFrom stats cov
 #'
-#' @examples \dontrun{
+#' @examples
 #' # build ASEM COIN
 #' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 #' # get Cronbach of indicators in Physical pillar
-#' getCronbach(ASEM, dset = "Raw", icodes = "Physical", aglev = 1)}
+#' getCronbach(ASEM, dset = "Raw", icodes = "Physical", aglev = 1)
 #'
-#' @return Cronbach alpha value
+#' @return Cronbach alpha as a numerical value.
 #'
 #' @export
 

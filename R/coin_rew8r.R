@@ -16,344 +16,357 @@
 #' Consider that changing weights to "fix" correlations may result in unusual sets of weights that are hard to justify. This tool may
 #' be more useful as a curiosity, as part of a "what-if" analysis, or simply to better understand what is going on inside your index.
 #'
-#' NOTE that you need to have aggregated your data first before using this.
+#' NOTE that you need to have aggregated your data first before using this. This app also requires an interactive R session to
+#' run.
 #'
 #' @param COIN COIN object
 #'
 #' @importFrom plotly plot_ly plotlyOutput layout add_trace renderPlotly add_segments
 #' @importFrom reactable renderReactable reactableOutput
 #'
-#' @examples \dontrun{
+#' @examples
+#' ## Only run this example in interactive R sessions
+#' if (interactive()) {
 #' # build ASEM COIN up to aggregation
 #' ASEM <- build_ASEM()
 #' # launch app
-#' ASEM <- rew8r(ASEM)}
+#' ASEM <- rew8r(ASEM)
+#' }
 #'
 #' @seealso
 #' * [weightOpt()] Correlation-optimised weights
 #' * [plotCorr()] Correlation plots
 #'
-#' @return An updated COIN object with additional sets of weights, if specified.
+#' @return An updated COIN object with additional sets of weights in `.$Parameters$Weights`, if specified.
 #'
 #' @export
 
 rew8r <- function(COIN){
 
-  # aggregate names for dropdown lists
-  agnames <- paste0("Level ", 1:COIN$Parameters$Nlevels)
+  if(interactive()){
 
-  # get indicator names
-  inames <- COIN$Parameters$IndCodes
+    if(!is.coin(COIN)){
+      stop("This function only runs with a COIN as an input.")
+    }
 
-  # initial weights
-  w0 <- COIN$Parameters$Weights$Original
-  # initial correlations etc
-  crOut <- weights2corr(COIN, w0, aglevs = c(1, COIN$Parameters$Nlevels))$cr
+    # aggregate names for dropdown lists
+    agnames <- paste0("Level ", 1:COIN$Parameters$Nlevels)
 
-  # initialise data frame for plotting
-  dat <- data.frame(
-    Indicator = crOut[[1]],
-    Weight = w0$Weight[w0$AgLevel == 1],
-    Correlation = crOut[[3]] )
-  colnames(dat)[3] <- "Correlation"
+    # get indicator names
+    inames <- COIN$Parameters$IndCodes
 
-  ## Create the shiny UI layout
-  ui <- fluidPage(
+    # initial weights
+    w0 <- COIN$Parameters$Weights$Original
+    # initial correlations etc
+    crOut <- weights2corr(COIN, w0, aglevs = c(1, COIN$Parameters$Nlevels))$cr
 
-    # the side panel
-    sidebarPanel(
-      h3("ReW8R v0.2"),
-      fluidRow(
-        column(6,selectInput("aglev1", "Correlate this:",
-                             agnames, selected = "Level 1")),
-        column(6,selectInput("aglev2", "with this:",
-                             agnames, selected = "Level 2"))
+    # initialise data frame for plotting
+    dat <- data.frame(
+      Indicator = crOut[[1]],
+      Weight = w0$Weight[w0$AgLevel == 1],
+      Correlation = crOut[[3]] )
+    colnames(dat)[3] <- "Correlation"
+
+    ## Create the shiny UI layout
+    ui <- fluidPage(
+
+      # the side panel
+      sidebarPanel(
+        h3("ReW8R v0.2"),
+        fluidRow(
+          column(6,selectInput("aglev1", "Correlate this:",
+                               agnames, selected = "Level 1")),
+          column(6,selectInput("aglev2", "with this:",
+                               agnames, selected = "Level 2"))
+        ),
+        fluidRow(
+          column(6,checkboxInput("facet", "Separate groups", value = FALSE)),
+          column(6,selectInput("cortype", "Correlation type",
+                               c("pearson","spearman","kendall")))
+        ),
+        hr(style = "border-top: 1px solid #000000;"),
+        h4("Weighting"),
+        selectInput("vseldrop", "Select indicator here or by clicking a point on plot.",
+                    c("<Select>",inames)),
+        "Indicator weight",
+        sliderInput("wi", "Select indicator first",
+                    min = 0, max = 1,
+                    value = 1, step = 0.1),
+        fluidRow(
+          column(4,br(),actionButton("butEQw", "Equal weights")),
+          column(8,
+                 selectInput(inputId = "wset", label = "Weight sets", choices = c(names(COIN$Parameters$Weights)))
+          )
+        ),
+        hr(style = "border-top: 1px solid #000000;"),
+        fluidRow(
+          column(6,numericInput("locorval", "Low corr. threshold:", -0.2, min = -1, max = 1, step = 0.05)),
+          column(6,numericInput("hicorval", "High corr. threshold:", 0.9, min = -1, max = 1, step = 0.05))
+        ),
+        hr(style = "border-top: 1px solid #000000;"),
+        h4("Weights output"),
+        fluidRow(
+          column(8,textInput("weightsname", "Save as", "AltWeights")),
+          column(4,br(),actionButton("saveweights", "Save"),)
+        ),
+        actionButton("closeapp", "Close app", width = "100%")
+
       ),
-      fluidRow(
-        column(6,checkboxInput("facet", "Separate groups", value = FALSE)),
-        column(6,selectInput("cortype", "Correlation type",
-                             c("pearson","spearman","kendall")))
-      ),
-      hr(style = "border-top: 1px solid #000000;"),
-      h4("Weighting"),
-      selectInput("vseldrop", "Select indicator here or by clicking a point on plot.",
-                  c("<Select>",inames)),
-      "Indicator weight",
-      sliderInput("wi", "Select indicator first",
-                  min = 0, max = 1,
-                  value = 1, step = 0.1),
-      fluidRow(
-        column(4,br(),actionButton("butEQw", "Equal weights")),
-        column(8,
-               selectInput(inputId = "wset", label = "Weight sets", choices = c(names(COIN$Parameters$Weights)))
-               )
-      ),
-      hr(style = "border-top: 1px solid #000000;"),
-      fluidRow(
-        column(6,numericInput("locorval", "Low corr. threshold:", -0.2, min = -1, max = 1, step = 0.05)),
-        column(6,numericInput("hicorval", "High corr. threshold:", 0.9, min = -1, max = 1, step = 0.05))
-      ),
-      hr(style = "border-top: 1px solid #000000;"),
-      h4("Weights output"),
-      fluidRow(
-        column(8,textInput("weightsname", "Save as", "AltWeights")),
-        column(4,br(),actionButton("saveweights", "Save"),)
-      ),
-      actionButton("closeapp", "Close app", width = "100%")
 
-    ),
-
-    # the main panel (graph, table, etc)
-    mainPanel(
-      tabsetPanel(type = "tabs",
-                  tabPanel("Correlations",
-                           suppressMessages(plotly::plotlyOutput("corrplot")),
-                           br(),
-                           fluidRow(
-                             column(5,
-                                    tabsetPanel(type = "tabs",
-                                                tabPanel("Ind-Ind",
-                                                         h4("Flagged indicators (high corr. within group)"),
-                                                         reactable::reactableOutput("collinSP")
-                                                ),
-                                                tabPanel("Cross-level",
-                                                         h4("Flagged indicators"),
-                                                         reactable::reactableOutput("locorinds")))),
-                             column(7,
-                                    h4("Correlation heatmap"),
-                                    suppressMessages(plotly::plotlyOutput("corrheat")),
-                                    checkboxInput("HMcorrvals", "Show correlation values", value = FALSE)
+      # the main panel (graph, table, etc)
+      mainPanel(
+        tabsetPanel(type = "tabs",
+                    tabPanel("Correlations",
+                             suppressMessages(plotly::plotlyOutput("corrplot")),
+                             br(),
+                             fluidRow(
+                               column(5,
+                                      tabsetPanel(type = "tabs",
+                                                  tabPanel("Ind-Ind",
+                                                           h4("Flagged indicators (high corr. within group)"),
+                                                           reactable::reactableOutput("collinSP")
+                                                  ),
+                                                  tabPanel("Cross-level",
+                                                           h4("Flagged indicators"),
+                                                           reactable::reactableOutput("locorinds")))),
+                               column(7,
+                                      h4("Correlation heatmap"),
+                                      suppressMessages(plotly::plotlyOutput("corrheat")),
+                                      checkboxInput("HMcorrvals", "Show correlation values", value = FALSE)
+                               )
                              )
-                           )
-                  ),
-                  tabPanel("Results",
-                           h4("Scores and ranks"),
-                           reactable::reactableOutput("restable"))
-      )#tabsetpanel
-    )#mainpanel
-  )#fluidpage
+                    ),
+                    tabPanel("Results",
+                             h4("Scores and ranks"),
+                             reactable::reactableOutput("restable"))
+        )#tabsetpanel
+      )#mainpanel
+    )#fluidpage
 
-  ## Create the Shiny Server layout
-  server <- function(input, output, session) {
+    ## Create the Shiny Server layout
+    server <- function(input, output, session) {
 
-    # The main input to plotly is "dat", which consists of (a) weights, and (b) correlationa
-    # The weight is updated by two things: the plotly click which says which variable to target, and the weight slider which says what value to assign
-    # So, need to monitor two inputs: plotly click -> variable, and slider -> value
-    # THEN, need to rebuild dat. Then plot.
-    # Finally, need to make sure that dat doesn't forget previous values.
+      # The main input to plotly is "dat", which consists of (a) weights, and (b) correlationa
+      # The weight is updated by two things: the plotly click which says which variable to target, and the weight slider which says what value to assign
+      # So, need to monitor two inputs: plotly click -> variable, and slider -> value
+      # THEN, need to rebuild dat. Then plot.
+      # Finally, need to make sure that dat doesn't forget previous values.
 
-    # this is the plotly click data
-    event.data <- reactive({plotly::event_data(event = "plotly_click", source = "scplot")})
+      # this is the plotly click data
+      event.data <- reactive({plotly::event_data(event = "plotly_click", source = "scplot")})
 
-    # the weights (full list for all levs)
-    w <- reactiveVal(w0)
+      # the weights (full list for all levs)
+      w <- reactiveVal(w0)
 
-    # the table of data. Initialise with data
-    dfRes <- reactiveVal(
-      COIN$Data$Aggregated[c("UnitName",
-                              COIN$Parameters$AggCodes[[length(COIN$Parameters$AggCodes)]],
-                              COIN$Parameters$AggCodes[[length(COIN$Parameters$AggCodes)-1]])]
-    )
+      # the table of data. Initialise with data
+      dfRes <- reactiveVal(
+        COIN$Data$Aggregated[c("UnitName",
+                               COIN$Parameters$AggCodes[[length(COIN$Parameters$AggCodes)]],
+                               COIN$Parameters$AggCodes[[length(COIN$Parameters$AggCodes)-1]])]
+      )
 
-    # the correlations
-    #crs <- reactiveVal(cr0)
+      # the correlations
+      #crs <- reactiveVal(cr0)
 
-    # the list of weightIndCodes to output
-    wlist <- reactiveVal(NULL)
+      # the list of weightIndCodes to output
+      wlist <- reactiveVal(NULL)
 
-    # the vector of indicator codes
-    icodes <- reactiveVal(inames)
+      # the vector of indicator codes
+      icodes <- reactiveVal(inames)
 
-    # First, monitor which variable is active
-    # Create reactive value for active var
-    acvar <- reactiveVal(NULL)
-    # update active variable via plot click
-    observeEvent(event.data(),{
-      acvar(event.data()$key)})
-    # update active variable via dropdown
-    observeEvent(input$vseldrop,
-                 acvar(input$vseldrop))
-    # Make reactive values for the two aggregation levels
-    lev1 <- reactiveVal(1)
-    lev2 <- reactiveVal(COIN$Parameters$Nlevels)
-    # update aggregation level to numeric (used by the functions)
-    observeEvent(input$aglev1,
-                 lev1(which(agnames==input$aglev1)))
-    observeEvent(input$aglev2,
-                 lev2(which(agnames==input$aglev2)))
+      # First, monitor which variable is active
+      # Create reactive value for active var
+      acvar <- reactiveVal(NULL)
+      # update active variable via plot click
+      observeEvent(event.data(),{
+        acvar(event.data()$key)})
+      # update active variable via dropdown
+      observeEvent(input$vseldrop,
+                   acvar(input$vseldrop))
+      # Make reactive values for the two aggregation levels
+      lev1 <- reactiveVal(1)
+      lev2 <- reactiveVal(COIN$Parameters$Nlevels)
+      # update aggregation level to numeric (used by the functions)
+      observeEvent(input$aglev1,
+                   lev1(which(agnames==input$aglev1)))
+      observeEvent(input$aglev2,
+                   lev2(which(agnames==input$aglev2)))
 
-    # modify weight vector
-    observeEvent(input$wi,{
-      # this is the full df of weights
-      wdash <- w()
-      # modify
-      wdash$Weight[wdash$Code == acvar()] <- input$wi
-      # update variable
-      w(wdash)
-    })
+      # modify weight vector
+      observeEvent(input$wi,{
+        # this is the full df of weights
+        wdash <- w()
+        # modify
+        wdash$Weight[wdash$Code == acvar()] <- input$wi
+        # update variable
+        w(wdash)
+      })
 
-    # this is the main data frame with correlations and weights etc
-    dat1 <- reactive({
+      # this is the main data frame with correlations and weights etc
+      dat1 <- reactive({
 
-      out1 <- weights2corr(COIN, w(), aglevs = c(lev1(), lev2()), cortype = input$cortype)
+        out1 <- weights2corr(COIN, w(), aglevs = c(lev1(), lev2()), cortype = input$cortype)
 
-      # the table of results
-      dfRes(out1$dat)
-      # correlations
-      #crs(out1$cr[[3]])
+        # the table of results
+        dfRes(out1$dat)
+        # correlations
+        #crs(out1$cr[[3]])
 
-      wts <- w()
+        wts <- w()
 
-      dat <- data.frame(
-        Indicator = out1$cr[[1]],
-        Parent = out1$cr[[2]],
-        Weight = wts$Weight[wts$AgLevel == lev1()],
-        Correlation = out1$cr[[3]] )
-      colnames(dat)[4] <- "Correlation"
+        dat <- data.frame(
+          Indicator = out1$cr[[1]],
+          Parent = out1$cr[[2]],
+          Weight = wts$Weight[wts$AgLevel == lev1()],
+          Correlation = out1$cr[[3]] )
+        colnames(dat)[4] <- "Correlation"
 
 
-      return(dat)
-    })
+        return(dat)
+      })
 
-    # also update everything when level changes
-    observeEvent(lev1(),{
-      # get new ind codes
-      icodes(w0$Code[w0$AgLevel==lev1()])
-    })
+      # also update everything when level changes
+      observeEvent(lev1(),{
+        # get new ind codes
+        icodes(w0$Code[w0$AgLevel==lev1()])
+      })
 
-    ## Create correlation scatter plot
-    output$corrplot <- plotly::renderPlotly({
+      ## Create correlation scatter plot
+      output$corrplot <- plotly::renderPlotly({
 
-      if(lev1()==lev2()){
-        return(NULL)
-      } else {
-        p <- corrweightscat(dat1(), facet = input$facet, acvar = acvar(), linesw = TRUE,
-                            locorval = input$locorval, hicorval = input$hicorval) %>%
+        if(lev1()==lev2()){
+          return(NULL)
+        } else {
+          p <- corrweightscat(dat1(), facet = input$facet, acvar = acvar(), linesw = TRUE,
+                              locorval = input$locorval, hicorval = input$hicorval) %>%
+            suppressWarnings()
+          p <- p %>% plotly::layout(title = paste0("Correlation of ", input$aglev1, " with ", input$aglev2))
+          return(p)
+        }
+      })
+
+      ## Create correlation heatmap
+      output$corrheat <- plotly::renderPlotly({
+        iplotCorr(COIN, aglevs = c(lev1(), lev2()), grouprects = TRUE,
+                  corthresh = list(clow = input$locorval, chigh = input$hicorval),
+                  showvals = input$HMcorrvals, cortype = input$cortype, useweights = w()) %>%
           suppressWarnings()
-        p <- p %>% plotly::layout(title = paste0("Correlation of ", input$aglev1, " with ", input$aglev2))
-        return(p)
-      }
-    })
+      })
 
-    ## Create correlation heatmap
-    output$corrheat <- plotly::renderPlotly({
-      iplotCorr(COIN, aglevs = c(lev1(), lev2()), grouprects = TRUE,
-               corthresh = list(clow = input$locorval, chigh = input$hicorval),
-               showvals = input$HMcorrvals, cortype = input$cortype, useweights = w()) %>%
-        suppressWarnings()
-    })
+      # collinear indicators within sub-pillar
+      output$collinSP <- reactable::renderReactable({
+        dfc <- hicorrSP(COIN, hicorval = input$hicorval, cortype = input$cortype)
+        if( nrow(dfc)==0){
+          dfc <- data.frame(Indicator = "None")
+          return(dfc %>% reactable::reactable() )
+        } else {
+          return(dfc %>%
+                   reactable::reactable(defaultPageSize = 7, highlight = TRUE, wrap = F,
+                                        defaultSorted = list(Corr = "desc")))
+        }
+      })
 
-    # collinear indicators within sub-pillar
-    output$collinSP <- reactable::renderReactable({
-      dfc <- hicorrSP(COIN, hicorval = input$hicorval, cortype = input$cortype)
-      if( nrow(dfc)==0){
-        dfc <- data.frame(Indicator = "None")
-        return(dfc %>% reactable::reactable() )
-      } else {
-        return(dfc %>%
-                 reactable::reactable(defaultPageSize = 7, highlight = TRUE, wrap = F,
-                                      defaultSorted = list(Corr = "desc")))
-      }
-    })
+      # low/high correlation indicators
+      output$locorinds <- reactable::renderReactable({
+        dfc <- dat1()
+        dfc$Correlation <- round(dfc$Correlation,3)
+        colnames(dfc)[2] <- "In"
+        rownames(dfc) <- NULL
+        dfclo <- cbind(dfc, "Flag" = "Low")
+        dfclo <- dplyr::filter(dfclo, .data$Correlation < input$locorval)
+        dfchi <- cbind(dfc, "Flag" = "High")
+        dfchi <- dplyr::filter(dfchi, .data$Correlation > input$hicorval)
+        dfc <- rbind(dfclo,dfchi)
+        if( nrow(dfc)==0){
+          dfc <- data.frame(Indicator = "None")
+          return(dfc %>% reactable::reactable() )
+        } else {
+          return(dfc %>%
+                   reactable::reactable(defaultPageSize = 7, highlight = TRUE, wrap = F,
+                                        defaultSorted = list(Correlation = "asc")))
+        }
+      })
 
-    # low/high correlation indicators
-    output$locorinds <- reactable::renderReactable({
-      dfc <- dat1()
-      dfc$Correlation <- round(dfc$Correlation,3)
-      colnames(dfc)[2] <- "In"
-      rownames(dfc) <- NULL
-      dfclo <- cbind(dfc, "Flag" = "Low")
-      dfclo <- dplyr::filter(dfclo, .data$Correlation < input$locorval)
-      dfchi <- cbind(dfc, "Flag" = "High")
-      dfchi <- dplyr::filter(dfchi, .data$Correlation > input$hicorval)
-      dfc <- rbind(dfclo,dfchi)
-      if( nrow(dfc)==0){
-        dfc <- data.frame(Indicator = "None")
-        return(dfc %>% reactable::reactable() )
-      } else {
-        return(dfc %>%
-                 reactable::reactable(defaultPageSize = 7, highlight = TRUE, wrap = F,
-                                      defaultSorted = list(Correlation = "asc")))
-      }
-    })
+      # table of unit results
+      output$restable <- reactable::renderReactable({
+        data.frame(lapply(dfRes(), function(y) if(is.numeric(y)) round(y, 3) else y)) %>%
+          reactable::reactable(defaultPageSize = 20, highlight = TRUE, wrap = F,
+                               defaultSorted = list(Index = "desc"))
+      })
 
-    # table of unit results
-    output$restable <- reactable::renderReactable({
-      data.frame(lapply(dfRes(), function(y) if(is.numeric(y)) round(y, 3) else y)) %>%
-        reactable::reactable(defaultPageSize = 20, highlight = TRUE, wrap = F,
-                             defaultSorted = list(Index = "desc"))
-    })
+      # update slider
+      observeEvent(acvar(),{
+        wts <- w()
+        #wts <- wts[[lev1()]]
+        updateSliderInput(session, "wi",
+                          label = acvar(),
+                          value = wts$Weight[wts$Code == acvar()])
+      })
 
-    # update slider
-    observeEvent(acvar(),{
-      wts <- w()
-      #wts <- wts[[lev1()]]
-      updateSliderInput(session, "wi",
-                        label = acvar(),
-                        value = wts$Weight[wts$Code == acvar()])
-    })
+      # update dropdown menu on active variable
+      observeEvent(acvar(),{
+        updateSelectInput(session, "vseldrop", selected = acvar())
+      })
 
-    # update dropdown menu on active variable
-    observeEvent(acvar(),{
-      updateSelectInput(session, "vseldrop", selected = acvar())
-    })
+      # update dropdown menu on change of level
+      observeEvent(lev1(),{
+        updateSelectInput(session, "vseldrop", choices = icodes() )
+      })
 
-    # update dropdown menu on change of level
-    observeEvent(lev1(),{
-      updateSelectInput(session, "vseldrop", choices = icodes() )
-    })
+      # button to set to equal weights
+      observeEvent(input$butEQw,{
+        wdash <- w()
+        #wts <- wdash[[lev1()]]
+        # update weights
+        wdash$Weight[wdash$AgLevel == lev1()] <- rep(1,length(icodes()))
+        w(wdash)
+        # also update slider
+        updateSliderInput(session, "wi",
+                          label = acvar(),
+                          value = wdash$Weight[wdash$Code==acvar()])
+      })
 
-    # button to set to equal weights
-    observeEvent(input$butEQw,{
-      wdash <- w()
-      #wts <- wdash[[lev1()]]
-      # update weights
-      wdash$Weight[wdash$AgLevel == lev1()] <- rep(1,length(icodes()))
-      w(wdash)
-      # also update slider
-      updateSliderInput(session, "wi",
-                        label = acvar(),
-                        value = wdash$Weight[wdash$Code==acvar()])
-    })
+      # dropdown to choose weight sets
+      observeEvent(input$wset,{
+        # change weights
+        w(COIN$Parameters$Weights[[input$wset]])
+        # also update slider
+        wts <- w()
+        updateSliderInput(session, "wi",
+                          label = acvar(),
+                          value = wts$Weight[wts$Code==acvar()])
+      })
 
-    # dropdown to choose weight sets
-    observeEvent(input$wset,{
-      # change weights
-      w(COIN$Parameters$Weights[[input$wset]])
-      # also update slider
-      wts <- w()
-      updateSliderInput(session, "wi",
-                        label = acvar(),
-                        value = wts$Weight[wts$Code==acvar()])
-    })
+      # button to save weights
+      observeEvent(input$saveweights,{
 
-    # button to save weights
-    observeEvent(input$saveweights,{
+        wnew <- w()
 
-      wnew <- w()
+        if(is.null(wlist())){
+          # create list and save name of weights
+          eval(parse(text=paste0("wlist(list(",input$weightsname," = wnew ))")))
+        } else {
+          # add to list. Have to make copy because otherwise seems difficult to modify reactive list
+          wlist2  <- wlist()
+          eval(parse(text=paste0("wlist2$",input$weightsname," = wnew ")))
+          wlist(wlist2)
+        }
+      })
 
-      if(is.null(wlist())){
-        # create list and save name of weights
-        eval(parse(text=paste0("wlist(list(",input$weightsname," = wnew ))")))
-      } else {
-        # add to list. Have to make copy because otherwise seems difficult to modify reactive list
-        wlist2  <- wlist()
-        eval(parse(text=paste0("wlist2$",input$weightsname," = wnew ")))
-        wlist(wlist2)
-      }
-    })
+      # end app and return weights
+      observeEvent(input$closeapp, {
+        COIN$Parameters$Weights <- c(COIN$Parameters$Weights, wlist())
+        returnValue <- COIN
+        stopApp(returnValue)
+      })
 
-    # end app and return weights
-    observeEvent(input$closeapp, {
-      COIN$Parameters$Weights <- c(COIN$Parameters$Weights, wlist())
-      returnValue <- COIN
-      stopApp(returnValue)
-    })
+    }
 
+    runGadget(ui, server, viewer = browserViewer())
+
+  } else {
+    message("App not run: interactive R session required.")
   }
-
-  runGadget(ui, server, viewer = browserViewer())
-
 }
 
 #' Recalculate correlations and ranks based on new weights
@@ -374,15 +387,15 @@ rew8r <- function(COIN){
 #' @importFrom reshape2 melt
 #' @importFrom dplyr inner_join
 #'
-#' @return A list with `.$cr` is a vector of correlations between each indicator and the index, and
+#' @return A list where `.$cr` is a vector of correlations between each indicator and the index, and
 #' `.$dat` is a data frame of rankings, with unit code, and index, input and output scores
 #'
-#' @examples \dontrun{
+#' @examples
 #' # build ASEM COIN up to aggregation
 #' ASEM <- build_ASEM()
 #' # get correlations between pillars (level 2) and index (level 4)
 #' # original weights used just for demonstration, normally you would alter first.
-#' weights2corr(ASEM, ASEM$Parameters$Weights$Original, aglevs = c(2,4))}
+#' l <- weights2corr(ASEM, ASEM$Parameters$Weights$Original, aglevs = c(2,4))
 #'
 #' @seealso
 #' * [rew8r()] Interactive app for adjusting weights and seeing effects on correlations
@@ -458,6 +471,8 @@ weights2corr <- function(COIN, w, aglevs = NULL, icodes = NULL,
 #' Plots correlations on the x axis and weights on the y axis. Allows a selected highlighted point
 #' and a line showing low correlation boundary. This function is intended for use inside [rew8r()].
 #'
+#' Since this plot is really only intended for use inside [rew8r()] no example is provided.
+#'
 #' @param dat Data frame with first col indicator codes, second is weights, third is correlations
 #' @param facet Logical: if `TRUE` creates subplots.
 #' @param acvar Active variable to highlight (one of the indicator codes)
@@ -471,7 +486,7 @@ weights2corr <- function(COIN, w, aglevs = NULL, icodes = NULL,
 #' * [rew8r()] Interactive app for adjusting weights and seeing effects on correlations
 #' * [getCorr()] Get correlations between indicators/levels
 #'
-#' @return A scatter plot, also outputs event data (the clicked indicator).
+#' @return A scatter plot generated using plotly, also outputs event data (the clicked indicator).
 #'
 #' @export
 
@@ -615,11 +630,11 @@ corrweightscat <- function(dat, facet = FALSE, acvar = NULL, linesw = FALSE,
 #'
 #' @importFrom reshape2 melt
 #'
-#' @examples \dontrun{
+#' @examples
 #' # Assemble ASEM COIN
 #' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 #' # check for any within-pillar correlations of > 0.7
-#' hicorrSP(ASEM, dset = "Raw", hicorval = 0.7, , grouplev = 2)}
+#' hicorrSP(ASEM, dset = "Raw", hicorval = 0.7, , grouplev = 2)
 #'
 #' @seealso
 #' * [rew8r()] Interactive app for adjusting weights and seeing effects on correlations
@@ -690,18 +705,18 @@ hicorrSP <- function(COIN, dset = "Normalised", hicorval = 0.9, cortype = "pears
 #' @importFrom reshape2 melt
 #' @importFrom rlang .data
 #'
-#' @examples \dontrun{
+#' @examples
 #' # build ASEM COIN up to aggregation
 #' ASEM <- build_ASEM()
 #' # correlation heatmap of pillars against sub-indexes
-#' iplotCorr(ASEM, aglevs = c(2,3))}
+#' iplotCorr(ASEM, aglevs = c(2,3))
 #'
 #' @seealso
 #' * [plotCorr()] Static correlation heat maps
 #' * [rew8r()] Interactive app for adjusting weights and seeing effects on correlations
 #' * [getCorr()] Get correlations between indicators/levels
 #'
-#' @return A **plotly** correlation map.
+#' @return A **plotly** correlation map (figure).
 #' @export
 
 iplotCorr <- function(COIN, aglevs = NULL, insig = FALSE, levs = TRUE, grouprects = TRUE,
@@ -996,17 +1011,19 @@ iplotCorr <- function(COIN, aglevs = NULL, insig = FALSE, levs = TRUE, grouprect
 #'
 #' @importFrom stats optim
 #'
-#' @examples \dontrun{
+#' @examples
 #' # build ASEM COIN up to aggregation
 #' ASEM <- build_ASEM()
 #' # optimise sub-pillar weights to give equal correlations with index
-#' ASEM <- weightOpt(ASEM, itarg = "equal", aglev = 3, out2 = "COIN")}
+#' ASEM <- weightOpt(ASEM, itarg = "equal", aglev = 3, out2 = "COIN")
 #'
 #' @seealso
 #' * [rew8r()] Interactive app for adjusting weights and seeing effects on correlations
 #' * [getPCA()] PCA, including weights from PCA
 #'
-#' @return An updated object with optimised weights.
+#' @return If `out2 = "COIN"` returns an updated COIN object with a new set of weights in `.$Parameters$Weights`, plus
+#' details of the optimisation in `.$Analysis`.
+#' Else if `out2 = "list"` the same outputs (new weights plus details of optimisation) are wrapped in a list.
 #'
 #' @export
 

@@ -1,6 +1,6 @@
 #' Results visualisation dashboard
 #'
-#' Generates an interactive visualisation of results. Requires Shiny and an active R session.
+#' Generates an interactive visualisation of results. Requires Shiny and an interactive R session.
 #'
 #' This function provides a fast way to present and explore results in a COIN. It plots interactive bar charts of any indicator
 #' or aggregate, and maps if the unit codes are ISO alpha-3 country codes. It also includes an interactive results table, and the
@@ -13,13 +13,16 @@
 #' @importFrom plotly plot_ly plotlyOutput layout add_trace renderPlotly
 #' @importFrom reactable reactable renderReactable
 #'
-#' @examples \dontrun{
+#' @examples
+#' # To be run in an interactive R session...
+#' if(interactive()){
 #' # build ASEM up to results
 #' ASEM <- build_ASEM()
 #' # launch results dashboard
-#' resultsDash(ASEM)}
+#' resultsDash(ASEM)
+#' }
 #'
-#' @return Interactive app for exploring results.
+#' @return Interactive app for exploring results (if running an interactive R session). Otherwise will simply generate a message.
 #'
 #' @seealso
 #' * [indDash()] shiny dashboard for exploring indicator distributions
@@ -29,212 +32,220 @@
 
 resultsDash <- function(COIN, dset = "Aggregated"){
 
-  # first, get the indicator data from input object
-  out <- getIn(COIN, dset)
-  ind_data_only <- out$ind_data_only
-  ind_data <- out$ind_data
+  if(interactive()){
 
-  rfac = 0.1 # parameter to adjust the fixed range when matching axes
+    if(!is.coin(COIN)){
+      stop("This function only supports COINs as inputs.")
+    }
 
-  ###--------- Define the UI ---------------
+    # first, get the indicator data from input object
+    out <- getIn(COIN, dset)
+    ind_data_only <- out$ind_data_only
+    ind_data <- out$ind_data
 
-  ui <- fluidPage(
-    titlePanel("Results dashboard"),
+    ###--------- Define the UI ---------------
 
-    sidebarLayout(
+    ui <- fluidPage(
+      titlePanel("Results dashboard"),
 
-      # Sidebar panel for inputs ----
-      sidebarPanel(
-        selectInput("dset1", "Data set", choices= rev(names(COIN$Data)) ),
-        selectInput("vr1", "Indicator", choices=rev(colnames(ind_data_only))),
-        hr(),
-        h4("Unit comparison"),
-        "Click a unit in the bar or map chart to plot data. Double click to clear.",
-        plotly::plotlyOutput("radar"),
-        column(6,
-               numericInput("aglev", "Aggregation level", 1, min = 1, max = COIN$Parameters$Nlevels-1, step = 1)
+      sidebarLayout(
+
+        # Sidebar panel for inputs ----
+        sidebarPanel(
+          selectInput("dset1", "Data set", choices= rev(names(COIN$Data)) ),
+          selectInput("vr1", "Indicator", choices=rev(colnames(ind_data_only))),
+          hr(),
+          h4("Unit comparison"),
+          "Click a unit in the bar or map chart to plot data. Double click to clear.",
+          plotly::plotlyOutput("radar"),
+          column(6,
+                 numericInput("aglev", "Aggregation level", 1, min = 1, max = COIN$Parameters$Nlevels-1, step = 1)
+          ),
+          column(6,
+                 selectInput("aggroup", "Aggregation group", choices= COIN$Parameters$AggCodes[[1]] )
+          )
         ),
-        column(6,
-               selectInput("aggroup", "Aggregation group", choices= COIN$Parameters$AggCodes[[1]] )
+
+        # Main panel for displaying outputs ----
+        mainPanel(
+
+          # Using two tabs here
+          tabsetPanel(type = "tabs",
+                      tabPanel("Indicator",
+                               plotly::plotlyOutput("barmap",height = "600px"),
+                               column(9,
+                                      tableOutput("unitinfo")),
+                               column(3,
+                                      checkboxInput("barmapsel", "Toggle map/bar chart", value = FALSE),
+                                      checkboxInput("stack_kids", "Show component scores (bar only)", value = FALSE)),
+                      ),
+                      tabPanel("Table", reactable::reactableOutput("table"))
+          )
+
         )
-      ),
-
-      # Main panel for displaying outputs ----
-      mainPanel(
-
-        # Using two tabs here
-        tabsetPanel(type = "tabs",
-                    tabPanel("Indicator",
-                             plotly::plotlyOutput("barmap",height = "600px"),
-                             column(9,
-                                    tableOutput("unitinfo")),
-                             column(3,
-                                    checkboxInput("barmapsel", "Toggle map/bar chart", value = FALSE),
-                                    checkboxInput("stack_kids", "Show component scores (bar only)", value = FALSE)),
-                    ),
-                    tabPanel("Table", reactable::reactableOutput("table"))
-        )
-
       )
     )
-  )
 
-  ###------ Define the server code -----------
+    ###------ Define the server code -----------
 
-  server <- function(input, output, session) {
+    server <- function(input, output, session) {
 
-    ## ---- First initialise and modify some values ---- ##
+      ## ---- First initialise and modify some values ---- ##
 
-    # initialise reactive values: the data sets
-    idata1 <- reactiveVal(ind_data_only)
-    idata1_full <- reactiveVal(ind_data)
-    # the selected unit
-    usel <- reactiveVal(NULL)
-    isel1 <- reactiveVal(NULL)
+      # initialise reactive values: the data sets
+      idata1 <- reactiveVal(ind_data_only)
+      idata1_full <- reactiveVal(ind_data)
+      # the selected unit
+      usel <- reactiveVal(NULL)
+      isel1 <- reactiveVal(NULL)
 
-    ## --------- Indicator Selection ----------------
+      ## --------- Indicator Selection ----------------
 
-    # update selected indicator (table click)
-    observeEvent(input$vr1,{
-      if (exists(input$vr1,idata1())){
-        isel1(input$vr1)
-      } else {
-        isel1(colnames(idata1())[1])
-      }
-    })
-
-    # update selected indicator (table click)
-    observeEvent(input$clicked,{
-      isel1(input$clicked$column)
-    })
-
-    # update data set 1 to selected one
-    observeEvent(input$dset1,{
-      outsel <- getIn(COIN, input$dset1)
-      idata1(outsel$ind_data_only)
-      idata1_full(outsel$ind_data)
-    })
-
-    ## -------------- Unit selection -------
-
-    # get click data
-    eventmap <- reactive({plotly::event_data(event = "plotly_click", source = "mapclick", priority = "event")})
-    eventbar <- reactive({plotly::event_data(event = "plotly_click", source = "barclick", priority = "event")})
-    eventmap2 <- reactive({plotly::event_data(event = "plotly_doubleclick", source = "mapclick")})
-    eventbar2 <- reactive({plotly::event_data(event = "plotly_doubleclick", source = "barclick")})
-
-    # consolidate click data
-    observeEvent(eventmap(),{
-      usel(eventmap()$key)
-    })
-    observeEvent(eventbar(),{
-      usel(eventbar()$key)
-    })
-    observeEvent(input$clicked,{
-      usel(idata1_full()[input$clicked$index,"UnitCode"] )
-    })
-
-    # initialise character vector of selected units
-    usels <- reactiveVal(NULL)
-
-    # Collect all the selected units
-    observeEvent(usel(), {
-      usel_new <- usel()
-      # if already selected and clicked again, remove
-      if (usel_new %in% usels()){
-        usel_old_new <- usels()
-        usel_old_new <- usel_old_new[usel_old_new != usel_new]
-      } else {
-        # otherwise, add to list
-        usel_old_new <- c(usels(), usel())
-      }
-      # set selection to NULL if empty - avoids error on plot
-      if(length(usel_old_new)==0){usel_old_new<-NULL}
-      usels(unique(usel_old_new))
-    })
-
-    # clear the set of units when a double-click occurs
-    observeEvent(eventmap2(), {
-      usels(NULL)
-    })
-    observeEvent(eventbar2(), {
-      usels(NULL)
-    })
-
-    ## ----- Plots and tables ----- ##
-
-    # Choropleth map OR bar chart
-    output$barmap <- plotly::renderPlotly({
-      if (input$barmapsel==TRUE){
-        iplotMap(COIN, input$dset1, isel1())
-      } else {
-
-        # need to find aglev
-        if (isel1() %in% COIN$Input$IndMeta$IndCode){
-          aglev1 <- 1
+      # update selected indicator (table click)
+      observeEvent(input$vr1,{
+        if (exists(input$vr1,idata1())){
+          isel1(input$vr1)
         } else {
-          aglev1 <- COIN$Input$AggMeta$AgLevel[COIN$Input$AggMeta$Code == isel1()]
+          isel1(colnames(idata1())[1])
         }
+      })
 
-        if(input$stack_kids & aglev1 > 1){
-          iplotBar(COIN, dset = input$dset1, isel = isel1(), usel = usels(), aglev = aglev1, stack_children = TRUE)
+      # update selected indicator (table click)
+      observeEvent(input$clicked,{
+        isel1(input$clicked$column)
+      })
+
+      # update data set 1 to selected one
+      observeEvent(input$dset1,{
+        outsel <- getIn(COIN, input$dset1)
+        idata1(outsel$ind_data_only)
+        idata1_full(outsel$ind_data)
+      })
+
+      ## -------------- Unit selection -------
+
+      # get click data
+      eventmap <- reactive({plotly::event_data(event = "plotly_click", source = "mapclick", priority = "event")})
+      eventbar <- reactive({plotly::event_data(event = "plotly_click", source = "barclick", priority = "event")})
+      eventmap2 <- reactive({plotly::event_data(event = "plotly_doubleclick", source = "mapclick")})
+      eventbar2 <- reactive({plotly::event_data(event = "plotly_doubleclick", source = "barclick")})
+
+      # consolidate click data
+      observeEvent(eventmap(),{
+        usel(eventmap()$key)
+      })
+      observeEvent(eventbar(),{
+        usel(eventbar()$key)
+      })
+      observeEvent(input$clicked,{
+        usel(idata1_full()[input$clicked$index,"UnitCode"] )
+      })
+
+      # initialise character vector of selected units
+      usels <- reactiveVal(NULL)
+
+      # Collect all the selected units
+      observeEvent(usel(), {
+        usel_new <- usel()
+        # if already selected and clicked again, remove
+        if (usel_new %in% usels()){
+          usel_old_new <- usels()
+          usel_old_new <- usel_old_new[usel_old_new != usel_new]
         } else {
-          iplotBar(COIN, dset = input$dset1, isel = isel1(), usel = usels(), aglev = aglev1)
+          # otherwise, add to list
+          usel_old_new <- c(usels(), usel())
         }
+        # set selection to NULL if empty - avoids error on plot
+        if(length(usel_old_new)==0){usel_old_new<-NULL}
+        usels(unique(usel_old_new))
+      })
 
-      }
-    })
+      # clear the set of units when a double-click occurs
+      observeEvent(eventmap2(), {
+        usels(NULL)
+      })
+      observeEvent(eventbar2(), {
+        usels(NULL)
+      })
 
-    # Results table
-    output$table <- reactable::renderReactable({
-      iplotTable(COIN, input$dset1)
-    })
+      ## ----- Plots and tables ----- ##
 
-    # Radar plot
-    output$radar <- plotly::renderPlotly({
-      if(is.null(usels())){NULL} else {
-      iplotRadar(COIN, dset = "Aggregated", usel = usels(),
-                  aglev = input$aglev, isel = input$aggroup) }
-    })
+      # Choropleth map OR bar chart
+      output$barmap <- plotly::renderPlotly({
+        if (input$barmapsel==TRUE){
+          iplotMap(COIN, input$dset1, isel1())
+        } else {
 
-    # Unit data on selected indicator
-    output$unitinfo <- renderTable({
-      if(is.null(usels())){data.frame(Info = "Select a unit")}
-      else {
-        data.frame(
-          UnitName = idata1_full()$UnitName[idata1_full()$UnitCode %in% usels()],
-          UnitCode = idata1_full()$UnitCode[idata1_full()$UnitCode %in% usels()],
-          IndicatorCode = isel1(),
-          IndicatorName = COIN$Parameters$Code2Name$AggName[COIN$Parameters$Code2Name$AggCode==isel1()],
-          Score = idata1()[idata1_full()$UnitCode %in% usels(), isel1()] %>% dplyr::pull(1),
-          Rank = rank(-1*idata1_full()[,isel1()])[idata1_full()$UnitCode %in% usels()] %>%
-            as.numeric() %>% round()
-        )}
-    })
+          # need to find aglev
+          if (isel1() %in% COIN$Input$IndMeta$IndCode){
+            aglev1 <- 1
+          } else {
+            aglev1 <- COIN$Input$AggMeta$AgLevel[COIN$Input$AggMeta$Code == isel1()]
+          }
 
-    ## ---- Update dropdown menus ---- ##
+          if(input$stack_kids & aglev1 > 1){
+            iplotBar(COIN, dset = input$dset1, isel = isel1(), usel = usels(), aglev = aglev1, stack_children = TRUE)
+          } else {
+            iplotBar(COIN, dset = input$dset1, isel = isel1(), usel = usels(), aglev = aglev1)
+          }
 
-    # Update dropdown menu of indicator selection based on data set 1
-    observeEvent(input$dset1,{
-      updateSelectInput(session = session, inputId = "vr1",
-                        choices = rev(getIn(COIN,input$dset1)$ind_names))
-    })
-    # Update selected indicator based on table click
-    observeEvent(input$clicked$column,{
-      updateSelectInput(session = session, inputId = "vr1", selected = input$clicked$column)
-    })
-    # Update dropdown menu of aggregation groups based on selected agg level
-    observeEvent(input$aglev,{
-      newchoices <- COIN$Parameters$AggCodes[[input$aglev]]
-      updateSelectInput(session = session, inputId = "aggroup",
-                        choices = newchoices,
-                        selected = newchoices[1])
-    })
+        }
+      })
 
+      # Results table
+      output$table <- reactable::renderReactable({
+        iplotTable(COIN, input$dset1)
+      })
+
+      # Radar plot
+      output$radar <- plotly::renderPlotly({
+        if(is.null(usels())){NULL} else {
+          iplotRadar(COIN, dset = "Aggregated", usel = usels(),
+                     aglev = input$aglev, isel = input$aggroup) }
+      })
+
+      # Unit data on selected indicator
+      output$unitinfo <- renderTable({
+        if(is.null(usels())){data.frame(Info = "Select a unit")}
+        else {
+          data.frame(
+            UnitName = idata1_full()$UnitName[idata1_full()$UnitCode %in% usels()],
+            UnitCode = idata1_full()$UnitCode[idata1_full()$UnitCode %in% usels()],
+            IndicatorCode = isel1(),
+            IndicatorName = COIN$Parameters$Code2Name$AggName[COIN$Parameters$Code2Name$AggCode==isel1()],
+            Score = idata1()[idata1_full()$UnitCode %in% usels(), isel1()] %>% dplyr::pull(1),
+            Rank = rank(-1*idata1_full()[,isel1()])[idata1_full()$UnitCode %in% usels()] %>%
+              as.numeric() %>% round()
+          )}
+      })
+
+      ## ---- Update dropdown menus ---- ##
+
+      # Update dropdown menu of indicator selection based on data set 1
+      observeEvent(input$dset1,{
+        updateSelectInput(session = session, inputId = "vr1",
+                          choices = rev(getIn(COIN,input$dset1)$ind_names))
+      })
+      # Update selected indicator based on table click
+      observeEvent(input$clicked$column,{
+        updateSelectInput(session = session, inputId = "vr1", selected = input$clicked$column)
+      })
+      # Update dropdown menu of aggregation groups based on selected agg level
+      observeEvent(input$aglev,{
+        newchoices <- COIN$Parameters$AggCodes[[input$aglev]]
+        updateSelectInput(session = session, inputId = "aggroup",
+                          choices = newchoices,
+                          selected = newchoices[1])
+      })
+
+    }
+
+    # Return a Shiny app object
+    shinyApp(ui = ui, server = server)
+
+  } else {
+    message("resultsDash() only works in interactive mode. Open an interactive R session to view the app.")
   }
-
-  # Return a Shiny app object
-  shinyApp(ui = ui, server = server)
 
 }
 
@@ -250,11 +261,11 @@ resultsDash <- function(COIN, dset = "Aggregated"){
 #'
 #' @importFrom plotly plot_ly layout colorbar
 #'
-#' @examples \dontrun{
+#' @examples
 #' # assemble ASEM COIN
 #' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 #' # map CO2 indicator
-#' iplotMap(ASEM, dset = "Raw", isel = "CO2")}
+#' iplotMap(ASEM, dset = "Raw", isel = "CO2")
 #'
 #' @return Interactive map generated by plotly.
 #'
@@ -317,17 +328,17 @@ iplotMap <- function(COIN, dset = "Raw", isel){
 #'
 #' @importFrom plotly plot_ly layout
 #'
-#' @examples \dontrun{
+#' @examples
 #' # assemble ASEM COIN
 #' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
-#' # map Flights indicator
-#' iplotBar(ASEM, dset = "Raw", isel = "Flights")}
+#' # plot Flights indicator
+#' iplotBar(ASEM, dset = "Raw", isel = "Flights", aglev = 1)
 #'
 #' @seealso
 #' * [iplotMap()] bar chart of indicator or aggregate
 #' * [resultsDash()] interactive dashboard of indicator data
 #'
-#' @return Interactive bar chart.
+#' @return Interactive bar chart generated by plotly.
 #'
 #' @export
 
@@ -494,11 +505,11 @@ iplotBar <- function(COIN, dset = "Raw", isel = NULL, usel = NULL, aglev = NULL,
 #'
 #' @importFrom reactable reactable
 #'
-#' @examples \dontrun{
+#' @examples
 #' # assemble ASEM COIN
 #' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 #' # table of indicators in "Poltical" pillar
-#' iplotTable(ASEM, dset = "Raw", isel = "Political", aglev = 1)}
+#' iplotTable(ASEM, dset = "Raw", isel = "Political", aglev = 1)
 #'
 #' @seealso
 #' * [colourTable()] Conditionally-formatted table for any data frame
@@ -540,7 +551,7 @@ iplotTable <- function(COIN, dset = "Raw", isel = NULL, aglev = NULL, nround = 1
 #' Given a data frame, generates a conditionally-formatted html table using reactable. This function is used by
 #' [iplotTable()]. It is a quick wrapper for [reactable::reactable].
 #'
-#' @param df The COIN object, or a data frame of indicator data.
+#' @param df A data frame to be displayed as a table.
 #' @param freeze1 If `TRUE` (default), freezes the first column. This may be for example the unit name or code.
 #' @param sortcol A column name to sort the table by. Defaults to first numerical column. Set to `"none"` to disable.
 #' @param sortorder Either `"desc"` for sorted column to be sorted from high to low (default) or `"asc"` for the opposite.
@@ -552,7 +563,15 @@ iplotTable <- function(COIN, dset = "Raw", isel = NULL, aglev = NULL, nround = 1
 #'
 #' @importFrom reactable reactable
 #'
-#' @examples \dontrun{colourTable(as.data.frame(matrix(runif(12), 3, 4)))}
+#' @examples
+#' # some random data
+#' df <-  as.data.frame(matrix(runif(12), 3, 4))
+#' # a names column
+#' df <- cbind(Rnames = letters[1:3], df)
+#' # round it
+#' df <- roundDF(df)
+#' # make a table
+#' colourTable(df)
 #'
 #' @seealso
 #' * [iplotTable()] Interactive table of indicator data (from a COIN)
@@ -668,14 +687,13 @@ colourTable <- function(df, freeze1 = TRUE, sortcol = NULL, sortorder = "desc", 
 #'
 #' @importFrom plotly plot_ly add_trace
 #'
-#' @examples \dontrun{
+#' @examples
 #' # build ASEM COIN up to aggregation
 #' ASEM <- build_ASEM()
 #' # radar chart of Austria vs. China in Political indicators
 #' iplotRadar(ASEM, dset = "Aggregated", usel = c("AUT", "CHN"), isel = "Political", aglev = 1)
-#' }
 #'
-#' @return Interactive radar chart
+#' @return Interactive radar chart generated using plotly.
 #'
 #' @seealso
 #' * [resultsDash()] Interactive results dashboard.

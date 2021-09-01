@@ -14,14 +14,14 @@
 #' @param nround The number of decimal places to round numerical values to. Defaults to 2.
 #' @param out2 If `"df"`, outputs a data frame (tibble). Else if `"COIN"` attaches to `.$Results` in an updated COIN.
 #'
-#' @examples \dontrun{
+#' @examples
 #' # build ASEM COIN up to aggregation
 #' ASEM <- build_ASEM()
 #' # results table of scores for index and aggregates (excluding indicator scores)
-#' getResults(ASEM, tab_type = "Aggregates")
-#' }
+#' dfResults <- getResults(ASEM, tab_type = "Aggregates", out2 = "df")
 #'
-#' @return Results table as data frame or updated COIN.
+#' @return If `out2 = "df"`, the results table is returned as a data frame. If `out2 = "COIN"`, this function returns an updated
+#' COIN with the results table attached to `.$Results`.
 #'
 #' @seealso
 #' * [resultsDash()] Interactive results dashboard
@@ -156,13 +156,14 @@ getResults <- function(COIN, tab_type = "Summary", use = "scores", order_by = NU
 #'
 #' @param df A data frame
 #'
-#' @examples \dontrun{
-#' # some random data
-#' df <- as.data.frame(matrix(runif(20), 5, 4))
+#' @examples
+#' # some random data, with a column of characters
+#' df <- data.frame(RName = c("A", "B", "C"),
+#' Score1 = runif(3), Score2 = runif(3))
 #' # convert to ranks
-#' rankDF(df)}
+#' rankDF(df)
 #'
-#' @return Data frame with ranks
+#' @return A data frame equal to the data frame that was input, but with any numerical columns replaced with ranks.
 #'
 #' @seealso
 #' * [roundDF()] Round a data frame to a specified number of decimals.
@@ -201,7 +202,7 @@ rankDF <- function(df){
 #' @param matchcol A common column name that is used to match row order. E.g. this might be `UnitCode`.
 #' @param sigfigs The number of significant figures to use for matching numerical columns
 #'
-#' @examples \dontrun{
+#' @examples
 #' # take a sample of indicator data (including the UnitCode column)
 #' data1 <- ASEMIndData[c(2,12:15)]
 #' # copy the data
@@ -209,9 +210,16 @@ rankDF <- function(df){
 #' # make a change: replace one value in data2 by NA
 #' data2[1,2] <- NA
 #' # compare data frames
-#' compareDF(data1, data2, matchcol = "UnitCode")}
+#' compareDF(data1, data2, matchcol = "UnitCode")
 #'
-#' @return A list with comparison results
+#' @return A list with comparison results. List contains:
+#' * `.$Same`: overall summary: if `TRUE` the data frames are the same according to the rules specified, otherwise `FALSE`.
+#' * `.$Details`: details of each column as a data frame. Each row summarises a column of the data frame, saying whether
+#' the column is the same as its equivalent, and the number of differences, if any. In case the two data frames have differing
+#' numbers of columns and rows, or have differing column names or entries in `matchcol`, `.$Details` will simply contain a
+#' message to this effect.
+#' * `.$Differences`: a list with one entry for every column which contains different entries. Differences are summarised as
+#' a data frame with one row for each difference, reporting the value from `df1` and its equivalent from `df2`.
 #'
 #' @export
 
@@ -346,11 +354,19 @@ compareDF <- function(df1, df2, matchcol, sigfigs = 5){
 #' @param rmd_template A character string specifying the full file path to an R Markdown template which is used to generate the report. If this is not specified,
 #' defaults to COINr's inbuilt template example.
 #'
-#' @examples \dontrun{
+#' @examples
 #' # build ASEM COIN up to aggregation
 #' ASEM <- build_ASEM()
-#' # generate a unit report for NZ
-#' getUnitReport(ASEM, usel = "NZL", out_type = ".html")}
+#' # Generate a unit report for NZ
+#' # This is written to the temporary directory to avoid polluting other directories
+#' # during automated testing.
+#' # It will be deleted at the end of the R session.
+#' # Normally you would set the directory to somewhere else to save the resulting files
+#' getUnitReport(ASEM, usel = "NZL", out_type = ".html", outdir = tempdir())
+#' # You can find this file in the temporary directory:
+#' print(tempdir())
+#' # We will now delete the file to keep things tidy in testing
+#' unlink(paste0(tempdir(),"\\NZL_report.html"))
 #'
 #' @return Markdown document rendered to HTML, pdf or Word.
 #'
@@ -409,17 +425,17 @@ COINr documentation and the help file of this function for more details.")
 #' @param usel A selected unit code
 #' @param aglevs The aggregation levels to display results from.
 #'
-#' @examples \dontrun{
+#' @examples
 #' # build ASEM COIN up to aggregation
 #' ASEM <- build_ASEM()
 #' # generate unit summary for NZ - index and sub-indexes only
-#' getUnitSummary(ASEM, usel ="NZL", aglevs = c(4,3))}
+#' getUnitSummary(ASEM, usel ="NZL", aglevs = c(4,3))
 #'
 #' @seealso
 #' * [getUnitReport()] Automatic unit report as html, pdf or Word
 #' * [getStrengthNWeak()] Top N-ranking indicators for a given unit
 #'
-#' @return A data frame summary table.
+#' @return A summary table as a data frame, containing scores and ranks for specified indicators/aggregates.
 #'
 #' @export
 
@@ -471,17 +487,18 @@ getUnitSummary <- function(COIN, usel, aglevs){
 #' @param withcodes If `TRUE` (default), also includes a column of indicator codes. Setting to `FALSE` may be more useful
 #' in generating reports, where codes are not helpful.
 #'
-#' @examples \dontrun{
+#' @examples
 #' # build ASEM COIN up to aggregation
 #' ASEM <- build_ASEM()
 #' # generate top 5 strengths and weaknesses for GBR
-#' getStrengthNWeak(ASEM, usel = "GBR")}
+#' getStrengthNWeak(ASEM, usel = "GBR")
 #'
 #' @seealso
 #' * [getUnitReport()] Automatic unit report as html, pdf or Word
 #' * [getUnitSummary()] Summary of scores for a given unit
 #'
-#' @return A list containing a data frame of strengths, and a data frame of weaknesses.
+#' @return A list containing a data frame `.$Strengths`, and a data frame `.$Weaknesses`.
+#' Each data frame has columns with indicator code, name, rank and value (for the selected unit).
 #'
 #' @export
 
