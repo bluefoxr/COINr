@@ -36,10 +36,11 @@ checkData(
 \item{Force}{A data frame with any additional countries to force inclusion or exclusion. First column is \code{"UnitCode"}. Second column \code{"Status"} either \code{"Include"} or \code{"Exclude"} for each country to force.}
 
 \item{out2}{Where to output the results. If \code{"COIN"} (default for COIN input), appends to updated COIN,
-otherwise if \code{"df"} outputs to data frame.}
+otherwise if \code{"list"} outputs to data frame.}
 }
 \value{
-An updated COIN with tables showing missing data, and a filtered list of countries to include in subsequent calculations.
+An updated COIN with data frames showing missing data in \code{.$Analysis}, and if \code{unit_screen != "none"} outputs a new data set .$Data$Screened.
+If \code{out2 = "list"} wraps missing data stats and screened data set into a list.
 }
 \description{
 Gives detailed tables of data availability, and optionally screens units based on a data
@@ -54,10 +55,12 @@ Each unit is flagged as having low data or too many zeros based on thresholds.
 This function currently only supports COINs as inputs, not data frames.
 }
 \examples{
-\dontrun{
 # build ASEM COIN
 ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
-# return stats to the COIN
-ASEM <- checkData(ASEM, dset = "Raw", unit_screen = TRUE)}
+# return stats to the COIN, plus screened data set, return to list
+ScreenedData <- checkData(ASEM, dset = "Raw", unit_screen = "byNA",
+ind_thresh = 0.9, out2 = "list")
+# See which units were removed
+print(ScreenedData$RemovedUnits)
 
 }

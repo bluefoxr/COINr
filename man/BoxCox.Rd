@@ -13,17 +13,20 @@ BoxCox(x, lambda, makepos = TRUE)
 
 \item{makepos}{If \code{TRUE} (default) makes all values positive by subtracting the minimum and adding 1.}
 }
+\value{
+A vector of length \code{length(x)} with transformed values.
+}
 \description{
 Simple Box Cox, with no optimisation of lambda.
 See \href{https://bluefoxr.github.io/COINrDoc/data-treatment.html#transformation}{COINr online documentation} for more details.
 }
 \examples{
-\dontrun{
 # get a column of data with outliers
 x <- ASEMIndData$Tariff
 # Apply Box Cox
 xBox <- BoxCox(x, lambda = 2)
-}
+# plot one against the other
+plot(x, xBox)
 
 }
 \seealso{

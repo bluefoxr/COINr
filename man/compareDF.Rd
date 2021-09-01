@@ -16,7 +16,16 @@ compareDF(df1, df2, matchcol, sigfigs = 5)
 \item{sigfigs}{The number of significant figures to use for matching numerical columns}
 }
 \value{
-A list with comparison results
+A list with comparison results. List contains:
+\itemize{
+\item \code{.$Same}: overall summary: if \code{TRUE} the data frames are the same according to the rules specified, otherwise \code{FALSE}.
+\item \code{.$Details}: details of each column as a data frame. Each row summarises a column of the data frame, saying whether
+the column is the same as its equivalent, and the number of differences, if any. In case the two data frames have differing
+numbers of columns and rows, or have differing column names or entries in \code{matchcol}, \code{.$Details} will simply contain a
+message to this effect.
+\item \code{.$Differences}: a list with one entry for every column which contains different entries. Differences are summarised as
+a data frame with one row for each difference, reporting the value from \code{df1} and its equivalent from \code{df2}.
+}
 }
 \description{
 A custom function for comparing two data frames of indicator data, to see whether they match up, at a specified number of
@@ -37,7 +46,6 @@ This is intended to cross-check results. For example, if you run something in CO
 external calculations.
 }
 \examples{
-\dontrun{
 # take a sample of indicator data (including the UnitCode column)
 data1 <- ASEMIndData[c(2,12:15)]
 # copy the data
@@ -45,6 +53,6 @@ data2 <- data1
 # make a change: replace one value in data2 by NA
 data2[1,2] <- NA
 # compare data frames
-compareDF(data1, data2, matchcol = "UnitCode")}
+compareDF(data1, data2, matchcol = "UnitCode")
 
 }

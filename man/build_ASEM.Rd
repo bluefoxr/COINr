@@ -7,12 +7,15 @@
 build_ASEM()
 }
 \value{
-COIN object of ASEM index.
+COIN class object (a list) of the ASEM index, as well as information printed to the console - see \code{\link[=assemble]{assemble()}}.
 }
 \description{
-A short cut function for building the ASEM COIN. Useful for testing.
+A short cut function for building the ASEM COIN. This builds the ASEM COIN up to and including aggregated results. See
+the \href{https://composite-indicators.jrc.ec.europa.eu/asem-sustainable-connectivity/repository}{ASEM Portal} for the underlying
+data set and \href{https://bluefoxr.github.io/COINrDoc/coins-the-currency-of-coinr.html}{online documentation} for more information on COINs.
 }
 \examples{
-\dontrun{ASEM <- build_ASEM()}
+# Build the ASEM COIN
+ASEM <- build_ASEM()
 
 }

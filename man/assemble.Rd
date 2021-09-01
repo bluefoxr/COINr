@@ -31,14 +31,23 @@ A "COIN" (list) formatted to the specifications of COINr.
 Note that the COIN object is an S3 class. It doesn't impose restrictions on the structure of the list.
 }
 \description{
-This takes the raw data provided by the user and puts it into an list format (COIN object) that is recognised by COINr.
+This takes the raw data provided by the user and puts it into a list format (COIN object) that is recognised by COINr.
 It also checks whether there are any syntax errors in the data provided. Optionally, you can exclude
 or include indicators using the \code{include} and \code{exclude} arguments. Note that if an indicator is specified in
 BOTH \code{include} and \code{exclude}, it will be excluded.
 }
+\details{
+A "COIN" is an S3 class which is a structured list of indicator data, metadata, results and methodology which is used
+throughout COINr. COINs are a convenient way to store all variables relating to the composite indicator in a single named
+object. This keeps the workspace tidy, but also allows fast and concise calls to functions, as well as copying COINs to
+introduce methodological variations, and enables complex operations such as global sensitivity analysis (see \code{\link[=sensitivity]{sensitivity()}}.
+
+For general information on COINs see the COINr vignette as well as the \href{https://bluefoxr.github.io/COINrDoc/coins-the-currency-of-coinr.html}{relevant chapter} in the COINr online documentation.
+
+For details on copying, adjusting and comparing COINs see the \href{https://bluefoxr.github.io/COINrDoc/adjustments-and-comparisons.html}{COINr chapter on adjustments and comparisons}.
+}
 \examples{
-\dontrun{
 # build the ASEM COIN
-ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta}
+ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 
 }

@@ -27,6 +27,15 @@ thresholds achieved (but it is likely this will cause errors).}
 
 \item{icode}{The indicator name - used for error messages in \code{\link[=treat]{treat()}}.}
 }
+\value{
+A list containing:
+\itemize{
+\item \code{.$icol} the vector of treated data
+\item \code{.$imax} the indices of elements of the vector that were Winsorised as high values
+\item \code{.$imax} the indices of elements of the vector that were Winsorised as low values
+\item \code{.$winz} the total number of Winsorised points
+}
+}
 \description{
 To be used inside \code{\link[=treat]{treat()}} to avoid repetitions. Winsorises a numerical vector of data.
 }
@@ -37,12 +46,15 @@ kurtosis by successively Winsorising points up to a specified limit.
 The process is detailed in the \href{https://bluefoxr.github.io/COINrDoc/data-treatment.html#data-treatment-in-coinr}{COINr online documentation}.
 }
 \examples{
-\dontrun{
 # get a column of data with outliers
 x <- ASEMIndData$Tariff
 # Winsorise up to five points
 winlist <- coin_win(x, winmax = 5)
-}
+# check the differences
+data.frame(
+Orig = x,
+Treated = winlist$icol,
+Changes = ifelse(x == winlist$icol, "Same", "Treated"))
 
 }
 \seealso{

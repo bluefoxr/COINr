@@ -37,7 +37,7 @@ Ensure that \code{NA}s are handled (e.g. set \code{na.rm = T}) if your data has 
 otherwise if \code{"df"} outputs to data frame.}
 }
 \value{
-An updated COIN object containing the new aggregated data set.
+An updated COIN containing the new aggregated data set at \code{.$Data$Aggregated}.
 }
 \description{
 Takes indicator data and a specified structure and hierarchically aggregates according to the structure
@@ -45,9 +45,13 @@ specified in \code{IndMeta}. Uses a variety of aggregation methods as specified 
 each level of aggregation (see \code{agtype_by_level}).
 }
 \examples{
-\dontrun{
+# assemble a COIN first
 ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+# normalise the data
 ASEM <- normalise(ASEM, dset = "Raw")
-ASEM <- COINr::aggregate(ASEM, agtype="arith_mean", dset = "Normalised")}
+# aggregate the data
+ASEM <- COINr::aggregate(ASEM, agtype="arith_mean", dset = "Normalised")
+# check aggregated data set exists
+stopifnot(!is.null(ASEM$Data$Aggregated))
 
 }

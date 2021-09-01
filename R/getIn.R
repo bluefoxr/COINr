@@ -11,6 +11,8 @@
 #' You can also specify which aggregation level to target, using the `aglev` argument. See examples
 #' below, and in particular the [COINr online documentation](https://bluefoxr.github.io/COINrDoc/helper-functions.html#selecting-data-sets-and-indicators).
 #'
+#' [getIn()] is used by many COINr functions for plotting, accessing and reporting subsets of indicator data.
+#'
 #' @param obj An input object. The function can handle either the COIN object, or a data frame.
 #' The data frame should have each column as an indicator, and optional columns `UnitCode` and `UnitName` which
 #' specify the code (or name) of each unit. Any columns except these latter two will be treated as indicators. Any other type of object will return an error.
@@ -26,12 +28,14 @@
 #' @importFrom rlang .data
 #'
 #' @examples
-#' \dontrun{
 #' # assemble ASEM COIN
 #' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 #' # get indicator data from Social pillar
 #' SocData <- getIn(ASEM, dset = "Raw", icodes = "Social", aglev = 1)
-#' }
+#' # Indicator codes
+#' SocData$IndCodes
+#' # Indicator data (no other columns)
+#' SocData$ind_data_only
 #'
 #' @return A list with the following entries:
 #' * `.$IndCodes`  The indicator codes
@@ -46,7 +50,7 @@
 getIn <- function(obj, dset = "Raw", icodes = NULL, aglev = NULL, justnumeric = TRUE){
 
   # Check to see what kind of input we have.
-  if ("COIN" %in% class(obj)){ # COIN obj
+  if (is.coin(obj)){ # COIN obj
 
     otype <- "COINobj"
 
@@ -191,7 +195,7 @@ getIn <- function(obj, dset = "Raw", icodes = NULL, aglev = NULL, justnumeric = 
 #' @param decimals The number of decimal places to round to (default 2)
 #'
 #' @examples
-#' \dontrun{ df <- roundDF( as.data.frame(matrix(runif(20),10,2)) )}
+#' roundDF( as.data.frame(matrix(runif(20),10,2)), decimals = 3)
 #'
 #' @seealso
 #' * [rankDF()] Replace data frame numbers with ranks.
@@ -207,4 +211,31 @@ roundDF <- function(df, decimals = 2){
   df
 }
 
+#' Check if an object is a COIN
+#'
+#' Returns TRUE if an input object is a COIN, otherwise FALSE if not.
+#'
+#' @param obj An input object to test
+#'
+#' @examples
+#' # build the ASEM COIN
+#' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+#' # check class
+#' stopifnot(is.coin(ASEM))
+#'
+#' @seealso
+#' * [getIn()] Get subset of indicator data from either a COIN or data frame.
+#' * [assemble()] Assemble a COIN from indicator data and metadata
+#'
+#' @return Logical: TRUE if input is a COIN, otherwise FALSE
+#'
+#' @export
 
+is.coin <- function(obj){
+  # Check to see what kind of input we have.
+  if ("COIN" %in% class(obj)){
+    TRUE
+  } else {
+    FALSE
+  }
+}

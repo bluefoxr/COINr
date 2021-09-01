@@ -11,6 +11,9 @@ SA_sample(N, d)
 
 \item{d}{The dimensionality of the sample}
 }
+\value{
+A matrix with \eqn{N(d+2)} rows and \code{d} columns.
+}
 \description{
 Generates an input sample for a Monte Carlo estimation of global sensitivity indices. Used in
 the \code{\link[=sensitivity]{sensitivity()}} function. The total sample size will be \eqn{N(d+2)}.
@@ -20,8 +23,8 @@ This function generates a Monte Carlo sample as described e.g. in the \href{http
 See also \href{https://bluefoxr.github.io/COINrDoc/sensitivity-analysis.html}{COINr online documentation}.
 }
 \examples{
-\dontrun{
-X <- SA_sample(100, 3)}
+# sensitivity analysis sample for 3 dimensions with 100 points per dimension
+X <- SA_sample(100, 3)
 
 }
 \seealso{

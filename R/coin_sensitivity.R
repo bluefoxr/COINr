@@ -5,6 +5,8 @@
 #' To perform a sensitivity or uncertainty analysis, you must specify *which* parameters/assumptions to vary and *what* their alternative
 #' values are. This is the `SA_specs` argument below. To understand how this works, please see the [COINr online documentation](https://bluefoxr.github.io/COINrDoc/sensitivity-analysis.html#sensitivity-in-coinr).
 #'
+#' The output of this function can be visualised with the functions [plotSARanks()] and [plotSA()].
+#'
 #' @param COIN A COIN (this function does not support data frame input)
 #' @param v_targ The target variable to perform SA or UA on. Currently just supports one variable, which
 #' should be an indicator/aggregate code present in `.$Data$Aggregated`.
@@ -24,8 +26,8 @@
 #' @importFrom purrr flatten
 #' @importFrom stats median quantile runif
 #'
-#' @examples \dontrun{
-#'
+#' @examples
+#' \donttest{
 #' # build ASEM COIN up to aggregation
 #' ASEM <- build_ASEM()
 #'
@@ -40,18 +42,28 @@
 #' )
 #'
 #' # run uncertainty analysis
+#' # here we set N deliberately much lower than normal to enable quick testing
+#' # Would recommend in a practical case to increase to perhaps 500 (more is always better)
 #' SAresults <- sensitivity(ASEM, v_targ = "Index",
 #'                          SA_specs = SAspecs,
-#'                          N = 100,
+#'                          N = 15,
 #'                          SA_type = "UA")
 #'
-#' # to run a sensitivity analysis set SA_type = "SA" (takes longer)}
+#' # to run a sensitivity analysis set SA_type = "SA" (takes longer)
+#' }
 #'
 #' @seealso
 #' * [plotSARanks()] Plot confidence intervals of ranks following UA or SA
 #' * [plotSA()] Plot sensitivity indices following a sensitivity analysis
 #'
-#' @return Sensitivity analysis results
+#' @return Sensitivity analysis results as a list, containing:
+#' * `.$Scores` a data frame with a row for each unit, and columns are the scores for each replication.
+#' * `.$Parameters` a record of the parameters used for each iteration
+#' * `.$Ranks` as `.$Scores` but for unit ranks
+#' * `.$RankStats` summary statistics for ranks of each unit
+#' * `.$Nominal` the nominal scores and ranks of each unit (i.e. from the original COIN)
+#' * Some information on the time elapsed, average time, and the parameters perturbed.
+#' * Depending on the setting of `store_results`, may also contain a list of Methods or a list of COINs for each replication.
 #'
 #' @export
 
@@ -418,16 +430,16 @@ sensitivity <- function(COIN, v_targ, SA_specs, N, SA_type = "UA", NrepWeights =
 #'  * `NoiseFactor`: The size of the perturbation: setting e.g. 0.2 perturbs by +/- 20% of nominal values.
 #' @param Nrep The number of weight replications to generate.
 #'
-#' @examples \dontrun{
+#' @examples
 #'
 #' # build ASEM COIN
-#' ASEM <- ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta,
+#' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta,
 #' AggMeta = ASEMAggMeta)
 #'
 #' # generate 2 sets of weights based on original ASEM weights,
 #' # perturbed by +/-20% only at indicator level
 #' wlist <- noisyWeights(ASEM$Parameters$Weights$Original,
-#' noise_specs = data.frame(AgLevel = 1, NoiseFactor = 0.2), Nrep = 2)}
+#' noise_specs = data.frame(AgLevel = 1, NoiseFactor = 0.2), Nrep = 2)
 #'
 #' @return A list of `Nrep` sets of weights (data frames).
 #'
@@ -474,8 +486,8 @@ noisyWeights <- function(w, noise_specs, Nrep){
 #' the median, and 5th/95th percentiles of ranks.
 #'
 #' To use this function you first need to run [sensitivity()]. Then enter the resulting list as the
-#' `SAresults` argument here. I haven't provided an example because of the time required for performing
-#' a sensitivity analysis. See [COINr online documentation](https://bluefoxr.github.io/COINrDoc/sensitivity-analysis.html) for more details.
+#' `SAresults` argument here. See [COINr online documentation](https://bluefoxr.github.io/COINrDoc/sensitivity-analysis.html)
+#' for more details.
 #'
 #' @param SAresults A list of sensitivity/uncertainty analysis results from [sensitivity()].
 #' @param plot_units A character vector of units to plot. Defaults to all units. You can also set
@@ -483,6 +495,33 @@ noisyWeights <- function(w, noise_specs, Nrep){
 #' @param order_by If set to `"nominal"`, orders the rank plot by nominal ranks
 #' (i.e. the original ranks prior to the sensitivity analysis). Otherwise if `"median"`, orders by
 #' median ranks.
+#'
+#' @examples
+#' \donttest{
+#' # build ASEM COIN up to aggregation
+#' ASEM <- build_ASEM()
+#'
+#' # define noise to be applied to weights
+#' nspecs <- data.frame(AgLevel = c(2,3), NoiseFactor = c(0.25,0.25))
+#'
+#' # create list specifying assumptions to vary and alternatives
+#' SAspecs <- list(
+#'   impute = list(imtype = c("indgroup_mean", "ind_mean", "none")),
+#'   normalise = list(ntype = c("minmax", "rank", "dist2max")),
+#'   weights = list(NoiseSpecs = nspecs, Nominal = "Original")
+#' )
+#'
+#' # run uncertainty analysis
+#' # here we set N deliberately much lower than normal to enable quick testing
+#' # Would recommend in a practical case to increase to perhaps 500 (more is always better)
+#' SAresults <- sensitivity(ASEM, v_targ = "Index",
+#'                          SA_specs = SAspecs,
+#'                          N = 20,
+#'                          SA_type = "UA")
+#'
+#' # plot rank intervals
+#' plotSARanks(SAresults)
+#' }
 #'
 #' @seealso
 #' * [sensitivity()] Perform global sensitivity or uncertainty analysis on a COIN
@@ -560,8 +599,11 @@ plotSARanks <- function(SAresults, plot_units = NULL, order_by = "nominal"){
 #' @param N The number of sample points per dimension.
 #' @param d The dimensionality of the sample
 #'
-#' @examples \dontrun{
-#' X <- SA_sample(100, 3)}
+#' @examples
+#' # sensitivity analysis sample for 3 dimensions with 100 points per dimension
+#' X <- SA_sample(100, 3)
+#'
+#' @return A matrix with \eqn{N(d+2)} rows and `d` columns.
 #'
 #' @seealso
 #' * [sensitivity()] Perform global sensitivity or uncertainty analysis on a COIN.
@@ -597,8 +639,8 @@ SA_sample <- function(N, d){
 #' which is generated as a result of running a Monte Carlo sample from [SA_sample()] through a system.
 #' Then it estimates sensitivity indices using this sample.
 #'
-#' This function is built to be used inside [sensitivity()]. I don't provide an example because of the time taken to
-#' do a sensitivity analysis. See [COINr online documentation](https://bluefoxr.github.io/COINrDoc/sensitivity-analysis.html) for more details.
+#' This function is built to be used inside [sensitivity()].
+#' See [COINr online documentation](https://bluefoxr.github.io/COINrDoc/sensitivity-analysis.html) for more details.
 #'
 #' @param yy A vector of model output values, as a result of a \eqn{N(d+2)} Monte Carlo design.
 #' @param N The number of sample points per dimension.
@@ -608,11 +650,31 @@ SA_sample <- function(N, d){
 #'
 #' @importFrom stats var
 #'
+#' @examples
+#' # This is a generic example rather than applied to a COIN (for reasons of speed)
+#'
+#' # A simple test function
+#' testfunc <- function(x){
+#' x[1] + 2*x[2] + 3*x[3]
+#' }
+#'
+#' # First, generate a sample
+#' X <- SA_sample(500, 3)
+#'
+#' # Run sample through test function to get corresponding output for each row
+#' y <- apply(X, 1, testfunc)
+#'
+#' # Estimate sensitivity indices using sample
+#' SAinds <- SA_estimate(y, N = 500, d = 3, Nboot = 1000)
+#' SAinds$SensInd
+#' # Notice that total order indices have narrower confidence intervals than first order.
+#'
 #' @seealso
 #' * [sensitivity()] Perform global sensitivity or uncertainty analysis on a COIN
 #' * [SA_sample()] Input design for estimating sensitivity indices
 #'
-#' @return A list with variance, first order and total order sensitivity indices.
+#' @return A list with the output variance, plus a data frame of first order and total order sensitivity indices for
+#' each variable, as well as bootstrapped confidence intervals if `!is.null(Nboot)`.
 #'
 #' @export
 
@@ -697,12 +759,39 @@ SA_estimate <- function(yy, N, d, Nboot = NULL){
 #' Plots sensitivity indices as bar or pie charts.
 #'
 #' To use this function you first need to run [sensitivity()]. Then enter the resulting list as the
-#' `SAresults` argument here. I haven't provided an example because of the time required for performing
-#' a sensitivity analysis.
+#' `SAresults` argument here.
 #' See [COINr online documentation](https://bluefoxr.github.io/COINrDoc/sensitivity-analysis.html) for more details.
 #'
 #' @param SAresults A list of sensitivity/uncertainty analysis results from [sensitivity()].
 #' @param ptype Type of plot to generate - either `"bar"`, `"pie"` or `"box"`.
+#'
+#' @examples
+#' \donttest{
+#' # build ASEM COIN up to aggregation
+#' ASEM <- build_ASEM()
+#'
+#' # define noise to be applied to weights
+#' nspecs <- data.frame(AgLevel = c(2,3), NoiseFactor = c(0.25,0.25))
+#'
+#' # create list specifying assumptions to vary and alternatives
+#' SAspecs <- list(
+#'   normalise = list(ntype = c("minmax", "rank", "dist2max")),
+#'   weights = list(NoiseSpecs = nspecs, Nominal = "Original")
+#' )
+#'
+#' # run uncertainty analysis
+#' # here we set N deliberately much lower than normal to enable quick testing
+#' # Would recommend in a practical case to increase to perhaps 500 (more is always better)
+#' SAresults <- sensitivity(ASEM, v_targ = "Index",
+#'                          SA_specs = SAspecs,
+#'                          N = 5,
+#'                          SA_type = "SA")
+#'
+#' # Plot results as a bar chart
+#' plotSA(SAresults, ptype = "bar")
+#' }
+#'
+#' @return A plot of sensitivity indices generated by ggplot2.
 #'
 #' @seealso
 #' * [sensitivity()] Perform global sensitivity or uncertainty analysis on a COIN

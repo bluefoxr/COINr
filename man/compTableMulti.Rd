@@ -35,10 +35,9 @@ this could include group columns.}
 Rank comparison table as a data frame
 }
 \description{
-Takes multiple COINs, and generates a rank comparison for a single indicator or aggregate.
+Takes multiple COINs (two or more), and generates a rank comparison for a single indicator or aggregate.
 }
 \examples{
-\dontrun{
 ASEM <- build_ASEM()
 # Make a copy
 ASEMAltNorm <- ASEM
@@ -47,9 +46,13 @@ ASEMAltNorm$Method$normalise$ntype <- "borda"
 # Regenerate
 ASEMAltNorm <- COINr::regen(ASEMAltNorm, quietly = TRUE)
 # compare
-compTableMulti(list(ASEM, ASEMAltNorm), dset = "Aggregated", isel = "Index")
+ctable <- compTableMulti(list(ASEM, ASEMAltNorm), dset = "Aggregated", isel = "Index")
 
 # add more COINs to the list to see more cols in the table...
-}
 
+}
+\seealso{
+\itemize{
+\item \code{\link[=compTable]{compTable()}} Comparison table between two COINs
+}
 }

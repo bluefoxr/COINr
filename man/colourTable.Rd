@@ -16,7 +16,7 @@ colourTable(
 )
 }
 \arguments{
-\item{df}{The COIN object, or a data frame of indicator data.}
+\item{df}{A data frame to be displayed as a table.}
 
 \item{freeze1}{If \code{TRUE} (default), freezes the first column. This may be for example the unit name or code.}
 
@@ -41,7 +41,14 @@ Given a data frame, generates a conditionally-formatted html table using reactab
 \code{\link[=iplotTable]{iplotTable()}}. It is a quick wrapper for \link[reactable:reactable]{reactable::reactable}.
 }
 \examples{
-\dontrun{colourTable(as.data.frame(matrix(runif(12), 3, 4)))}
+# some random data
+df <-  as.data.frame(matrix(runif(12), 3, 4))
+# a names column
+df <- cbind(Rnames = letters[1:3], df)
+# round it
+df <- roundDF(df)
+# make a table
+colourTable(df)
 
 }
 \seealso{

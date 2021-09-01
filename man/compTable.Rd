@@ -28,23 +28,26 @@ compTable(
 if \code{"RankChange"}, sorts by rank change, and if \code{"AbsRankChange"} sorts by absolute rank change.}
 }
 \value{
-A data frame with ranks and rank changes
+A data frame with ranks and rank changes between two COINs.
 }
 \description{
 Takes two COINs, and generates a rank comparison between specified indicator/aggregates. COINs must share at least some common
 unit codes, and the indicator selected by \code{isel}.
 }
 \examples{
-\dontrun{
 ASEM <- build_ASEM()
 # Make a copy
 ASEMAltNorm <- ASEM
 # Edit .$Method
 ASEMAltNorm$Method$normalise$ntype <- "borda"
 # Regenerate
-ASEMAltNorm <- COINr::regen(ASEMAltNorm, quietly = TRUE)
+ASEMAltNorm <- regen(ASEMAltNorm, quietly = TRUE)
 # compare
-compTable(ASEM, ASEMAltNorm, dset = "Aggregated", isel = "Index")
-}
+CT <- compTable(ASEM, ASEMAltNorm, dset = "Aggregated", isel = "Index")
 
+}
+\seealso{
+\itemize{
+\item \code{\link[=compTableMulti]{compTableMulti()}} Comparison table between multiple COINs
+}
 }

@@ -39,21 +39,24 @@
 #' @importFrom e1071 skewness kurtosis
 #' @importFrom tibble add_column
 #'
-#' @examples \dontrun{
+#' @examples
 #' # assemble ASEM COIN
 #' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 #' # treat raw data set, Winsorise up to a maximum of five points
 #' ASEM <- treat(ASEM, dset = "Raw", winmax = 5)
 #' # inspect what was done
-#' ASEM$Analysis$Treated$TreatSummary}
+#' ASEM$Analysis$Treated$TreatSummary
+#' # check whether skew and kurtosis now within limits
+#' ASEM$Analysis$Treated$StatTable$SK.outlier.flag
 #'
 #' @seealso
 #' * [indDash()] Interactive app for checking indicator distributions. Useful for comparing before/after data treatment.
 #'
-#' @return A treated data set plus information about how the data was treated.
+#' @return If the input is a COIN, outputs an updated COIN with a new treated data set at `.$Data$Treated`, as well as
+#' information about the data treatment in `.$Analysis$Treated`. Else if the input is a data frame, outputs both the treated
+#' data set and the information about data treatment to a list.
 #'
 #' @export
-#'
 
 treat <- function(COIN, dset = NULL, winmax = NULL, winchange = NULL, deflog = NULL, boxlam = NULL,
                        t_skew = NULL, t_kurt = NULL, individual = NULL, indiv_only = NULL, bypass_all = NULL){
@@ -331,8 +334,6 @@ treat <- function(COIN, dset = NULL, winmax = NULL, winchange = NULL, deflog = N
 }
 
 
-##### -------- WINZ FUNCTION (HELPER) ---- #####
-
 #' Winsorisation helper function
 #'
 #' To be used inside [treat()] to avoid repetitions. Winsorises a numerical vector of data.
@@ -350,15 +351,25 @@ treat <- function(COIN, dset = NULL, winmax = NULL, winchange = NULL, deflog = N
 #' @param t_kurt Kurtosis threshold (default 3.5).
 #' @param icode The indicator name - used for error messages in [treat()].
 #'
-#' @examples \dontrun{
+#' @examples
 #' # get a column of data with outliers
 #' x <- ASEMIndData$Tariff
 #' # Winsorise up to five points
 #' winlist <- coin_win(x, winmax = 5)
-#' }
+#' # check the differences
+#' data.frame(
+#' Orig = x,
+#' Treated = winlist$icol,
+#' Changes = ifelse(x == winlist$icol, "Same", "Treated"))
 #'
 #' @seealso
 #' * [treat()] Outlier treatment
+#'
+#' @return A list containing:
+#' * `.$icol` the vector of treated data
+#' * `.$imax` the indices of elements of the vector that were Winsorised as high values
+#' * `.$imax` the indices of elements of the vector that were Winsorised as low values
+#' * `.$winz` the total number of Winsorised points
 #'
 #' @export
 
@@ -429,15 +440,18 @@ coin_win <- function(icol, winmax, winchange = TRUE, t_skew = 2, t_kurt = 3.5, i
 #' @param lambda The lambda parameter of the Box Cox transform
 #' @param makepos If `TRUE` (default) makes all values positive by subtracting the minimum and adding 1.
 #'
-#' @examples \dontrun{
+#' @examples
 #' # get a column of data with outliers
 #' x <- ASEMIndData$Tariff
 #' # Apply Box Cox
 #' xBox <- BoxCox(x, lambda = 2)
-#' }
+#' # plot one against the other
+#' plot(x, xBox)
 #'
 #' @seealso
 #' * [treat()] Outlier treatment
+#'
+#' @return A vector of length `length(x)` with transformed values.
 #'
 #' @export
 
@@ -467,15 +481,46 @@ BoxCox <- function(x, lambda, makepos = TRUE){
 #'
 #' @param x A vector or column of data to transform
 #' @param ltype The type of log transformation - see `deflog` in [treat()].
-#' @param params Some extra parameters to pass
+#' @param params Some extra parameters to pass. These parameters mostly concern internal messages for [treat()] and this can be
+#' left unspecified unless `ltype == "boxcox"`, in which case there should be a parameter `params$boxlam` specified
+#' (see [BoxCox()]). However, if you wish to use a Box Cox transformation, it is better to use [BoxCox()] directly.
+#'
+#' @examples
+#' # get a column of data with outliers
+#' x <- ASEMIndData$Tariff
+#' # apply a GII transformation
+#' xdash <- loggish(x, ltype = "GIIlog")
+#' # plot one against the other
+#' plot(x, xdash$x)
 #'
 #' @seealso
 #' * [treat()] Outlier treatment
 #'
+#' @return A list with
+#' * `.$x` is the transformed vector of data
+#' * `.$Flag` is a flag of the type of treatment specified (used inside [treat()])
+#' * `.$Treatment` the treatment applied (used inside [treat()])
+#' * `.$TreatSpec` the treatment specified (used inside [treat()])
+#'
 #' @export
 
-loggish <- function(x, ltype, params){
+loggish <- function(x, ltype, params = NULL){
 
+  # some default parameters if this function is used on its own
+  if(is.null(params)){
+    params = list(IndCodes = "Indicator",
+                  ii = 1,
+                  forced = FALSE,
+                  winmax = "unspecified",
+                  boxlam = 1)
+  } else if (!is.null(params$boxlam)){
+    params$IndCodes = "Indicator"
+    params$ii = 1
+    params$forced = FALSE
+    params$winmax = "unspecified"
+  }
+
+  # prep a list
   l <- list(x = NA, Flag = NA, Treatment = NA, TreatSpec = NA)
 
   if ( (sum(x<=0, na.rm=T)>0) & (ltype == "log") ){ # negative values. No can normal log.

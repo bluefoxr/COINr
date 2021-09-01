@@ -2,24 +2,32 @@
 % Please edit documentation in R/coin_2excel.R
 \name{coin2Excel}
 \alias{coin2Excel}
-\title{Write data to Excel}
+\title{Write a COIN to Excel}
 \usage{
-coin2Excel(COINobj, fname = "COINresults.xlsx")
+coin2Excel(COIN, fname = "COINresults.xlsx")
 }
 \arguments{
-\item{COINobj}{A COIN object}
+\item{COIN}{A COIN object}
 
-\item{fname}{The file name to write to}
+\item{fname}{The file name to write to, as a character string}
 }
 \value{
 An Excel workbook with each table on a separate named tab.
 }
 \description{
-Takes the COIN object and writes all main data tables and other things to an Excel file.
+Takes a COIN and writes all main data tables and other things to an Excel file. This uses the 'openxlsx' package.
 }
 \examples{
-\dontrun{
+
+## Here we write a COIN to Excel, but this is done to a temporary directory
+## to avoid "polluting" the working directory when running automatic tests.
+## In a real case, set fname to a directory of your choice.
 ASEM <- build_ASEM()
-coin2Excel(ASEM)}
+# write to Excel in temporary directory
+coin2Excel(ASEM, fname = paste0(tempdir(), "\\\\ASEM_results.xlsx"))
+# spreadsheet is at:
+print(paste0(tempdir(), "\\\\ASEM_results.xlsx"))
+# now delete temporary file to keep things tidy in testing
+unlink(paste0(tempdir(),"\\\\ASEM_results.xlsx"))
 
 }

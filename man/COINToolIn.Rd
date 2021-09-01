@@ -17,7 +17,12 @@ for indicators, not aggregation groups.}
 There are some minor differences on where the elements are found.}
 }
 \value{
-A list
+A list containing:
+\itemize{
+\item \code{.$IndData} A data frame of imported indicator data to be input as the \code{IndData} argument in \code{\link[=assemble]{assemble()}}.
+\item \code{.$IndMeta} A data frame of imported indicator metadata to be input as the \code{IndMeta} argument in \code{\link[=assemble]{assemble()}}.
+\item \code{.$AggMeta} A data frame of imported aggregation metadata to be input as the \code{AggMeta} argument in \code{\link[=assemble]{assemble()}}.
+}
 }
 \description{
 This provides a direct interface for reading a COIN Tool input deck and converting it to COINr.
@@ -27,6 +32,29 @@ You need to provide a COIN Tool file, with the "Database" sheet properly compile
 The \href{https://knowledge4policy.ec.europa.eu/composite-indicators/coin-tool_en}{COIN Tool} is an Excel-based tool for building composite indicators.
 
 See \href{https://bluefoxr.github.io/COINrDoc/helper-functions.html#r-interfaces}{COINr online documentation} for more details and an example.
+}
+\examples{
+\dontrun{
+## This example downloads a COIN Tool spreadsheet containing example data,
+## saves it to a temporary directory, unzips, and reads into R. Finally it
+## assembles it into a COIN.
+
+# Make temp zip filename in temporary directory
+tmpz <- tempfile(fileext = ".zip")
+# Download an example COIN Tool file to temporary directory
+# NOTE: the download.file() command may need its "method" option set to a
+# specific value depending on the platform you run this on. You can also
+# choose to download/unzip this file manually.
+download.file("https://knowledge4policy.ec.europa.eu/sites/default/
+files/coin_tool_v1_lite_exampledata.zip", tmpz)
+# Unzip
+CTpath <- unzip(tmpz, exdir = tempdir())
+# Read COIN Tool into R
+l <- COINToolIn(CTpath, makecodes = TRUE)
+# We can finish by assembling it
+CT_exampleCOIN <- assemble(l$IndData, l$IndMeta, l$AggMeta)
+}
+
 }
 \seealso{
 \itemize{
