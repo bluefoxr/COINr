@@ -33,11 +33,10 @@ This returns a data frame of any highly correlated indicators within the same ag
 group can be controlled by the \code{grouplev} argument.
 }
 \examples{
-\dontrun{
 # Assemble ASEM COIN
 ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 # check for any within-pillar correlations of > 0.7
-hicorrSP(ASEM, dset = "Raw", hicorval = 0.7, , grouplev = 2)}
+hicorrSP(ASEM, dset = "Raw", hicorval = 0.7, , grouplev = 2)
 
 }
 \seealso{

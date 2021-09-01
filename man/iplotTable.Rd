@@ -38,11 +38,10 @@ conditional formatting (colouring by cell value), and sorts by the first column 
 it can target subsets of indicators.
 }
 \examples{
-\dontrun{
 # assemble ASEM COIN
 ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 # table of indicators in "Poltical" pillar
-iplotTable(ASEM, dset = "Raw", isel = "Political", aglev = 1)}
+iplotTable(ASEM, dset = "Raw", isel = "Political", aglev = 1)
 
 }
 \seealso{

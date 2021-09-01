@@ -27,11 +27,18 @@ indicators used in calculating the index results. Any indicators that are added 
 present in \code{.$Input$Original} (in both \code{IndData} and \code{IndMeta}).
 }
 \examples{
-\dontrun{COIN <- indChange(COIN, add = "Ind1", drop = "Ind3")}
+# build ASEM example
+ASEM <- build_ASEM()
+# remove one indicator and regenerate results
+ASEM2 <- indChange(ASEM, drop = "UNVote", regen = TRUE)
+# compare the differences
+CT <- compTable(ASEM, ASEM2, dset = "Aggregated", isel = "Index")
 
 }
 \seealso{
 \itemize{
 \item \code{\link[=regen]{regen()}} regenerate a COIN
+\item \code{\link[=compTable]{compTable()}} compare two different COINs
+\item \code{\link[=compTableMulti]{compTableMulti()}} compare multiple COINs
 }
 }

@@ -59,7 +59,9 @@ If \code{FALSE}, all indicators are treated: any outside of \code{individual} wi
 is useful for sensitivity analysis and comparing the effects of turning data treatment on and off.}
 }
 \value{
-A treated data set plus information about how the data was treated.
+If the input is a COIN, outputs an updated COIN with a new treated data set at \code{.$Data$Treated}, as well as
+information about the data treatment in \code{.$Analysis$Treated}. Else if the input is a data frame, outputs both the treated
+data set and the information about data treatment to a list.
 }
 \description{
 Takes the COIN object and Winsorises indicators where necessary or specified, or reverts to log transform or similar. This is done
@@ -72,13 +74,14 @@ kurtosis by successively Winsorising points up to a specified limit. If this lim
 The process is detailed in the \href{https://bluefoxr.github.io/COINrDoc/data-treatment.html#data-treatment-in-coinr}{COINr online documentation}.
 }
 \examples{
-\dontrun{
 # assemble ASEM COIN
 ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 # treat raw data set, Winsorise up to a maximum of five points
 ASEM <- treat(ASEM, dset = "Raw", winmax = 5)
 # inspect what was done
-ASEM$Analysis$Treated$TreatSummary}
+ASEM$Analysis$Treated$TreatSummary
+# check whether skew and kurtosis now within limits
+ASEM$Analysis$Treated$StatTable$SK.outlier.flag
 
 }
 \seealso{

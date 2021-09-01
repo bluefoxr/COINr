@@ -35,16 +35,15 @@ while the \code{NoiseFactor} refers to the size of the perturbation. If e.g. a r
 nominal values (the values in \code{w}).
 }
 \examples{
-\dontrun{
 
 # build ASEM COIN
-ASEM <- ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta,
+ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta,
 AggMeta = ASEMAggMeta)
 
 # generate 2 sets of weights based on original ASEM weights,
 # perturbed by +/-20\% only at indicator level
 wlist <- noisyWeights(ASEM$Parameters$Weights$Original,
-noise_specs = data.frame(AgLevel = 1, NoiseFactor = 0.2), Nrep = 2)}
+noise_specs = data.frame(AgLevel = 1, NoiseFactor = 0.2), Nrep = 2)
 
 }
 \seealso{

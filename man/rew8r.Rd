@@ -10,7 +10,7 @@ rew8r(COIN)
 \item{COIN}{COIN object}
 }
 \value{
-An updated COIN object with additional sets of weights, if specified.
+An updated COIN object with additional sets of weights in \code{.$Parameters$Weights}, if specified.
 }
 \description{
 Interactive gadget which lets you adjust weights and see the effects. Weights can be saved with new names to the COIN object.
@@ -30,14 +30,17 @@ as a new weight-set(s). To do this, click "Save", and then at the end of the ses
 Consider that changing weights to "fix" correlations may result in unusual sets of weights that are hard to justify. This tool may
 be more useful as a curiosity, as part of a "what-if" analysis, or simply to better understand what is going on inside your index.
 
-NOTE that you need to have aggregated your data first before using this.
+NOTE that you need to have aggregated your data first before using this. This app also requires an interactive R session to
+run.
 }
 \examples{
-\dontrun{
+## Only run this example in interactive R sessions
+if (interactive()) {
 # build ASEM COIN up to aggregation
 ASEM <- build_ASEM()
 # launch app
-ASEM <- rew8r(ASEM)}
+ASEM <- rew8r(ASEM)
+}
 
 }
 \seealso{

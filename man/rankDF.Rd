@@ -10,18 +10,18 @@ rankDF(df)
 \item{df}{A data frame}
 }
 \value{
-Data frame with ranks
+A data frame equal to the data frame that was input, but with any numerical columns replaced with ranks.
 }
 \description{
 Replaces all numerical columns of a data frame with their ranks. Uses sport ranking, i.e. ties
 share the highest rank place. Ignores non-numerical columns. See \code{\link[=rank]{rank()}}.
 }
 \examples{
-\dontrun{
-# some random data
-df <- as.data.frame(matrix(runif(20), 5, 4))
+# some random data, with a column of characters
+df <- data.frame(RName = c("A", "B", "C"),
+Score1 = runif(3), Score2 = runif(3))
 # convert to ranks
-rankDF(df)}
+rankDF(df)
 
 }
 \seealso{

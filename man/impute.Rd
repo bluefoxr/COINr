@@ -34,21 +34,31 @@ impute(
 
 \item{EMaglev}{The aggregation level to use if \code{imtype = "EM"}.}
 
-\item{out2}{Where to output the results. If \code{"COIN"} (default for COIN input), appends to updated COIN,
-otherwise if \code{"df"} outputs to data frame.}
+\item{out2}{Where to output the imputed data frame. If \code{"COIN"} (default for COIN input), creates a new data set \code{.$Data$Imputed}.
+Otherwise if \code{"df"} outputs directly to a data frame.}
 }
 \value{
-A data frame of normalised indicators.
+If \code{out2 = "COIN"} (default for COIN input), creates a new data set \code{.$Data$Imputed}.
+Otherwise if \code{out2 = "df"} outputs directly to a data frame.
 }
 \description{
 Imputation of missing data data sets using a variety of methods (see \code{imtype}). This also includes the possibility of imputing
 by grouping variables, i.e. columns of \code{IndData} that are prefaced by \code{"Group_"}.
 }
+\details{
+See \href{https://bluefoxr.github.io/COINrDoc/missing-data-and-imputation.html#imputation-in-coinr}{online documentation} for further details and examples.
+}
 \examples{
-\dontrun{
 # assemble the COIN
 ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+# Check how many missing data points are in raw data set
+sum(is.na(ASEM$Data$Raw))
 # impute data using Asia/Europe group mean
-ASEM <- impute(ASEM, dset = "Denominated", imtype = "indgroup_mean", groupvar = "Group_EurAsia")}
+DataImputed <- impute(ASEM, dset = "Raw", imtype = "indgroup_mean", groupvar = "Group_EurAsia",
+out2 = "df")
+# See how many missing data points we have in the imputed data
+sum(is.na(DataImputed))
+# check no missing data
+stopifnot(sum(is.na(DataImputed))==0)
 
 }

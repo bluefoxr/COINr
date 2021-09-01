@@ -47,7 +47,8 @@ Otherwise if \code{TRUE} they are not normalised.}
 otherwise if \code{"df"} outputs to data frame.}
 }
 \value{
-An updated COIN object with \code{.$Data$Normalised} added, or a normalised data frame.
+If \code{out2 = "COIN"} (default for COIN input), returns an updated COIN object with a data frame \code{.$Data$Normalised}
+added. Else if \code{out2 = "df"} outputs a data frame of normalised data.
 }
 \description{
 A dataset of indicators is normalised using one of several methods. This function also supports custom normalisation.
@@ -63,10 +64,16 @@ to see full details check the \href{https://bluefoxr.github.io/COINrDoc/normalis
 Indicators can also be each normalised by a different method. See \code{individual}.
 }
 \examples{
-\dontrun{
 # build ASEM COIN
 ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 # directly normalise raw data using min-max, onto 0-10 interval
-ASEM <- normalise(ASEM, dset = "Raw", ntype = "minmax", npara = list(minmax = c(0,10)))}
+ASEM <- normalise(ASEM, dset = "Raw", ntype = "minmax", npara = list(minmax = c(0,10)))
+# Check: get indicator data first
+NormData <- getIn(ASEM, dset = "Normalised")$ind_data_only
+# ensure that min is 0 and max is 10 for all columns
+stopifnot(
+all(apply(NormData, MARGIN = 2, min, na.rm = TRUE) == 0),
+all(apply(NormData, MARGIN = 2, max, na.rm = TRUE) == 10)
+)
 
 }

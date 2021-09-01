@@ -37,7 +37,9 @@ overall correlations. \emph{This latter option is experimental and may not yet w
 creating a new list of weights in \code{.$Parameters$Weights}. Otherwise if \code{"list"} outputs to a list (default).}
 }
 \value{
-An updated object with optimised weights.
+If \code{out2 = "COIN"} returns an updated COIN object with a new set of weights in \code{.$Parameters$Weights}, plus
+details of the optimisation in \code{.$Analysis}.
+Else if \code{out2 = "list"} the same outputs (new weights plus details of optimisation) are wrapped in a list.
 }
 \description{
 This function provides optimised weights to agree with a pre-specified vector of "target importances".
@@ -50,11 +52,10 @@ See the \href{https://bluefoxr.github.io/COINrDoc/weighting-1.html#automatic-re-
 for more details.
 }
 \examples{
-\dontrun{
 # build ASEM COIN up to aggregation
 ASEM <- build_ASEM()
 # optimise sub-pillar weights to give equal correlations with index
-ASEM <- weightOpt(ASEM, itarg = "equal", aglev = 3, out2 = "COIN")}
+ASEM <- weightOpt(ASEM, itarg = "equal", aglev = 3, out2 = "COIN")
 
 }
 \seealso{

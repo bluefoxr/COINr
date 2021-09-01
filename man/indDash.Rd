@@ -10,18 +10,23 @@ indDash(COIN)
 \item{COIN}{The COIN object}
 }
 \value{
-Interactive app. This app is purely exploratory and does not return anything back to R.
+Interactive app (if running an interactive R session). This app is purely exploratory and does not return anything back to R.
 }
 \description{
 Generates an interactive visualisation of one or two indicators at a time. Requires Shiny and an active R session.
 This dashboard is useful for quickly exploring indicator data, and seeing e.g. an untreated indicator distribution
 against its treated equivalent.
 }
+\details{
+This function requires an interactive R session. Otherwise it will simply generate a message to that effect.
+}
 \examples{
-\dontrun{
+# Only run in interactive mode
+if(interactive()){
 # build ASEM COIN
 ASEM <- build_ASEM()
 # view dashboard
-indDash(ASEM)}
+indDash(ASEM)
+}
 
 }

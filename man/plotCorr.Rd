@@ -56,7 +56,10 @@ returns the correlation matrix in wide form. The last option here is probably us
 present a table of the data in a report.}
 }
 \value{
-Plots generated with \strong{ggplot2}. These can be edited further with \strong{ggplot2} commands.
+If \code{out2 = "fig"} returns a plot generated with \strong{ggplot2}. These can be edited further with \strong{ggplot2} commands.
+If \code{out2 = "dflong"} returns the correlation matrix as a data frame in long form, if \code{out2 = "dfwide"},
+returns the correlation matrix in wide form. The last option here is probably useful if you want to
+present a table of the data in a report.
 }
 \description{
 Generates heatmaps of correlation matrices using \strong{ggplot2}. This enables correlating any set of indicators against any other,
@@ -70,10 +73,16 @@ This function calls \code{\link[=getCorr]{getCorr()}}.
 Note that this function can only call correlations within the same data set (i.e. only one data set in \code{.$Data}).
 }
 \examples{
-\dontrun{
 # build ASEM COIN
 ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
-# correlation map of indicators in connectivity sub-index, grouped by pillar
-plotCorr(ASEM, dset = "Raw", icodes = "Conn", aglevs = 1, showvals = F)}
+# correlation data frame of indicators in connectivity sub-index, grouped by pillar
+corrs <- plotCorr(ASEM, dset = "Raw", icodes = "Conn", aglevs = 1,
+showvals = F, out2 = "dflong")
+# NOTE to create a plot instead set out2 = "fig"
 
+}
+\seealso{
+\itemize{
+\item \code{\link[=getCorr]{getCorr()}} Getting correlation matrices of indicator subsets
+}
 }

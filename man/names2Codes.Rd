@@ -21,9 +21,8 @@ Given a character vector of long names (probably with spaces), generates short c
 Intended for use when importing from the COIN Tool.
 }
 \examples{
-\dontrun{
 # generate codes for indicators in the ASEM data set (first five only)
-names2Codes(ASEMIndMeta$IndName[1:5], maxlet = 3)}
+names2Codes(ASEMIndMeta$IndName[1:5], maxlet = 3)
 
 }
 \seealso{

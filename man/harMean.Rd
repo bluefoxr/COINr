@@ -13,16 +13,18 @@ harMean(x, w = NULL)
 and will be re-scaled to sum to 1. If \code{w} is not specified, defaults to equal weights.}
 }
 \value{
-Harmonic mean (scalar value)
+Weighted harmonic mean, as a numeric value.
 }
 \description{
 Weighted harmonic mean of a vector. \code{NA} are skipped by default. This function is used inside
 \code{\link[=aggregate]{aggregate()}}.
 }
 \examples{
-\dontrun{
+# a vector of values
 x <- 1:10
+# a vector of weights
 w <- runif(10)
-harMean(x,w)}
+# weighted harmonic mean
+harMean(x,w)
 
 }

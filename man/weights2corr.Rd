@@ -27,7 +27,7 @@ weights2corr(
 \item{withparent}{Logical: if \code{TRUE}, only correlates with the parent, e.g. sub-pillars are only correlated with their parent pillars and not others.}
 }
 \value{
-A list with \code{.$cr} is a vector of correlations between each indicator and the index, and
+A list where \code{.$cr} is a vector of correlations between each indicator and the index, and
 \code{.$dat} is a data frame of rankings, with unit code, and index, input and output scores
 }
 \description{
@@ -39,12 +39,11 @@ This function is principally used inside \code{\link[=rew8r]{rew8r()}}. The \cod
 as the data frames found in \code{.$Parameters$Weights}.
 }
 \examples{
-\dontrun{
 # build ASEM COIN up to aggregation
 ASEM <- build_ASEM()
 # get correlations between pillars (level 2) and index (level 4)
 # original weights used just for demonstration, normally you would alter first.
-weights2corr(ASEM, ASEM$Parameters$Weights$Original, aglevs = c(2,4))}
+l <- weights2corr(ASEM, ASEM$Parameters$Weights$Original, aglevs = c(2,4))
 
 }
 \seealso{

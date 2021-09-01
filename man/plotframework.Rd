@@ -10,7 +10,7 @@ plotframework(COIN)
 \item{COIN}{COIN object, or list with first entry is the indicator metadata, second entry is the aggregation metadata}
 }
 \value{
-Interactive sunburst plot. This can be edited further with \strong{plotly} commands.
+Interactive sunburst plot built using \strong{plotly}. This can be edited further with \strong{plotly} commands.
 }
 \description{
 Plots the structure of the index using a sunburst plot using \strong{plotly}. Output can be used as an interactive plot
@@ -22,10 +22,9 @@ a COIN, this plot should work automatically. If you input a list, you should mak
 is ordered by descending order of the hierarchy (i.e. highest level, working downwards).
 }
 \examples{
-\dontrun{
 # build ASEM COIN
 ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 # plot framework
-plotframework(ASEM)}
+plotframework(ASEM)
 
 }

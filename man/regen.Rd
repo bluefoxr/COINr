@@ -12,7 +12,7 @@ regen(COINold, quietly = FALSE)
 \item{quietly}{Logical: if \code{TRUE} suppresses all messages from COINr functions (warnings may still occur though).}
 }
 \value{
-An updated COIN object, with all data sets recalculated. Weight sets will be passed through.
+An updated COIN object, with all data sets recalculated according to specifications in \code{.$Method}. Weight sets will be passed through.
 }
 \description{
 Function to regenerate the results of the COIN, using the methodological parameters stored in
@@ -23,6 +23,16 @@ found in \code{.$Method}, along with any custom code found in \code{.$Method$Cus
 Note that while sets of weights will be passed to the regenerated COIN, anything in \code{.$Analysis} will be removed and will have to be recalculated.
 
 For more details on regeneration of COINs, comparisons and adjustments, see the \href{https://bluefoxr.github.io/COINrDoc/adjustments-and-comparisons.html}{online documentation}.
+}
+\examples{
+ASEM <- build_ASEM()
+# Make a copy
+ASEMAltNorm <- ASEM
+# Edit .$Method
+ASEMAltNorm$Method$normalise$ntype <- "borda"
+# Regenerate
+ASEMAltNorm <- regen(ASEMAltNorm, quietly = TRUE)
+
 }
 \seealso{
 \itemize{

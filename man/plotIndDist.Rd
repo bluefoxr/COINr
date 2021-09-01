@@ -44,10 +44,9 @@ purpose it calls \code{\link[=normalise]{normalise()}} - see \code{ntype} and \c
 See \href{https://bluefoxr.github.io/COINrDoc/initial-visualisation-and-analysis.html#distributions}{COINr online documentation} and \code{\link[=getIn]{getIn()}} for more information on accessing/plotting groups.
 }
 \examples{
-\dontrun{
 # build ASEM COIN
 ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 # plot indicators in Physical pillar
-plotIndDist(ASEM, type = "Box", dset = "Raw", icodes = "Physical")}
+plotIndDist(ASEM, type = "Box", dset = "Raw", icodes = "Physical")
 
 }

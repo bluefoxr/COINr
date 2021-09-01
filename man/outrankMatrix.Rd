@@ -14,17 +14,18 @@ as columns. No other columns should be present (e.g. label columns).}
 and will be re-scaled to sum to 1. If \code{w} is not specified, defaults to equal weights.}
 }
 \value{
-Outranking matrix
+An outranking matrix with \verb{nrow(ind_data} rows and columns (matrix class).
 }
 \description{
 Constructs an outranking matrix based on a data frame of indicator data and corresponding weights. This function is used inside
 \code{\link[=aggregate]{aggregate()}}.
 }
 \examples{
-\dontrun{
 # get a sample of a few indicators
-ind_data <- ASEMIndData[12:16]
+ind_data <- COINr::ASEMIndData[12:16]
 # calculate outranking matrix
-outrankMatrix(ind_data)}
+ORmatrix <- outrankMatrix(ind_data)
+# check output
+stopifnot(is.matrix(ORmatrix), nrow(ORmatrix) == nrow(ind_data))
 
 }

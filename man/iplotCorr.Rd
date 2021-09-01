@@ -44,7 +44,7 @@ specify a subset of these and the others will revert to defaults.}
 \item{useweights}{An optional list of weights to use (this is used mainly in the \code{\link[=rew8r]{rew8r()}} app).}
 }
 \value{
-A \strong{plotly} correlation map.
+A \strong{plotly} correlation map (figure).
 }
 \description{
 Plots an interactive heatmap of a correlation matrix. Currently this only works with the
@@ -56,11 +56,10 @@ heat maps as HTML widgets. It has some flexibility regarding grouping of indicat
 and the correlation type. Explore the arguments and see.
 }
 \examples{
-\dontrun{
 # build ASEM COIN up to aggregation
 ASEM <- build_ASEM()
 # correlation heatmap of pillars against sub-indexes
-iplotCorr(ASEM, aglevs = c(2,3))}
+iplotCorr(ASEM, aglevs = c(2,3))
 
 }
 \seealso{

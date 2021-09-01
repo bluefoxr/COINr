@@ -38,7 +38,7 @@ Using a group mean or median won't make sense unless all of selected units are f
 Defaults to \code{statgroup}.}
 }
 \value{
-Interactive radar chart
+Interactive radar chart generated using plotly.
 }
 \description{
 Generates an interactive radar chart for a specified unit or set of units.
@@ -49,12 +49,10 @@ Optionally, you can add mean/median or group mean/median as an extra trace. The 
 its peers.
 }
 \examples{
-\dontrun{
 # build ASEM COIN up to aggregation
 ASEM <- build_ASEM()
 # radar chart of Austria vs. China in Political indicators
 iplotRadar(ASEM, dset = "Aggregated", usel = c("AUT", "CHN"), isel = "Political", aglev = 1)
-}
 
 }
 \seealso{

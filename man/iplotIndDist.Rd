@@ -35,10 +35,9 @@ HTML documents, websites, etc, or used for more interactive data exploration. Th
 indicator at a time - for multiple plots you can use \code{\link[=plotIndDist]{plotIndDist()}}.
 }
 \examples{
-\dontrun{
 # build ASEM COIN
 ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 # plot renewable energy indicator
-iplotIndDist(ASEM, "Raw", "Renew", ptype = "Violin")}
+iplotIndDist(ASEM, "Raw", "Renew", ptype = "Violin")
 
 }

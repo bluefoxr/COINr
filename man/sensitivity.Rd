@@ -44,7 +44,16 @@ If this is not specified, bootstrapping is not applied. Ignored if \code{SA_type
 \item{quietly}{If \code{FALSE} (default), gives progress messages. Set \code{TRUE} to suppress these.}
 }
 \value{
-Sensitivity analysis results
+Sensitivity analysis results as a list, containing:
+\itemize{
+\item \code{.$Scores} a data frame with a row for each unit, and columns are the scores for each replication.
+\item \code{.$Parameters} a record of the parameters used for each iteration
+\item \code{.$Ranks} as \code{.$Scores} but for unit ranks
+\item \code{.$RankStats} summary statistics for ranks of each unit
+\item \code{.$Nominal} the nominal scores and ranks of each unit (i.e. from the original COIN)
+\item Some information on the time elapsed, average time, and the parameters perturbed.
+\item Depending on the setting of \code{store_results}, may also contain a list of Methods or a list of COINs for each replication.
+}
 }
 \description{
 Performs global uncertainty and sensitivity analysis on a COIN.
@@ -52,10 +61,11 @@ Performs global uncertainty and sensitivity analysis on a COIN.
 \details{
 To perform a sensitivity or uncertainty analysis, you must specify \emph{which} parameters/assumptions to vary and \emph{what} their alternative
 values are. This is the \code{SA_specs} argument below. To understand how this works, please see the \href{https://bluefoxr.github.io/COINrDoc/sensitivity-analysis.html#sensitivity-in-coinr}{COINr online documentation}.
+
+The output of this function can be visualised with the functions \code{\link[=plotSARanks]{plotSARanks()}} and \code{\link[=plotSA]{plotSA()}}.
 }
 \examples{
-\dontrun{
-
+\donttest{
 # build ASEM COIN up to aggregation
 ASEM <- build_ASEM()
 
@@ -70,12 +80,15 @@ SAspecs <- list(
 )
 
 # run uncertainty analysis
+# here we set N deliberately much lower than normal to enable quick testing
+# Would recommend in a practical case to increase to perhaps 500 (more is always better)
 SAresults <- sensitivity(ASEM, v_targ = "Index",
                          SA_specs = SAspecs,
-                         N = 100,
+                         N = 15,
                          SA_type = "UA")
 
-# to run a sensitivity analysis set SA_type = "SA" (takes longer)}
+# to run a sensitivity analysis set SA_type = "SA" (takes longer)
+}
 
 }
 \seealso{

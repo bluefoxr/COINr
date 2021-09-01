@@ -22,11 +22,10 @@ level data (i.e. one point per country), with countries labelled by \href{https:
 This function is simply a quick wrapper for the \strong{plotly} choropleth map function.
 }
 \examples{
-\dontrun{
 # assemble ASEM COIN
 ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 # map CO2 indicator
-iplotMap(ASEM, dset = "Raw", isel = "CO2")}
+iplotMap(ASEM, dset = "Raw", isel = "CO2")
 
 }
 \seealso{

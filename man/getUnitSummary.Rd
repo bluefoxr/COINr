@@ -14,7 +14,7 @@ getUnitSummary(COIN, usel, aglevs)
 \item{aglevs}{The aggregation levels to display results from.}
 }
 \value{
-A data frame summary table.
+A summary table as a data frame, containing scores and ranks for specified indicators/aggregates.
 }
 \description{
 Generates a summary table for a single unit. This is mostly useful in unit reports.
@@ -24,11 +24,10 @@ This returns the scores and ranks for each indicator/aggregate as specified in \
 the highest aggregation levels are first. This means that if the index level is included, it will be first.
 }
 \examples{
-\dontrun{
 # build ASEM COIN up to aggregation
 ASEM <- build_ASEM()
 # generate unit summary for NZ - index and sub-indexes only
-getUnitSummary(ASEM, usel ="NZL", aglevs = c(4,3))}
+getUnitSummary(ASEM, usel ="NZL", aglevs = c(4,3))
 
 }
 \seealso{

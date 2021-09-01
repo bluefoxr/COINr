@@ -34,10 +34,9 @@ Generates a JavaScript distribution plot of two indicators, using Plotly. Plot c
 HTML documents, websites, etc, or used for more interactive data exploration.
 }
 \examples{
-\dontrun{
 # build ASEM COIN
 ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 # plot CO2 against renewable energy indicator
-iplotIndDist2(ASEM, dsets = "Raw", icodes = c("Renew", "CO2"))}
+iplotIndDist2(ASEM, dsets = "Raw", icodes = c("Renew", "CO2"))
 
 }

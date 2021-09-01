@@ -12,10 +12,10 @@ resultsDash(COIN, dset = "Aggregated")
 \item{dset}{The initial data set to explore.}
 }
 \value{
-Interactive app for exploring results.
+Interactive app for exploring results (if running an interactive R session). Otherwise will simply generate a message.
 }
 \description{
-Generates an interactive visualisation of results. Requires Shiny and an active R session.
+Generates an interactive visualisation of results. Requires Shiny and an interactive R session.
 }
 \details{
 This function provides a fast way to present and explore results in a COIN. It plots interactive bar charts of any indicator
@@ -23,11 +23,13 @@ or aggregate, and maps if the unit codes are ISO alpha-3 country codes. It also 
 possibility to quickly compare units on a radar chart.
 }
 \examples{
-\dontrun{
+# To be run in an interactive R session...
+if(interactive()){
 # build ASEM up to results
 ASEM <- build_ASEM()
 # launch results dashboard
-resultsDash(ASEM)}
+resultsDash(ASEM)
+}
 
 }
 \seealso{
