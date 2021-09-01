@@ -20,11 +20,11 @@
 #' @importFrom reshape2 melt
 #' @importFrom ggplot2 ggplot aes geom_boxplot theme_light geom_dotplot geom_violin geom_histogram labs facet_wrap
 #'
-#' @examples \dontrun{
+#' @examples
 #' # build ASEM COIN
 #' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 #' # plot indicators in Physical pillar
-#' plotIndDist(ASEM, type = "Box", dset = "Raw", icodes = "Physical")}
+#' plotIndDist(ASEM, type = "Box", dset = "Raw", icodes = "Physical")
 #'
 #' @return Plots generated with **ggplot2**. These can be edited further with **ggplot2** commands.
 #'

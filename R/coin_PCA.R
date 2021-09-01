@@ -4,6 +4,9 @@
 #' corresponding to the first principal component, i.e the weights that maximise the variance explained
 #' by the linear combination of indicators.
 #'
+#' Note that `getPCA()` is simply a quick wrapper for [stats::prcomp()] which makes PCA on COINs quicker.
+#' See [COINr online documentation](https://bluefoxr.github.io/COINrDoc/multivariate-analysis.html#pca) for more details and examples.
+#'
 #' @param COIN An input object. The function can handle either the COIN object, or a data frame.
 #' The data frame should have each column as an indicator, and an optional column `"UnitCode"` which
 #' specifies the code (or name) of each unit. Any other type of object will return an error.
@@ -19,20 +22,28 @@
 #' @importFrom stats prcomp na.omit
 #' @importFrom rlang .data
 #'
-#' @examples \dontrun{
+#' @examples
 #' # build ASEM COIN
 #' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta,
 #' AggMeta = ASEMAggMeta)
-#' # get PCA results for pillar groups inside "Conn" sub-index
+#' # get PCA results for pillar groups inside "Sust" (sustainability) sub-index
 #' # (warnings about missing data are suppressed)
 #' PCAres <- getPCA(ASEM, dset = "Raw", icodes = "Sust",
-#' aglev = 1, nowarnings = TRUE, out2 = "list")}
+#' aglev = 1, nowarnings = TRUE, out2 = "list")
+#' # summarise PCA results for Social pillar
+#' summary(PCAres$PCAresults$Social$PCAres)
 #'
-#' @return PCA data, plus PCA weights corresponding to the loadings of the first principle component.
-#' This should correspond to the linear combination of indicators that explains the most variance.
+#' @return
+#' If `out2 = "COIN"`, results are appended to the COIN object. Specifically:
+#' * A new set of PCA weights is added to .$Parameters$Weights
+#' * A list is added to `.$Analysis` containing PCA weights (loadings) of the first principle component, and the output of [stats::prcomp], for each
+#' aggregation group found in the targeted level.
+#' If `out2 = "list"` the same outputs are contained in a list.
+#'
+#' @seealso
+#' * [stats::prcomp] Principle component analysis
 #'
 #' @export
-#'
 
 getPCA <- function(COIN, dset = "Raw", icodes = NULL, aglev = NULL, nowarnings = FALSE, out2 = "COIN"){
 

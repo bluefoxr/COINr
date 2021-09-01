@@ -23,24 +23,29 @@
 #' `unit_screen != "none"` outputs a new data set .$Data$Screened.
 #' @param Force A data frame with any additional countries to force inclusion or exclusion. First column is `"UnitCode"`. Second column `"Status"` either `"Include"` or `"Exclude"` for each country to force.
 #' @param out2 Where to output the results. If `"COIN"` (default for COIN input), appends to updated COIN,
-#' otherwise if `"df"` outputs to data frame.
+#' otherwise if `"list"` outputs to data frame.
 #'
 #' @importFrom dplyr select starts_with pull mutate filter
 #'
-#' @examples \dontrun{
+#' @examples
 #' # build ASEM COIN
 #' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
-#' # return stats to the COIN
-#' ASEM <- checkData(ASEM, dset = "Raw", unit_screen = TRUE)}
+#' # return stats to the COIN, plus screened data set, return to list
+#' ScreenedData <- checkData(ASEM, dset = "Raw", unit_screen = "byNA",
+#' ind_thresh = 0.9, out2 = "list")
+#' # See which units were removed
+#' print(ScreenedData$RemovedUnits)
 #'
-#' @return An updated COIN with tables showing missing data, and a filtered list of countries to include in subsequent calculations.
+#' @return An updated COIN with data frames showing missing data in `.$Analysis`, and if `unit_screen != "none"` outputs a new data set .$Data$Screened.
+#' If `out2 = "list"` wraps missing data stats and screened data set into a list.
+#'
 #' @export
 
 checkData <- function(COIN, dset = NULL, ind_thresh = NULL, zero_thresh = NULL,
                       unit_screen = "none", Force = NULL, out2 = "COIN"){
 
   # Check input type. If not COIN, exit.
-  if (!("COIN" %in% class(COIN))){ # COIN obj
+  if (!is.coin(COIN)){ # COIN obj
     stop("This function currently only supports COINs as inputs.")
   }
   # Check for dset. If not specified, exit.

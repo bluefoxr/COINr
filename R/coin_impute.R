@@ -3,6 +3,8 @@
 #' Imputation of missing data data sets using a variety of methods (see `imtype`). This also includes the possibility of imputing
 #' by grouping variables, i.e. columns of `IndData` that are prefaced by `"Group_"`.
 #'
+#' See [online documentation](https://bluefoxr.github.io/COINrDoc/missing-data-and-imputation.html#imputation-in-coinr) for further details and examples.
+#'
 #' @param COIN A COIN or a data frame
 #' @param imtype The type of imputation method. Either:
 #' * `"agg_mean"` (the mean of normalised indicators inside the aggregation group),
@@ -16,8 +18,8 @@
 #' @param dset The data set in `.$Data` to impute
 #' @param groupvar The name of the column to use for by-group imputation. Only applies when `imtype` is set to a group option.
 #' @param EMaglev The aggregation level to use if `imtype = "EM"`.
-#' @param out2 Where to output the results. If `"COIN"` (default for COIN input), appends to updated COIN,
-#' otherwise if `"df"` outputs to data frame.
+#' @param out2 Where to output the imputed data frame. If `"COIN"` (default for COIN input), creates a new data set `.$Data$Imputed`.
+#' Otherwise if `"df"` outputs directly to a data frame.
 #'
 #' @importFrom tidyr replace_na
 #' @importFrom stringr str_subset
@@ -25,13 +27,21 @@
 #' @importFrom rlang .data
 #' @importFrom Amelia amelia
 #'
-#' @examples \dontrun{
+#' @examples
 #' # assemble the COIN
 #' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+#' # Check how many missing data points are in raw data set
+#' sum(is.na(ASEM$Data$Raw))
 #' # impute data using Asia/Europe group mean
-#' ASEM <- impute(ASEM, dset = "Denominated", imtype = "indgroup_mean", groupvar = "Group_EurAsia")}
+#' DataImputed <- impute(ASEM, dset = "Raw", imtype = "indgroup_mean", groupvar = "Group_EurAsia",
+#' out2 = "df")
+#' # See how many missing data points we have in the imputed data
+#' sum(is.na(DataImputed))
+#' # check no missing data
+#' stopifnot(sum(is.na(DataImputed))==0)
 #'
-#' @return A data frame of normalised indicators.
+#' @return If `out2 = "COIN"` (default for COIN input), creates a new data set `.$Data$Imputed`.
+#' Otherwise if `out2 = "df"` outputs directly to a data frame.
 #'
 #' @export
 

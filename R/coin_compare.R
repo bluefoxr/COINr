@@ -11,19 +11,21 @@
 #' @param sort_by If `"RankCOIN1"`, sorts by the indicator values of COIN1, if `"RankCOIN2"`, sorts by `COIN2`,
 #' if `"RankChange"`, sorts by rank change, and if `"AbsRankChange"` sorts by absolute rank change.
 #'
-#' @examples \dontrun{
+#' @examples
 #' ASEM <- build_ASEM()
 #' # Make a copy
 #' ASEMAltNorm <- ASEM
 #' # Edit .$Method
 #' ASEMAltNorm$Method$normalise$ntype <- "borda"
 #' # Regenerate
-#' ASEMAltNorm <- COINr::regen(ASEMAltNorm, quietly = TRUE)
+#' ASEMAltNorm <- regen(ASEMAltNorm, quietly = TRUE)
 #' # compare
-#' compTable(ASEM, ASEMAltNorm, dset = "Aggregated", isel = "Index")
-#' }
+#' CT <- compTable(ASEM, ASEMAltNorm, dset = "Aggregated", isel = "Index")
 #'
-#' @return A data frame with ranks and rank changes
+#' @return A data frame with ranks and rank changes between two COINs.
+#'
+#' @seealso
+#' * [compTableMulti()] Comparison table between multiple COINs
 #'
 #' @export
 #'
@@ -60,7 +62,7 @@ compTable <- function(COIN1, COIN2, dset = "Raw", isel, COINnames = NULL, sort_b
 
 #' Rank tables between multiple COINs
 #'
-#' Takes multiple COINs, and generates a rank comparison for a single indicator or aggregate.
+#' Takes multiple COINs (two or more), and generates a rank comparison for a single indicator or aggregate.
 #'
 #' @param COINs A list of COINs
 #' @param dset The data set to extract the indicator from (must be present in each COIN). Default `"Aggregated"`.
@@ -74,7 +76,7 @@ compTable <- function(COIN1, COIN2, dset = "Raw", isel, COINnames = NULL, sort_b
 #'
 #' @importFrom purrr modify_if
 #'
-#' @examples \dontrun{
+#' @examples
 #' ASEM <- build_ASEM()
 #' # Make a copy
 #' ASEMAltNorm <- ASEM
@@ -83,17 +85,27 @@ compTable <- function(COIN1, COIN2, dset = "Raw", isel, COINnames = NULL, sort_b
 #' # Regenerate
 #' ASEMAltNorm <- COINr::regen(ASEMAltNorm, quietly = TRUE)
 #' # compare
-#' compTableMulti(list(ASEM, ASEMAltNorm), dset = "Aggregated", isel = "Index")
+#' ctable <- compTableMulti(list(ASEM, ASEMAltNorm), dset = "Aggregated", isel = "Index")
 #'
 #' # add more COINs to the list to see more cols in the table...
-#' }
 #'
 #' @return Rank comparison table as a data frame
+#'
+#' @seealso
+#' * [compTable()] Comparison table between two COINs
 #'
 #' @export
 
 compTableMulti <- function(COINs, dset = "Aggregated", isel = "Index", tabtype = "Ranks", ibase = 1,
                            sort_table = TRUE, extra_cols = NULL){
+
+  if(any(!(sapply(COINs, is.coin)))){
+    stop("One or more elements of COINs argument is not a valid COIN. Please check.")
+  }
+
+  if(length(COINs)<2){
+    stop("List of COINs has less than two entries. You need at least 2 COINs to use this function.")
+  }
 
   # change order of list: put ibase first
   COINs <- COINs[c(ibase, setdiff(1:length(COINs), ibase))]

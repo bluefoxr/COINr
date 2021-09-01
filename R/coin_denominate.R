@@ -1,10 +1,15 @@
 #' Denominate indicator data sets
 #'
 #' Denominates (divides) indicators by other "denominator" indicators that are either input here or were attached as `"Den_*"` columns of
-#' `IndData` when assembling the COIN.
+#' `IndData` when assembling the COIN. This function can work either on COINs or on data frames.
 #'
 #' Typically, the aim here is to convert extensive (size-related) variables into intensive variables(comparable between units
 #' of different sizes). There is also the option `scaledenoms` to scale denominators to avoid very small or very large numbers resulting.
+#'
+#' This function expects that `denominators$UnitCode` contains all unit codes found in the data frame to be denominated. Unused
+#' unit codes (rows) in `denominators` will be ignored. Note that some national-level denominator data is available inside COINr at `COINr::WorldDenoms`.
+#'
+#' See [online documentation](https://bluefoxr.github.io/COINrDoc/denomination.html) for further details and examples.
 #'
 #' @param obj COIN object or a data frame of indicator data to be denominated. If a data frame, must include a `UnitCode` column.
 #' @param dset The data set to denominate (only if COIN used as input)
@@ -25,13 +30,25 @@
 #' @param out2 Where to output the results. If `"COIN"` (default for COIN input), appends to updated COIN,
 #' otherwise if `"df"` outputs to data frame.
 #'
-#' @examples \dontrun{
+#' @examples
 #' # assemble ASEM COIN
 #' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 #' # denominate using specs present on assembly
-#' ASEM <- denominate(ASEM, dset = "Raw")}
+#' ASEM <- denominate(ASEM, dset = "Raw")
 #'
-#' @return An updated COIN object, with new dataset `.$Data$Denominated` of denominated indicators.
+#' # OR, use function on data frame
+#' # Get a sample of indicator data (note must be indicators plus a "UnitCode" column)
+#' IndData <- ASEMIndData[c("UnitCode", "Goods", "Services", "FDI")]
+#' # Also get some denominator data
+#' Denoms <- ASEMIndData[c("UnitCode", "Den_Pop", "Den_GDP")]
+#' # Denominate one by the other
+#' IndDataDenom <- denominate(IndData, denomby = c("Den_GDP", NA, "Den_Pop"), denominators = Denoms)
+#'
+#' @return If `out2 = COIN` and `obj` is a COIN, returns an updated COIN object, with new dataset `.$Data$Denominated` of denominated indicators.
+#' Otherwise returns a data frame of denominated indicator data.
+#'
+#' @seealso
+#' * [WorldDenoms] A data set of some common national-level denominators.
 #'
 #' @export
 

@@ -13,11 +13,11 @@
 #'
 #' @importFrom plotly plot_ly layout
 #'
-#' @examples \dontrun{
+#' @examples
 #' # build ASEM COIN
 #' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 #' # plot renewable energy indicator
-#' iplotIndDist(ASEM, "Raw", "Renew", ptype = "Violin")}
+#' iplotIndDist(ASEM, "Raw", "Renew", ptype = "Violin")
 #'
 #' @return Plots generated with **plotly**. These can be edited further with **plotly** commands.
 #'
@@ -106,11 +106,11 @@ iplotIndDist <- function(COIN, dset = "Raw", icodes = NULL, ptype = "Violin", ag
 #'
 #' @importFrom plotly plot_ly
 #'
-#' @examples \dontrun{
+#' @examples
 #' # build ASEM COIN
 #' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 #' # plot CO2 against renewable energy indicator
-#' iplotIndDist2(ASEM, dsets = "Raw", icodes = c("Renew", "CO2"))}
+#' iplotIndDist2(ASEM, dsets = "Raw", icodes = c("Renew", "CO2"))
 #'
 #' @return Plots generated with **plotly**. These can be edited further with **plotly** commands.
 #'

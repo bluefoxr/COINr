@@ -1,9 +1,18 @@
 #' Build COIN object
 #'
-#' This takes the raw data provided by the user and puts it into an list format (COIN object) that is recognised by COINr.
+#' This takes the raw data provided by the user and puts it into a list format (COIN object) that is recognised by COINr.
 #' It also checks whether there are any syntax errors in the data provided. Optionally, you can exclude
 #' or include indicators using the `include` and `exclude` arguments. Note that if an indicator is specified in
 #' BOTH `include` and `exclude`, it will be excluded.
+#'
+#' A "COIN" is an S3 class which is a structured list of indicator data, metadata, results and methodology which is used
+#' throughout COINr. COINs are a convenient way to store all variables relating to the composite indicator in a single named
+#' object. This keeps the workspace tidy, but also allows fast and concise calls to functions, as well as copying COINs to
+#' introduce methodological variations, and enables complex operations such as global sensitivity analysis (see [sensitivity()].
+#'
+#' For general information on COINs see the COINr vignette as well as the [relevant chapter](https://bluefoxr.github.io/COINrDoc/coins-the-currency-of-coinr.html) in the COINr online documentation.
+#'
+#' For details on copying, adjusting and comparing COINs see the [COINr chapter on adjustments and comparisons](https://bluefoxr.github.io/COINrDoc/adjustments-and-comparisons.html).
 #'
 #' @param IndData A data frame of indicator data.
 #' @param IndMeta A data frame containing auxiliary information for each indicator
@@ -22,9 +31,9 @@
 #' @importFrom purrr "map_lgl"
 #' @importFrom stats "na.omit"
 #'
-#' @examples \dontrun{
+#' @examples
 #' # build the ASEM COIN
-#' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta}
+#' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 #'
 #' @return A "COIN" (list) formatted to the specifications of COINr.
 #' Note that the COIN object is an S3 class. It doesn't impose restrictions on the structure of the list.
@@ -40,6 +49,10 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL, 
   }
 
   ##----- INITIAL CHECKS -----##
+
+  stopifnot(is.data.frame(IndData),
+            is.data.frame(IndMeta),
+            is.data.frame(AggMeta))
 
   # Do some checks first - make sure required cols are present
   if(!exists("UnitCode", IndData)){

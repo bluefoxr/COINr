@@ -29,12 +29,17 @@
 #' @importFrom dplyr "c_across"
 #' @importFrom tibble as_tibble
 #'
-#' @examples \dontrun{
+#' @examples
+#' # assemble a COIN first
 #' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
+#' # normalise the data
 #' ASEM <- normalise(ASEM, dset = "Raw")
-#' ASEM <- COINr::aggregate(ASEM, agtype="arith_mean", dset = "Normalised")}
+#' # aggregate the data
+#' ASEM <- COINr::aggregate(ASEM, agtype="arith_mean", dset = "Normalised")
+#' # check aggregated data set exists
+#' stopifnot(!is.null(ASEM$Data$Aggregated))
 #'
-#' @return An updated COIN object containing the new aggregated data set.
+#' @return An updated COIN containing the new aggregated data set at `.$Data$Aggregated`.
 #'
 #' @export
 
@@ -182,12 +187,15 @@ aggregate <- function(COIN, agtype = "arith_mean", agweights = NULL, dset = NULL
 #' @param w A vector of weights, which should have length equal to `length(x)`. Weights are relative
 #' and will be re-scaled to sum to 1. If `w` is not specified, defaults to equal weights.
 #'
-#' @examples \dontrun{
+#' @examples
+#' # a vector of values
 #' x <- 1:10
+#' # a vector of weights
 #' w <- runif(10)
-#' geoMean(x,w)}
+#' # weighted geometric mean
+#' geoMean(x,w)
 #'
-#' @return Geometric mean
+#' @return The geometric mean, as a numeric value.
 #'
 #' @export
 
@@ -233,12 +241,15 @@ geoMean <- function(x, w = NULL){
 #' @param w A vector of weights, which should have length equal to `length(x)`. Weights are relative
 #' and will be re-scaled to sum to 1. If `w` is not specified, defaults to equal weights.
 #'
-#' @examples \dontrun{
+#' @examples
+#' # a vector of values
 #' x <- 1:10
+#' # a vector of weights
 #' w <- runif(10)
-#' geoMean_rescaled(x,w)}
+#' # rescaled weighted geometric mean
+#' geoMean_rescaled(x,w)
 #'
-#' @return Geometric mean (scalar value)
+#' @return Rescaled weighted geometric mean, as a numeric value.
 #'
 #' @export
 
@@ -281,12 +292,15 @@ geoMean_rescaled <- function(x, w = NULL){
 #' @param w A vector of weights, which should have length equal to `length(x)`. Weights are relative
 #' and will be re-scaled to sum to 1. If `w` is not specified, defaults to equal weights.
 #'
-#' @examples \dontrun{
+#' @examples
+#' # a vector of values
 #' x <- 1:10
+#' # a vector of weights
 #' w <- runif(10)
-#' harMean(x,w)}
+#' # weighted harmonic mean
+#' harMean(x,w)
 #'
-#' @return Harmonic mean (scalar value)
+#' @return Weighted harmonic mean, as a numeric value.
 #'
 #' @export
 
@@ -327,13 +341,15 @@ harMean <- function(x, w = NULL){
 #' @param w A vector of weights, which should have length equal to `ncol(ind_data)`. Weights are relative
 #' and will be re-scaled to sum to 1. If `w` is not specified, defaults to equal weights.
 #'
-#' @examples \dontrun{
+#' @examples
 #' # get a sample of a few indicators
-#' ind_data <- ASEMIndData[12:16]
+#' ind_data <- COINr::ASEMIndData[12:16]
 #' # calculate outranking matrix
-#' outrankMatrix(ind_data)}
+#' ORmatrix <- outrankMatrix(ind_data)
+#' # check output
+#' stopifnot(is.matrix(ORmatrix), nrow(ORmatrix) == nrow(ind_data))
 #'
-#' @return Outranking matrix
+#' @return An outranking matrix with `nrow(ind_data` rows and columns (matrix class).
 #'
 #' @export
 
@@ -386,20 +402,20 @@ outrankMatrix <- function(ind_data, w = NULL){
 #' Copeland scores
 #'
 #' Aggregates a data frame of indicator values into a single column using the Copeland method. This function is used inside
-#' [aggregate()].
+#' [aggregate()], and calls `outrankMatrix()`.
 #'
 #' @param ind_data A data frame or matrix of indicator data, with observations as rows and indicators
 #' as columns. No other columns should be present (e.g. label columns).
 #' @param w A vector of weights, which should have length equal to `ncol(ind_data)`. Weights are relative
 #' and will be re-scaled to sum to 1. If `w` is not specified, defaults to equal weights.
 #'
-#' @examples \dontrun{
+#' @examples
 #' # get a sample of a few indicators
 #' ind_data <- ASEMIndData[12:16]
 #' # calculate outranking matrix
 #' cop_results <- copeland(ind_data)
-#' # inspect
-#' cop_results$Scores}
+#' # check output
+#' stopifnot(length(cop_results$Scores) == nrow(ind_data))
 #'
 #' @return Numeric vector of Copeland scores.
 #'
