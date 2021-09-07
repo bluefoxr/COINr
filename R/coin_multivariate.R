@@ -305,7 +305,7 @@ getCorr <- function(COIN, dset, icodes = NULL, aglevs = NULL, cortype = "pearson
     for (lev2ii in lev2){
       # get child codes
       lev1 <- agcols[agcols[2]==lev2ii, 1]
-      lev1 <- unique(lev1[[1]]) # otherwise it is still a tibble, also remove dups
+      lev1 <- unique(unlist(lev1, use.names = FALSE)) # otherwise it is still a tibble, also remove dups
       # get all 2-way combos of these codes
       lev1pairs <- expand.grid(lev1, lev1)
       # add to df
