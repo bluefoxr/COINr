@@ -12,7 +12,7 @@
 #' Indicators can also be each normalised by a different method. See `individual`.
 #'
 #' @param COIN Either the COIN object, or a data frame of indicator data
-#' @param ntype The type of normalisation method. Either `"minmax"`, `"zscore"`, `"scaled"`, `"rank"`, `"borda"`, `"prank"`,
+#' @param ntype The type of normalisation method. Either `"minmax"`, `"zscore"`, `"scaled"`, `"goalposts"`, `"rank"`, `"borda"`, `"prank"`,
 #' `"fracmax"`, `"dist2targ"`, `"dist2ref"`, `"dist2max"`, `"custom"` or `"none"`.
 #' See the [online documentation](https://bluefoxr.github.io/COINrDoc/normalisation.html).
 #' @param npara Supporting object for `ntype`. This is a list of the form `list(ntype = parameters_for_ntype)`. So,
@@ -169,6 +169,29 @@ normalise <- function(COIN, ntype = "minmax", npara = NULL,
         npara$scaled <- c(0,1)
       }
       dfn <- (df-npara$scaled[1])/npara$scaled[2]
+
+    } else if (ntype == "goalposts"){
+
+      # GOALPOSTS
+      if (is.null(npara$goalposts)){ # no default parameters here
+        stop("No parameters found for goalposts method. Please enter something in npara$goalposts.")
+      }
+
+      # since indicators arrive with directions possibly reversed (*-1), we have to also multiply GPs by -1
+      if(directions[ii] == -1){
+        # here, indicators are multiplied by -1, so need to also multiply goalposts by -1
+        npara$goalposts[1:2] <- -1*npara$goalposts[1:2]
+        # then, the goalpost formula is reversed as well
+        dfn <- (df-npara$goalposts[2])/(npara$goalposts[1] - npara$goalposts[2])
+      } else {
+        dfn <- (df-npara$goalposts[1])/(npara$goalposts[2] - npara$goalposts[1])
+      }
+
+      # this is the truncation bit
+      dfn[dfn > 1] <- 1
+      dfn[dfn < 0] <- 0
+      # overall scaling
+      dfn <- dfn * npara$goalposts[3]
 
     } else if (ntype == "rank"){
 
