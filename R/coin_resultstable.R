@@ -231,97 +231,117 @@ compareDF <- function(df1, df2, matchcol, sigfigs = 5){
             matchcol %in% colnames(df1),
             matchcol %in% colnames(df2))
 
+  # check for duplicates in matchcol
+  if( (anyDuplicated(df1[[matchcol]]) > 0) | (anyDuplicated(df2[[matchcol]]) > 0) ){
+    stop("Duplicates found in matchcol. This function requires unique entries in matchcol to make a comparison.")
+  }
+
+  # this is default but will change if anything is found to be different
+  sameanswer <- TRUE
+
   # check sizes
   if(nrow(df1)!=nrow(df2)){
     sameanswer <- FALSE
-    details("Different number of rows.")
+    details <- "Different number of rows."
   }
   if(ncol(df1)!=ncol(df2)){
     sameanswer <- FALSE
-    details("Different number of columns.")
+    details <- "Different number of columns."
   }
 
   # check column names
   if(!setequal(colnames(df1), colnames(df2))){
     sameanswer <- FALSE
-    details("Column names not the same.")
+    details <- "Column names not the same."
   }
   # check row names same in matchcol
   if(!setequal(df1[matchcol], df2[matchcol])){
     sameanswer <- FALSE
-    details("Elements in matchcol are not the same.")
+    details <- "Elements in matchcol are not the same."
   }
 
-  # From this point we should be fairly sure that the two dfs are the same size and contain the same cols and rows
+  if(!sameanswer){
+    # exiting because dfs have different sizes or column/row names
+    return(list(Same = sameanswer,
+                Details = details))
+  } else {
 
-  # match col order
-  df2 <- df2[colnames(df1)]
-  # match row order
-  df2 <- df2[match(df1[[matchcol]], df2[[matchcol]]),]
+    # From this point we should be fairly sure that the two dfs are the same size and contain the same cols and rows
 
-  # Now the dfs should be also in the same order of rows and cols. Remains to check the values.
-  details = data.frame(Column = colnames(df1),
-                       TheSame = NA,
-                       Comment = NA,
-                       NDifferent = NA)
+    # match col order
+    df2 <- df2[colnames(df1)]
+    browser()
+    # match row order
+    df2 <- df2[match(df1[[matchcol]], df2[[matchcol]]),]
 
-  diffs <- vector(mode = "list", length = 0)
+    # Now the dfs should be also in the same order of rows and cols. Remains to check the values.
+    details <- data.frame(Column = colnames(df1),
+                          TheSame = NA,
+                          Comment = NA,
+                          NDifferent = NA)
 
-  # now loop over columns
-  for(ii in 1:length(colnames(df1))){
+    diffs <- vector(mode = "list", length = 0)
 
-    # get cols
-    x <- df1[[ii]]
-    y <- df2[[ii]]
+    # now loop over columns
+    for(ii in 1:length(colnames(df1))){
 
-    # class check
-    if(class(x)!=class(y)){
-      details$TheSame[[ii]] <- FALSE
-      details$Comment[[ii]] <- "Class difference"
-      next
-    }
+      # get cols
+      x <- df1[[ii]]
+      y <- df2[[ii]]
 
-    # now check depending on type
-    if(is.numeric(x)){
-
-      if(identical(signif(x, sigfigs), signif(y, sigfigs))){
-        details$TheSame[[ii]] <- TRUE
-        details$Comment[[ii]] <- paste0("Numerical and identical to ", sigfigs, " sf.")
-        details$NDifferent[[ii]] <- 0
-      } else {
+      # class check
+      if(class(x)!=class(y)){
         details$TheSame[[ii]] <- FALSE
-        details$Comment[[ii]] <- paste0("Numerical and different at ", sigfigs, " sf.")
-        dfdiffs <- data.frame(MatchCol = df1[[matchcol]], df1 = x, df2 = y)
-        colnames(dfdiffs)[1] <- matchcol
-        diffrows <- signif(x, sigfigs) != signif(y, sigfigs)
-        diffrows[is.na(diffrows)] <- TRUE
-        dfdiffs <- dfdiffs[diffrows, ]
-        diffs[[colnames(df1)[ii]]] <- dfdiffs
-        details$NDifferent[[ii]] <- nrow(dfdiffs)
+        details$Comment[[ii]] <- "Class difference"
+        next
       }
 
-    } else {
+      # now check depending on type
+      if(is.numeric(x)){
 
-      if(identical(x, y)){
-        details$TheSame[[ii]] <- TRUE
-        details$Comment[[ii]] <- paste0("Non-numerical and identical")
-        details$NDifferent[[ii]] <- 0
+        if(identical(signif(x, sigfigs), signif(y, sigfigs))){
+          details$TheSame[[ii]] <- TRUE
+          details$Comment[[ii]] <- paste0("Numerical and identical to ", sigfigs, " sf.")
+          details$NDifferent[[ii]] <- 0
+        } else {
+          details$TheSame[[ii]] <- FALSE
+          details$Comment[[ii]] <- paste0("Numerical and different at ", sigfigs, " sf.")
+          dfdiffs <- data.frame(MatchCol = df1[[matchcol]], df1 = x, df2 = y)
+          colnames(dfdiffs)[1] <- matchcol
+          diffrows <- signif(x, sigfigs) != signif(y, sigfigs)
+          diffrows[is.na(diffrows)] <- TRUE
+          dfdiffs <- dfdiffs[diffrows, ]
+          diffs[[colnames(df1)[ii]]] <- dfdiffs
+          details$NDifferent[[ii]] <- nrow(dfdiffs)
+        }
+
       } else {
-        details$TheSame[[ii]] <- FALSE
-        details$Comment[[ii]] <- paste0("Non-numerical and different")
-        dfdiffs <- data.frame(MatchCol = df1[[matchcol]], df1 = x, df2 = y)
-        colnames(dfdiffs)[1] <- matchcol
-        dfdiffs <- dfdiffs[x != y, ]
-        diffs[[colnames(df1)[ii]]] <- dfdiffs
-        details$NDifferent[[ii]] <- nrow(dfdiffs)
+
+        if(identical(x, y)){
+          details$TheSame[[ii]] <- TRUE
+          details$Comment[[ii]] <- paste0("Non-numerical and identical")
+          details$NDifferent[[ii]] <- 0
+        } else {
+          details$TheSame[[ii]] <- FALSE
+          details$Comment[[ii]] <- paste0("Non-numerical and different")
+          dfdiffs <- data.frame(MatchCol = df1[[matchcol]], df1 = x, df2 = y)
+          colnames(dfdiffs)[1] <- matchcol
+          dfdiffs <- dfdiffs[x != y, ]
+          diffs[[colnames(df1)[ii]]] <- dfdiffs
+          details$NDifferent[[ii]] <- nrow(dfdiffs)
+        }
       }
+
     }
+
+    return(list(Same = all(details$TheSame),
+                Details = details,
+                Differences = diffs))
 
   }
 
-  return(list(Same = all(details$TheSame),
-              Details = details,
-              Differences = diffs))
+
+
 
 }
 
@@ -354,6 +374,8 @@ compareDF <- function(df1, df2, matchcol, sigfigs = 5){
 #' @param rmd_template A character string specifying the full file path to an R Markdown template which is used to generate the report. If this is not specified,
 #' defaults to COINr's inbuilt template example.
 #'
+#' @importFrom rmarkdown render pandoc_available
+#'
 #' @examples
 #' # build ASEM COIN up to aggregation
 #' ASEM <- build_ASEM()
@@ -368,11 +390,20 @@ compareDF <- function(df1, df2, matchcol, sigfigs = 5){
 #' # We will now delete the file to keep things tidy in testing
 #' unlink(paste0(tempdir(),"\\NZL_report.html"))
 #'
-#' @return Markdown document rendered to HTML, pdf or Word.
+#' @return Markdown document rendered to HTML, pdf or Word. This function requires Pandoc to be installed. If Pandoc is not found,
+#' then it returns a warning and a printed message (string).
 #'
 #' @export
 
 getUnitReport <- function(COIN, usel, out_type = ".html", outdir = NULL, rmd_template = NULL){
+
+  # first check if Pandoc exists and is accessible. If not, fail without error because
+  # otherwise this messes up CRAN tests. It seems that one of the distributions that CRAN uses
+  # to test packages does not have Pandoc installed.
+  if(!(rmarkdown::pandoc_available("1.12.3"))){
+    warning("Pandoc version >= 1.12.3 is required to run this function (knit R markdown documents).")
+    return("Function exited because Pandoc not available.")
+  }
 
   # specify output type
   if(out_type == ".pdf"){
@@ -408,7 +439,8 @@ COINr documentation and the help file of this function for more details.")
     rmarkdown::render(rmd_template,
                       params = list(COIN = COIN, usel = uselii),
                       output_file = paste0(outdir, "/", uselii, '_report', out_type),
-                      output_format = output_format)
+                      output_format = output_format, intermediates_dir = outdir,
+                      knit_root_dir = outdir, clean = TRUE)
   }
 
 }
