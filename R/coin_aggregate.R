@@ -5,14 +5,23 @@
 #' each level of aggregation (see `agtype_by_level`).
 #'
 #' @param COIN COIN object
-#' @param agtype The type of aggregation method.
+#' @param agtype The type of aggregation method. One of either:
+#' * `"arith_mean"` - weighted arithmetic mean
+#' * `"median"` - weighted median
+#' * `"geom_mean"` - weighted geometric mean
+#' * `"harm_mean"` - weighted harmonic mean
+#' * `"copeland"` - weighted Copeland method
+#' * `"custom"` - a custom function -  see `agfunc`
+#' * `"mixed"` - a different aggregation method for each level. In this case, aggregation methods are specified as any of the previous
+#' options using the `agtype_bylevel` argument.
 #' @param agweights The weights to use in the aggregation. This can either be:
 #' `NULL`, in which case it will use the weights that were attached to `IndMeta` and `AggMeta` in [assemble()] (if they exist), or
 #' A character string which corresponds to a named list of weights stored in `.$Parameters$Weights`. You can either add these manually or through [rew8r()].
 #' E.g. entering `agweights = "Original"` will use the original weights read in on assembly. This is equivalent to `agweights = NULL`.
 #' Or, a data frame of weights to use in the aggregation.
 #' @param dset Which data set (contained in COIN object) to use
-#' @param agtype_bylevel A character vector with aggregation types for each level
+#' @param agtype_bylevel A character vector with aggregation types for each level. Note that if this is specified, `agtype` *must*
+#' be specified as `agtype = "mixed"`, otherwise `agtype_by_level` will be ignored.
 #' @param agfunc A custom function to use for aggregation if `agtype = "custom"`, of the type \eqn{y = f(x,w)},
 #' where \eqn{y} is a scalar aggregated value and \eqn{x} and \eqn{w} are vectors of indicator values and weights respectively.
 #' Ensure that `NA`s are handled (e.g. set `na.rm = T`) if your data has missing values.
@@ -86,6 +95,10 @@ aggregate <- function(COIN, agtype = "arith_mean", agweights = NULL, dset = NULL
   if (agtype != "mixed"){
     # we just use the same type for every level
     agtype_bylevel <- rep(agtype, COIN$Parameters$Nlevels - 1)
+  } else {
+    if(is.null(agtype_bylevel)){
+      stop("If you specify a mixed aggregation method you must specify the method for each level using the agtype_bylevel argument. See ?aggregate.")
+    }
   }
   agtypes <- agtype_bylevel
 
