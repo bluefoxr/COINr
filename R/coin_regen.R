@@ -41,7 +41,9 @@ regen <- function(COINold, quietly = FALSE){
                         AggMeta = COINold$Input$Original$AggMeta,
                         include = COINold$Method$assemble$include,
                         exclude = COINold$Method$assemble$exclude,
-                        preagg = COINold$Method$assemble$preagg) %>% suppressMessages()
+                        preagg = COINold$Method$assemble$preagg,
+                        use_year = COINold$Method$assemble$use_year,
+                        impute_latest = COINold$Method$assemble$impute_latest) %>% suppressMessages()
 
     # copy weights from old COIN (otherwise any additional will be deleted)
     # first, save the new original weights (may have added/deleted indicators)
@@ -198,7 +200,9 @@ regen <- function(COINold, quietly = FALSE){
                         IndMeta = COINold$Input$Original$IndMeta,
                         AggMeta = COINold$Input$Original$AggMeta,
                         include = COINold$Method$assemble$include,
-                        exclude = COINold$Method$assemble$exclude)
+                        exclude = COINold$Method$assemble$exclude,
+                        use_year = COINold$Method$assemble$use_year,
+                        impute_latest = COINold$Method$assemble$impute_latest)
 
     # copy weights from old COIN (otherwise any additional will be deleted)
     # first, save the new original weights (may have added/deleted indicators)
