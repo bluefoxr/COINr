@@ -20,6 +20,12 @@
 #' @param include Optional argument specifying a subset of indicator codes to include (default all indicators included)
 #' @param exclude Optional argument specifying a subset of indicator codes to exclude (default none excluded)
 #' @param preagg Set to `TRUE` if you want to assemble a COIN using pre-aggregated data (typically for ex-post analysis)
+#' @param use_year If `IndData` includes a `Year` column, and there are multiple observations for each unit (one per year),
+#' this can be set to a target year. For example, setting `use_year = 2020` will filter `IndData` to only include points from
+#' 2020. Keeping in mind that a COIN represents a single year of data.
+#' @param impute_latest Logical: if `TRUE`, imputes missing data points using most recent value from previous years. If `FALSE`
+#' (default) simply extracts the data frame as is. This only works if `!is.null(use_year)` and there are previous years of data
+#' available (before `use_year`). Currently does not support imputation using future values or interpolation.
 #'
 #' @importFrom magrittr "%>%"
 #' @importFrom dplyr "select"
@@ -40,7 +46,8 @@
 #'
 #' @export
 
-assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL, preagg = NULL){
+assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL,
+                     preagg = NULL, use_year = NULL, impute_latest = FALSE){
 
   ##----- SET DEFAULTS -------##
   # Done here because otherwise if we use regen, this input could be input as NULL
@@ -76,10 +83,21 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL, 
     stop("One or more of required columns 'AgLevel', 'Code', 'Name', 'Weight' not found in AggMeta. Please check.")
   }
 
-  ##----- IND CODES AND DENOMS -----##
-
   # copy ind data before going any further. Used in .$Input$Original
   IndDataOrig <- IndData
+
+  ##----- PANEL DATA ---------------##
+  # The objective here is to give a simple option to filter panel data to a certain year.
+  # It will also optionally impute using the latest year available.
+
+  if(!is.null(use_year)){
+    # pass to function (see below in this file)
+    l_imp <- extractYear(IndData, use_year, impute_latest)
+    # extract indicator data
+    IndData <- l_imp$IndDataImp
+  }
+
+  ##----- IND CODES AND DENOMS -----##
 
   # Extract indicator codes from raw data
   cnames1 <- IndData %>% dplyr::select(!dplyr::starts_with(
@@ -196,6 +214,13 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL, 
     }
   }
 
+  # add some info if by-year data was used
+  if(!is.null(use_year) & impute_latest){
+    COINobj$Analysis$Years$DataYears <- l_imp$DataYears
+    COINobj$Analysis$Years$ImpTable <- l_imp$ImpTable
+    COINobj$Analysis$Years$NImputed <- l_imp$NImputed
+  }
+
   # Check for duplicates
   if(anyDuplicated(cnames1) != 0){
     stop("Duplicate indicator codes detected - please ensure indicator codes are unique and try again.")
@@ -294,6 +319,14 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL, 
   agg_cols <- ind_meta %>% dplyr::select(dplyr::starts_with("Agg"))
   n_agg_levels <- length(agg_cols)
 
+  # want to check that weights are numeric and not accidentally character
+  if(!is.numeric(ind_meta$IndWeight)){
+    stop("Indicator weights (in IndMeta) not numeric - please check data was imported correctly.")
+  }
+  if(!is.numeric(AggMeta$Weight)){
+    stop("Weights in AggMeta are not numeric - please check data was imported correctly.")
+  }
+
   agweights <- data.frame(AgLevel = 1,
                           Code = ind_meta$IndCode,
                           Weight = ind_meta$IndWeight)
@@ -317,13 +350,181 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL, 
 
   #------- Last bits
 
-  # record inclusion/exclusion choices
+  # record function arguments
   COINobj$Method$assemble$include <- include0
   COINobj$Method$assemble$exclude <- exclude0
   COINobj$Method$assemble$preagg <- preagg
+  COINobj$Method$assemble$use_year <- use_year
+  COINobj$Method$assemble$impute_latest <- impute_latest
 
   class(COINobj) <- "COIN" # assigns a "COIN" class to the list. Helpful for later on.
 
   return(COINobj)
 
 }
+
+
+#' Impute panel data
+#'
+#' Given a data frame of the `IndData` format, with a `Year` column, imputes any missing data using the latest available year.
+#' This function is used inside [assemble()].
+#'
+#' This expects a data frame in the `IndData` format, i.e. it should at least have a `UnitCode` column, and a `Year` column,
+#' as well as other columns that are to be imputed. It also presumes that there are multiple observations for each unit code,
+#' i.e. one per year. It then searches for any missing values in the target year, and replaces them with the equivalent points
+#' from previous years. It will replace using the most recently available point.
+#'
+#' @param IndData A data frame of indicator data, containing a `Year` column and with multiple observations for each unit code.
+#' @param use_year The year of data to extract and impute.
+#' @param impute_latest Logical: if `TRUE`, imputes missing data points using most recent value from previous years. If `FALSE`
+#' (default) simply extracts the data frame as is.
+#'
+#' @examples
+#' # artificial example using ASEM data
+#' # We only have one year of data so we copy it and "pretend" that they are from different years
+#' # First, introduce 3 NAs
+#' dat2018 <- ASEMIndData
+#' dat2018[2, 12] <- NA
+#' dat2018[3, 13] <- NA
+#' dat2018[4, 14] <- NA
+#' # Now make copy, pretending it is the previous year
+#' dat2017 <- ASEMIndData
+#' dat2017$Year <- 2017
+#' # This df still has one missing point
+#' dat2017[4, 14] <- NA
+#' # Finally we have a 2016 data frame where none of the previous points are missing
+#' dat2016 <- ASEMIndData
+#' dat2016$Year <- 2016
+#' # We can now put them together
+#' IndData <- rbind(dat2018, dat2017, dat2016)
+#' # And extract the 2018 data, with missing data taken from previous years
+#' Imp <- extractYear(IndData, 2018, impute_latest = TRUE)
+#' # View which points have been imputed and the years of data used
+#' Imp$ImpTable
+#'
+#' @return A list containing:
+#' * `.$IndDataImp`: An `IndData` format data frame from the specified year (`use_year`), with missing data imputed using previous years
+#' (where possible).
+#' * `.$DataYears`: A data frame in the same format as `IndData`, where each entry shows which year each data point came from.
+#' Points where there was no missing data will have `use_year`, imputed points will have the corresponding year used to impute,
+#' and any points in `.$IndDataImp` which are still `NA` will be be `NA`.
+#' * `.$ImpTable`: A data frame where each row is a point that was successfully imputed. This is a filtered and arranged version
+#' of `.$DataYears` that focuses only on the imputed points.
+#' * `.$NImputed`: The number of imputed points.
+#'
+#' @seealso
+#' * [assemble()] Assemble a COIN - this function optionally calls [extractYear()].
+#' * [impute()] Impute data using other imputation options (not using panel data).
+#'
+#' @export
+
+extractYear <- function(IndData, use_year, impute_latest = FALSE){
+
+  # Some checks
+  if(is.null(IndData$Year)){
+    stop("You have specified to filter to a year but no 'Year' column is detected in IndData")
+  }
+  stopifnot(is.numeric(use_year),
+            length(use_year)==1)
+  if(!(use_year %in% IndData$Year)){
+    stop("The year specified by use_year is not found in IndData$Year.")
+  }
+
+  # Now filter to year
+  IndDataY <- IndData[IndData$Year == use_year, ]
+
+  # See what years are in IndData
+  yrs <- sort(unique(IndData$Year), decreasing = TRUE)
+
+  if(impute_latest){
+
+    # Impute using latest year
+
+    if(length(yrs)==1){
+      warning("Cannot impute by latest year because only on year of data available.")
+    }
+
+    olderyrs <- yrs[yrs < use_year]
+
+    if(length(olderyrs) == 1){
+      warning("Cannot impute by latest year because there is no year before the selected use_year.")
+    }
+
+    # I have to do this unit by unit... this is the safest way to deal with the possibility of
+    # (a) different ordering of units
+    # (b) subsets of units being available for different years
+    # Since the each year of the data comes from the same table, column ordering is consistent so
+    # I don't have to worry about that.
+
+    # here I prep a data frame which will record the year used for each data point
+    # we only make changes to this when a point is imputed
+    DataYears <- IndDataY[!(colnames(IndDataY) %in% c("Year", "UnitName"))]
+    DataYears[colnames(DataYears) != "UnitCode"] <- use_year
+
+    for (ii in 1:nrow(IndDataY)){
+
+      # get row
+      irow <- IndDataY[ii, ]
+      # if no NAs, go onto the next one
+      if(all(!is.na(irow))){next}
+
+      # get unit code
+      unitcode <- irow$UnitCode
+
+      # otherwise, we have to go year by year
+      for(oldyr in olderyrs){
+
+        # get row of same unit, for a previous year
+        irowold <- IndData[(IndData$Year == oldyr) & (IndData$UnitCode == unitcode), ]
+        # substitute in any missing values
+        # first, get the equivalent entries of the old row (corresponding to NAs in new row)
+        irowold_replace <- irowold[, as.logical(is.na(irow))]
+        # and the names
+        names_irowold <- names(irowold)[as.logical(is.na(irow))]
+        # replace them into the new row
+        irow[, as.logical(is.na(irow))] <- irowold_replace
+        # find which indicators were imputed here
+        ind_imp <- names_irowold[!as.logical(is.na(irowold_replace))]
+        # record what happened in datayears
+        DataYears[DataYears$UnitCode == unitcode, colnames(DataYears) %in% ind_imp] <- oldyr
+        # check if we need to carry on
+        if(all(!is.na(irow))){break}
+
+      }
+
+      # replace with imputed row
+      IndDataY[ii, ] <- irow
+
+    }
+
+    # if there are still any NAs, we need to record this in DataYears
+    NAcheck <- IndDataY[colnames(DataYears)]
+    DataYears[is.na(NAcheck)] <- NA
+
+    # count how many imputed
+    nimputed <- sum(is.na(IndData[IndData$Year == use_year, ])) - sum(is.na(IndDataY))
+    message(paste0("Number of imputed points = ", nimputed))
+
+    # we also want just a table of imputed points
+    ImpTable <- tidyr::pivot_longer(DataYears, !.data$UnitCode, names_to = "Variable", values_to = "YearUsed")
+    ImpTable <- ImpTable[(ImpTable$YearUsed != use_year) & !is.na(ImpTable$YearUsed), ]
+
+
+    # return imputed data
+    return(list(IndDataImp = IndDataY,
+         DataYears = DataYears,
+         ImpTable = ImpTable,
+         NImputed = nimputed
+    ))
+
+  } else {
+
+    # if no imputation, return just filtered df. For consistency this is anyway wrapped in a list.
+    return(list(IndDataImp = IndDataY
+    ))
+
+  }
+
+}
+
+
