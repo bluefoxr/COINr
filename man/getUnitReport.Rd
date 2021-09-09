@@ -29,7 +29,8 @@ template includes interactive plots (e.g. the \code{iplot()} functions from COIN
 defaults to COINr's inbuilt template example.}
 }
 \value{
-Markdown document rendered to HTML, pdf or Word.
+Markdown document rendered to HTML, pdf or Word. This function requires Pandoc to be installed. If Pandoc is not found,
+then it returns a warning and a printed message (string).
 }
 \description{
 Generates a scorecard for a given unit using an R Markdown template.

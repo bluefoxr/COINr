@@ -10,7 +10,9 @@ assemble(
   AggMeta,
   include = NULL,
   exclude = NULL,
-  preagg = NULL
+  preagg = NULL,
+  use_year = NULL,
+  impute_latest = FALSE
 )
 }
 \arguments{
@@ -25,6 +27,14 @@ assemble(
 \item{exclude}{Optional argument specifying a subset of indicator codes to exclude (default none excluded)}
 
 \item{preagg}{Set to \code{TRUE} if you want to assemble a COIN using pre-aggregated data (typically for ex-post analysis)}
+
+\item{use_year}{If \code{IndData} includes a \code{Year} column, and there are multiple observations for each unit (one per year),
+this can be set to a target year. For example, setting \code{use_year = 2020} will filter \code{IndData} to only include points from
+2020. Keeping in mind that a COIN represents a single year of data.}
+
+\item{impute_latest}{Logical: if \code{TRUE}, imputes missing data points using most recent value from previous years. If \code{FALSE}
+(default) simply extracts the data frame as is. This only works if \code{!is.null(use_year)} and there are previous years of data
+available (before \code{use_year}). Currently does not support imputation using future values or interpolation.}
 }
 \value{
 A "COIN" (list) formatted to the specifications of COINr.

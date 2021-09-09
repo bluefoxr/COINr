@@ -18,7 +18,7 @@ normalise(
 \arguments{
 \item{COIN}{Either the COIN object, or a data frame of indicator data}
 
-\item{ntype}{The type of normalisation method. Either \code{"minmax"}, \code{"zscore"}, \code{"scaled"}, \code{"rank"}, \code{"borda"}, \code{"prank"},
+\item{ntype}{The type of normalisation method. Either \code{"minmax"}, \code{"zscore"}, \code{"scaled"}, \code{"goalposts"}, \code{"rank"}, \code{"borda"}, \code{"prank"},
 \code{"fracmax"}, \code{"dist2targ"}, \code{"dist2ref"}, \code{"dist2max"}, \code{"custom"} or \code{"none"}.
 See the \href{https://bluefoxr.github.io/COINrDoc/normalisation.html}{online documentation}.}
 
