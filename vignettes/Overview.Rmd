@@ -147,7 +147,7 @@ A COIN is a hierarchical list (a list of lists) which has been assigned an S3 cl
 ```{r, message=F, warning=F}
 library(COINr)
 ASEM <- COINr::build_ASEM()
-class(ASEM) |> print()
+print(class(ASEM))
 ```
 
 ## Inside a COIN
@@ -328,9 +328,8 @@ Another way to check the input data is to call `COINr::getStats()`. This returns
 ASEM <- COINr::getStats(ASEM, dset = "Raw", out2 = "COIN")
 
 # display stats table, first few columns/rows only
-ASEM$Analysis$Raw$StatTable[1:8] |>
-  head(5) |>
-  roundDF()
+stat_tab <- ASEM$Analysis$Raw$StatTable[1:8]
+roundDF(head(stat_tab, 5))
 ```
 
 The columns of this table give all kinds of information from max, min, standard deviation, etc, to the presence of outliers and amount of missing data (columns have been omitted for brevity).
@@ -473,10 +472,10 @@ knitr::include_graphics("images/stacked_bar-min.png")
 Similarly, the sub-index values can be plotted against each other as follows:
 
 ```{r, eval=F}
-COINr::iplotIndDist2(ASEM, dsets = "Aggregated",
-                     icodes = c("Conn", "Sust"), aglevs = 3) |>
-  plotly::layout(xaxis = list(title = "Connectivity"),
-                     yaxis = list(title = "Sustainability"))
+plt <- COINr::iplotIndDist2(ASEM, dsets = "Aggregated",
+                     icodes = c("Conn", "Sust"), aglevs = 3)
+plotly::layout(plt, xaxis = list(title = "Connectivity"),
+                  yaxis = list(title = "Sustainability"))
 ```
 
 ```{r consusScat, echo=F, fig.align = 'center', out.width = "80%", fig.cap = "Connectivity and sustainability sub-indexes."}
@@ -498,8 +497,8 @@ knitr::include_graphics("images/choropleth-min.png")
 For a tabular format, `COINr::getResults()` gives several different varieties of results table, including simple tables of just index scores, up to full tables of all scores or ranks for every indicator. The following generates a simple sorted table at the index level for quick display.
 
 ```{r}
-COINr::getResults(ASEM, tab_type = "Summary") |>
-  head(10)
+rslts <- COINr::getResults(ASEM, tab_type = "Summary")
+head(rslts, 10)
 ```
 
 
@@ -532,9 +531,8 @@ Apart from checking indicator statistics using `COINr::getStats()`, the data ava
 ASEM <- checkData(ASEM, dset = "Raw")
 
 # view missing data by group (last few rows/cols)
-ASEM$Analysis$Raw$MissDatByGroup[1:8] |>
-  tail(10) |>
-  roundDF()
+missdat <- ASEM$Analysis$Raw$MissDatByGroup[1:8]
+roundDF(tail(missdat, 10))
 ```
 
 It may also be useful to plot the distributions of indicators. This can be quickly explored using `COINr::indDash()`, but for presentation purposes *COINr* has fast options for plotting distributions by groups. For example, to plot indicator distributions in the "Political" pillar:
@@ -634,9 +632,9 @@ Here a copy of the ASEM index is made. Then the normalisation method is changed 
 Next, the two alternative COINs can be compared using `COINr::compTable()`.
 
 ```{r}
-COINr::compTable(ASEM, ASEMAltNorm, dset = "Aggregated",
-                 isel = "Index") |>
-  head(10)
+comptab <- COINr::compTable(ASEM, ASEMAltNorm, dset = "Aggregated",
+                 isel = "Index")
+head(comptab, 10)
 ```
 
 This table is sorted by absolute rank change and shows that Malta and Portugal have been affected the most by altering the normalisation method. Another useful function is `COINr::compTableMulti()` which allows comparison of more than two COINs. For adding and removing indicators, *COINr* includes a short-cut function called `COINr::indChange()` which allows indicators to be added and removed, and the results regenerated, in a single command.
