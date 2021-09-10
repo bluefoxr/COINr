@@ -54,7 +54,7 @@ compTable <- function(COIN1, COIN2, dset = "Raw", isel, COINnames = NULL, sort_b
 
 
   if (!is.null(COINnames)){
-    colnames(df1)[3:4] <- paste0("Rank:",COINnames)
+    colnames(df1)[3:4] <- paste0("Rank: ",COINnames)
   }
 
   df1
