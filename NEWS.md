@@ -1,3 +1,10 @@
+# COINr 0.5.4.9000
+
+*This is a development version that is not yet on CRAN*
+
+* Improved documentation and bug catching in `aggregate()`
+* New function `replaceDF()` which is a simple utility for multiple values in one go for a data frame.
+
 # COINr 0.5.4
 
 * Fixed various small issues that were flagged by CRAN
