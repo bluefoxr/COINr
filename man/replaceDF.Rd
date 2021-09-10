@@ -7,7 +7,7 @@
 replaceDF(df, lookup)
 }
 \arguments{
-\item{df}{A data frame}
+\item{df}{A data frame or a vector}
 
 \item{lookup}{A data frame with columns \code{old} (the values to be replaced) and \code{new} the values to replace with. See details.}
 }
@@ -15,7 +15,7 @@ replaceDF(df, lookup)
 A data frame with replaced values
 }
 \description{
-Given a data frame, this function replaces all values according to a look up table or dictionary. In COINr this may
+Given a data frame (or vector), this function replaces values according to a look up table or dictionary. In COINr this may
 be useful for exchanging categorical data with numeric scores, prior to assembly. Or for changing codes.
 }
 \details{
@@ -26,7 +26,10 @@ If you wish to replace with a different class, you should convert classes in you
 }
 \examples{
 # replace sub-pillar codes in ASEM indicator metadata
-
+codeswap <- data.frame(old = c("Conn", "Sust"), new = c("SI1", "SI2"))
+# swap codes in both indmeta and aggmeta
+replaceDF(ASEMIndMeta, codeswap)
+replaceDF(ASEMAggMeta, codeswap)
 
 }
 \seealso{

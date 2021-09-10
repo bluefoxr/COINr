@@ -530,7 +530,7 @@ extractYear <- function(IndData, use_year, impute_latest = FALSE){
 
 #' Replace multiple values in a data frame
 #'
-#' Given a data frame, this function replaces all values according to a look up table or dictionary. In COINr this may
+#' Given a data frame (or vector), this function replaces values according to a look up table or dictionary. In COINr this may
 #' be useful for exchanging categorical data with numeric scores, prior to assembly. Or for changing codes.
 #'
 #' The lookup data frame must not have any duplicated values in the `old` column. This function looks for exact matches of
@@ -538,12 +538,15 @@ extractYear <- function(IndData, use_year, impute_latest = FALSE){
 #' the class of the old value must match the class of the new value. This is to keep classes of data frames columns consistent.
 #' If you wish to replace with a different class, you should convert classes in your data frame before using this function.
 #'
-#' @param df A data frame
+#' @param df A data frame or a vector
 #' @param lookup A data frame with columns `old` (the values to be replaced) and `new` the values to replace with. See details.
 #'
 #' @examples
 #' # replace sub-pillar codes in ASEM indicator metadata
-#'
+#' codeswap <- data.frame(old = c("Conn", "Sust"), new = c("SI1", "SI2"))
+#' # swap codes in both indmeta and aggmeta
+#' replaceDF(ASEMIndMeta, codeswap)
+#' replaceDF(ASEMAggMeta, codeswap)
 #'
 #' @return A data frame with replaced values
 #'
@@ -556,6 +559,13 @@ extractYear <- function(IndData, use_year, impute_latest = FALSE){
 #' @export
 
 replaceDF <- function(df, lookup){
+
+  # if a vector is input, convert to data frame
+  vecflag <- FALSE
+  if(is.vector(df)){
+    vecflag <- TRUE
+    df <- data.frame(v1 = df)
+  }
 
   # checks
   stopifnot(is.data.frame(df),
@@ -574,6 +584,11 @@ replaceDF <- function(df, lookup){
 
     # replace value
     df[df == lookup$old[ii]] <- lookup$new[ii]
+  }
+
+  # if it was a vector, convert back
+  if(vecflag){
+    df <- unlist(df, use.names = FALSE)
   }
 
   df
