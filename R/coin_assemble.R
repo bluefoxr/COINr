@@ -528,3 +528,54 @@ extractYear <- function(IndData, use_year, impute_latest = FALSE){
 }
 
 
+#' Replace multiple values in a data frame
+#'
+#' Given a data frame, this function replaces all values according to a look up table or dictionary. In COINr this may
+#' be useful for exchanging categorical data with numeric scores, prior to assembly. Or for changing codes.
+#'
+#' The lookup data frame must not have any duplicated values in the `old` column. This function looks for exact matches of
+#' elements of the `old` column and replaces them with the corresponding value in the `new` column. For each row of `lookup`,
+#' the class of the old value must match the class of the new value. This is to keep classes of data frames columns consistent.
+#' If you wish to replace with a different class, you should convert classes in your data frame before using this function.
+#'
+#' @param df A data frame
+#' @param lookup A data frame with columns `old` (the values to be replaced) and `new` the values to replace with. See details.
+#'
+#' @examples
+#' # replace sub-pillar codes in ASEM indicator metadata
+#'
+#'
+#' @return A data frame with replaced values
+#'
+#' @seealso
+#' * [assemble()] Assemble a COIN - this function optionally calls [extractYear()].
+#' * [rankDF()] Replace numeric columns of a data frame with ranks.
+#' * [roundDF()] Replace numeric columns of a data frame with rounded values.
+#' * [compareDF()] Detailed comparison of two similar data frames.
+#'
+#' @export
+
+replaceDF <- function(df, lookup){
+
+  # checks
+  stopifnot(is.data.frame(df),
+            is.data.frame(lookup),
+            !(is.null(lookup$old)),
+            !(is.null(lookup$new)),
+            anyDuplicated(lookup$old) == 0)
+
+  # replace each item one at a time
+  for(ii in 1:nrow(lookup)){
+
+    # check that the class of the old/new pair is the same
+    if(class(lookup$old[ii]) != class(lookup$new[ii]) ){
+      stop(paste0("Class difference detected in row ", ii, " of lookup. Old class is ", class(lookup$old[ii]), " but new class is ", class(lookup$new[ii]), "."))
+    }
+
+    # replace value
+    df[df == lookup$old[ii]] <- lookup$new[ii]
+  }
+
+  df
+
+}
