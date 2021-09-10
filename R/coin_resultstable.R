@@ -270,7 +270,7 @@ compareDF <- function(df1, df2, matchcol, sigfigs = 5){
 
     # match col order
     df2 <- df2[colnames(df1)]
-    browser()
+
     # match row order
     df2 <- df2[match(df1[[matchcol]], df2[[matchcol]]),]
 
