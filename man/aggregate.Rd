@@ -17,7 +17,17 @@ aggregate(
 \arguments{
 \item{COIN}{COIN object}
 
-\item{agtype}{The type of aggregation method.}
+\item{agtype}{The type of aggregation method. One of either:
+\itemize{
+\item \code{"arith_mean"} - weighted arithmetic mean
+\item \code{"median"} - weighted median
+\item \code{"geom_mean"} - weighted geometric mean
+\item \code{"harm_mean"} - weighted harmonic mean
+\item \code{"copeland"} - weighted Copeland method
+\item \code{"custom"} - a custom function -  see \code{agfunc}
+\item \code{"mixed"} - a different aggregation method for each level. In this case, aggregation methods are specified as any of the previous
+options using the \code{agtype_bylevel} argument.
+}}
 
 \item{agweights}{The weights to use in the aggregation. This can either be:
 \code{NULL}, in which case it will use the weights that were attached to \code{IndMeta} and \code{AggMeta} in \code{\link[=assemble]{assemble()}} (if they exist), or
@@ -27,7 +37,8 @@ Or, a data frame of weights to use in the aggregation.}
 
 \item{dset}{Which data set (contained in COIN object) to use}
 
-\item{agtype_bylevel}{A character vector with aggregation types for each level}
+\item{agtype_bylevel}{A character vector with aggregation types for each level. Note that if this is specified, \code{agtype} \emph{must}
+be specified as \code{agtype = "mixed"}, otherwise \code{agtype_by_level} will be ignored.}
 
 \item{agfunc}{A custom function to use for aggregation if \code{agtype = "custom"}, of the type \eqn{y = f(x,w)},
 where \eqn{y} is a scalar aggregated value and \eqn{x} and \eqn{w} are vectors of indicator values and weights respectively.
