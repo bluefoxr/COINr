@@ -4,6 +4,7 @@
 
 * Improved documentation and bug catching in `aggregate()`
 * New function `replaceDF()` which is a simple utility for multiple values in one go for a data frame.
+* New function `removeElements()` which successively removes indicators or aggregates one at a time and summarises the effects
 
 # COINr 0.5.4
 
