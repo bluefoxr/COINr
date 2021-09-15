@@ -1,10 +1,9 @@
-# COINr 0.5.4.9000
+# COINr 0.5.5
 
-*This is a development version that is not yet on CRAN*
-
+* COINr now requires R version 4.0.0 or above - this is following some issues on some distributions during CRAN checks.
 * Improved documentation and bug catching in `aggregate()`
 * New function `replaceDF()` which is a simple utility for multiple values in one go for a data frame.
-* New function `removeElements()` which successively removes indicators or aggregates one at a time and summarises the effects
+* New function `removeElements()` which successively removes indicators or aggregates one at a time and summarises the effects.
 
 # COINr 0.5.4
 
