@@ -1,15 +1,10 @@
 ## Resubmission
 
-This is a resubmission following further CRAN comments. In this version I have:
+This is a resubmission following CRAN comments (an error on r-oldrel-macos-x86_64). Now all other distributions seem to work fine. Hopefully this is the the last correction for now.
 
-* Ensured that any files are always written to the temporary directory
-* Removed any marked UTF-8 strings
-* Inserted an escape for a function that knits R Markdown docs. Now, if Pandoc is not installed, it exits with a warning.
-* Removed the use of the new pipe ( |> ) operator in the vignette, since that requires a newer version of R than stated
-
-These fixes correspond to errors and warnings that arose during further CRAN checks, regarding emails on 06/09/2021 and 07/09/2021 from Prof Brian Ripley and Kurt Hornik.
-
-Below there is a note that the last submission is only 3 days ago. I assume that given the requests to fix the issues above, this note is OK.
+* Required R >= 4.0.0
+* Removed a version requirement for stats package
+* Corrected
 
 Thanks.
 
@@ -23,6 +18,6 @@ Thanks.
   checking CRAN incoming feasibility ... NOTE
   Maintainer: 'William Becker <william.becker@bluefoxdata.eu>'
   
-  Days since last update: 3
+  Days since last update: 6
 
 0 errors √ | 0 warnings √ | 1 note x
