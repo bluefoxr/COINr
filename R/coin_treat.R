@@ -410,7 +410,7 @@ coin_win <- function(icol, winmax, winchange = TRUE, t_skew = 2, t_kurt = 3.5, i
     winz<-winz+1 # add the winsorisation counter
 
     # test skew and kurtosis again
-    if(length(unique(icol)) < 2){
+    if(length(unique(icol[!is.na(icol)])) < 2){
       stop(paste0("Can't Winsorise further because it would imply less than two unique values in the indicator.
       This is probably not a good idea. Consider individual settings for this indicator, such as
       a lower winmax, using a transformation by default, or excluding from treatment.
