@@ -1,3 +1,11 @@
+# COINr 0.5.5.9000
+
+* Improved bug trapping in Winsorisation function
+
+# COINr 0.5.5.9000
+
+* Added data availability thresholds during aggregation - see `aggregate()` function.
+
 # COINr 0.5.5
 
 * COINr now requires R version 4.0.0 or above - this is following some issues on some distributions during CRAN checks.
