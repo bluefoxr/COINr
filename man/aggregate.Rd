@@ -11,6 +11,7 @@ aggregate(
   dset = NULL,
   agtype_bylevel = NULL,
   agfunc = NULL,
+  avail_limit = NULL,
   out2 = NULL
 )
 }
@@ -44,6 +45,12 @@ be specified as \code{agtype = "mixed"}, otherwise \code{agtype_by_level} will b
 where \eqn{y} is a scalar aggregated value and \eqn{x} and \eqn{w} are vectors of indicator values and weights respectively.
 Ensure that \code{NA}s are handled (e.g. set \code{na.rm = T}) if your data has missing values.}
 
+\item{avail_limit}{A data availability threshold, below which aggregation returns NA. This parameter is the fraction of data
+availability needed in a given aggregation group to return an aggregated score. Specified as either \code{NULL} (default, aggregation
+values are always returned if possible) or a value between 0 and 1 (below this value of data availability, \code{NA} will be
+returned). See Details.
+are ignored during aggregation, so that as long as there is at least one value in an aggregation group}
+
 \item{out2}{Where to output the results. If \code{"COIN"} (default for COIN input), appends to updated COIN,
 otherwise if \code{"df"} outputs to data frame.}
 }
@@ -54,6 +61,21 @@ An updated COIN containing the new aggregated data set at \code{.$Data$Aggregate
 Takes indicator data and a specified structure and hierarchically aggregates according to the structure
 specified in \code{IndMeta}. Uses a variety of aggregation methods as specified by \code{agtype}, which can be different for
 each level of aggregation (see \code{agtype_by_level}).
+}
+\details{
+This function aggregates indicators according to the index structure specified in \code{IndMeta}. It will either use a single
+aggregation method for all aggregation levels (by specifying \code{agtype}) or can use a different aggregation method for each
+level of the index (see \code{agtype_by_level}). Aggregation methods are typically weighted (e.g. weighted means), and the weights
+for the aggregation are specified using the \code{agweights} argument.
+
+By default, this function will aggregate wherever possible - generally this means that if at least one value is available
+for a given unit inside an aggregation group, it will return an aggregated score. Optionally, you can also specify a data
+availability threshold which will instead return \code{NA} if the data availability (within group and for each unit) falls below
+the threshold. For example, you may have four indicators inside a group, and you might want to only produce an aggregated
+score if data availability is at least 50\% - this would be specified by \code{avail_limit = 0.5}. It is also possible to specify
+different data availability thresholds for different levels of the index, by specifying \code{avail_limit} as a vector which has
+one value for every aggregation level (the first value gives the threshold for the first aggregation, and so on up to the
+final level).
 }
 \examples{
 # assemble a COIN first
