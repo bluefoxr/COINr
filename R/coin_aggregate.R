@@ -202,7 +202,6 @@ aggregate <- function(COIN, agtype = "arith_mean", agweights = NULL, dset = NULL
 
       # Missing data reset, if asked
       if(!is.null(avail_limit)){
-
         # we will reset any values that have missing data thresholds below limits specified
         # get data
         dat2agg <- ind_data[iselect]
