@@ -67,8 +67,10 @@ getStats <- function(COIN, icodes = NULL, dset = "Raw", out2 = "COIN", cortype =
   iprcna <- (1-ina/nrow(ind_data_only)) * 100  # percent available data
   imissflag <- (iprcna < t_missing) %>% dplyr::if_else(true = "Low", false = "OK") # flag if data availability is below threshold
   skflag <- ((abs(iskew)>t_skew) & (ikurt>t_kurt)) %>% dplyr::if_else(true = "Outliers", false = "OK") # flag if exceed both skew and kurt thresholds
+  q5 <- ind_data_only %>% purrr::map_dbl(~quantile(.x, probs = 0.05, na.rm = TRUE)) # 5th prc
   q25 <- ind_data_only %>% purrr::map_dbl(~quantile(.x, probs = 0.25, na.rm = TRUE)) # 25th prc
   q75 <- ind_data_only %>% purrr::map_dbl(~quantile(.x, probs = 0.75, na.rm = TRUE)) # 75th prc
+  q95 <- ind_data_only %>% purrr::map_dbl(~quantile(.x, probs = 0.95, na.rm = TRUE)) # 95th prc
   iIQR <- ind_data_only %>% purrr::map_dbl(stats::IQR, na.rm = TRUE) # interquartile range
   Nunique <- ind_data_only %>% purrr::map_dbl(~{dplyr::n_distinct(.x)/length(.x)})
 
@@ -98,7 +100,7 @@ getStats <- function(COIN, icodes = NULL, dset = "Raw", out2 = "COIN", cortype =
     Indicator = ind_names,
     Min = imin, Max = imax,
     Mean = imean, Median = imed,
-    Q.25 = q25, Q.75 = q75, IQ.range = iIQR,
+    Q.5 = q5, Q.25 = q25, Q.75 = q75, Q.95 = q95, IQ.range = iIQR,
     Std.dev = istd, Skew = iskew, Kurtosis = ikurt,
     N.missing = ina, Prc.complete = iprcna, Low.data.flag = imissflag, Prc.Unique = Nunique, Frac.Zero = fraczero,
     SK.outlier.flag = skflag, Low.Outliers.IQR = out_low, High.Outliers.IQR = out_high
