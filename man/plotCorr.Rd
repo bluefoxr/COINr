@@ -16,6 +16,7 @@ plotCorr(
   flagcolours = FALSE,
   flagthresh = c(-0.4, 0.3, 0.9),
   pval = 0.05,
+  insig_colour = "#E8E8E8",
   out2 = "fig"
 )
 }
@@ -49,7 +50,9 @@ aggregation level above. Set to 0 to disable grouping and plot the full matrix.}
 and anything above \code{flagthresh[3]} is flagged "high".}
 
 \item{pval}{The significance level for plotting correlations. Correlations with \eqn{p < pval} will be shown,
-otherwise they will be plotted as white squares. Set to 0 to disable this.}
+otherwise they will be plotted as the colour specified by \code{insig_colour}. Set to 0 to disable this.}
+
+\item{insig_colour}{The colour to plot insignificant correlations. Defaults to a light grey.}
 
 \item{out2}{If \code{"fig"} returns a plot, if \code{"dflong"} returns the correlation matrix in long form, if \code{"dfwide"},
 returns the correlation matrix in wide form. The last option here is probably useful if you want to

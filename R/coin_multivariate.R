@@ -28,7 +28,8 @@
 #' `flagthresh[3]` is the "high" threshold. Anything between `flagthresh[2]` and `flagthresh[3]` is flagged "OK",
 #' and anything above `flagthresh[3]` is flagged "high".
 #' @param pval The significance level for plotting correlations. Correlations with \eqn{p < pval} will be shown,
-#' otherwise they will be plotted as white squares. Set to 0 to disable this.
+#' otherwise they will be plotted as the colour specified by `insig_colour`. Set to 0 to disable this.
+#' @param insig_colour The colour to plot insignificant correlations. Defaults to a light grey.
 #' @param out2 If `"fig"` returns a plot, if `"dflong"` returns the correlation matrix in long form, if `"dfwide"`,
 #' returns the correlation matrix in wide form. The last option here is probably useful if you want to
 #' present a table of the data in a report.
@@ -55,7 +56,7 @@
 
 plotCorr <- function(COIN, dset = "Raw", icodes = NULL, aglevs = 1, cortype = "pearson",
                      withparent = "parent", grouplev = NULL, showvals = TRUE, flagcolours = FALSE,
-                     flagthresh = c(-0.4, 0.3, 0.9), pval = 0.05, out2 = "fig"){
+                     flagthresh = c(-0.4, 0.3, 0.9), pval = 0.05, insig_colour = "#E8E8E8", out2 = "fig"){
 
   if (length(icodes) == 1){
     icodes = rep(icodes, 2)
@@ -108,6 +109,12 @@ plotCorr <- function(COIN, dset = "Raw", icodes = NULL, aglevs = 1, cortype = "p
     ord1 <- unique(crtable$Var1)
     ord2 <- unique(crtable$Var2)
 
+    # if we are correlating a set with itself, we make sure the orders match
+    if(setequal(ord1,ord2)){
+      # reversing agrees with the "classical" view of a correlation matrix
+      ord2 <- rev(ord1)
+    }
+
     # for discrete colour map
     hithresh <- 0.9
     weakthresh <- 0.3
@@ -135,7 +142,8 @@ plotCorr <- function(COIN, dset = "Raw", icodes = NULL, aglevs = 1, cortype = "p
 
       plt <- plt + ggplot2::scale_fill_manual(
         breaks = c("High", "OK", "Weak", "Negative"),
-        values = c("#62910c", "#9dc0d3", "#bdc9bb", "#b25491")
+        values = c("#62910c", "#9dc0d3", "#bdc9bb", "#b25491"),
+        na.value = insig_colour
       )
     } else {
 
@@ -152,7 +160,8 @@ plotCorr <- function(COIN, dset = "Raw", icodes = NULL, aglevs = 1, cortype = "p
         ggplot2::scale_x_discrete(expand=c(0,0)) +
         ggplot2::scale_y_discrete(expand=c(0,0))
 
-      plt <- plt + ggplot2::scale_fill_gradient2(mid="#FBFEF9",low="#A63446",high="#0C6291", limits=c(-1,1))
+      plt <- plt + ggplot2::scale_fill_gradient2(mid="#FBFEF9",low="#A63446",high="#0C6291", limits=c(-1,1),
+                                                 na.value = insig_colour)
     }
 
     if (showvals){

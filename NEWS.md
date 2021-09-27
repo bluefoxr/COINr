@@ -1,10 +1,8 @@
 # COINr 0.5.5.9000
 
 * Improved bug trapping in Winsorisation function
-
-# COINr 0.5.5.9000
-
 * Added data availability thresholds during aggregation - see `aggregate()` function.
+* Better NA colour for `plotCorr()` plus fixed variable ordering
 
 # COINr 0.5.5
 
