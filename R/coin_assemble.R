@@ -77,11 +77,35 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL,
   if(!exists("Direction", IndMeta)){
     stop("No Direction column found in IndMeta. This column is required for assembling a COIN object.")
   }
+  if(!exists("IndWeight", IndMeta)){
+    stop("No IndWeight column found in IndMeta. This column is required for assembling a COIN object.")
+  }
 
   # also check aggmeta
   if(any(!(c("AgLevel", "Code", "Name", "Weight") %in% colnames(AggMeta)))){
     stop("One or more of required columns 'AgLevel', 'Code', 'Name', 'Weight' not found in AggMeta. Please check.")
   }
+
+  # check classes of required columns in each df
+  # IndData
+  if( !(is.character(IndData$UnitCode) & is.character(IndData$UnitName)) ){
+    stop("One or more of IndData$UnitCode or IndData$UnitName is not a character vector. Make sure all codes and names are characters (not numeric).")
+  }
+  # IndMeta
+  if( !(is.character(IndMeta$IndName) & is.character(IndMeta$IndCode)) ){
+    stop("One or more of IndMeta$IndName or IndMeta$IndCode is not a character vector. Make sure all codes and names are characters (not numeric).")
+  }
+  if( !(is.numeric(IndMeta$Direction) & is.numeric(IndMeta$IndWeight)) ){
+    stop("One or more of IndMeta$Direction or IndMeta$IndWeight is not a numeric vector. Weights and directions are required to be numeric.")
+  }
+  # AggMeta
+  if( !(is.character(AggMeta$Code) & is.character(AggMeta$Name)) ){
+    stop("One or more of AggMeta$Code or AggMeta$Name is not a character vector. Make sure all codes and names are characters (not numeric).")
+  }
+  if( !(is.numeric(AggMeta$AgLevel) & is.numeric(AggMeta$Weight)) ){
+    stop("One or more of AggMeta$AgLevel or AggMeta$Weight is not a numeric vector. AgLevel and Weight are required to be numeric.")
+  }
+
 
   # copy ind data before going any further. Used in .$Input$Original
   IndDataOrig <- IndData
