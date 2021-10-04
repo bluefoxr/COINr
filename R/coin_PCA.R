@@ -15,6 +15,8 @@
 #' an aggregation group name, and data will be sub-setted accordingly. NOTE does not work with multiple aggregate group names.
 #' @param aglev The aggregation level to take indicator data from. Integer from 1 (indicator level)
 #' to N (top aggregation level, typically the index).
+#' @param by_groups If `TRUE` (default), performs PCA inside each aggregation group inside the specified level. If `FALSE`,
+#' performs a single PCA over all indicators/aggregates in the specified level.
 #' @param nowarnings If `FALSE` (default), will give warnings where missing data are found. Set to `TRUE` to suppress these warnings.
 #' @param out2 If the input is a COIN object, this controls where to send the output. If `"COIN"`, it
 #' sends the results to the COIN object, otherwise if `"list"`, outputs to a separate list.
@@ -45,7 +47,8 @@
 #'
 #' @export
 
-getPCA <- function(COIN, dset = "Raw", icodes = NULL, aglev = NULL, nowarnings = FALSE, out2 = "COIN"){
+getPCA <- function(COIN, dset = "Raw", icodes = NULL, aglev = NULL, by_groups = TRUE,
+                   nowarnings = FALSE, out2 = "COIN"){
 
   # There is a catch here because we might want to do PCA weights across one level, but that level
   # may have multiple groups. This means we have to call PCA separately for each group.
@@ -85,17 +88,22 @@ PCA. You can also try imputing data first to avoid this."))
     return(list(wts = wts, PCAres = PCAres, IndCodes = out$IndCodes))
   }
 
-  # OK, first thing is to find what groups we have
-  # Get index structure
-  agcols <- dplyr::select(COIN$Input$IndMeta, .data$IndCode, dplyr::starts_with("Agg"))
-  # Get cols of interest: the present one plus the parents
-  agcols <- agcols[c(aglev, aglev + 1)]
   # We need to know the codes of the inds/aggs to get weights from
   out3 <- getIn(COIN, dset = dset, icodes = icodes, aglev = aglev)
   IndCodes <- out3$IndCodes
-  # Get parents of these codes
-  parents <- unique(agcols[(agcols[[1]] %in% IndCodes) ,2])
-  parents <- parents[[1]]
+
+  if(by_groups){
+    # OK, first thing is to find what groups we have
+    # Get index structure
+    agcols <- dplyr::select(COIN$Input$IndMeta, .data$IndCode, dplyr::starts_with("Agg"))
+    # Get cols of interest: the present one plus the parents
+    agcols <- agcols[c(aglev, aglev + 1)]
+    # Get parents of these codes
+    parents <- unique(agcols[(agcols[[1]] %in% IndCodes) ,2]) |> unlist()
+  } else {
+    parents = "All"
+  }
+
 
   # Right, now we need to cycle through these groups and do PCA on each group.
   # List for general PCA results
@@ -104,8 +112,13 @@ PCA. You can also try imputing data first to avoid this."))
   wlist <- COIN$Parameters$Weights$Original
 
   for (ii in 1: length(parents)){
-    # get PCA results for group
-    outPCA <- PCAwts(parents[ii])
+    if(by_groups){
+      # get PCA results for group
+      outPCA <- PCAwts(parents[ii])
+    } else {
+      # get PCA results for group
+      outPCA <- PCAwts(NULL)
+    }
     # attach weights to list
     # wts should be in the same order as out$IndCodes. We have to make sure they match exactly here as
     # sometimes things get reordered. This is done with match() rather than %in% for this reason.

@@ -9,6 +9,7 @@ getPCA(
   dset = "Raw",
   icodes = NULL,
   aglev = NULL,
+  by_groups = TRUE,
   nowarnings = FALSE,
   out2 = "COIN"
 )
@@ -25,6 +26,9 @@ an aggregation group name, and data will be sub-setted accordingly. NOTE does no
 
 \item{aglev}{The aggregation level to take indicator data from. Integer from 1 (indicator level)
 to N (top aggregation level, typically the index).}
+
+\item{by_groups}{If \code{TRUE} (default), performs PCA inside each aggregation group inside the specified level. If \code{FALSE},
+performs a single PCA over all indicators/aggregates in the specified level.}
 
 \item{nowarnings}{If \code{FALSE} (default), will give warnings where missing data are found. Set to \code{TRUE} to suppress these warnings.}
 
