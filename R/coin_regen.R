@@ -36,7 +36,7 @@ regen <- function(COINold, quietly = FALSE){
 
   if (quietly){
     # Assemble always comes first.
-    COINnew <- assemble(IndData = COINold$Input$Original$IndData,
+    COIN <- assemble(IndData = COINold$Input$Original$IndData,
                         IndMeta = COINold$Input$Original$IndMeta,
                         AggMeta = COINold$Input$Original$AggMeta,
                         include = COINold$Method$assemble$include,
@@ -47,11 +47,11 @@ regen <- function(COINold, quietly = FALSE){
 
     # copy weights from old COIN (otherwise any additional will be deleted)
     # first, save the new original weights (may have added/deleted indicators)
-    rescueorig <- COINnew$Parameters$Weights$Original
+    rescueorig <- COIN$Parameters$Weights$Original
     # overwrite new weights with old (all weight sets)
-    COINnew$Parameters$Weights <- COINold$Parameters$Weights
+    COIN$Parameters$Weights <- COINold$Parameters$Weights
     # re-add the new original weights as we don't want to disturb these.
-    COINnew$Parameters$Weights$Original <- rescueorig
+    COIN$Parameters$Weights$Original <- rescueorig
 
     # optional custom operation
     if (exists("Custom",COINold$Method)){
@@ -79,7 +79,7 @@ regen <- function(COINold, quietly = FALSE){
       if(fi=="checkData"){
 
         # run checkData
-        COINnew <- checkData(COINnew, dset = COINold$Method$checkData$dset,
+        COIN <- checkData(COIN, dset = COINold$Method$checkData$dset,
                              ind_thresh = COINold$Method$checkData$ind_thresh,
                              zero_thresh = COINold$Method$checkData$zero_thresh,
                              unit_screen = COINold$Method$checkData$unit_screen,
@@ -96,7 +96,7 @@ regen <- function(COINold, quietly = FALSE){
       } else if (fi=="denominate"){
 
         # run denominate
-        COINnew <- denominate(COINnew, dset = COINold$Method$denominate$dset,
+        COIN <- denominate(COIN, dset = COINold$Method$denominate$dset,
                               specby = COINold$Method$denominate$specby,
                               denomby = COINold$Method$denominate$denomby,
                               denominators = COINold$Method$denominate$denominators,
@@ -113,7 +113,7 @@ regen <- function(COINold, quietly = FALSE){
       } else if (fi=="impute"){
 
         # run impute
-        COINnew <- impute(COINnew, imtype = COINold$Method$impute$imtype,
+        COIN <- impute(COIN, imtype = COINold$Method$impute$imtype,
                           dset = COINold$Method$impute$dset,
                           groupvar = COINold$Method$impute$groupvar,
                           #byyear = COINold$Method$impute$byyear,
@@ -130,7 +130,7 @@ regen <- function(COINold, quietly = FALSE){
       } else if (fi=="treat"){
 
         # run treat
-        COINnew <- treat(COINnew, dset = COINold$Method$treat$dset,
+        COIN <- treat(COIN, dset = COINold$Method$treat$dset,
                          winmax = COINold$Method$treat$winmax,
                          winchange = COINold$Method$treat$winchange,
                          deflog = COINold$Method$treat$deflog,
@@ -151,7 +151,7 @@ regen <- function(COINold, quietly = FALSE){
       } else if (fi=="normalise"){
 
         # run normalise
-        COINnew <- normalise(COINnew, ntype = COINold$Method$normalise$ntype,
+        COIN <- normalise(COIN, ntype = COINold$Method$normalise$ntype,
                              npara = COINold$Method$normalise$npara,
                              dset = COINold$Method$normalise$dset,
                              directions = COINold$Method$normalise$directions,
@@ -169,7 +169,7 @@ regen <- function(COINold, quietly = FALSE){
       } else if (fi=="aggregate"){
 
         # run aggregate
-        COINnew <- aggregate(COINnew, agtype = COINold$Method$aggregate$agtype,
+        COIN <- aggregate(COIN, agtype = COINold$Method$aggregate$agtype,
                              agweights = COINold$Method$aggregate$agweights,
                              dset = COINold$Method$aggregate$dset,
                              agtype_bylevel = COINold$Method$aggregate$agtype_bylevel,
@@ -196,7 +196,7 @@ regen <- function(COINold, quietly = FALSE){
     ## BEGIN VERBOSE OUTPUT
 
     # Assemble always comes first.
-    COINnew <- assemble(IndData = COINold$Input$Original$IndData,
+    COIN <- assemble(IndData = COINold$Input$Original$IndData,
                         IndMeta = COINold$Input$Original$IndMeta,
                         AggMeta = COINold$Input$Original$AggMeta,
                         include = COINold$Method$assemble$include,
@@ -206,11 +206,11 @@ regen <- function(COINold, quietly = FALSE){
 
     # copy weights from old COIN (otherwise any additional will be deleted)
     # first, save the new original weights (may have added/deleted indicators)
-    rescueorig <- COINnew$Parameters$Weights$Original
+    rescueorig <- COIN$Parameters$Weights$Original
     # overwrite new weights with old (all weight sets)
-    COINnew$Parameters$Weights <- COINold$Parameters$Weights
+    COIN$Parameters$Weights <- COINold$Parameters$Weights
     # re-add the new original weights as we don't want to disturb these.
-    COINnew$Parameters$Weights$Original <- rescueorig
+    COIN$Parameters$Weights$Original <- rescueorig
 
     # optional custom operation
     if (exists("Custom",COINold$Method)){
@@ -238,7 +238,7 @@ regen <- function(COINold, quietly = FALSE){
       if(fi=="checkData"){
 
         # run checkData
-        COINnew <- checkData(COINnew, dset = COINold$Method$checkData$dset,
+        COIN <- checkData(COIN, dset = COINold$Method$checkData$dset,
                              ind_thresh = COINold$Method$checkData$ind_thresh,
                              unit_screen = COINold$Method$checkData$unit_screen,
                              Force = COINold$Method$checkData$Force,
@@ -254,7 +254,7 @@ regen <- function(COINold, quietly = FALSE){
       } else if (fi=="denominate"){
 
         # run denominate
-        COINnew <- denominate(COINnew, dset = COINold$Method$denominate$dset,
+        COIN <- denominate(COIN, dset = COINold$Method$denominate$dset,
                               specby = COINold$Method$denominate$specby,
                               denomby = COINold$Method$denominate$denomby,
                               denominators = COINold$Method$denominate$denominators,
@@ -270,7 +270,7 @@ regen <- function(COINold, quietly = FALSE){
       } else if (fi=="impute"){
 
         # run impute
-        COINnew <- impute(COINnew, imtype = COINold$Method$impute$imtype,
+        COIN <- impute(COIN, imtype = COINold$Method$impute$imtype,
                           dset = COINold$Method$impute$dset,
                           groupvar = COINold$Method$impute$groupvar,
                           #byyear = COINold$Method$impute$byyear,
@@ -287,7 +287,7 @@ regen <- function(COINold, quietly = FALSE){
       } else if (fi=="treat"){
 
         # run treat
-        COINnew <- treat(COINnew, dset = COINold$Method$treat$dset,
+        COIN <- treat(COIN, dset = COINold$Method$treat$dset,
                          winmax = COINold$Method$treat$winmax,
                          winchange = COINold$Method$treat$winchange,
                          deflog = COINold$Method$treat$deflog,
@@ -307,7 +307,7 @@ regen <- function(COINold, quietly = FALSE){
       } else if (fi=="normalise"){
 
         # run normalise
-        COINnew <- normalise(COINnew, ntype = COINold$Method$normalise$ntype,
+        COIN <- normalise(COIN, ntype = COINold$Method$normalise$ntype,
                              npara = COINold$Method$normalise$npara,
                              dset = COINold$Method$normalise$dset,
                              directions = COINold$Method$normalise$directions,
@@ -325,7 +325,7 @@ regen <- function(COINold, quietly = FALSE){
       } else if (fi=="aggregate"){
 
         # run aggregate
-        COINnew <- aggregate(COINnew, agtype = COINold$Method$aggregate$agtype,
+        COIN <- aggregate(COIN, agtype = COINold$Method$aggregate$agtype,
                              agweights = COINold$Method$aggregate$agweights,
                              dset = COINold$Method$aggregate$dset,
                              agtype_bylevel = COINold$Method$aggregate$agtype_bylevel,
@@ -349,7 +349,7 @@ regen <- function(COINold, quietly = FALSE){
 
 
 
-  return(COINnew)
+  return(COIN)
 
 }
 
