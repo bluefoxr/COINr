@@ -3,6 +3,9 @@
 * Improved bug trapping in Winsorisation function
 * Added data availability thresholds during aggregation - see `aggregate()` function.
 * Better NA colour for `plotCorr()` plus fixed variable ordering
+* Further colour options in `plotCorr()`
+* Variable/aggregate ordering in `plotCorr()` now matches grouping in higher levels
+* Add option to do PCA not in groups in `getPCA()`
 
 # COINr 0.5.5
 
