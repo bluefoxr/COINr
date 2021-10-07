@@ -60,7 +60,7 @@
 plotCorr <- function(COIN, dset = "Raw", icodes = NULL, aglevs = 1, cortype = "pearson",
                      withparent = "parent", grouplev = NULL, showvals = TRUE, flagcolours = FALSE,
                      flagthresh = c(-0.4, 0.3, 0.9), pval = 0.05, insig_colour = "#F0F0F0",
-                     text_colour = "white", discrete_colours = NULL, out2 = "fig"){
+                     text_colour = NULL, discrete_colours = NULL, out2 = "fig"){
 
   if (length(icodes) == 1){
     icodes = rep(icodes, 2)
@@ -109,9 +109,21 @@ plotCorr <- function(COIN, dset = "Raw", icodes = NULL, aglevs = 1, cortype = "p
   ##- PLOT -----------------------------------------
 
   if(out2 == "fig"){
+
     # get orders (otherwise ggplot reorders)
     ord1 <- unique(crtable$Var1)
     ord2 <- unique(crtable$Var2)
+
+    # sometimes these orderings come out not sorted according to higher aggregation levels
+    # Here we sort them according to the order in IndMeta (which is already sorted)
+    # First get index structure...
+    aggcols <- dplyr::select(COIN$Input$IndMeta, .data$IndCode, dplyr::starts_with("Agg"))
+    # Order first set
+    c1 <- unlist(aggcols[aglevs[1]])
+    ord1 <- unique(c1[c1 %in% ord1])
+    # Order second set
+    c2 <- unlist(aggcols[aglevs[2]])
+    ord2 <- unique(c2[c2 %in% ord2])
 
     # if we are correlating a set with itself, we make sure the orders match
     if(setequal(ord1,ord2)){
@@ -145,7 +157,7 @@ plotCorr <- function(COIN, dset = "Raw", icodes = NULL, aglevs = 1, cortype = "p
         ggplot2::scale_y_discrete(expand=c(0,0))
 
       if(is.null(discrete_colours)){
-        discrete_colours <- c("#62910c", "#b8e8b5", "#e2e6e1", "#b25491")
+        discrete_colours <- c("#80d67b", "#b8e8b5", "#e2e6e1", "#b25491")
       } else {
         stopifnot(is.character(discrete_colours),
                   length(discrete_colours)==4)
@@ -176,6 +188,11 @@ plotCorr <- function(COIN, dset = "Raw", icodes = NULL, aglevs = 1, cortype = "p
     }
 
     if (showvals){
+      if(flagcolours){
+        text_colour <- "#6a6a6a"
+      } else {
+        text_colour <- "white"
+      }
       plt <- plt + ggplot2::geom_text(colour = text_colour, size = 3)
     }
     return(plt)
@@ -307,6 +324,10 @@ getCorr <- function(COIN, dset, icodes = NULL, aglevs = NULL, cortype = "pearson
 
     # get index structure
     agcols <- dplyr::select(COIN$Input$IndMeta, .data$IndCode, dplyr::starts_with("Agg"))
+
+    if(grouplev <= aglevs[1]){
+      stop("grouplev must be at least the aggregation level above aglevs.")
+    }
 
     if(grouplev > ncol(agcols)){
       stop("Grouping level is out of range - should be between 2 and ", ncol(agcols), " or zero to turn off.")
