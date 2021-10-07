@@ -30,6 +30,9 @@
 #' @param pval The significance level for plotting correlations. Correlations with \eqn{p < pval} will be shown,
 #' otherwise they will be plotted as the colour specified by `insig_colour`. Set to 0 to disable this.
 #' @param insig_colour The colour to plot insignificant correlations. Defaults to a light grey.
+#' @param text_colour The colour of the correlation value text (default white).
+#' @param discrete_colours An optional 4-length character vector of colour codes or names to define the discrete
+#' colour map if `flagcolours = TRUE` (from high to low correlation categories). Defaults to a green/blue/grey/purple.
 #' @param out2 If `"fig"` returns a plot, if `"dflong"` returns the correlation matrix in long form, if `"dfwide"`,
 #' returns the correlation matrix in wide form. The last option here is probably useful if you want to
 #' present a table of the data in a report.
@@ -56,7 +59,8 @@
 
 plotCorr <- function(COIN, dset = "Raw", icodes = NULL, aglevs = 1, cortype = "pearson",
                      withparent = "parent", grouplev = NULL, showvals = TRUE, flagcolours = FALSE,
-                     flagthresh = c(-0.4, 0.3, 0.9), pval = 0.05, insig_colour = "#E8E8E8", out2 = "fig"){
+                     flagthresh = c(-0.4, 0.3, 0.9), pval = 0.05, insig_colour = "#F0F0F0",
+                     text_colour = "white", discrete_colours = NULL, out2 = "fig"){
 
   if (length(icodes) == 1){
     icodes = rep(icodes, 2)
@@ -140,9 +144,16 @@ plotCorr <- function(COIN, dset = "Raw", icodes = NULL, aglevs = 1, cortype = "p
         ggplot2::scale_x_discrete(expand=c(0,0)) +
         ggplot2::scale_y_discrete(expand=c(0,0))
 
+      if(is.null(discrete_colours)){
+        discrete_colours <- c("#62910c", "#9dc0d3", "#e2e6e1", "#b25491")
+      } else {
+        stopifnot(is.character(discrete_colours),
+                  length(discrete_colours)==4)
+      }
+
       plt <- plt + ggplot2::scale_fill_manual(
         breaks = c("High", "OK", "Weak", "Negative"),
-        values = c("#62910c", "#9dc0d3", "#bdc9bb", "#b25491"),
+        values = discrete_colours,
         na.value = insig_colour
       )
     } else {
@@ -165,7 +176,7 @@ plotCorr <- function(COIN, dset = "Raw", icodes = NULL, aglevs = 1, cortype = "p
     }
 
     if (showvals){
-      plt <- plt + ggplot2::geom_text(colour = "white", size = 3)
+      plt <- plt + ggplot2::geom_text(colour = text_colour, size = 3)
     }
     return(plt)
 
