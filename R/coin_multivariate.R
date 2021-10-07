@@ -145,7 +145,7 @@ plotCorr <- function(COIN, dset = "Raw", icodes = NULL, aglevs = 1, cortype = "p
         ggplot2::scale_y_discrete(expand=c(0,0))
 
       if(is.null(discrete_colours)){
-        discrete_colours <- c("#62910c", "#9dc0d3", "#e2e6e1", "#b25491")
+        discrete_colours <- c("#62910c", "#b8e8b5", "#e2e6e1", "#b25491")
       } else {
         stopifnot(is.character(discrete_colours),
                   length(discrete_colours)==4)
