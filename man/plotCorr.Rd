@@ -17,7 +17,7 @@ plotCorr(
   flagthresh = c(-0.4, 0.3, 0.9),
   pval = 0.05,
   insig_colour = "#F0F0F0",
-  text_colour = "white",
+  text_colour = NULL,
   discrete_colours = NULL,
   out2 = "fig"
 )
