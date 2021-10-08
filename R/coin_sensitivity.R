@@ -495,6 +495,8 @@ noisyWeights <- function(w, noise_specs, Nrep){
 #' @param order_by If set to `"nominal"`, orders the rank plot by nominal ranks
 #' (i.e. the original ranks prior to the sensitivity analysis). Otherwise if `"median"`, orders by
 #' median ranks.
+#' @param dot_colour Colour of dots representing median ranks.
+#' @param line_colour Colour of lines connecting 5th and 95th percentiles.
 #'
 #' @examples
 #' \donttest{
@@ -531,7 +533,8 @@ noisyWeights <- function(w, noise_specs, Nrep){
 #'
 #' @export
 
-plotSARanks <- function(SAresults, plot_units = NULL, order_by = "nominal"){
+plotSARanks <- function(SAresults, plot_units = NULL, order_by = "nominal",
+                        dot_colour = NULL, line_colour = NULL){
 
   rnks <- SAresults$RankStats
 
@@ -568,10 +571,18 @@ plotSARanks <- function(SAresults, plot_units = NULL, order_by = "nominal"){
                                names_to = "Statistic",
                                values_to = "Rank")
 
+  # colours
+  if(is.null(dot_colour)){
+    dot_colour <- "#83af70"
+  }
+  if(is.null(line_colour)){
+    line_colour <- "grey"
+  }
+
   # generate plot
   stats_long %>%
   ggplot2::ggplot(aes(x = .data$Rank, y = .data$UnitCode)) +
-    ggplot2::geom_line(aes(group = .data$UnitCode), color = "grey") +
+    ggplot2::geom_line(aes(group = .data$UnitCode), color = line_colour) +
     ggplot2::geom_point(aes(color = .data$Statistic, shape = .data$Statistic, size= .data$Statistic)) +
     ggplot2::scale_shape_manual(values = c(16, 15, 15)) +
     ggplot2::scale_size_manual(values = c(2, 0, 0)) +
@@ -579,7 +590,7 @@ plotSARanks <- function(SAresults, plot_units = NULL, order_by = "nominal"){
     ggplot2::guides(shape = FALSE, size = FALSE, color = FALSE) +
     ggplot2::theme_classic() +
     ggplot2::theme(legend.position="top") +
-    ggplot2::scale_color_manual(values = c("#83af70", "#e67f83", "#e67f83")) +
+    ggplot2::scale_color_manual(values = c(dot_colour, "#ffffff", "#ffffff")) +
     ggplot2::scale_y_discrete(limits = plot_order) +
     ggplot2::scale_x_reverse() +
     ggplot2::coord_flip() +

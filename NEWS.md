@@ -6,6 +6,7 @@
 * Further colour options in `plotCorr()`
 * Variable/aggregate ordering in `plotCorr()` now matches grouping in higher levels
 * Add option to do PCA not in groups in `getPCA()`
+* Colour options for `plotSARanks()`
 
 # COINr 0.5.5
 
