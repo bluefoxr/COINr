@@ -40,13 +40,19 @@ In short, COINr aims to allow composite indicators to be developed and prototype
 
 # Installation
 
-COINr should be on CRAN soon, but for now can anyway be installed via GitHub. First, install the 'devtools' package if you don't already have it, then run:
+COINr is on CRAN and can be installed by running:
+
+```{r InstallCOINrC, eval=FALSE}
+install.packages("COINr")
+```
+
+Or simply browsing for the package in R Studio. The CRAN version will be updated every 1-2 months or so. If you want the very latest version in the meantime (I am usually adding features and fixing bugs as I find them), you can install the development version from GitHub. First, install the 'devtools' package if you don't already have it, then run:
 
 ```{r InstallCOINr, eval=FALSE}
 devtools::install_github("bluefoxr/COINr")
 ```
 
-This should directly install the package from Github, without any other steps. You may be asked to update packages. This might not be strictly necessary, so you can also skip this step.
+This should directly install the package from Github, without any other steps. You may be asked to update packages. This might not be strictly necessary, so you can also try skipping this step.
 
 # Getting started
 
