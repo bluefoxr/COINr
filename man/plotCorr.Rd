@@ -12,6 +12,7 @@ plotCorr(
   cortype = "pearson",
   withparent = "parent",
   grouplev = NULL,
+  box_level = NULL,
   showvals = TRUE,
   flagcolours = FALSE,
   flagthresh = c(-0.4, 0.3, 0.9),
@@ -19,6 +20,7 @@ plotCorr(
   insig_colour = "#F0F0F0",
   text_colour = NULL,
   discrete_colours = NULL,
+  box_colour = NULL,
   out2 = "fig"
 )
 }
@@ -41,6 +43,8 @@ If \code{"none"} plots the full correlation matrix.}
 \item{grouplev}{The aggregation level to group correlations by if \code{aglev[1] == aglev[2]}. By default, groups correlations into the
 aggregation level above. Set to 0 to disable grouping and plot the full matrix.}
 
+\item{box_level}{The aggregation level to draw boxes around if \code{aglev[1] == aglev[2]}.}
+
 \item{showvals}{If \code{TRUE}, shows correlation values. If \code{FALSE}, no values shown.}
 
 \item{flagcolours}{If \code{TRUE}, uses discrete colour map with thresholds defined by \code{flagthresh}. If \code{FALSE} uses continuous colour map.}
@@ -60,6 +64,8 @@ otherwise they will be plotted as the colour specified by \code{insig_colour}. S
 
 \item{discrete_colours}{An optional 4-length character vector of colour codes or names to define the discrete
 colour map if \code{flagcolours = TRUE} (from high to low correlation categories). Defaults to a green/blue/grey/purple.}
+
+\item{box_colour}{The line colour of grouping boxes, default black.}
 
 \item{out2}{If \code{"fig"} returns a plot, if \code{"dflong"} returns the correlation matrix in long form, if \code{"dfwide"},
 returns the correlation matrix in wide form. The last option here is probably useful if you want to
