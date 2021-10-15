@@ -84,6 +84,8 @@ plotIndDist <- function(COINobj, dset = "Raw", icodes = NULL, aglev = 1, type = 
     plt <- ggplot2::ggplot(data = datamelt, ggplot2::aes(x = .data$value))
     plt <- plt + ggplot2::geom_histogram(colour = "#e9ecef", bins = 10) + ggplot2::theme_light()
 
+  } else {
+    stop("Plot type not recognised.")
   }
 
   # If plotting single indicator, use long name, otherwise use codes and facet plotting
