@@ -218,11 +218,13 @@ plotCorr <- function(COIN, dset = "Raw", icodes = NULL, aglevs = 1, cortype = "p
 
       # isolate cols of things we are correlating. Here all levels above current.
       acls <- aggcols[min(aglevs):ncol(aggcols)] |> unique()
+      # filter out to current set of indicators
+      acls <- acls[unlist(acls[1]) %in% unlist(unique(crtable[2])), ]
       # now we need to iterate over columns, excluding the first one
       for(icol in 2:ncol(acls)){
         # isolate the column of interest
         parents <- acls[icol] |> unlist()
-        # starting indices of the rectangles
+        # starting and ending indices of the rectangles
         yends <- match(unique(parents), parents)
         yends <- length(ord2) - yends + 1.5
         ystarts <- c(yends, 0.5)
@@ -267,7 +269,7 @@ plotCorr <- function(COIN, dset = "Raw", icodes = NULL, aglevs = 1, cortype = "p
         # isolate cols of things we are correlating, plus box level
         acls <- aggcols[c(aglevs[2], box_level)] |> unique()
         # filter out to current set of indicators
-        acls <- acls[unlist(acls[1]) %in% unlist(unique(crtable[1])), ]
+        acls <- acls[unlist(acls[1]) %in% unlist(unique(crtable[2])), ]
         # get parent codes
         parents <- acls[2] |> unlist()
         # starting indices of the rectangles
