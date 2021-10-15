@@ -62,6 +62,12 @@ normalise <- function(COIN, ntype = "minmax", npara = NULL,
     stop("dset is NULL. Please specify which data set to operate on.")
   }
 
+  # some checks
+  stopifnot(is.coin(COIN))
+  if(!is.null(npara)){
+    stopifnot(is.list(npara))
+  }
+
   ##----- SET DEFAULTS -------##
   # Done here because otherwise if we use regen, this input could be input as NULL
   if(is.null(indiv_only)){
