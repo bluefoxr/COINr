@@ -399,19 +399,31 @@ harMean <- function(x, w = NULL){
 #' # get a sample of a few indicators
 #' ind_data <- COINr::ASEMIndData[12:16]
 #' # calculate outranking matrix
-#' ORmatrix <- outrankMatrix(ind_data)
-#' # check output
-#' stopifnot(is.matrix(ORmatrix), nrow(ORmatrix) == nrow(ind_data))
+#' outlist <- outrankMatrix(ind_data)
+#' # see fraction of dominant pairs (robustness)
+#' outlist$fracDominant
 #'
-#' @return An outranking matrix with `nrow(ind_data` rows and columns (matrix class).
+#' @return A list with:
+#' * `.$OutRankMatrix` the outranking matrix with `nrow(ind_data)` rows and columns (matrix class).
+#' * `.$nDominant` the number of dominance/robust pairs
+#' * `.$fracDominant` the percentage of dominance/robust pairs
 #'
 #' @export
 
 outrankMatrix <- function(ind_data, w = NULL){
 
+  stopifnot(is.data.frame(ind_data) | is.matrix(ind_data))
+
+  if (!all(apply(ind_data, 2, is.numeric))){
+    stop("Non-numeric columns in input data frame or matrix not allowed.")
+  }
+
+  nInd <- ncol(ind_data)
+  nUnit <- nrow(ind_data)
+
   if(is.null(w)){
     # default equal weights
-    w <- rep(1,ncol(ind_data))
+    w <- rep(1,nUnit)
     message("No weights specified for outranking matrix, using equal weights.")
   }
 
@@ -419,14 +431,14 @@ outrankMatrix <- function(ind_data, w = NULL){
   w = w/sum(w, na.rm = TRUE)
 
   # prep outranking matrix
-  orm <- matrix(NA, nrow = nrow(ind_data), ncol = nrow(ind_data))
+  orm <- matrix(NA, nrow = nUnit, ncol = nUnit)
 
-  for (ii in 1:nrow(orm)){
+  for (ii in 1:nUnit){
 
     # get iith row, i.e. the indicator values of unit ii
     rowii <- ind_data[ii,]
 
-    for (jj in 1:ncol(orm)){
+    for (jj in 1:nUnit){
 
       if (ii==jj){
         # diag vals are zero
@@ -449,7 +461,15 @@ outrankMatrix <- function(ind_data, w = NULL){
     }
   }
 
-  return(orm)
+  # find number of dominance pairs
+  ndom <- sum(orm==1, na.rm = TRUE)
+  npairs <- (nUnit^2 - nUnit)/2
+  prcdom <- ndom/npairs
+
+  return(list(
+    OutRankMatrix = orm,
+    nDominant = ndom,
+    fracDominant = prcdom))
 
 }
 
@@ -478,7 +498,7 @@ outrankMatrix <- function(ind_data, w = NULL){
 copeland <- function(ind_data, w = NULL){
 
   # get outranking matrix
-  orm <- outrankMatrix(ind_data, w)
+  orm <- outrankMatrix(ind_data, w)$OutRankMatrix
 
   # get scores by summing across rows
   scores <- rowSums(orm, na.rm = TRUE)

@@ -14,7 +14,12 @@ as columns. No other columns should be present (e.g. label columns).}
 and will be re-scaled to sum to 1. If \code{w} is not specified, defaults to equal weights.}
 }
 \value{
-An outranking matrix with \verb{nrow(ind_data} rows and columns (matrix class).
+A list with:
+\itemize{
+\item \code{.$OutRankMatrix} the outranking matrix with \code{nrow(ind_data)} rows and columns (matrix class).
+\item \code{.$nDominant} the number of dominance/robust pairs
+\item \code{.$fracDominant} the percentage of dominance/robust pairs
+}
 }
 \description{
 Constructs an outranking matrix based on a data frame of indicator data and corresponding weights. This function is used inside
@@ -24,8 +29,8 @@ Constructs an outranking matrix based on a data frame of indicator data and corr
 # get a sample of a few indicators
 ind_data <- COINr::ASEMIndData[12:16]
 # calculate outranking matrix
-ORmatrix <- outrankMatrix(ind_data)
-# check output
-stopifnot(is.matrix(ORmatrix), nrow(ORmatrix) == nrow(ind_data))
+outlist <- outrankMatrix(ind_data)
+# see fraction of dominant pairs (robustness)
+outlist$fracDominant
 
 }
