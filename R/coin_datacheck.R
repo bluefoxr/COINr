@@ -140,8 +140,10 @@ checkData <- function(COIN, dset = NULL, ind_thresh = NULL, zero_thresh = NULL,
     data_avail <- cbind(data_avail, Included = data_avail$ZeroFlag == FALSE)
   } else if (unit_screen == "byNAandzeros"){
     data_avail <- cbind(data_avail, Included = data_avail$LowDatOrZeroFlag == FALSE)
-  } else {
+  } else if (unit_screen == "none") {
     data_avail <- cbind(data_avail, Included = TRUE)
+  } else {
+    stop("unit_screen argument value not recognised...")
   }
 
   if (!is.null(Force)){ # if some countries to force include/exclude
