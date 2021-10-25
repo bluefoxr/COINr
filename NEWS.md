@@ -1,5 +1,6 @@
 # COINr 0.5.5.9000
 
+* New plot function `plotIndDot()` for plotting single indicators with possibility to label units
 * Improved bug trapping in Winsorisation function
 * Added data availability thresholds during aggregation - see `aggregate()` function.
 * Better NA colour for `plotCorr()` plus fixed variable ordering
@@ -7,6 +8,8 @@
 * Variable/aggregate ordering in `plotCorr()` now matches grouping in higher levels
 * Add option to do PCA not in groups in `getPCA()`
 * Colour options for `plotSARanks()`
+* Added dominance pairs calculation to `ourankMatrix()`
+* [Online book](https://bluefoxr.github.io/COINrDoc/) now pretty much up to date with COINr 0.5.5.9000
 
 # COINr 0.5.5
 
