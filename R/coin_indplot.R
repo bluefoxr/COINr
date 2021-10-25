@@ -100,3 +100,170 @@ plotIndDist <- function(COINobj, dset = "Raw", icodes = NULL, aglev = 1, type = 
   plt
 
 }
+
+
+#' Dot plots of single indicator with highlighting
+#'
+#' Plots a single indicator as a line of dots, and optionally highlights a selected unit.
+#'
+#' @param COIN The COIN
+#' @param dset The source data set to use for indicator data
+#' @param icode An indicator code to plot.
+#' @param marker_type The type of marker, either `"circle"` (default) or `"cross"`, or a marker number to pass to ggplot2 (0-25).
+#' @param usel A unit or set of units (as a string or character vector) to highlight.
+#' @param add_stat A statistic to overlay, either `"mean"`, `"median"` or else a specified value.
+#' @param plabel Controls the labelling of the indicator. If not specified, returns the indicator name,
+#' plus units if found. Otherwise if `"indname"`, returns only indicator name, if `"indname+unit"`, returns
+#' indicator name plus unit (if found), if `"unit"` returns only unit (if found), otherwise if `"none"`,
+#' displays no text. Finally, any other string can be passed, so e.g. `"My indicator"` will display this on the
+#' axis.
+#' @param usel_label If `TRUE` (default) also labels selected units with their unit codes. `FALSE` to disable.
+#'
+#' @importFrom ggplot2 ggplot aes theme_minimal ylab geom_point theme element_blank
+#'
+#' @examples
+#' # add
+#'
+#' @return Plots generated with **ggplot2**. These can be edited further with **ggplot2** commands.
+#'
+#' @export
+
+plotIndDot <- function(COIN, dset = NULL, icode = NULL, usel = NULL,
+                       marker_type = "circle", add_stat = NULL, show_ticks = TRUE,
+                       plabel = NULL, usel_code = TRUE){
+
+  # some discarded stuff from the "orient" option which doesn't work very well
+  # @param orient If `"horizontal"` (default), displays chart horizontally, otherwise if `"vertical"`, vertically.
+  # orient = "horizontal",
+
+
+  if(!is.coin(COIN)){
+    stop("This function currently requires a COIN as input.")
+  }
+  stopifnot(!is.null(icode),
+            is.character(icode),
+            length(icode) == 1)
+
+  out1 <- getIn(COIN, dset = dset, icodes = icode)
+
+  ind_data <- cbind(y = 1, out1$ind_data_only)
+  colnames(ind_data) <- c("y", "x")
+
+  if(marker_type=="circle"){
+    mno <- 21
+  } else if (marker_type == "cross"){
+    mno <- 3
+  } else {
+    mno <- marker_type
+  }
+
+  plt <- ggplot2::ggplot(ind_data, ggplot2::aes(x=x, y=y)) +
+    ggplot2::theme_minimal() +
+    ggplot2::geom_point(
+      color="transparent",
+      fill="blue",
+      shape=mno,
+      alpha=0.5,
+      size=3,
+      #stroke = 0
+      ) +
+    ggplot2::ylab(NULL) +
+    ggplot2::theme(axis.text.y = ggplot2::element_blank(),
+                   axis.ticks.y = ggplot2::element_blank())
+
+  if(!show_ticks){
+    plt <- plt +
+      ggplot2::theme(axis.text.x = ggplot2::element_blank(),
+                     axis.ticks.x = ggplot2::element_blank())
+  }
+
+  if(!is.null(usel)){
+    # get df of just selected units
+    if(!("UnitCode" %in% colnames(out1$ind_data))){
+      stop("UnitCode column not found in data.")
+    }
+    # select indicator plus unit code col
+    ind_data_wcodes <- out1$ind_data[c("UnitCode", out1$IndCodes)]
+    # filter to selected units
+
+    udfi <- ind_data_wcodes[ind_data_wcodes$UnitCode %in% usel,]
+    # check sth is left
+    if(nrow(udfi) == 0){
+      stop("None of the specified usel found in indicator data.")
+    }
+    # make into df ready for ggplot
+    udf <- data.frame(y = 1, udfi[[out1$IndCodes]])
+    colnames(udf) <- c("y", "x")
+
+    # overlay on plot
+    plt <- plt + ggplot2::geom_point(
+      data = udf,
+      ggplot2::aes(x=x, y=y),
+      color="red",
+      fill="blue",
+      shape=21,
+      alpha=0.7,
+      size=3,
+      stroke = 2
+    )
+
+    if(usel_code){
+      # add text labels
+      plt <- plt +
+        ggplot2::annotate("text", x = udf$x, y = 1.008, label = udfi$UnitCode,
+                          angle = 45, hjust = 0.3, size = 3.5)
+    }
+
+  }
+
+  if(!is.null(add_stat)){
+    if(add_stat == "mean"){
+      stat_val <- mean(unlist(out1$ind_data_only), na.rm = TRUE)
+    } else if (add_stat == "median"){
+      stat_val <- stats::median(unlist(out1$ind_data_only), na.rm = TRUE)
+    } else if (is.numeric(add_stat)){
+      stat_val <- add_stat
+    } else {
+      stop("add_stat not recognised. Should be 'mean', 'median', or a number.")
+    }
+
+    #plt <- plt + ggplot2::geom_vline(xintercept = stat_val)
+    plt <- plt + ggplot2::annotate(
+      "segment", x = stat_val, y= 0.99,
+      xend = stat_val, yend = 1.01,
+      alpha = 0.5, size = 2, colour = "#8B8000")
+  }
+
+  if(is.null(plabel)){
+
+    plabel <- out1$IndNames
+
+    if(exists("IndUnit", ASEM$Input$IndMeta)){
+      plabel <- paste0(plabel, " (", ASEM$Input$IndMeta$IndUnit[ASEM$Input$IndMeta$IndCode == icode], ")")
+    }
+  } else if  (plabel == "none"){
+    plabel <- NULL
+  } else if (plabel == "indname"){
+    plabel <- out1$IndNames
+  } else if (plabel == "indname+unit"){
+    plabel <- out1$IndNames
+    if(exists("IndUnit", ASEM$Input$IndMeta)){
+      plabel <- paste0(plabel, " (", ASEM$Input$IndMeta$IndUnit[ASEM$Input$IndMeta$IndCode == icode], ")")
+    }
+  } else if (plabel == "unit"){
+    if(exists("IndUnit", ASEM$Input$IndMeta)){
+      plabel <- paste0(plabel, " (", ASEM$Input$IndMeta$IndUnit[ASEM$Input$IndMeta$IndCode == icode], ")")
+    } else {
+      plabel <- NULL
+    }
+  }
+  plt <- plt + ggplot2::xlab(plabel)
+
+  # if(orient == "vertical"){
+  #   plt <- plt + ggplot2::coord_flip()
+  # }
+
+  plt + ggplot2::ylim(c(0.98, 1.02))
+
+
+}
