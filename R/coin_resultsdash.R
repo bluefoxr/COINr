@@ -557,8 +557,8 @@ iplotTable <- function(COIN, dset = "Raw", isel = NULL, aglev = NULL, nround = 1
 #' @param sortorder Either `"desc"` for sorted column to be sorted from high to low (default) or `"asc"` for the opposite.
 #' @param searchable If `TRUE`, includes a search box
 #' @param pagesize The number of rows to display on each page.
-#' @param cell_colours A character vector of colour codes (e.g. Hex codes) to use for the colour palette. Should be in
-#' order of low to high values. Defaults to a simple green palette. See [grDevices::colorRamp()] for more info.
+#' @param cell_colours A character vector of at least two colour codes (e.g. Hex codes) to use for the colour palette. Should be in
+#' order of low to high values. Defaults to a simple green palette of `c("#eefff4", "#358554")`. See [grDevices::colorRamp()] for more info.
 #' @param reverse_colours If `TRUE`, reverses the colour map - useful for rank tables where lowest numbers mean high scores.
 #'
 #' @importFrom reactable reactable

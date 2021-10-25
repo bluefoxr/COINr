@@ -28,8 +28,8 @@ colourTable(
 
 \item{pagesize}{The number of rows to display on each page.}
 
-\item{cell_colours}{A character vector of colour codes (e.g. Hex codes) to use for the colour palette. Should be in
-order of low to high values. Defaults to a simple green palette. See \code{\link[grDevices:colorRamp]{grDevices::colorRamp()}} for more info.}
+\item{cell_colours}{A character vector of at least two colour codes (e.g. Hex codes) to use for the colour palette. Should be in
+order of low to high values. Defaults to a simple green palette of \code{c("#eefff4", "#358554")}. See \code{\link[grDevices:colorRamp]{grDevices::colorRamp()}} for more info.}
 
 \item{reverse_colours}{If \code{TRUE}, reverses the colour map - useful for rank tables where lowest numbers mean high scores.}
 }
