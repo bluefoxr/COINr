@@ -115,6 +115,13 @@ getIn <- function(obj, dset = "Raw", icodes = NULL, aglev = NULL, justnumeric = 
     }
 
     # select indicator data columns
+    # first, check if cols are present
+    indcheck <- IndCodes %in% colnames(ind_data)
+    if(all(!indcheck)){
+      stop("Indicator code(s) not found in selected data set")
+    } else if (any(!indcheck)){
+      warning("One or more indicator codes not found in selected data set. Returning what I can.")
+    }
 
     ind_data <- ind_data %>% dplyr::select(dplyr::starts_with(
       c("UnitCode", "UnitName", "Year", "Group_", "x_", IndCodes)) )
