@@ -26,7 +26,18 @@
 
 coin2Excel <- function(COIN, fname = "COINresults.xlsx"){
 
-  stopifnot(is.coin(COIN))
+  stopifnot(is.COIN(COIN))
+
+  # function to stop tab names exceeding 31 characters, avoiding errors.
+  trunc_str <- function(x){
+    if(nchar(x) > 31){
+      xnew <- substr(x, 1, 31)
+      warning("Truncated tab name (", x, ") because exceeds Excel length limit (31 characters).")
+    } else {
+      xnew <- x
+    }
+    xnew
+  }
 
   # Create workbook
   wb <- openxlsx::createWorkbook()
@@ -37,6 +48,8 @@ coin2Excel <- function(COIN, fname = "COINresults.xlsx"){
 
       # name of worksheet
       shname <- paste0("Results",names(COIN$Results[ii]))
+      # make sure 31 chars or less
+      shname <- trunc_str(shname)
       # add worksheet with name
       openxlsx::addWorksheet(wb, sheetName = shname, tabColour = "red")
       openxlsx::writeData(wb, shname, COIN$Results[[ii]], colNames = TRUE)
@@ -51,6 +64,8 @@ coin2Excel <- function(COIN, fname = "COINresults.xlsx"){
 
       # name of worksheet
       shname <- paste0("Data",names(COIN$Data[ii]))
+      # make sure 31 chars or less
+      shname <- trunc_str(shname)
       # add worksheet with name
       openxlsx::addWorksheet(wb, sheetName = shname, tabColour = "blue")
       openxlsx::writeData(wb, shname, COIN$Data[[ii]], colNames = TRUE)
@@ -64,6 +79,8 @@ coin2Excel <- function(COIN, fname = "COINresults.xlsx"){
 
       # name of worksheet
       shname <- paste0("Input",names(COIN$Input[ii]))
+      # make sure 31 chars or less
+      shname <- trunc_str(shname)
       if(shname == "InputOriginal"){next}
       # add worksheet with name
       openxlsx::addWorksheet(wb, sheetName = shname, tabColour = "gray")
@@ -81,6 +98,8 @@ coin2Excel <- function(COIN, fname = "COINresults.xlsx"){
       if(is.data.frame(thing)){
         # name of worksheet
         shname <- paste0("Analysis",names(COIN$Analysis[ii]))
+        # make sure 31 chars or less
+        shname <- trunc_str(shname)
         # add worksheet with name
         openxlsx::addWorksheet(wb, sheetName = shname, tabColour = "green")
         openxlsx::writeData(wb, shname, COIN$Analysis[[ii]], colNames = TRUE)
@@ -89,6 +108,8 @@ coin2Excel <- function(COIN, fname = "COINresults.xlsx"){
           if(is.data.frame(thing[[jj]])){
             # name of worksheet
             shname <- paste0(names(COIN$Analysis[ii]),names(thing)[jj])
+            # make sure 31 chars or less
+            shname <- trunc_str(shname)
             # add worksheet with name
             openxlsx::addWorksheet(wb, sheetName = shname, tabColour = "green")
             openxlsx::writeData(wb, shname, thing[[jj]], colNames = TRUE)
