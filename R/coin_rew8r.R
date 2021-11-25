@@ -45,7 +45,7 @@ rew8r <- function(COIN){
 
   if(interactive()){
 
-    if(!is.coin(COIN)){
+    if(!is.COIN(COIN)){
       stop("This function only runs with a COIN as an input.")
     }
 
