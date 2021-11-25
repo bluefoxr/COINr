@@ -4,7 +4,15 @@
 \alias{getIn}
 \title{Get subsets of indicator data}
 \usage{
-getIn(obj, dset = "Raw", icodes = NULL, aglev = NULL, justnumeric = TRUE)
+getIn(
+  obj,
+  dset = "Raw",
+  icodes = NULL,
+  aglev = NULL,
+  usel = NULL,
+  use_group = NULL,
+  justnumeric = TRUE
+)
 }
 \arguments{
 \item{obj}{An input object. The function can handle either the COIN object, or a data frame.
@@ -18,6 +26,17 @@ an aggregation group name, and data will be subsetted accordingly. NOTE does not
 
 \item{aglev}{The aggregation level to take indicator data from. Integer from 1 (indicator level)
 to N (top aggregation level, typically the index).}
+
+\item{usel}{An optional unit code, or character vector of unit codes to use to filter the data. The returned data will
+only include rows corresponding to the \code{usel}, unless \code{usel = NULL} (default).}
+
+\item{use_group}{An optional grouping variable and group to filter data from. Of the format \code{list(Group_Var = Group)},
+where \code{Group_Var} is a Group_ column that must be present in the selected data set, and \code{Group} is a specified group
+inside that grouping variable. This filters the selected data to only include rows from the specified group. Alternatively,
+this argument can work in conjunction with \code{usel}: if \code{usel} is specified, \code{use_group} may be input as a string simply
+representing a group column. In that case the data will be filtered to include only rows from the group(s) which the \code{usel}
+belong to. If \code{usel} is specified and \code{use_group} is specified as a list, \code{usel} will take precedence and \code{use_group}
+will be ignored.}
 
 \item{justnumeric}{Logical: if \code{TRUE}, removes any non-numeric columns from \code{ind_data_only}. Otherwise keeps all except those.}
 }
@@ -44,6 +63,10 @@ or aggregation groups, and can call multiple groups.
 
 You can also specify which aggregation level to target, using the \code{aglev} argument. See examples
 below, and in particular the \href{https://bluefoxr.github.io/COINrDoc/helper-functions.html#selecting-data-sets-and-indicators}{COINr online documentation}.
+
+As well as selection of columns, you can also filter to specific rows using unit codes as a reference, and/or
+grouping variables. This is done using the \code{usel} and \code{use_group} arguments. This gives the ability to isolate
+a unit inside a given group, for example.
 
 \code{\link[=getIn]{getIn()}} is used by many COINr functions for plotting, accessing and reporting subsets of indicator data.
 }

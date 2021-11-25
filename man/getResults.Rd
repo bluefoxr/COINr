@@ -6,24 +6,29 @@
 \usage{
 getResults(
   COIN,
-  tab_type = "Summary",
+  tab_type = "Summ",
   use = "scores",
   order_by = NULL,
   nround = 2,
+  use_group = NULL,
   out2 = "df"
 )
 }
 \arguments{
 \item{COIN}{The COIN object, or a data frame of indicator data}
 
-\item{tab_type}{The type of table to generate. Either \code{"Summary"}, \code{"Aggregates"}, \code{"Full"}, or \code{"FullWithDenoms"}.}
+\item{tab_type}{The type of table to generate. Either \code{"Summ"} (a single indicator plus rank), \code{"Aggs"} (all aggregated
+scores/ranks above indicator level), or \code{"Full"} (all scores/ranks plus all group, denominator columns).}
 
-\item{use}{Either \code{"scores"} (default) or \code{"ranks"}.}
+\item{use}{Either \code{"scores"} (default), \code{"ranks"}, or \code{"groupranks"}. For the latter, \code{use_group} must be specified.}
 
 \item{order_by}{A code of the indicator or aggregate to sort the table by. If not specified, defaults to the highest
-aggregate level, i.e. the index in most cases.}
+aggregate level, i.e. the index in most cases. If \code{use_group} is specified, rows will also be sorted by the specified group.}
 
 \item{nround}{The number of decimal places to round numerical values to. Defaults to 2.}
+
+\item{use_group}{An optional grouping variable. If specified, the results table includes this group column,
+and if \code{use = "groupranks"}, ranks will be returned with respect to the groups in this column.}
 
 \item{out2}{If \code{"df"}, outputs a data frame (tibble). Else if \code{"COIN"} attaches to \code{.$Results} in an updated COIN.}
 }

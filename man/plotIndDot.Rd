@@ -9,11 +9,14 @@ plotIndDot(
   dset = NULL,
   icode = NULL,
   usel = NULL,
+  use_group = NULL,
   marker_type = "circle",
   add_stat = NULL,
+  stat_label = NULL,
   show_ticks = TRUE,
   plabel = NULL,
-  usel_code = TRUE
+  usel_label = TRUE,
+  vert_adjust = 0.5
 )
 }
 \arguments{
@@ -25,9 +28,17 @@ plotIndDot(
 
 \item{usel}{A unit or set of units (as a string or character vector) to highlight.}
 
+\item{use_group}{The name of a grouping column which must be present in the specified data set. If this
+is specified, the plot will be restricted to only include units within the group(s) to which usel belongs.
+This argument can also be specified as a list - see function documentation for \code{\link[=getIn]{getIn()}}.}
+
 \item{marker_type}{The type of marker, either \code{"circle"} (default) or \code{"cross"}, or a marker number to pass to ggplot2 (0-25).}
 
 \item{add_stat}{A statistic to overlay, either \code{"mean"}, \code{"median"} or else a specified value.}
+
+\item{stat_label}{An optional string to use as label at the point specified by \code{add_stat}.}
+
+\item{show_ticks}{Set \code{FALSE} to remove axis ticks.}
 
 \item{plabel}{Controls the labelling of the indicator. If not specified, returns the indicator name,
 plus units if found. Otherwise if \code{"indname"}, returns only indicator name, if \code{"indname+unit"}, returns
@@ -36,6 +47,9 @@ displays no text. Finally, any other string can be passed, so e.g. \code{"My ind
 axis.}
 
 \item{usel_label}{If \code{TRUE} (default) also labels selected units with their unit codes. \code{FALSE} to disable.}
+
+\item{vert_adjust}{Adjusts the vertical height of text labels and stat lines, which matters depending on plot size.
+Takes a value between 0 to 2 (higher will probably remove the label from the axis space).}
 }
 \value{
 Plots generated with \strong{ggplot2}. These can be edited further with \strong{ggplot2} commands.
@@ -44,6 +58,10 @@ Plots generated with \strong{ggplot2}. These can be edited further with \strong{
 Plots a single indicator as a line of dots, and optionally highlights a selected unit.
 }
 \examples{
-# add
+# assemble ASEM COIN
+ASEM <- assemble(ASEMIndData, ASEMIndMeta, ASEMAggMeta)
+# plot CO2 indicator with highlighted countries plus median
+plotIndDot(ASEM, dset = "Raw", icode = "CO2",
+  usel = c("GBR", "ESP", "AUS"), add_stat = "median")
 
 }

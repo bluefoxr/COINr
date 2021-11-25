@@ -4,12 +4,12 @@
 \alias{extractYear}
 \title{Impute panel data}
 \usage{
-extractYear(IndData, use_year, impute_latest = FALSE)
+extractYear(use_year, IndData, impute_latest = FALSE)
 }
 \arguments{
-\item{IndData}{A data frame of indicator data, containing a \code{Year} column and with multiple observations for each unit code.}
-
 \item{use_year}{The year of data to extract and impute.}
+
+\item{IndData}{A data frame of indicator data, containing a \code{Year} column and with multiple observations for each unit code.}
 
 \item{impute_latest}{Logical: if \code{TRUE}, imputes missing data points using most recent value from previous years. If \code{FALSE}
 (default) simply extracts the data frame as is.}
@@ -56,7 +56,7 @@ dat2016$Year <- 2016
 # We can now put them together
 IndData <- rbind(dat2018, dat2017, dat2016)
 # And extract the 2018 data, with missing data taken from previous years
-Imp <- extractYear(IndData, 2018, impute_latest = TRUE)
+Imp <- extractYear(2018, IndData, impute_latest = TRUE)
 # View which points have been imputed and the years of data used
 Imp$ImpTable
 
