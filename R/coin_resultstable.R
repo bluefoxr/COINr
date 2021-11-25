@@ -7,11 +7,14 @@
 #' relevant columns. Scores are also rounded by default, and there is the option to present scores or ranks.
 #'
 #' @param COIN The COIN object, or a data frame of indicator data
-#' @param tab_type The type of table to generate. Either `"Summary"`, `"Aggregates"`, `"Full"`, or `"FullWithDenoms"`.
-#' @param use Either `"scores"` (default) or `"ranks"`.
+#' @param tab_type The type of table to generate. Either `"Summ"` (a single indicator plus rank), `"Aggs"` (all aggregated
+#' scores/ranks above indicator level), or `"Full"` (all scores/ranks plus all group, denominator columns).
+#' @param use Either `"scores"` (default), `"ranks"`, or `"groupranks"`. For the latter, `use_group` must be specified.
 #' @param order_by A code of the indicator or aggregate to sort the table by. If not specified, defaults to the highest
-#' aggregate level, i.e. the index in most cases.
+#' aggregate level, i.e. the index in most cases. If `use_group` is specified, rows will also be sorted by the specified group.
 #' @param nround The number of decimal places to round numerical values to. Defaults to 2.
+#' @param use_group An optional grouping variable. If specified, the results table includes this group column,
+#' and if `use = "groupranks"`, ranks will be returned with respect to the groups in this column.
 #' @param out2 If `"df"`, outputs a data frame (tibble). Else if `"COIN"` attaches to `.$Results` in an updated COIN.
 #'
 #' @examples
@@ -29,8 +32,8 @@
 #'
 #' @export
 
-getResults <- function(COIN, tab_type = "Summary", use = "scores", order_by = NULL,
-                         nround = 2, out2 = "df"){
+getResults <- function(COIN, tab_type = "Summ", use = "scores", order_by = NULL,
+                         nround = 2, use_group = NULL, out2 = "df"){
 
   # first, get the data
   df <- COIN$Data$Aggregated
@@ -38,7 +41,7 @@ getResults <- function(COIN, tab_type = "Summary", use = "scores", order_by = NU
   ## PREP ## ----------------------------------------------------
 
   if(is.null(df)){
-    stop("Can't find data set. Have you aggregated your data?")
+    stop("Can't find aggregated data set. Have you aggregated your data?")
   }
 
   # get structure
@@ -60,46 +63,34 @@ getResults <- function(COIN, tab_type = "Summary", use = "scores", order_by = NU
 
   ## BUILD TABLE ## ---------------------------------------------
 
-  if(tab_type == "Summary"){
+  if(tab_type %in% c("Summ", "Summary")){
 
     df$Rank <- rank(-1*df[[sortcode]], na.last = "keep", ties.method = "min")
 
     # Just the indicator/index plus ranks
     tabout <- tibble::as_tibble(
-      df[c("UnitCode", "UnitName", sortcode, "Rank")]
+      df[c("UnitCode", "UnitName", use_group, sortcode, "Rank")]
     )
 
-  } else if (tab_type == "Aggregates"){
+  } else if (tab_type %in% c("Aggs", "Aggregates")){
 
     df$Rank <- rank(-1*df[[sortcode]], na.last = "keep", ties.method = "min")
 
     # All the aggregate scores
     tabout <- tibble::as_tibble(
-      df[c("UnitCode", "UnitName", "Rank", ag$Code)]
+      df[c("UnitCode", "UnitName", use_group, "Rank", ag$Code)]
     )
 
-  } else if (tab_type == "Full"){
+  } else if (tab_type %in% c("Full", "FullWithDenoms")){
 
     df$Rank <- rank(-1*df[[sortcode]], na.last = "keep", ties.method = "min")
 
     # Get all other codes (not names or aggs)
-    othercodes <- setdiff(colnames(df), c("UnitCode", "UnitName", ag$Code, "Rank"))
+    othercodes <- setdiff(colnames(df), c("UnitCode", "UnitName", use_group, "Rank", ag$Code))
 
     # All the aggregate scores, plus the remaining cols on the end
     tabout <- tibble::as_tibble(
-      df[c("UnitCode", "UnitName", "Rank", ag$Code, othercodes)]
-    )
-
-  } else if (tab_type == "FullWithDenoms"){
-
-    df$Rank <- rank(-1*df[[sortcode]], na.last = "keep", ties.method = "min")
-
-    # Get all other codes (not names or aggs)
-    othercodes <- setdiff(colnames(df), c("UnitCode", "UnitName", "Rank", ag$Code))
-
-    # All the aggregate scores, plus the remaining cols on the end
-    tabout <- tibble::as_tibble(
-      df[c("UnitCode", "UnitName", "Rank", ag$Code, othercodes)]
+      df[c("UnitCode", "UnitName", use_group, "Rank", ag$Code, othercodes)]
     )
 
     if (!is.null(COIN$Input$Denominators)){
@@ -125,6 +116,14 @@ getResults <- function(COIN, tab_type = "Summary", use = "scores", order_by = NU
   if(use == "ranks"){
     tabout <- tabout[colnames(tabout) != "Rank"]
     tabout <- rankDF(tabout)
+  } else if (use =="groupranks"){
+    if(is.null(use_group)){
+      stop("If groupranks is specified, you need to also specify use_group.")
+    }
+    tabout <- tabout[colnames(tabout) != "Rank"]
+    tabout <- rankDF(tabout, use_group = use_group)
+    # sort by group
+    tabout <- tabout[order(tabout[[use_group]]),]
   }
 
   ## FINISH AND OUTPUT ## -------------------------------------------------
@@ -136,9 +135,11 @@ getResults <- function(COIN, tab_type = "Summary", use = "scores", order_by = NU
   } else if (out2 == "COIN"){
 
     if(use == "scores"){
-      COIN$Results[[paste0(tab_type,"Scores")]] <- tabout
+      COIN$Results[[paste0(tab_type,"Score")]] <- tabout
     } else if (use == "ranks"){
-      COIN$Results[[paste0(tab_type,"Ranks")]] <- tabout
+      COIN$Results[[paste0(tab_type,"Rank")]] <- tabout
+    } else if (use == "groupranks"){
+      COIN$Results[[paste0(tab_type,"GrpRnk", use_group)]] <- tabout
     }
     return(COIN)
 
@@ -152,9 +153,12 @@ getResults <- function(COIN, tab_type = "Summary", use = "scores", order_by = NU
 #' Convert a data frame to ranks
 #'
 #' Replaces all numerical columns of a data frame with their ranks. Uses sport ranking, i.e. ties
-#' share the highest rank place. Ignores non-numerical columns. See [rank()].
+#' share the highest rank place. Ignores non-numerical columns. See [rank()]. Optionally, returns in-group ranks
+#' using a specified grouping column.
 #'
 #' @param df A data frame
+#' @param use_group An optional column of df (specified as a string) to use as a grouping variable. If specified, returns ranks
+#' inside each group present in this column.
 #'
 #' @examples
 #' # some random data, with a column of characters
@@ -162,6 +166,9 @@ getResults <- function(COIN, tab_type = "Summary", use = "scores", order_by = NU
 #' Score1 = runif(3), Score2 = runif(3))
 #' # convert to ranks
 #' rankDF(df)
+#' # grouped ranking - use some example data
+#' df1 <- ASEMIndData[c("UnitCode", "Group_GDP", "Goods", "LPI")]
+#' rankDF(df1, use_group = "Group_GDP")#'
 #'
 #' @return A data frame equal to the data frame that was input, but with any numerical columns replaced with ranks.
 #'
@@ -170,10 +177,34 @@ getResults <- function(COIN, tab_type = "Summary", use = "scores", order_by = NU
 #'
 #' @export
 
-rankDF <- function(df){
+rankDF <- function(df, use_group = NULL){
 
-  df <- lapply(df, function(y) if(is.numeric(y)) rank(-1*y, na.last = "keep", ties.method = "min") else y) %>%
-    data.frame()
+  if(is.null(use_group)){
+    df <- lapply(df, function(y) if(is.numeric(y)) rank(-1*y, na.last = "keep", ties.method = "min") else y) |>
+      data.frame()
+  } else {
+    stopifnot(use_group %in% colnames(df))
+    # get groups
+    grps <- df[[use_group]] |> unlist() |> unique()
+    # I have to work over groups. To me the clearest way of doing this is with a for loop (sorry)
+    dfold <- df
+    for(grp in grps){
+      # get current group rows
+      grprows <- df[[use_group]] == grp
+      # exclude any NAs
+      grprows[is.na(grprows)] <- FALSE
+      # now work over all columns, but just for the current group rows
+      df[grprows,] <- lapply(dfold[grprows,], function(y) if(is.numeric(y)) rank(-1*y, na.last = "keep", ties.method = "min") else y) |>
+        data.frame()
+    }
+
+    # now I have to fill in rows that have NA group values, with NAs
+    if(any(is.na(df[[use_group]]))){
+      df[is.na(df[[use_group]]),] <- lapply(df[is.na(df[[use_group]]),], function(y) if(is.numeric(y)) NA else y) |>
+        data.frame()
+    }
+  }
+
   rownames(df) <- NULL
   df
 
@@ -474,14 +505,15 @@ COINr documentation and the help file of this function for more details.")
 getUnitSummary <- function(COIN, usel, aglevs){
 
   # get rank and score tables
-  if(is.null(COIN$Results$FullRanks)){
+  if(is.null(COIN$Results$FullRank)){
     COIN <- getResults(COIN, tab_type = "Full", use = "ranks", out2 = "COIN")
   }
-  if(is.null(COIN$Results$FullScores)){
+  if(is.null(COIN$Results$FullScore)){
     COIN <- getResults(COIN, tab_type = "Full", use = "scores", out2 = "COIN")
   }
-  rnks <- COIN$Results$FullRanks
-  scrs <- COIN$Results$FullScores
+
+  rnks <- COIN$Results$FullRank
+  scrs <- COIN$Results$FullScore
 
   # get agg codes
   aggs <- COIN$Input$AggMeta[order(-COIN$Input$AggMeta$AgLevel),]
@@ -504,20 +536,54 @@ getUnitSummary <- function(COIN, usel, aglevs){
 
 #' Generate strengths and weaknesses for a specified unit
 #'
-#' Generates a table of strengths and weaknesses for a selected unit, based on ranks.
+#' Generates a table of strengths and weaknesses for a selected unit, based on ranks, or ranks within
+#' a specified grouping variable.
 #'
 #' This currently only works at the indicator level. Indicators with NA values for the selected unit are ignored.
 #' Strengths and weaknesses mean the top N-ranked indicators for the selected unit. Effectively, this takes the rank that the
 #' selected unit has in each indicator, sorts the ranks, and takes the top N highest and lowest.
 #'
-#' NOTE: this function currently requires data to be aggregated. This restriction may be relaxed at some point.
+#' This function must be used with a little care: indicators should be adjusted for their directions before use,
+#' otherwise a weakness might be counted as a strength, and vice versa. Use the `adjust_direction` parameter
+#' to help here.
+#'
+#' A further useful parameter is `unq_discard`, which also filters out any indicators with a low number of
+#' unique values, based on a specified threshold. Also `min_discard` which filters out any indicators which
+#' have the minimum rank.
+#'
+#' The best way to use this function is to play around with the settings a little bit. The reason being that
+#' in practice, indicators have very different distributions and these can sometimes lead to unexpected
+#' outcomes. An example is if you have an indicator with 50% zero values, and the rest non-zero (but unique).
+#' Using the sport ranking system, all units with zero values will receive a rank which is equal to the number
+#' of units divided by two. This then might be counted as a "strength" for some units with overall low scores.
+#' But a zero value can hardly be called a strength. This is where the `min_discard` function can help out.
+#'
+#' Problems such as these mainly arise when e.g. generating a large number of country profiles.
 #'
 #' @param COIN A COIN
+#' @param dset The data set to extract indicator data from, to use as strengths and weaknesses.
 #' @param usel A selected unit code
 #' @param topN The top N indicators to report
 #' @param bottomN The bottom N indicators to report
 #' @param withcodes If `TRUE` (default), also includes a column of indicator codes. Setting to `FALSE` may be more useful
 #' in generating reports, where codes are not helpful.
+#' @param use_group An optional grouping variable (named column of `.Data$Aggregated`) to use for reporting
+#' in-group ranks. Specifying this will report the ranks of the selected unit within the group of `use_group`
+#' to which it belongs.
+#' @param unq_discard Optional parameter for handling discrete indicators. Some indicators may be binary
+#' variables of the type "yes = 1", "no = 0". These may be picked up as strengths or weaknesses, when they
+#' may not be wanted to be highlighted, since e.g. maybe half of units will have a zero or a one. This argument
+#' takes a number between 0 and 1 specifying a unique value threshold for ignoring indicators as strengths. E.g.
+#' setting `prc_unq_discard = 0.2` will ensure that only indicators with at least 20% unique values will be
+#' highlighted as strengths or weaknesses. Set to `NULL` to disable (default).
+#' @param min_discard If `TRUE` (default), discards any strengths which correspond to the minimum rank for the given
+#' indicator. See details.
+#' @param report_level Optional aggregation level to report parent codes from. For example, setting
+#' `report_level = 2` will add a column to the strengths and weaknesses tables which reports the aggregation
+#' group from level 2, to which each reported indicator belongs. Set to `NULL` to disable (default).
+#' @param with_units If `TRUE` (default), includes indicator units in output tables.
+#' @param adjust_direction If `TRUE`, will adjust directions of indicators according to the "Direction" column
+#' of `IndMeta`. By default, this is `TRUE` *if* `dset = "Raw"`, and `FALSE` otherwise.
 #'
 #' @examples
 #' # build ASEM COIN up to aggregation
@@ -534,22 +600,58 @@ getUnitSummary <- function(COIN, usel, aglevs){
 #'
 #' @export
 
-getStrengthNWeak <- function(COIN, usel = NULL, topN = 5, bottomN = 5, withcodes = TRUE){
-
-  # first, get a rank table
-  if(is.null(COIN$Results$FullRanks)){
-    COIN <- getResults(COIN, tab_type = "Full", use = "ranks", out2 = "COIN")
-  }
-  rnks <- COIN$Results$FullRanks
+getStrengthNWeak <- function(COIN, dset = NULL, usel = NULL, topN = 5, bottomN = 5, withcodes = TRUE,
+                             use_group = NULL, unq_discard = NULL, min_discard = TRUE, report_level = NULL,
+                             with_units = TRUE, adjust_direction = NULL){
 
   # indicator codes
   IndCodes <- COIN$Input$IndMeta$IndCode
+  # scores
+  if(is.null(dset)) dset <- "Raw"
+  data_scrs <- COIN$Data[[dset]]
+  # ranks
+  # first, we have to adjust for direction
+  if(is.null(adjust_direction)){
+    if(dset == "Raw"){
+      adjust_direction <- TRUE
+    } else {
+      adjust_direction <- FALSE
+    }
+  }
+  # make a copy to adjust by direction
+  data_scrs1 <- data_scrs
+  if(adjust_direction){
+    data_scrs1[IndCodes] <- data_scrs1[IndCodes]
+
+    data_scrs1[IndCodes] <- purrr::map2_df(data_scrs1[IndCodes],
+                                           COIN$Input$IndMeta$Direction, ~ .x*.y)
+  }
+
+  data_rnks <- rankDF(data_scrs1, use_group = use_group)
+
+  # unique value filtering
+  if(!is.null(unq_discard)){
+    # find fraction of unique vals for each indicator
+    frc_unique <- apply(data_scrs[IndCodes], MARGIN = 2,
+                        function(x){
+                          length(unique(x))/length(x)
+                        })
+    # filter indicator codes to only the ones with frac unique above thresh
+    IndCodes <- IndCodes[frc_unique > unq_discard]
+  }
 
   # isolate the row and indicator cols
-  rnks_usel <- rnks[rnks$UnitCode == usel, IndCodes]
+  rnks_usel <- data_rnks[data_rnks$UnitCode == usel, IndCodes]
 
   # remove NAs
-  rnks_usel <- rnks_usel[,!is.na(rnks_usel[1,])]
+  rnks_usel <- rnks_usel[,!is.na(as.numeric(rnks_usel))]
+
+  # Also need to (optionally) remove minimum rank entries
+  # (by min I mean MAX, i.e. min SCORE)
+  if(min_discard){
+    rnks_min <- lapply(data_rnks[colnames(rnks_usel)], max, na.rm = T) |> as.data.frame()
+    rnks_usel <- rnks_usel[,!(rnks_usel == rnks_min)]
+  }
 
   # sort by row values
   rnks_usel <- rnks_usel[ ,order(as.numeric(rnks_usel[1,]))]
@@ -558,19 +660,36 @@ getStrengthNWeak <- function(COIN, usel = NULL, topN = 5, bottomN = 5, withcodes
   Scodes <- colnames(rnks_usel)[1:topN]
   Wcodes <- colnames(rnks_usel)[ (ncol(rnks_usel) - bottomN + 1) : ncol(rnks_usel) ]
 
+  # find agg level column of interest
+  if(is.null(report_level)){
+    report_level <- 2
+  }
+  agcols <- colnames(COIN$Input$IndMeta)[startsWith(colnames(COIN$Input$IndMeta), "Agg")]
+  agcolname <- agcols[report_level - 1]
+
   # make tables
   strengths <- data.frame(
     Code = Scodes,
     Name = COIN$Input$IndMeta$IndName[match(Scodes, COIN$Input$IndMeta$IndCode)],
+    Dimension = COIN$Input$IndMeta[[agcolname]][match(Scodes, COIN$Input$IndMeta$IndCode)],
     Rank = as.numeric(rnks_usel[Scodes]),
-    Value = signif(as.numeric(COIN$Data$Raw[COIN$Data$Raw$UnitCode == usel ,Scodes]),3)
+    Value = signif(as.numeric(data_scrs[data_scrs$UnitCode == usel ,Scodes]),3)
   )
+
   weaks <- data.frame(
     Code = Wcodes,
     Name = COIN$Input$IndMeta$IndName[match(Wcodes, COIN$Input$IndMeta$IndCode)],
+    Dimension = COIN$Input$IndMeta[[agcolname]][match(Wcodes, COIN$Input$IndMeta$IndCode)],
     Rank = as.numeric(rnks_usel[Wcodes]),
-    Value = signif(as.numeric(COIN$Data$Raw[COIN$Data$Raw$UnitCode == usel ,Wcodes]),3)
+    Value = signif(as.numeric(data_scrs[data_scrs$UnitCode == usel ,Wcodes]),3)
   )
+
+  # units
+  # if units col exists and requested
+  if(with_units & !is.null(COIN$Input$IndMeta$IndUnit)){
+    strengths$Unit <- COIN$Input$IndMeta$IndUnit[match(Scodes, COIN$Input$IndMeta$IndCode)]
+    weaks$Unit <- COIN$Input$IndMeta$IndUnit[match(Wcodes, COIN$Input$IndMeta$IndCode)]
+  }
 
   # remove indicator codes if needed
   if(!withcodes){
@@ -583,6 +702,4 @@ getStrengthNWeak <- function(COIN, usel = NULL, topN = 5, bottomN = 5, withcodes
     Strengths = strengths,
     Weaknesses = weaks
   ))
-
-
 }
