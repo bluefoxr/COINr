@@ -111,40 +111,54 @@ plotIndDist <- function(COINobj, dset = "Raw", icodes = NULL, aglev = 1, type = 
 #' @param icode An indicator code to plot.
 #' @param marker_type The type of marker, either `"circle"` (default) or `"cross"`, or a marker number to pass to ggplot2 (0-25).
 #' @param usel A unit or set of units (as a string or character vector) to highlight.
+#' @param use_group The name of a grouping column which must be present in the specified data set. If this
+#' is specified, the plot will be restricted to only include units within the group(s) to which usel belongs.
+#' This argument can also be specified as a list - see function documentation for [getIn()].
 #' @param add_stat A statistic to overlay, either `"mean"`, `"median"` or else a specified value.
+#' @param stat_label An optional string to use as label at the point specified by `add_stat`.
+#' @param show_ticks Set `FALSE` to remove axis ticks.
 #' @param plabel Controls the labelling of the indicator. If not specified, returns the indicator name,
 #' plus units if found. Otherwise if `"indname"`, returns only indicator name, if `"indname+unit"`, returns
 #' indicator name plus unit (if found), if `"unit"` returns only unit (if found), otherwise if `"none"`,
 #' displays no text. Finally, any other string can be passed, so e.g. `"My indicator"` will display this on the
 #' axis.
 #' @param usel_label If `TRUE` (default) also labels selected units with their unit codes. `FALSE` to disable.
+#' @param vert_adjust Adjusts the vertical height of text labels and stat lines, which matters depending on plot size.
+#' Takes a value between 0 to 2 (higher will probably remove the label from the axis space).
 #'
 #' @importFrom ggplot2 ggplot aes theme_minimal ylab geom_point theme element_blank
 #'
 #' @examples
-#' # add
+#' # assemble ASEM COIN
+#' ASEM <- assemble(ASEMIndData, ASEMIndMeta, ASEMAggMeta)
+#' # plot CO2 indicator with highlighted countries plus median
+#' plotIndDot(ASEM, dset = "Raw", icode = "CO2",
+#'   usel = c("GBR", "ESP", "AUS"), add_stat = "median")
 #'
 #' @return Plots generated with **ggplot2**. These can be edited further with **ggplot2** commands.
 #'
 #' @export
 
-plotIndDot <- function(COIN, dset = NULL, icode = NULL, usel = NULL,
-                       marker_type = "circle", add_stat = NULL, show_ticks = TRUE,
-                       plabel = NULL, usel_code = TRUE){
+plotIndDot <- function(COIN, dset = NULL, icode = NULL, usel = NULL, use_group = NULL,
+                       marker_type = "circle", add_stat = NULL, stat_label = NULL, show_ticks = TRUE,
+                       plabel = NULL, usel_label = TRUE, vert_adjust = 0.5){
 
   # some discarded stuff from the "orient" option which doesn't work very well
   # @param orient If `"horizontal"` (default), displays chart horizontally, otherwise if `"vertical"`, vertically.
   # orient = "horizontal",
 
-
-  if(!is.coin(COIN)){
+  if(!is.COIN(COIN)){
     stop("This function currently requires a COIN as input.")
   }
   stopifnot(!is.null(icode),
             is.character(icode),
             length(icode) == 1)
 
-  out1 <- getIn(COIN, dset = dset, icodes = icode)
+  if(is.null(use_group)){
+    out1 <- getIn(COIN, dset = dset, icodes = icode, use_group = use_group)
+  } else {
+    out1 <- getIn(COIN, dset = dset, icodes = icode, usel = usel, use_group = use_group)
+  }
 
   ind_data <- cbind(y = 1, out1$ind_data_only)
   colnames(ind_data) <- c("y", "x")
@@ -157,7 +171,7 @@ plotIndDot <- function(COIN, dset = NULL, icode = NULL, usel = NULL,
     mno <- marker_type
   }
 
-  plt <- ggplot2::ggplot(ind_data, ggplot2::aes(x=x, y=y)) +
+  plt <- ggplot2::ggplot(ind_data, ggplot2::aes(x=.data$x, y=.data$y)) +
     ggplot2::theme_minimal() +
     ggplot2::geom_point(
       color="transparent",
@@ -198,7 +212,7 @@ plotIndDot <- function(COIN, dset = NULL, icode = NULL, usel = NULL,
     # overlay on plot
     plt <- plt + ggplot2::geom_point(
       data = udf,
-      ggplot2::aes(x=x, y=y),
+      ggplot2::aes(x=.data$x, y=.data$y),
       color="red",
       fill="blue",
       shape=21,
@@ -207,10 +221,10 @@ plotIndDot <- function(COIN, dset = NULL, icode = NULL, usel = NULL,
       stroke = 2
     )
 
-    if(usel_code){
+    if(usel_label){
       # add text labels
       plt <- plt +
-        ggplot2::annotate("text", x = udf$x, y = 1.008, label = udfi$UnitCode,
+        ggplot2::annotate("text", x = udf$x, y = 1 + vert_adjust/100, label = udfi$UnitCode,
                           angle = 45, hjust = 0.3, size = 3.5)
     }
 
@@ -229,17 +243,24 @@ plotIndDot <- function(COIN, dset = NULL, icode = NULL, usel = NULL,
 
     #plt <- plt + ggplot2::geom_vline(xintercept = stat_val)
     plt <- plt + ggplot2::annotate(
-      "segment", x = stat_val, y= 0.99,
-      xend = stat_val, yend = 1.01,
-      alpha = 0.5, size = 2, colour = "#8B8000")
+      "segment", x = stat_val, y= 1 - vert_adjust/80,
+      xend = stat_val, yend = 1 + vert_adjust/80,
+      alpha = 0.5, size = 2, colour = "#3CB371")
+
+    if(!is.null(stat_label)){
+      # add text labels
+      plt <- plt +
+        ggplot2::annotate("text", x = stat_val, y = 1 + vert_adjust/60, label = stat_label,
+                          angle = 45, hjust = 0.2, size = 3.5)
+    }
   }
 
   if(is.null(plabel)){
 
     plabel <- out1$IndNames
 
-    if(exists("IndUnit", ASEM$Input$IndMeta)){
-      plabel <- paste0(plabel, " (", ASEM$Input$IndMeta$IndUnit[ASEM$Input$IndMeta$IndCode == icode], ")")
+    if(exists("IndUnit", COIN$Input$IndMeta)){
+      plabel <- paste0(plabel, " (", COIN$Input$IndMeta$IndUnit[COIN$Input$IndMeta$IndCode == icode], ")")
     }
   } else if  (plabel == "none"){
     plabel <- NULL
@@ -247,12 +268,12 @@ plotIndDot <- function(COIN, dset = NULL, icode = NULL, usel = NULL,
     plabel <- out1$IndNames
   } else if (plabel == "indname+unit"){
     plabel <- out1$IndNames
-    if(exists("IndUnit", ASEM$Input$IndMeta)){
-      plabel <- paste0(plabel, " (", ASEM$Input$IndMeta$IndUnit[ASEM$Input$IndMeta$IndCode == icode], ")")
+    if(exists("IndUnit", COIN$Input$IndMeta)){
+      plabel <- paste0(plabel, " (", COIN$Input$IndMeta$IndUnit[COIN$Input$IndMeta$IndCode == icode], ")")
     }
   } else if (plabel == "unit"){
-    if(exists("IndUnit", ASEM$Input$IndMeta)){
-      plabel <- paste0(plabel, " (", ASEM$Input$IndMeta$IndUnit[ASEM$Input$IndMeta$IndCode == icode], ")")
+    if(exists("IndUnit", COIN$Input$IndMeta)){
+      plabel <- paste0(plabel, " (", COIN$Input$IndMeta$IndUnit[COIN$Input$IndMeta$IndCode == icode], ")")
     } else {
       plabel <- NULL
     }
