@@ -29,16 +29,18 @@ assemble(
 \item{preagg}{Set to \code{TRUE} if you want to assemble a COIN using pre-aggregated data (typically for ex-post analysis)}
 
 \item{use_year}{If \code{IndData} includes a \code{Year} column, and there are multiple observations for each unit (one per year),
-this can be set to a target year. For example, setting \code{use_year = 2020} will filter \code{IndData} to only include points from
-2020. Keeping in mind that a COIN represents a single year of data.}
+this can be set to a target year or years. For example, setting \code{use_year = 2020} will filter \code{IndData} to only include points from
+2020. Setting to \code{use_year = c(2019,2020)} will return a list of COINs. Set \code{use_year = "all"} to return
+a COIN for all years where data is available. Keep in mind that a COIN represents a single year of data.}
 
 \item{impute_latest}{Logical: if \code{TRUE}, imputes missing data points using most recent value from previous years. If \code{FALSE}
 (default) simply extracts the data frame as is. This only works if \code{!is.null(use_year)} and there are previous years of data
 available (before \code{use_year}). Currently does not support imputation using future values or interpolation.}
 }
 \value{
-A "COIN" (list) formatted to the specifications of COINr.
-Note that the COIN object is an S3 class. It doesn't impose restrictions on the structure of the list.
+A "COIN" S3 class object (list) formatted to the specifications of COINr. If the input is panel
+data and \code{use_year} is set to return multiple years, this function returns a tibble of COINs, indexed
+by the year. This latter feature is new and currently under development.
 }
 \description{
 This takes the raw data provided by the user and puts it into a list format (COIN object) that is recognised by COINr.
@@ -51,6 +53,10 @@ A "COIN" is an S3 class which is a structured list of indicator data, metadata, 
 throughout COINr. COINs are a convenient way to store all variables relating to the composite indicator in a single named
 object. This keeps the workspace tidy, but also allows fast and concise calls to functions, as well as copying COINs to
 introduce methodological variations, and enables complex operations such as global sensitivity analysis (see \code{\link[=sensitivity]{sensitivity()}}.
+
+If panel data is input to this function, it will output a tibble of COINs (see \code{use_year}). This feature
+is currently under development and more support will be included for these tibbles of COINs in COINr over
+time.
 
 For general information on COINs see the COINr vignette as well as the \href{https://bluefoxr.github.io/COINrDoc/coins-the-currency-of-coinr.html}{relevant chapter} in the COINr online documentation.
 

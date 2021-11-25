@@ -10,6 +10,10 @@
 #' object. This keeps the workspace tidy, but also allows fast and concise calls to functions, as well as copying COINs to
 #' introduce methodological variations, and enables complex operations such as global sensitivity analysis (see [sensitivity()].
 #'
+#' If panel data is input to this function, it will output a tibble of COINs (see `use_year`). This feature
+#' is currently under development and more support will be included for these tibbles of COINs in COINr over
+#' time.
+#'
 #' For general information on COINs see the COINr vignette as well as the [relevant chapter](https://bluefoxr.github.io/COINrDoc/coins-the-currency-of-coinr.html) in the COINr online documentation.
 #'
 #' For details on copying, adjusting and comparing COINs see the [COINr chapter on adjustments and comparisons](https://bluefoxr.github.io/COINrDoc/adjustments-and-comparisons.html).
@@ -21,8 +25,9 @@
 #' @param exclude Optional argument specifying a subset of indicator codes to exclude (default none excluded)
 #' @param preagg Set to `TRUE` if you want to assemble a COIN using pre-aggregated data (typically for ex-post analysis)
 #' @param use_year If `IndData` includes a `Year` column, and there are multiple observations for each unit (one per year),
-#' this can be set to a target year. For example, setting `use_year = 2020` will filter `IndData` to only include points from
-#' 2020. Keeping in mind that a COIN represents a single year of data.
+#' this can be set to a target year or years. For example, setting `use_year = 2020` will filter `IndData` to only include points from
+#' 2020. Setting to `use_year = c(2019,2020)` will return a list of COINs. Set `use_year = "all"` to return
+#' a COIN for all years where data is available. Keep in mind that a COIN represents a single year of data.
 #' @param impute_latest Logical: if `TRUE`, imputes missing data points using most recent value from previous years. If `FALSE`
 #' (default) simply extracts the data frame as is. This only works if `!is.null(use_year)` and there are previous years of data
 #' available (before `use_year`). Currently does not support imputation using future values or interpolation.
@@ -36,13 +41,15 @@
 #' @importFrom dplyr "n_distinct"
 #' @importFrom purrr "map_lgl"
 #' @importFrom stats "na.omit"
+#' @importFrom tibble tibble
 #'
 #' @examples
 #' # build the ASEM COIN
 #' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 #'
-#' @return A "COIN" (list) formatted to the specifications of COINr.
-#' Note that the COIN object is an S3 class. It doesn't impose restrictions on the structure of the list.
+#' @return A "COIN" S3 class object (list) formatted to the specifications of COINr. If the input is panel
+#' data and `use_year` is set to return multiple years, this function returns a tibble of COINs, indexed
+#' by the year. This latter feature is new and currently under development.
 #'
 #' @export
 
@@ -111,279 +118,325 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL,
   IndDataOrig <- IndData
 
   ##----- PANEL DATA ---------------##
+
   # The objective here is to give a simple option to filter panel data to a certain year.
   # It will also optionally impute using the latest year available.
 
   if(!is.null(use_year)){
-    # pass to function (see below in this file)
-    l_imp <- extractYear(IndData, use_year, impute_latest)
-    # extract indicator data
-    IndData <- l_imp$IndDataImp
-  }
 
-  ##----- IND CODES AND DENOMS -----##
-
-  # Extract indicator codes from raw data
-  cnames1 <- IndData %>% dplyr::select(!dplyr::starts_with(
-    c("UnitCode", "UnitName", "Year", "Group_","Den_", "IndUnit", "x_")) ) %>% colnames()
-
-  # check for any non-numeric cols and stop if any present
-  ind_data_only <- IndData[cnames1]
-  not_num <- cnames1[!purrr::map_lgl(ind_data_only, is.numeric)]
-  if(length(not_num)>0){
-    # stop, print any non-numeric
-    message("Non-numerical columns in IndData (probably character/text?):")
-    print(not_num)
-    stop(paste0("Non-numeric columns detected. Only numerical indicators are allowed"))
-  }
-
-  # In case no indicator cols present
-  if(is.null(cnames1)){
-    stop("No indicators found. Please check column names.")
-  }
-
-  # everything apart from denoms is IndData
-  IndData1 <- IndData %>% dplyr::select(!dplyr::starts_with("Den_"))
-
-  # if the everything-apart-from-denoms is diff from the original data, means there are denoms
-  # So, extract denoms
-  message("-----------------")
-  if(ncol(IndData1) < ncol(IndData)){
-    denoms <- IndData %>% dplyr::select(
-      dplyr::starts_with(c("UnitCode", "UnitName", "Year", "Group_", "Den_", "x_"))) # keep denominators to one side for the moment
-    message("Denominators detected - stored in .$Input$Denominators")
-  } else {
-    denoms <- NULL # this will have the effect of not attaching to the list
-    message("No denominators detected.")
-  }
-  message("-----------------")
-
-  # from this point, IndData is minus any denominators
-  IndData <- IndData1
-
-
-  ##------- Select indicators, if needed -----##
-
-  include0 <- include
-  exclude0 <- exclude
-
-  # if include is not specified, include everything
-  if(is.null(include)){include <- cnames1}
-
-  # the vector of indicators to include is everything in include, minus anything in exclude
-  include <- setdiff(include,exclude)
-
-  # select data and metadata accordingly
-  if(!is.null(include)){
-    if(any(!(include %in% IndMeta$IndCode)) & !preagg){
-      # note this is not implemented if preagg is TRUE, because aggregates are not present in IndMeta
-      warning("Some codes in include or exclude are not present in the indicator data and metadata. Ignoring any codes that are not found.")
-      include <- include[include %in% IndMeta$IndCode]
+    # first we get the years to use
+    if(is.character(use_year)){
+      if(use_year=="all"){
+        yrs <- IndData$Year |> unique() |> sort()
+      } else {
+        stop("use_year not recogised. Should be numerical (vector) or 'all'.")
+      }
+    } else {
+      if(!all(use_year %in% IndData$Year)){
+        stop("One or more of the time points in use_year not found in Year column of IndData.")
+      }
+      yrs <- use_year |> sort()
     }
 
-    ind_data <- IndData %>% dplyr::select(dplyr::starts_with(
-      c("UnitCode", "UnitName", "Year", "Group_", "IndUnit", "x_")), include )
-    ind_meta <- IndMeta[IndMeta$IndCode %in% include,]
+    if(length(yrs)==1){
+      l_imp <- extractYear(use_year, IndData, impute_latest)
+      # extract indicator data
+      IndData <- l_imp$IndDataImp
+      # IndData is a data frame
+    } else {
+      # pass to function (see below in this file)
+      IndData_List <- lapply(yrs, extractYear, IndData, impute_latest)
+      # get just the dfs
+      IndDatas <- lapply(IndData_List, function(x){x$IndDataImp})
+    }
+
   }
 
-  # sort ind_meta properly according to structure of index
-  # note: I sort according to the reversed order of the agg columns, so starting with the
-  # highest level of aggregation first then working down
+  ##----- ASSEMBLE COIN FUNC -----
+  # We now have either a list of IndDatas if panel data was input, or else a single IndData.
+  # The following is a function which assembles a single COIN for a given IndData.
+  # After defining the function, we will run it for the IndData(s)
+  makeCOIN <- function(IndData){
 
-  ind_meta <- dplyr::arrange(ind_meta,
-                             rev(dplyr::across(dplyr::starts_with("Agg"))))
+    ##----- IND CODES AND DENOMS -----
 
-  # I want the indicator cols to be in the same order as ind_meta, to avoid surprises
-  # Don't do for preagg though, because there would be extra cols.
-  if (!preagg){
-    ind_data <- dplyr::select(ind_data,
-                              dplyr::starts_with(c("UnitCode", "UnitName",
-                                                   "Year", "Group_", "IndUnit", "x_")), ind_meta$IndCode)
-  }
+    # Extract indicator codes from raw data
+    cnames1 <- IndData %>% dplyr::select(!dplyr::starts_with(
+      c("UnitCode", "UnitName", "Year", "Group_","Den_", "IndUnit", "x_")) ) %>% colnames()
 
-  # Build list
-  COINobj <- list(Input = list(
-    IndData = ind_data,
-    IndMeta = ind_meta,
-    AggMeta = AggMeta,
-    Original = list(
-      IndData = IndDataOrig,
-      IndMeta = IndMeta,
-      AggMeta = AggMeta
-    )))
+    # check for any non-numeric cols and stop if any present
+    ind_data_only <- IndData[cnames1]
+    not_num <- cnames1[!purrr::map_lgl(ind_data_only, is.numeric)]
+    if(length(not_num)>0){
+      # stop, print any non-numeric
+      message("Non-numerical columns in IndData (probably character/text?):")
+      print(not_num)
+      stop(paste0("Non-numeric columns detected. Only numerical indicators are allowed"))
+    }
+
+    # In case no indicator cols present
+    if(is.null(cnames1)){
+      stop("No indicators found. Please check column names.")
+    }
+
+    # everything apart from denoms is IndData
+    IndData1 <- IndData %>% dplyr::select(!dplyr::starts_with("Den_"))
+
+    # if the everything-apart-from-denoms is diff from the original data, means there are denoms
+    # So, extract denoms
+    message("-----------------")
+    if(ncol(IndData1) < ncol(IndData)){
+      denoms <- IndData %>% dplyr::select(
+        dplyr::starts_with(c("UnitCode", "UnitName", "Year", "Group_", "Den_", "x_"))) # keep denominators to one side for the moment
+      message("Denominators detected - stored in .$Input$Denominators")
+    } else {
+      denoms <- NULL # this will have the effect of not attaching to the list
+      message("No denominators detected.")
+    }
+    message("-----------------")
+
+    # from this point, IndData is minus any denominators
+    IndData <- IndData1
+
+
+    ##------- Select indicators, if needed -----##
+
+    include0 <- include
+    exclude0 <- exclude
+
+    # if include is not specified, include everything
+    if(is.null(include)){include <- cnames1}
+
+    # the vector of indicators to include is everything in include, minus anything in exclude
+    include <- setdiff(include,exclude)
+
+    # select data and metadata accordingly
+    if(!is.null(include)){
+      if(any(!(include %in% IndMeta$IndCode)) & !preagg){
+        # note this is not implemented if preagg is TRUE, because aggregates are not present in IndMeta
+        warning("Some codes in include or exclude are not present in the indicator data and metadata. Ignoring any codes that are not found.")
+        include <- include[include %in% IndMeta$IndCode]
+      }
+
+      ind_data <- IndData %>% dplyr::select(dplyr::starts_with(
+        c("UnitCode", "UnitName", "Year", "Group_", "IndUnit", "x_")), include )
+      ind_meta <- IndMeta[IndMeta$IndCode %in% include,]
+    }
+
+    # sort ind_meta properly according to structure of index
+    # note: I sort according to the reversed order of the agg columns, so starting with the
+    # highest level of aggregation first then working down
+
+    ind_meta <- dplyr::arrange(ind_meta,
+                               rev(dplyr::across(dplyr::starts_with("Agg"))))
+
+    # I want the indicator cols to be in the same order as ind_meta, to avoid surprises
+    # Don't do for preagg though, because there would be extra cols.
+    if (!preagg){
+      ind_data <- dplyr::select(ind_data,
+                                dplyr::starts_with(c("UnitCode", "UnitName",
+                                                     "Year", "Group_", "IndUnit", "x_")), ind_meta$IndCode)
+    }
+
+    # Build list
+    COINobj <- list(Input = list(
+      IndData = ind_data,
+      IndMeta = ind_meta,
+      AggMeta = AggMeta,
+      Original = list(
+        IndData = IndDataOrig,
+        IndMeta = IndMeta,
+        AggMeta = AggMeta
+      )))
     #Parameters = NULL, # for various model parameters (will be populated in a min)
     #Analysis = NULL, # for analysis of missing data, correlation etc
     #Method = NULL) # a record of the methodology applied to build the index
 
-  # add denoms separately - this is because if it is NULL it will disappear
-  COINobj$Input$Denominators = denoms
+    # add denoms separately - this is because if it is NULL it will disappear
+    COINobj$Input$Denominators = denoms
 
-  # Add $Data - depends on preagg
-  if(preagg){
+    # Add $Data - depends on preagg
+    if(preagg){
 
-    COINobj$Data = list(PreAggregated = ind_data)
+      COINobj$Data = list(PreAggregated = ind_data)
 
-    # Check that codes in the two tables match, save to list
-    if (!setequal(cnames1, c(IndMeta$IndCode, AggMeta$Code))){
-      stop("Indicator/agg codes in metadata tables and indicator table are not the same. Please correct.")
-    }
-
-  } else {
-
-    COINobj$Data = list(Raw = ind_data) # for various datasets as they emerge (raw, treated, etc.)
-
-    # Check that codes in the two tables match, save to list
-    if (!setequal(cnames1,IndMeta$IndCode)){
-      stop("Indicator codes in metadata table and indicator table are not the same. Please correct.")
-    }
-  }
-
-  # add some info if by-year data was used
-  if(!is.null(use_year) & impute_latest){
-    COINobj$Analysis$Years$DataYears <- l_imp$DataYears
-    COINobj$Analysis$Years$ImpTable <- l_imp$ImpTable
-    COINobj$Analysis$Years$NImputed <- l_imp$NImputed
-  }
-
-  # Check for duplicates
-  if(anyDuplicated(cnames1) != 0){
-    stop("Duplicate indicator codes detected - please ensure indicator codes are unique and try again.")
-  }
-  if(anyDuplicated(ind_data$UnitCode) != 0){
-    stop("Duplicate unit codes detected - please ensure unit codes are unique and try again.")
-  }
-  if(anyDuplicated(c(ind_data$UnitCode, cnames1)) != 0){
-    stop("At least one unit code is the same as an indicator code. Please make sure all codes are unique.")
-  }
-
-  message("-----------------")
-  message("Indicator codes cross-checked and OK.")
-  message("-----------------")
-  COINobj$Parameters$NInd <- length(ind_meta$IndCode) # save to list
-  COINobj$Parameters$IndCodes <- ind_meta$IndCode # save to list
-  message(paste("Number of indicators =",COINobj$Parameters$NInd))
-  message(paste("Number of units =", dplyr::n_distinct(ind_data$UnitCode, na.rm = TRUE)))
-
-  # COMMENTED out because no multi-year support at the moment
-  # if (ncol(dplyr::select(ind_data,dplyr::starts_with("Year"))) > 0){
-  #   message(paste("Number of reference years of data =",
-  #                 dplyr::n_distinct(dplyr::select(ind_data,dplyr::starts_with("Year")))))
-  #   message(paste("Years from",min(dplyr::select(ind_data,starts_with("Year"))),
-  #                 "to", max(dplyr::select(ind_data,dplyr::starts_with("Year")))))
-  # } else {
-  #   message("No Year column detected in input data. Assuming you only have one year of data.")
-  # }
-
-  # Check aggregation levels present and say how many
-  agg_cols <- ind_meta %>% dplyr::select(dplyr::starts_with("Agg"))
-  # In case no aggregation columns present
-  if(is.null(agg_cols)){
-    stop("No aggregation columns detected in IndMeta. Aggregation column names must start with 'Agg'.")
-  }
-  n_agg_levels <- length(agg_cols)
-  COINobj$Parameters$Nlevels <- n_agg_levels + 1 # add 1 because indicator level not included
-
-  # list with aggregation group names in, for each level
-  AggCodeslist <- vector(mode = "list", length = n_agg_levels)
-  for (ii in 1:n_agg_levels){
-    AggCodeslist[[ii]] <- AggMeta$Code[AggMeta$AgLevel==ii+1]
-  }
-  COINobj$Parameters$AggCodes <- AggCodeslist
-
-  # check for duplicates in aggmeta
-  if(anyDuplicated(AggMeta$Code) != 0){
-    stop("Duplicate codes found in AggMeta - please check.")
-  }
-
-  # run a check to make sure that each code is only assigned to ONE parent and not to multiple parents
-  fwk <- ind_meta %>% dplyr::select(.data$IndCode, dplyr::starts_with("Agg"))
-
-  for (ii in 1:(ncol(fwk)-1)){
-    # get aggregation col plus its parent column
-    child_parent <- fwk[c(ii, ii + 1)]
-    # remove any duplicates (full rows)
-    child_parent <- unique(child_parent)
-    # at this point, each CHILD should only be present once. Otherwise it is being assigned to multiple parents
-    if(anyDuplicated(child_parent[1]) != 0){
-      stop(paste0("You have assigned an indicator or aggregate to more than one parent. This was detected in Level ", ii, ". Please fix."))
-    }
-  }
-
-  if (n_agg_levels > 0){
-
-    message(paste("Number of aggregation levels =", n_agg_levels, "above indicator level."))
-    message("-----------------")
-
-    # Loop through aggregation levels. Get names of agg groups and store, plus print to console.
-    for (agg_no in 1:n_agg_levels){
-
-      agg_names <- COINobj$Parameters$AggCodes[[agg_no]]
-      n_agg_groups <- length(agg_names)
-      message(paste("Aggregation level",agg_no,"with",n_agg_groups,"aggregate groups:",paste0(agg_names, collapse=", ")))
-
-      agg_names2 <- unique(agg_cols[[agg_no]]) # cross check to see if agg names match
-
-      if (!setequal(agg_names,agg_names2)){
-        stop(paste0("Aggregation codes in framework are not consistent with metadata - this occured in Level ", agg_no+1))
-      }  else {
-        message("Cross-check between metadata and framework = OK.")
+      # Check that codes in the two tables match, save to list
+      if (!setequal(cnames1, c(IndMeta$IndCode, AggMeta$Code))){
+        stop("Indicator/agg codes in metadata tables and indicator table are not the same. Please correct.")
       }
 
+    } else {
+
+      COINobj$Data = list(Raw = ind_data) # for various datasets as they emerge (raw, treated, etc.)
+
+      # Check that codes in the two tables match, save to list
+      if (!setequal(cnames1,IndMeta$IndCode)){
+        stop("Indicator codes in metadata table and indicator table are not the same. Please correct.")
+      }
     }
 
+    # add some info if by-year data was used
+    if(!is.null(use_year) & impute_latest){
+      COINobj$Analysis$Years$DataYears <- l_imp$DataYears
+      COINobj$Analysis$Years$ImpTable <- l_imp$ImpTable
+      COINobj$Analysis$Years$NImputed <- l_imp$NImputed
+    }
+
+    # Check for duplicates
+    if(anyDuplicated(cnames1) != 0){
+      stop("Duplicate indicator codes detected - please ensure indicator codes are unique and try again.")
+    }
+    if(anyDuplicated(ind_data$UnitCode) != 0){
+      stop("Duplicate unit codes detected - please ensure unit codes are unique and try again. If you have panel data, set use_year.")
+    }
+    if(anyDuplicated(c(ind_data$UnitCode, cnames1)) != 0){
+      stop("At least one unit code is the same as an indicator code. Please make sure all codes are unique.")
+    }
+
+    message("-----------------")
+    message("Indicator codes cross-checked and OK.")
+    message("-----------------")
+    COINobj$Parameters$NInd <- length(ind_meta$IndCode) # save to list
+    COINobj$Parameters$IndCodes <- ind_meta$IndCode # save to list
+    message(paste("Number of indicators =",COINobj$Parameters$NInd))
+    message(paste("Number of units =", dplyr::n_distinct(ind_data$UnitCode, na.rm = TRUE)))
+
+    # Check aggregation levels present and say how many
+    agg_cols <- ind_meta %>% dplyr::select(dplyr::starts_with("Agg"))
+    # In case no aggregation columns present
+    if(is.null(agg_cols)){
+      stop("No aggregation columns detected in IndMeta. Aggregation column names must start with 'Agg'.")
+    }
+    n_agg_levels <- length(agg_cols)
+    COINobj$Parameters$Nlevels <- n_agg_levels + 1 # add 1 because indicator level not included
+
+    # list with aggregation group names in, for each level
+    AggCodeslist <- vector(mode = "list", length = n_agg_levels)
+    for (ii in 1:n_agg_levels){
+      AggCodeslist[[ii]] <- AggMeta$Code[AggMeta$AgLevel==ii+1]
+    }
+    COINobj$Parameters$AggCodes <- AggCodeslist
+
+    # check for duplicates in aggmeta
+    if(anyDuplicated(AggMeta$Code) != 0){
+      stop("Duplicate codes found in AggMeta - please check.")
+    }
+
+    # run a check to make sure that each code is only assigned to ONE parent and not to multiple parents
+    fwk <- ind_meta %>% dplyr::select(.data$IndCode, dplyr::starts_with("Agg"))
+
+    for (ii in 1:(ncol(fwk)-1)){
+      # get aggregation col plus its parent column
+      child_parent <- fwk[c(ii, ii + 1)]
+      # remove any duplicates (full rows)
+      child_parent <- unique(child_parent)
+      # at this point, each CHILD should only be present once. Otherwise it is being assigned to multiple parents
+      if(anyDuplicated(child_parent[1]) != 0){
+        stop(paste0("You have assigned an indicator or aggregate to more than one parent. This was detected in Level ", ii, ". Please fix."))
+      }
+    }
+
+    if (n_agg_levels > 0){
+
+      message(paste("Number of aggregation levels =", n_agg_levels, "above indicator level."))
+      message("-----------------")
+
+      # Loop through aggregation levels. Get names of agg groups and store, plus print to console.
+      for (agg_no in 1:n_agg_levels){
+
+        agg_names <- COINobj$Parameters$AggCodes[[agg_no]]
+        n_agg_groups <- length(agg_names)
+        message(paste("Aggregation level",agg_no,"with",n_agg_groups,"aggregate groups:",paste0(agg_names, collapse=", ")))
+
+        agg_names2 <- unique(agg_cols[[agg_no]]) # cross check to see if agg names match
+
+        if (!setequal(agg_names,agg_names2)){
+          stop(paste0("Aggregation codes in framework are not consistent with metadata - this occured in Level ", agg_no+1))
+        }  else {
+          message("Cross-check between metadata and framework = OK.")
+        }
+
+      }
+
+    } else {
+
+      warning("No aggregation levels were detected.")
+
+    }
+
+    # Add framework (useful in many functions)
+    COINobj$Parameters$Structure <- fwk
+
+    message("-----------------")
+
+    #------- Also get weights for all levels
+    agg_cols <- ind_meta %>% dplyr::select(dplyr::starts_with("Agg"))
+    n_agg_levels <- length(agg_cols)
+
+    # want to check that weights are numeric and not accidentally character
+    if(!is.numeric(ind_meta$IndWeight)){
+      stop("Indicator weights (in IndMeta) not numeric - please check data was imported correctly.")
+    }
+    if(!is.numeric(AggMeta$Weight)){
+      stop("Weights in AggMeta are not numeric - please check data was imported correctly.")
+    }
+
+    agweights <- data.frame(AgLevel = 1,
+                            Code = ind_meta$IndCode,
+                            Weight = ind_meta$IndWeight)
+
+    agweights <- rbind(agweights,
+                       AggMeta[c("AgLevel", "Code", "Weight")])
+
+    # squirrel away in object
+    COINobj$Parameters$Weights$Original <- agweights
+
+    #------- Create a lookup dictionary for codes <--> names
+    # this is like a lookup table of all indicator/agg codes and names
+    COINobj$Parameters$Code2Name <- rbind(
+      cbind(ind_meta$IndCode, ind_meta$IndName),
+      cbind(AggMeta$Code, AggMeta$Name) ) %>% as.data.frame()
+    colnames(COINobj$Parameters$Code2Name) <- c("AggCode", "AggName")
+
+    if(anyDuplicated(COINobj$Parameters$Code2Name$AggCode) != 0){
+      stop("Duplicate codes found between indicators and aggregates - please check.")
+    }
+
+    #------- Last bits
+
+    # record function arguments
+    COINobj$Method$assemble$include <- include0
+    COINobj$Method$assemble$exclude <- exclude0
+    COINobj$Method$assemble$preagg <- preagg
+    COINobj$Method$assemble$use_year <- use_year
+    COINobj$Method$assemble$impute_latest <- impute_latest
+
+    class(COINobj) <- "COIN" # assigns a "COIN" class to the list. Helpful for later on.
+
+    return(COINobj)
+
+  }
+
+  ##----- MAKE COIN(S) -----
+  # We now run the IndData(s) though the makeCOIN function. IndMeta and AggMeta remain the same.
+
+  if(is.null(use_year)){
+    # No panel data. We send IndData to the function
+    return(makeCOIN(IndData))
   } else {
-
-    warning("No aggregation levels were detected.")
-
+    if(length(yrs)==1){
+      # A single IndData has been created from a panel data set
+      return(makeCOIN(IndData))
+    } else {
+      # Multiple IndDatas have been created from a panel data set
+      COINlist <- lapply(IndDatas, makeCOIN)
+      # make a wallet (a data frame of COINs)
+      wallet <- tibble::tibble(Time = yrs, COIN = COINlist)
+      # NOTE NEED TO CHECK METHOD PARAMS IN THIS CASE, SO THAT COINS IN WALLET CAN REGEN PROPERLY
+      #class(wallet) <- "wallet"
+      return(wallet)
+    }
   }
-
-  message("-----------------")
-
-  #------- Also get weights for all levels
-  agg_cols <- ind_meta %>% dplyr::select(dplyr::starts_with("Agg"))
-  n_agg_levels <- length(agg_cols)
-
-  # want to check that weights are numeric and not accidentally character
-  if(!is.numeric(ind_meta$IndWeight)){
-    stop("Indicator weights (in IndMeta) not numeric - please check data was imported correctly.")
-  }
-  if(!is.numeric(AggMeta$Weight)){
-    stop("Weights in AggMeta are not numeric - please check data was imported correctly.")
-  }
-
-  agweights <- data.frame(AgLevel = 1,
-                          Code = ind_meta$IndCode,
-                          Weight = ind_meta$IndWeight)
-
-  agweights <- rbind(agweights,
-                     AggMeta[c("AgLevel", "Code", "Weight")])
-
-  # squirrel away in object
-  COINobj$Parameters$Weights$Original <- agweights
-
-  #------- Create a lookup dictionary for codes <--> names
-  # this is like a lookup table of all indicator/agg codes and names
-  COINobj$Parameters$Code2Name <- rbind(
-    cbind(ind_meta$IndCode, ind_meta$IndName),
-    cbind(AggMeta$Code, AggMeta$Name) ) %>% as.data.frame()
-  colnames(COINobj$Parameters$Code2Name) <- c("AggCode", "AggName")
-
-  if(anyDuplicated(COINobj$Parameters$Code2Name$AggCode) != 0){
-    stop("Duplicate codes found between indicators and aggregates - please check.")
-  }
-
-  #------- Last bits
-
-  # record function arguments
-  COINobj$Method$assemble$include <- include0
-  COINobj$Method$assemble$exclude <- exclude0
-  COINobj$Method$assemble$preagg <- preagg
-  COINobj$Method$assemble$use_year <- use_year
-  COINobj$Method$assemble$impute_latest <- impute_latest
-
-  class(COINobj) <- "COIN" # assigns a "COIN" class to the list. Helpful for later on.
-
-  return(COINobj)
 
 }
 
@@ -398,8 +451,8 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL,
 #' i.e. one per year. It then searches for any missing values in the target year, and replaces them with the equivalent points
 #' from previous years. It will replace using the most recently available point.
 #'
-#' @param IndData A data frame of indicator data, containing a `Year` column and with multiple observations for each unit code.
 #' @param use_year The year of data to extract and impute.
+#' @param IndData A data frame of indicator data, containing a `Year` column and with multiple observations for each unit code.
 #' @param impute_latest Logical: if `TRUE`, imputes missing data points using most recent value from previous years. If `FALSE`
 #' (default) simply extracts the data frame as is.
 #'
@@ -422,7 +475,7 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL,
 #' # We can now put them together
 #' IndData <- rbind(dat2018, dat2017, dat2016)
 #' # And extract the 2018 data, with missing data taken from previous years
-#' Imp <- extractYear(IndData, 2018, impute_latest = TRUE)
+#' Imp <- extractYear(2018, IndData, impute_latest = TRUE)
 #' # View which points have been imputed and the years of data used
 #' Imp$ImpTable
 #'
@@ -442,7 +495,7 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL,
 #'
 #' @export
 
-extractYear <- function(IndData, use_year, impute_latest = FALSE){
+extractYear <- function(use_year, IndData, impute_latest = FALSE){
 
   # Some checks
   if(is.null(IndData$Year)){
