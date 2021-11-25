@@ -99,7 +99,7 @@ compTable <- function(COIN1, COIN2, dset = "Raw", isel, COINnames = NULL, sort_b
 compTableMulti <- function(COINs, dset = "Aggregated", isel = "Index", tabtype = "Ranks", ibase = 1,
                            sort_table = TRUE, extra_cols = NULL){
 
-  if(any(!(sapply(COINs, is.coin)))){
+  if(any(!(sapply(COINs, is.COIN)))){
     stop("One or more elements of COINs argument is not a valid COIN. Please check.")
   }
 
