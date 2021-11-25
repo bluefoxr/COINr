@@ -4,17 +4,21 @@
 \alias{rankDF}
 \title{Convert a data frame to ranks}
 \usage{
-rankDF(df)
+rankDF(df, use_group = NULL)
 }
 \arguments{
 \item{df}{A data frame}
+
+\item{use_group}{An optional column of df (specified as a string) to use as a grouping variable. If specified, returns ranks
+inside each group present in this column.}
 }
 \value{
 A data frame equal to the data frame that was input, but with any numerical columns replaced with ranks.
 }
 \description{
 Replaces all numerical columns of a data frame with their ranks. Uses sport ranking, i.e. ties
-share the highest rank place. Ignores non-numerical columns. See \code{\link[=rank]{rank()}}.
+share the highest rank place. Ignores non-numerical columns. See \code{\link[=rank]{rank()}}. Optionally, returns in-group ranks
+using a specified grouping column.
 }
 \examples{
 # some random data, with a column of characters
@@ -22,6 +26,9 @@ df <- data.frame(RName = c("A", "B", "C"),
 Score1 = runif(3), Score2 = runif(3))
 # convert to ranks
 rankDF(df)
+# grouped ranking - use some example data
+df1 <- ASEMIndData[c("UnitCode", "Group_GDP", "Goods", "LPI")]
+rankDF(df1, use_group = "Group_GDP")#'
 
 }
 \seealso{
