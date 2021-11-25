@@ -11,6 +11,10 @@
 #' You can also specify which aggregation level to target, using the `aglev` argument. See examples
 #' below, and in particular the [COINr online documentation](https://bluefoxr.github.io/COINrDoc/helper-functions.html#selecting-data-sets-and-indicators).
 #'
+#' As well as selection of columns, you can also filter to specific rows using unit codes as a reference, and/or
+#' grouping variables. This is done using the `usel` and `use_group` arguments. This gives the ability to isolate
+#' a unit inside a given group, for example.
+#'
 #' [getIn()] is used by many COINr functions for plotting, accessing and reporting subsets of indicator data.
 #'
 #' @param obj An input object. The function can handle either the COIN object, or a data frame.
@@ -21,6 +25,15 @@
 #' an aggregation group name, and data will be subsetted accordingly. NOTE does not work with multiple aggregate group names.
 #' @param aglev The aggregation level to take indicator data from. Integer from 1 (indicator level)
 #' to N (top aggregation level, typically the index).
+#' @param usel An optional unit code, or character vector of unit codes to use to filter the data. The returned data will
+#' only include rows corresponding to the `usel`, unless `usel = NULL` (default).
+#' @param use_group An optional grouping variable and group to filter data from. Of the format `list(Group_Var = Group)`,
+#' where `Group_Var` is a Group_ column that must be present in the selected data set, and `Group` is a specified group
+#' inside that grouping variable. This filters the selected data to only include rows from the specified group. Alternatively,
+#' this argument can work in conjunction with `usel`: if `usel` is specified, `use_group` may be input as a string simply
+#' representing a group column. In that case the data will be filtered to include only rows from the group(s) which the `usel`
+#' belong to. If `usel` is specified and `use_group` is specified as a list, `usel` will take precedence and `use_group`
+#' will be ignored.
 #' @param justnumeric Logical: if `TRUE`, removes any non-numeric columns from `ind_data_only`. Otherwise keeps all except those.
 #'
 #' @importFrom magrittr extract
@@ -47,10 +60,11 @@
 #'
 #' @export
 
-getIn <- function(obj, dset = "Raw", icodes = NULL, aglev = NULL, justnumeric = TRUE){
+getIn <- function(obj, dset = "Raw", icodes = NULL, aglev = NULL,
+                  usel = NULL, use_group = NULL, justnumeric = TRUE){
 
   # Check to see what kind of input we have.
-  if (is.coin(obj)){ # COIN obj
+  if (is.COIN(obj)){ # COIN obj
 
     otype <- "COINobj"
 
@@ -182,6 +196,63 @@ getIn <- function(obj, dset = "Raw", icodes = NULL, aglev = NULL, justnumeric = 
     }
   }
 
+  # finally 2: we have to do some row filtering by usel and groups
+  # we find which rows to filter first depending on settings
+  if(!is.null(usel)){
+
+    if(!exists("UnitCode",ind_data)){
+      stop("No UnitCode column found in data.")
+    }
+    if(all(!(usel %in% ind_data$UnitCode))){
+      stop("None of usel are found in the selected data.")
+    }
+    if(any(!(usel %in% ind_data$UnitCode))){
+      warning("One or more usel not found in the selected data - returning what was found.")
+    }
+
+    # we need to filter by usel
+    if(is.null(use_group)){
+      # simple case, pick usel rows
+      rowfilter <- ind_data$UnitCode %in% usel
+    } else {
+      # more complicated, also have groups to think about
+      if(is.list(use_group)){
+        # a specific group is specified, however, usel takes precedence
+        rowfilter <- ind_data$UnitCode %in% usel
+      } else if (is.character(use_group)){
+        # filter to group(s) of usel
+        usel_groups <- ind_data[[use_group]][ind_data$UnitCode %in% usel] |> unique()
+        rowfilter <- ind_data[[use_group]] %in% usel_groups
+      } else {
+        stop("use_group must either be a list or string.")
+      }
+    }
+
+  } else if (!is.null(use_group) & is.null(usel)){
+
+    # here, only use_group is specified
+    if(is.list(use_group)){
+      # some checks first
+      stopifnot(length(use_group)==1)
+      stopifnot(names(use_group) %in% colnames(ind_data))
+      stopifnot(use_group[[1]] %in% ind_data[[names(use_group)]])
+      # a specific group is specified, however, usel takes precedence
+      rowfilter <- ind_data[[names(use_group)]] == use_group[[1]]
+    } else if (is.character(use_group)){
+      stop("If usel is not specified, use_group needs to be specified as a list.")
+    } else {
+      stop("use_group must either be a list or string.")
+    }
+
+  }
+
+  # here is where the rows are actually filtered
+  if(!is.null(usel)|!is.null(use_group)){
+    ind_data <- ind_data[rowfilter,]
+    ind_data_only <- ind_data_only[rowfilter,]
+    UnitCodes <- UnitCodes[rowfilter]
+  }
+
   out <- list(IndCodes = IndCodes,
               IndNames = IndNames,
               ind_data = ind_data,
@@ -228,7 +299,7 @@ roundDF <- function(df, decimals = 2){
 #' # build the ASEM COIN
 #' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 #' # check class
-#' stopifnot(is.coin(ASEM))
+#' stopifnot(is.COIN(ASEM))
 #'
 #' @seealso
 #' * [getIn()] Get subset of indicator data from either a COIN or data frame.
@@ -238,11 +309,122 @@ roundDF <- function(df, decimals = 2){
 #'
 #' @export
 
-is.coin <- function(obj){
-  # Check to see what kind of input we have.
-  if ("COIN" %in% class(obj)){
-    TRUE
+is.COIN <- function(obj){
+  inherits(obj, "COIN")
+}
+
+
+#' Print COIN
+#'
+#' Some details about the COIN
+#'
+#' @param x A COIN
+#' @param ... Arguments to be passed to or from other methods.
+#'
+#' @examples
+#' ASEM <- build_ASEM()
+#' print(ASEM)
+#'
+#' @importFrom utils head
+#'
+#' @return Text output
+#'
+#' @export
+
+print.COIN <- function(x, ...){
+
+  COIN <- x
+
+  cat("--------------\n")
+  cat("A COIN with...\n")
+  cat("--------------\n")
+  # Input
+  # Units
+  firstunits <- utils::head(COIN$Input$IndData$UnitCode, 3) |>
+    paste0(collapse = ", ")
+  if(length(COIN$Input$IndData$UnitCode)>3){
+    firstunits <- paste0(firstunits, ", ...")
+  }
+
+  # Indicators
+  firstinds <- utils::head(COIN$Input$IndMeta$IndCode, 3) |>
+    paste0(collapse = ", ")
+  if(length(COIN$Input$IndMeta$IndCode)>3){
+    firstinds <- paste0(firstinds, ", ...")
+  }
+
+  # Denominators
+  denoms <- names(COIN$Input$Denominators)
+  if(!is.null(denoms)){
+    denoms <- denoms[startsWith(denoms, "Den_")]
+    ndenom <- length(denoms)
+    denoms <- utils::head(denoms, 3) |>
+      paste0(collapse = ", ")
+    if(ndenom>3){
+      denoms <- paste0(denoms, ", ...")
+    }
   } else {
-    FALSE
+    denoms <- "none"
+    ndenom <- 0
+  }
+  # groups
+  grps <- names(COIN$Input$IndData)[startsWith(names(COIN$Input$IndData), "Group_")]
+  if(length(grps)>0){
+    ngrp <- length(grps)
+    grps <- utils::head(grps, 3) |>
+      paste0(collapse = ", ")
+    if(ngrp>3){
+      grps <- paste0(grps, ", ...")
+    }
+  } else {
+    grps <- "none"
+    ngrp <- 0
+  }
+
+
+  cat("Input:\n")
+  cat("  Units: ", nrow(COIN$Input$IndData), " (", firstunits, ")\n", sep = "")
+  cat(paste0("  Indicators: ", COIN$Parameters$NInd, " (", firstinds, ")\n"))
+  cat(paste0("  Denominators: ", ndenom, " (", denoms, ")\n"))
+  cat(paste0("  Groups: ", ngrp, " (", grps, ")\n\n"))
+
+
+  # Structure
+  fwk <- COIN$Parameters$Structure
+
+  cat("Structure:\n")
+  if(is.null(fwk)){
+    fwk <- COIN$Input$IndMeta[
+      colnames(COIN$Input$IndMeta) |>
+        startsWith(c("Agg"))
+    ]
+    fwk <- cbind(COIN$Input$IndMeta$IndCode, fwk)
+  }
+  for(ii in 1:ncol(fwk)){
+    codes <- unique(fwk[[ii]])
+    nuniq <- length(codes)
+    first3 <- utils::head(codes, 3)
+    if(length(codes)>3){
+      first3 <- paste0(first3, collapse = ", ")
+      first3 <- paste0(first3, ", ...")
+    } else {
+      first3 <- paste0(first3, collapse = ", ")
+    }
+
+    if(ii==1){
+      cat(paste0("  Level ", ii, ": ", nuniq, " indicators (", first3,") \n"))
+    } else {
+      cat(paste0("  Level ", ii, ": ", nuniq, " groups (", first3,") \n"))
+    }
+
+  }
+  cat("\n")
+
+  # Data sets
+  cat("Data sets:\n")
+  dsets <- names(COIN$Data)
+  for(dset in dsets){
+    nunit <- nrow(COIN$Data[[dset]])
+    cat(paste0("  ", dset, " (", nunit, " units)\n"))
   }
 }
