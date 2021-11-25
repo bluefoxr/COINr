@@ -34,7 +34,7 @@ resultsDash <- function(COIN, dset = "Aggregated"){
 
   if(interactive()){
 
-    if(!is.coin(COIN)){
+    if(!is.COIN(COIN)){
       stop("This function only supports COINs as inputs.")
     }
 
