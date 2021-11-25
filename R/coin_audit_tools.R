@@ -59,7 +59,7 @@ removeElements <- function(COIN, aglev, isel, quietly = FALSE){
 
   # check input first
   stopifnot(!is.null(COIN$Data$Aggregated),
-            is.coin(COIN),
+            is.COIN(COIN),
             aglev > 0)
 
   nlev <- COIN$Parameters$Nlevels
