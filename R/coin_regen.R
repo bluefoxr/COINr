@@ -30,7 +30,7 @@
 
 regen <- function(COINold, quietly = FALSE){
 
-  if(!is.coin(COINold)){
+  if(!is.COIN(COINold)){
     stop("This function only works on a COIN.")
   }
 
