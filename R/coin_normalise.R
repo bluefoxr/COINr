@@ -63,7 +63,7 @@ normalise <- function(COIN, ntype = "minmax", npara = NULL,
   }
 
   # some checks
-  stopifnot(is.coin(COIN))
+  stopifnot(is.COIN(COIN))
   if(!is.null(npara)){
     stopifnot(is.list(npara))
   }
