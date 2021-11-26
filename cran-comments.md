@@ -1,10 +1,7 @@
 ## Resubmission
 
-This is a resubmission following CRAN comments (an error on r-oldrel-macos-x86_64). Now all other distributions seem to work fine. Hopefully this is the the last correction for now.
-
-* Required R >= 4.0.0
-* Removed a version requirement for stats package
-* Corrected
+This is an update to v.0.6.0. Updates are described in NEWS.md.
+There were no errors or warnings (see below).
 
 Thanks.
 
@@ -14,10 +11,4 @@ Thanks.
 - R-hub fedora-clang-devel (r-devel)
 
 ## R CMD check results
-> On windows-x86_64-devel (r-devel), ubuntu-gcc-release (r-release), fedora-clang-devel (r-devel)
-  checking CRAN incoming feasibility ... NOTE
-  Maintainer: 'William Becker <william.becker@bluefoxdata.eu>'
-  
-  Days since last update: 6
-
-0 errors √ | 0 warnings √ | 1 note x
+0 errors √ | 0 warnings √ | 0 notes √
