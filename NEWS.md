@@ -1,4 +1,8 @@
-# COINr 0.6
+# COINr 0.6.1
+
+* Removed dependency on new native pipe so now runs again on R > 4.0
+
+# COINr 0.6.0
 
 * New plot function `plotIndDot()` for plotting single indicators with possibility to label units
 * Added `print` method for COIN class. More methods to come.

@@ -217,13 +217,13 @@ plotCorr <- function(COIN, dset = "Raw", icodes = NULL, aglevs = 1, cortype = "p
       # for family, we always plot boxes
 
       # isolate cols of things we are correlating. Here all levels above current.
-      acls <- aggcols[min(aglevs):ncol(aggcols)] |> unique()
+      acls <- unique(aggcols[min(aglevs):ncol(aggcols)])
       # filter out to current set of indicators
       acls <- acls[unlist(acls[1]) %in% unlist(unique(crtable[2])), ]
       # now we need to iterate over columns, excluding the first one
       for(icol in 2:ncol(acls)){
         # isolate the column of interest
-        parents <- acls[icol] |> unlist()
+        parents <- unlist(acls[icol])
         # starting and ending indices of the rectangles
         yends <- match(unique(parents), parents)
         yends <- length(ord2) - yends + 1.5
@@ -244,12 +244,12 @@ plotCorr <- function(COIN, dset = "Raw", icodes = NULL, aglevs = 1, cortype = "p
       }
 
       # isolate cols of things we are correlating, plus box level
-      acls <- aggcols[c(aglevs[1], box_level)] |> unique()
+      acls <- unique(aggcols[c(aglevs[1], box_level)])
       # filter out to current set of indicators
       acls <- acls[unlist(acls[1]) %in% unlist(unique(crtable[1])), ]
       # we need four vectors for annotate: xmin, xmax, ymin and ymax
       # actually xmin=ymin and xmax=ymax
-      parents <- acls[2] |> unlist()
+      parents <- unlist(acls[2])
       # starting indices of the rectangles
       starts <- match(unique(parents), parents)
       # ends are the same, but shifted one along and with the last index included
@@ -267,11 +267,11 @@ plotCorr <- function(COIN, dset = "Raw", icodes = NULL, aglevs = 1, cortype = "p
       } else {
 
         # isolate cols of things we are correlating, plus box level
-        acls <- aggcols[c(aglevs[2], box_level)] |> unique()
+        acls <- unique(aggcols[c(aglevs[2], box_level)])
         # filter out to current set of indicators
         acls <- acls[unlist(acls[1]) %in% unlist(unique(crtable[2])), ]
         # get parent codes
-        parents <- acls[2] |> unlist()
+        parents <- unlist(acls[2])
         # starting indices of the rectangles
         ystarts <- match(unique(parents), parents) - 0.5
         # ends are the same, but shifted one along and with the last index included

@@ -221,7 +221,7 @@ getIn <- function(obj, dset = "Raw", icodes = NULL, aglev = NULL,
         rowfilter <- ind_data$UnitCode %in% usel
       } else if (is.character(use_group)){
         # filter to group(s) of usel
-        usel_groups <- ind_data[[use_group]][ind_data$UnitCode %in% usel] |> unique()
+        usel_groups <- unique(ind_data[[use_group]][ind_data$UnitCode %in% usel])
         rowfilter <- ind_data[[use_group]] %in% usel_groups
       } else {
         stop("use_group must either be a list or string.")
@@ -340,15 +340,13 @@ print.COIN <- function(x, ...){
   cat("--------------\n")
   # Input
   # Units
-  firstunits <- utils::head(COIN$Input$IndData$UnitCode, 3) |>
-    paste0(collapse = ", ")
+  firstunits <- paste0(utils::head(COIN$Input$IndData$UnitCode, 3), collapse = ", ")
   if(length(COIN$Input$IndData$UnitCode)>3){
     firstunits <- paste0(firstunits, ", ...")
   }
 
   # Indicators
-  firstinds <- utils::head(COIN$Input$IndMeta$IndCode, 3) |>
-    paste0(collapse = ", ")
+  firstinds <- paste0(utils::head(COIN$Input$IndMeta$IndCode, 3), collapse = ", ")
   if(length(COIN$Input$IndMeta$IndCode)>3){
     firstinds <- paste0(firstinds, ", ...")
   }
@@ -358,8 +356,7 @@ print.COIN <- function(x, ...){
   if(!is.null(denoms)){
     denoms <- denoms[startsWith(denoms, "Den_")]
     ndenom <- length(denoms)
-    denoms <- utils::head(denoms, 3) |>
-      paste0(collapse = ", ")
+    denoms <- paste0(utils::head(denoms, 3), collapse = ", ")
     if(ndenom>3){
       denoms <- paste0(denoms, ", ...")
     }
@@ -371,8 +368,7 @@ print.COIN <- function(x, ...){
   grps <- names(COIN$Input$IndData)[startsWith(names(COIN$Input$IndData), "Group_")]
   if(length(grps)>0){
     ngrp <- length(grps)
-    grps <- utils::head(grps, 3) |>
-      paste0(collapse = ", ")
+    grps <- paste0(utils::head(grps, 3), collapse = ", ")
     if(ngrp>3){
       grps <- paste0(grps, ", ...")
     }
@@ -395,8 +391,7 @@ print.COIN <- function(x, ...){
   cat("Structure:\n")
   if(is.null(fwk)){
     fwk <- COIN$Input$IndMeta[
-      colnames(COIN$Input$IndMeta) |>
-        startsWith(c("Agg"))
+        startsWith(colnames(COIN$Input$IndMeta), c("Agg"))
     ]
     fwk <- cbind(COIN$Input$IndMeta$IndCode, fwk)
   }

@@ -180,12 +180,13 @@ getResults <- function(COIN, tab_type = "Summ", use = "scores", order_by = NULL,
 rankDF <- function(df, use_group = NULL){
 
   if(is.null(use_group)){
-    df <- lapply(df, function(y) if(is.numeric(y)) rank(-1*y, na.last = "keep", ties.method = "min") else y) |>
-      data.frame()
+    df <- data.frame(
+      lapply(df, function(y) if(is.numeric(y)) rank(-1*y, na.last = "keep", ties.method = "min") else y)
+      )
   } else {
     stopifnot(use_group %in% colnames(df))
     # get groups
-    grps <- df[[use_group]] |> unlist() |> unique()
+    grps <- unique(unlist(df[[use_group]]))
     # I have to work over groups. To me the clearest way of doing this is with a for loop (sorry)
     dfold <- df
     for(grp in grps){
@@ -194,14 +195,15 @@ rankDF <- function(df, use_group = NULL){
       # exclude any NAs
       grprows[is.na(grprows)] <- FALSE
       # now work over all columns, but just for the current group rows
-      df[grprows,] <- lapply(dfold[grprows,], function(y) if(is.numeric(y)) rank(-1*y, na.last = "keep", ties.method = "min") else y) |>
-        data.frame()
+      df[grprows,] <- data.frame(
+        lapply(dfold[grprows,], function(y) if(is.numeric(y)) rank(-1*y, na.last = "keep", ties.method = "min") else y)
+      )
     }
 
     # now I have to fill in rows that have NA group values, with NAs
     if(any(is.na(df[[use_group]]))){
-      df[is.na(df[[use_group]]),] <- lapply(df[is.na(df[[use_group]]),], function(y) if(is.numeric(y)) NA else y) |>
-        data.frame()
+      df[is.na(df[[use_group]]),] <- data.frame(lapply(df[is.na(df[[use_group]]),], function(y) if(is.numeric(y)) NA else y)
+      )
     }
   }
 
@@ -649,7 +651,7 @@ getStrengthNWeak <- function(COIN, dset = NULL, usel = NULL, topN = 5, bottomN =
   # Also need to (optionally) remove minimum rank entries
   # (by min I mean MAX, i.e. min SCORE)
   if(min_discard){
-    rnks_min <- lapply(data_rnks[colnames(rnks_usel)], max, na.rm = T) |> as.data.frame()
+    rnks_min <-  as.data.frame(lapply(data_rnks[colnames(rnks_usel)], max, na.rm = T))
     rnks_usel <- rnks_usel[,!(rnks_usel == rnks_min)]
   }
 

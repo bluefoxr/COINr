@@ -127,7 +127,7 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL,
     # first we get the years to use
     if(is.character(use_year)){
       if(use_year=="all"){
-        yrs <- IndData$Year |> unique() |> sort()
+        yrs <-  sort(unique(IndData$Year))
       } else {
         stop("use_year not recogised. Should be numerical (vector) or 'all'.")
       }
@@ -135,7 +135,7 @@ assemble <- function(IndData, IndMeta, AggMeta, include = NULL, exclude = NULL,
       if(!all(use_year %in% IndData$Year)){
         stop("One or more of the time points in use_year not found in Year column of IndData.")
       }
-      yrs <- use_year |> sort()
+      yrs <- sort(use_year)
     }
 
     if(length(yrs)==1){

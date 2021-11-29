@@ -99,7 +99,7 @@ PCA. You can also try imputing data first to avoid this."))
     # Get cols of interest: the present one plus the parents
     agcols <- agcols[c(aglev, aglev + 1)]
     # Get parents of these codes
-    parents <- unique(agcols[(agcols[[1]] %in% IndCodes) ,2]) |> unlist()
+    parents <- unlist(unique(agcols[(agcols[[1]] %in% IndCodes) ,2]))
   } else {
     parents = "All"
   }
