@@ -1,3 +1,8 @@
+# COINr 0.6.1.9000
+
+* Added colour option to `plotframework()`
+* Fixed bug in `compareDF()` (resulting from tibbles vs data frames)
+
 # COINr 0.6.1
 
 * Removed dependency on new native pipe so now runs again on R > 4.0

@@ -288,7 +288,7 @@ compareDF <- function(df1, df2, matchcol, sigfigs = 5){
     details <- "Column names not the same."
   }
   # check row names same in matchcol
-  if(!setequal(df1[matchcol], df2[matchcol])){
+  if(!setequal(df1[[matchcol]], df2[[matchcol]])){
     sameanswer <- FALSE
     details <- "Elements in matchcol are not the same."
   }
