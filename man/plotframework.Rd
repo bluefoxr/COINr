@@ -4,10 +4,14 @@
 \alias{plotframework}
 \title{Interactive sunburst plot of index structure}
 \usage{
-plotframework(COIN)
+plotframework(COIN, seg_cols = NULL)
 }
 \arguments{
 \item{COIN}{COIN object, or list with first entry is the indicator metadata, second entry is the aggregation metadata}
+
+\item{seg_cols}{A character vector of colour codes, one for each segment in the plot. The length of this
+vector must be equal to the number of segments, i.e. the sum of the number of indicators and aggregates
+in each level.}
 }
 \value{
 Interactive sunburst plot built using \strong{plotly}. This can be edited further with \strong{plotly} commands.

@@ -8,6 +8,9 @@
 #' is ordered by descending order of the hierarchy (i.e. highest level, working downwards).
 #'
 #' @param COIN COIN object, or list with first entry is the indicator metadata, second entry is the aggregation metadata
+#' @param seg_cols A character vector of colour codes, one for each segment in the plot. The length of this
+#' vector must be equal to the number of segments, i.e. the sum of the number of indicators and aggregates
+#' in each level.
 #'
 #' @importFrom dplyr select starts_with pull ends_with
 #' @importFrom plotly plot_ly
@@ -24,18 +27,38 @@
 #'
 #' @export
 
-plotframework <- function(COIN){
+plotframework <- function(COIN, seg_cols = NULL){
 
   # get effective weights, labels and parents
   outW <- effectiveWeight(COIN)
 
-  fig <- plotly::plot_ly(
-    labels = outW$LabelsParents$Labels,
-    parents = outW$LabelsParents$Parents,
-    values = outW$EffectiveWeights,
-    type = 'sunburst',
-    branchvalues = 'total'
-  )
+  if(is.null(seg_cols)){
+    fig <- plotly::plot_ly(
+      labels = outW$LabelsParents$Labels,
+      parents = outW$LabelsParents$Parents,
+      values = outW$EffectiveWeights,
+      type = 'sunburst',
+      branchvalues = 'total'
+    )
+  } else {
+    stopifnot(is.vector(seg_cols),
+              is.character(seg_cols))
+    if(length(seg_cols) != length(outW$LabelsParents$Labels)){
+      stop(paste0("seg_cols is the wrong length: it needs to be a character vector of colour codes that is
+           the same length as the sum of all elements of the structure, in this case length should be ",
+                  length(outW$LabelsParents$Labels)))
+    }
+    fig <- plotly::plot_ly(
+      labels = outW$LabelsParents$Labels,
+      parents = outW$LabelsParents$Parents,
+      values = outW$EffectiveWeights,
+      type = 'sunburst',
+      branchvalues = 'total',
+      marker = list(colors = seg_cols)
+    )
+  }
+
+
 
   fig
 
