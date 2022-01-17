@@ -186,6 +186,7 @@ effectiveWeight <- function(COIN){
   lbls_prnts <- data.frame(Labels = lbls,
                            Parents = prnts) %>% unique() # remove repeated rows
 
+
   # also get effective weights as structured list, this is more useful outside of plotframework()
   if ("COIN" %in% class(COIN)){ # COIN obj
 
