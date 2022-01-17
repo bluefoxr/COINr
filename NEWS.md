@@ -1,3 +1,7 @@
+# COINr 0.8.0.9000
+
+This branch is for the development version of COINr 0.8, which will be heavily revamped. This is not meant to be a functional installation at the moment. Stay tuned.
+
 # COINr 0.6.1.9000
 
 * Added colour option to `plotframework()`
