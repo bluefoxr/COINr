@@ -18,6 +18,6 @@ Message if everything ok, else error messages.
 Checks the format of iData input to \code{\link[=new_coin]{new_coin()}}.
 }
 \examples{
-check_IndData(IndData_2020)
+check_iData(IndData_2020)
 
 }
