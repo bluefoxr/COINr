@@ -3,8 +3,9 @@
 **Full documentation for COINr is available here:** 
 https://bluefoxr.github.io/COINrDoc/
 
+# COINr <img src="man/images/COINr_logo.png" width="121px" height="140px" align="right" style="padding-left:10px;background-color:white;" />
 
-# About COINr
+## About
 
 COINr is a high-level R package which is the first fully-flexible development and analysis environment for composite indicators and scoreboards. The main features can be summarised as features for *building*, features for *analysis* and features for *visualisation and presentation*.
 
@@ -38,7 +39,7 @@ COINr also allows fast import from the [COIN Tool](https://knowledge4policy.ec.e
 
 In short, COINr aims to allow composite indicators to be developed and prototyped very quickly and in a structured fashion, with the results immediately available and able to be explored interactively. Although it is built in R, it is a high-level package that aims to make command simple and intuitive, with the hard work performed behind the scenes, therefore it is also accessible to less experienced R users.
 
-# Installation
+## Installation
 
 COINr is on CRAN and can be installed by running:
 
@@ -54,7 +55,7 @@ devtools::install_github("bluefoxr/COINr")
 
 This should directly install the package from Github, without any other steps. You may be asked to update packages. This might not be strictly necessary, so you can also try skipping this step.
 
-# Getting started
+## Getting started
 
 COINr needs a little reading and learning to understand properly. But once you have done that, it can be very powerful
 for developing composite indicators.
