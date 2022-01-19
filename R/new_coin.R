@@ -2,8 +2,30 @@
 #'
 #' Creates a new coin class object.
 #'
+#' The `exclude` argument can be used to exclude specified indicators. If this is specified, `.$Data$Raw`
+#' will be built excluding these indicators, as will all subsequent build operations. However the full data set
+#' will still be stored in `.$Log$new_coin`. The codes here should correspond to entries in the `iMeta$iCode`.
+#' This option is useful e.g. in generating alternative coins with different indicator sets, and can be included
+#' as a variable in a sensitivity analysis.
+#'
+#' The `split_to` argument allows panel data to be used. Panel data must have a `Time` column in `iData`, which
+#' consists of some numerical time variable, such as a year. Panel data has multiple observations for each `uCode`,
+#' one for each unique entry in `Time`. The `Time` column is required to be numerical, because it needs to be
+#' possible to order it. To split panel data, specify `split_to = "all"` to split to a single coin for each
+#' of the unique entries in `Time`. Alternatively, you can pass a vector of entries in `Time` which allows
+#' to split to a subset of the entries to `Time`.
+#'
+#' Splitting panel data results in a so-called "purse" class, which is a data frame of COINs, indexed by `Time`.
+#' See online documentation for more details (*TO ADD*).
+#'
 #' @param iData The indicator data and metadata of each unit
 #' @param iMeta Indicator metadata
+#' @param exclude Optional character vector of any indicator codes (`iCode`s) to exclude from the coin(s).
+#' @param split_to This is used to split panel data into multiple coins, a so-called "purse". Should be either
+#' `"all"`, or a subset of entries in `iData$Time`. See Details.
+#' @param level_names Optional character vector of names of levels. Must have length equal to the number of
+#' levels in the hierarchy (`max(iMeta$Level, na.rm = TRUE)`).
+#' @param quietly If `TRUE`, suppresses all messages
 #'
 #' @examples
 #' #
@@ -14,49 +36,182 @@
 #' @return A "coin" object
 #'
 #' @export
-new_coin <- function(iData, iMeta){
+new_coin <- function(iData, iMeta, exclude = NULL, split_to = NULL,
+                     level_names = NULL, quietly = FALSE){
 
-  # record function inputs
+  # WRITE TO LOG ------------------------------------------------------------
 
-  # check inputs, aiming to
-  # a. pick out any errors
-  # b. detect whether we want to generate multiple coins
+  coin <- vector(mode = "list", length = 0)
+  coin <- write_log(coin)
 
-  # somewhere we split to separate iDatas. Presumably iMeta should be the same still
+  # OVERALL CHECKS ----------------------------------------------------------
 
-  # We should generate uName if not present
-  # Generate iName if not present
+  # individual dfs
+  check_iData(iData, quietly = quietly)
+  check_iMeta(iMeta, quietly = quietly)
 
-  # perhaps any further checks on individual iData, iMeta?
+  # covert any tibbles to normal dfs.
+  if(inherits(iData, "tbl_df")){
+    iData <- as.data.frame(iData)
+  }
+  if(inherits(iMeta, "tbl_df")){
+    iMeta <- as.data.frame(iMeta)
+  }
 
-  # Now build coins - either call separate function or recursively?
+  # CROSS CHECKS
+  # Make sure iData codes are all in iMeta, excluding special codes
+  iData_codes <- colnames(iData)[colnames(iData) %nin% c("uCode", "uName", "Time")]
+  if(any(iData_codes %nin% iMeta$iCode)){
+    stop("Column names from iData not found in iMeta (excluding special columns).")
+  }
+  if(any(iMeta$iCode[iMeta$Type != "Aggregate"] %nin% colnames(iData))){
+    stop("Entries in iMeta$iCode not found in colnames(iData).")
+  }
 
-  # Decide to either extract denoms, groups, other "passed-through" variables or not
-  # I'm thinking yes because merge is fairly easy. Can have a get_dset func to automatically merge
 
-  # What happens in the panel case, if we end up with different number/set of units and indicators?
-  # Is this allowed?
+  # EXCLUDE INDICATORS ------------------------------------------------------
+  # Optionally exclude any specified indicators
 
-  # aglevel names (maybe input to new_coin?)
+  if(!is.null(exclude)){
 
-  # build list
+    stopifnot(is.character(exclude))
+    if(any(exclude %nin% iMeta$iCode)){
+      stop("One or more entries in exclude not found in iMeta$iCode...")
+    }
 
-  # Add lineage
+    iData <- iData[colnames(iData) %nin% exclude]
+    iMeta <- iMeta[iMeta$iCode %nin% exclude, ]
+  }
 
-  #
+  # GENERATE DEFAULT NAMES --------------------------------------------------
 
+  # default names are codes
+  if(is.null(iData$uName)){
+    iData$uName <- iData$uCode
+  }
+  if(is.null(iMeta$iName)){
+    iMeta$iName <- iMeta$iCode
+  }
+
+  # SORT DFS ----------------------------------------------------------------
+
+  # we need indicator codes
+  icodes <- iMeta$iCode[iMeta$Type == "Indicator"]
+  # also all codes not indicator codes (excluding uCode)
+  not_icodes <- names(iData)[names(iData) %nin% c("uCode", icodes)]
+
+  # This is not strictly necessary but may help later on
+  iMeta <- iMeta[order(iMeta$Level, iMeta$Parent),]
+  iData <- iData[c("uCode", not_icodes, icodes)]
+
+  # iData sorting depends on if we have panel data
+  is_panel <- length(unique(iData$Time)) > 1
+  if(is_panel){
+    iData <- iData[order(iData$Time, iData$uCode),]
+  } else {
+    iData <- iData[order(iData$uCode),]
+  }
+
+  # SPLIT PANEL DATA --------------------------------------------------------
+  # NOTE: splitting may cause different numbers of units in each coin, but the number of indicators
+  # should always be the same, even if some will have all-NAs.
+
+  # NOTE: we need to include the year imputation at some point here.
+
+  if(!is.null(split_to)){
+
+    # make sure we can split first
+    if(!is_panel){
+      stop("Cannot split to multiple coins because either iData$Time doesn't exist, or you have only
+           one unique entry in iData$Time.")
+    }
+
+    # now split
+    iData_list <- split_iData(iData, split_to = split_to)
+    # check
+    lapply(iData_list, check_iData)
+  } else {
+    iData_list <- list(iData)
+  }
+
+  # BUILD COINS -------------------------------------------------------------
+
+  # First make some mods to the "base" coin which are same for all coins
+  coin$Meta$Ind <- iMeta
+  coin$Meta$Lineage <- get_lineage(iMeta, level_names = level_names)
+  # we also need to forget about splitting, as if we regenerate one of
+  # the coins in the purse, this would cause an error
+  coin$Log$new_coin$split_to <- NULL
+
+  coinmaker <- function(iDatai){
+
+    # copy the "global" coin
+    coin_i <- coin
+
+    # Store data (only uCode plus indicators)
+    coin_i$Data$Raw <- iDatai[c("uCode", icodes)]
+
+    # alter Log to only include iData of the COIN (not whole panel)
+    coin_i$Log$new_coin$iData <- iDatai
+
+    # Extract denominators, groups and other non-indicator cols
+    coin_i$Meta$Unit <- iDatai[c("uCode", not_icodes)]
+
+    # class
+    class(coin_i) <- "coin"
+
+    # return
+    coin_i
+  }
+
+  # now run coinmaker on list of iData
+  coins <- lapply(iData_list, coinmaker)
+
+
+  # TWEAKS AND OUTPUT -------------------------------------------------------
+
+  # squash to single coin if only one in the list
+  if(length(coins)==1){
+
+    f_output <- coins[[1]]
+
+  } else {
+
+    # get time value for each coin
+    coin_times <- sapply(coins, function(x){
+      unique(x$Meta$Unit$Time)
+    })
+
+    f_output <- data.frame(Time = coin_times)
+    f_output$coin <- coins
+
+    class(f_output) <- "purse"
+  }
+
+  f_output
 }
 
 
 #' Check iData
 #'
-#' Checks the format of iData input to [new_coin()].
+#' Checks the format of `iData` input to [new_coin()]. This check must be passed to successfully build a new
+#' coin.
+#'
+#' The restrictions on `iData` are not extensive. It should be a data frame with only one required column
+#' `uCode` which gives the code assigned to each unit (alphanumeric, not starting with a number). All other
+#' columns are defined by corresponding entries in `iMeta`, with the following special exceptions:
+#'
+#' * `Time` is an optional column which allows panel data to be input, consisting of e.g. multiple rows for
+#' each `uCode`: one for each `Time` value. This can be used to split a set of panel data into multiple coins
+#' (a so-called "purse") which can be input to COINr functions. See [new_coin()] for more details.
+#' * `uName` is an optional column which specifies a longer name for each unit. If this column is not included,
+#' unit codes (`uCode`) will be used as unit names where required.
 #'
 #' @param iData A data frame of indicator data.
 #' @param quietly Set `TRUE` to suppress message if input is valid.
 #'
 #' @examples
-#' check_iData(IndData_2020)
+#' check_iData(ASEM_iData)
 #'
 #' @return Message if everything ok, else error messages.
 #'
@@ -93,6 +248,8 @@ check_iData <- function(iData, quietly = FALSE){
     if(!is.numeric(iData$Time)){
       stop("iData$Time is required to be a numeric vector.")
     }
+    # flag if panel data: more than one unique value in Time
+    is_panel <- length(unique(iData$Time)) > 1
   }
 
   # uName
@@ -105,9 +262,18 @@ check_iData <- function(iData, quietly = FALSE){
   # DUPLICATES --------------------------------------------------------------
 
   # Check unique uCodes
-  if(anyDuplicated(iData$uCode) > 1){
-    stop("Duplicates detected in iData$uCode.")
+  # This is different depending on whether iData is panel data or not
+
+  if(is_panel){
+    if(anyDuplicated(iData[c("uCode", "Time")]) > 1){
+      stop("Duplicate uCode/Time pairs found.")
+    }
+  } else {
+    if(anyDuplicated(iData$uCode) > 1){
+      stop("Duplicates detected in iData$uCode.")
+    }
   }
+
   # Check unique colnames
   if(anyDuplicated(colnames(iData)) > 1){
     stop("Duplicates detected in colnames(iData).")
@@ -128,7 +294,9 @@ check_iData <- function(iData, quietly = FALSE){
 
 #' Check iMeta
 #'
-#' Checks the format of `iMeta` input to [new_coin()].
+#' Checks the format of `iMeta` input to [new_coin()]. This performs a series of thorough checks to make sure
+#' that `iMeta` agrees with the specifications. This also includes checks to make sure the structure makes
+#' sense, there are no duplicates, and other things. `iMeta` must pass this check to build a new coin.
 #'
 #' Required columns for `iMeta` are:
 #' * `Level`: Level in aggregation, where 1 is indicator level, 2 is the level resulting from aggregating
@@ -171,7 +339,7 @@ check_iData <- function(iData, quietly = FALSE){
 #' `Aggregate` for aggregates created by aggregating indicators or other aggregates. Otherwise set to `Group`
 #' if the variable is not used for building the index but instead is for defining groups of units. Set to
 #' `Denominator` if the variable is to be used for scaling (denominating) other indicators. Finally, set to
-#' `Other` if the variable should be ignored but passed through.
+#' `Other` if the variable should be ignored but passed through. Any other entries here will cause an error.
 #'
 #' Note: this function requires the columns above as specified, but extra columns can also be added without
 #' causing errors.
@@ -188,110 +356,257 @@ check_iData <- function(iData, quietly = FALSE){
 
 check_iMeta <- function(iMeta, quietly = FALSE){
 
+  # INITIAL CHECKS ----------------------------------------------------------
+
   # check is df
   stopifnot(is.data.frame(iMeta))
 
   # if tibble, convert (no alarms and no surprises)
-  if(inherits(iData, "tbl_df")){
-    iData <- as.data.frame(iData)
+  if(inherits(iMeta, "tbl_df")){
+    iMeta <- as.data.frame(iMeta)
   }
 
   # REQUIRED COLS -----------------------------------------------------------
 
   # required cols
   required_cols <- c("Level", "iCode", "Parent", "Direction", "Type", "Weight")
-  if(!all(expected_cols %in% colnames(iMeta))){
+  if(!all(required_cols %in% colnames(iMeta))){
     stop("One or more expected col names not found (Level, iCode, Parent, Direction, Type, Weight).")
   }
 
   # check col types
   col_numeric <- c("Level", "Direction", "Weight")
-  col_char <- setdiff(expected_cols, col_numeric)
+  col_char <- setdiff(required_cols, col_numeric)
 
   # numeric
   num_check <- sapply(iMeta[col_numeric], is.numeric)
-
   if(!all(num_check)){
     stop(paste0("One or more of the following columns is not numeric: ", paste0(col_numeric, collapse = "/")))
   }
 
   # char
   char_check <- sapply(iMeta[col_char], is.character)
-
   if(!all(char_check)){
     stop(paste0("One or more of the following columns is not character: ", paste0(col_char, collapse = "/")))
   }
 
-  # specific checks on columns
-  # LEVEL should be in 1:100 (not expecting more than 100 levs)
+
+  # SPECIFIC COL CHECKS -----------------------------------------------------
+
+  # Level should be in 1:100 (not expecting more than 1000 levs)
   levs <- iMeta$Level[!is.na(iMeta$Level)] |>
     unique()
-  if(levs %nin% 1:100){
-    stop("LEVEL column has unexpected entries. Expected as positive integers.")
+  if(any(levs %nin% 1:1000)){
+    stop("Level column has unexpected entries. Expected as positive integers.")
   }
-  # LEVEL should not skip any levels
+  # Level should not skip any levels
   maxlev <- max(levs, na.rm = TRUE)
   if(!setequal(levs, 1:maxlev)){
-    stop("LEVEL column has missing entries between 1 and max(LEVEL).")
+    stop("Level column has missing entries between 1 and max(Level).")
   }
 
-
-  # PARENT should refer to codes already present in CODE
-  if(!all( (iMeta$PARENT %in% iMeta$CODE) |
-           is.na(iMeta$PARENT))){
-    stop("One or more entries in PARENT not found in CODE.")
+  # iCode should have no duplicates
+  if(anyDuplicated(iMeta$iCode) != 0){
+    stop("Duplicate entries in iCode.")
   }
-  # check that (a) only one entry for level 1 (index), (b) no parent at this level
-  top_level <- iMeta[iMeta$LEVEL==1,]
-  if(nrow(top_level) > 1){
-    stop("More than one entry for LEVEL = 1")
-  }
-  if(!is.na(top_level$PARENT)){
-    stop("Non-NA value for LEVEL = 1. NA expected because this is index level.")
-  }
-  # DIRECTION should only be -1 or 1
-  if(!all(iMeta$DIRECTION %in% c(-1, 1))){
-    stop("One or more entries in DIRECTION are not -1 or 1.")
-  }
-  # CODE should have no duplicates
-  if(anyDuplicated(iMeta$CODE) != 0){
-    stop("Duplicate entries in CODE.")
-  }
-  # CODE should not start with a number
-  num_start <- substring(iMeta$CODE, 1,1) %in% 0:9
+  # iCode should not start with a number
+  num_start <- substring(iMeta$iCode, 1,1) %in% 0:9
   if(any(num_start)){
-    stop("One or more entries in CODE begins with a number - this causes problems and is not allowed.")
+    stop("One or more entries in iCode begins with a number - this causes problems and is not allowed.")
+  }
+  # iCode no NAs are allowed
+  if(any(is.na(iMeta$iCode))){
+    stop("NAs found in iCode - NAs are not allowed.")
   }
 
-  # we should also check NUM column but not 100% sure on format, esp. for aggregates, yet.
+  # Direction should only be -1 or 1
+  dirs <- iMeta$Direction[!is.na(iMeta$Direction)]
+  if(any(dirs %nin% c(-1, 1))){
+    stop("One or more entries in Direction are not -1 or 1.")
+  }
 
-  # Check on structure
+  # Type has to be one of the following
+  itypes <- c("Indicator", "Aggregate", "Group", "Denominator", "Other")
+  if(any(iMeta$Type %nin% itypes)){
+    stop("One or more entries in Type is not allowed - should be one of Indicator, Aggregate, Group, Denominator, Other.")
+  }
+
+  ## THE FOLLOWING ARE OPTIONAL COLS
+
+  # if iName exists, should be alphanumeric
+  if(!is.null(iMeta$iName)){
+    if(!is.character(iMeta$iName)){
+      stop("iName is not a character vector, which is required. If you don't want to specify iName, this
+           column can also be removed.")
+    }
+    # also no NAs are allowed
+    if(any(is.na(iMeta$iName))){
+      stop("NAs found in iName - if iName is specified, NAs are not allowed.")
+    }
+  }
+  # if Unit exists, should be alphanumeric
+  if(!is.null(iMeta$Unit)){
+    if(!is.character(iMeta$Unit)){
+      stop("Unit is not a character vector, which is required. If you don't want to specify Unit, this
+           column can also be removed.")
+    }
+  }
+  # if Target exists, should be alphanumeric
+  if(!is.null(iMeta$Target)){
+    if(!is.numeric(iMeta$Target)){
+      stop("Target is not a numeric vector, which is required. If you don't want to specify Target, this
+           column can also be removed (it is only required for distance to target normalisation).")
+    }
+  }
+
+  # BETWEEN-COL CHECKS ------------------------------------------------------
+
+  # Level should be non-NA for all indicators and aggregates
+  if( any(is.na(iMeta$Level) & (iMeta$Type %in% c("Indicator", "Aggregate"))) ){
+    stop("NAs detected in Level for Indicator/Aggregates. All Indicators and Aggregates must have a numeric
+         Level defined.")
+  }
+  # Level should be 1 for indicators
+  if(any( (iMeta$Level != 1) & (iMeta$Type == "Indicator") )){
+    stop("One or more rows of Type 'Indicator' is assigned Level != 1. Indicators should all be at Level 1.")
+  }
+
+  # Direction should be non-NA for all indicators and aggregates
+  if( any(is.na(iMeta$Direction) & (iMeta$Type %in% c("Indicator", "Aggregate"))) ){
+    stop("NAs detected in Direction for Indicator/Aggregates. All Indicators and Aggregates must have a
+         Direction defined (either 1 or -1).")
+  }
+
+  # Weight should be non-NA for all indicators and aggregates
+  if( any(is.na(iMeta$Weight) & (iMeta$Type %in% c("Indicator", "Aggregate"))) ){
+    stop("NAs detected in Weight for Indicator/Aggregates. All Indicators and Aggregates must have a numeric
+         Weight defined.")
+  }
+
+  # Unit should be non-NA except for Groups
+  if( any(is.na(iMeta$Unit) & (iMeta$Type != "Group")) ){
+    stop("NAs detected in Unit: NAs are only allowed in Unit for Type = 'Group'.")
+  }
+
+  # Target be specified for anything at Level 1
+  if( any(is.na(iMeta$Target) & (iMeta$Type == "Indicator")) ){
+    stop("NAs detected in Target for Type = 'Indicator'. If targets are specified, they must be non-NA
+         for all indicators. You can also remove the Target column if you don't need targets.")
+  }
+
+  # Parent should refer to codes already present in iCode
+  notin_iCode <- (iMeta$Parent[!is.na(iMeta$Parent)] %nin% iMeta$iCode)
+  if(any(notin_iCode)){
+    stop("One or more entries in Parent not found in iCode.")
+  }
+  # check top level has NA for parent (no parent assigned)
+  if( any(!is.na(iMeta$Parent) & (iMeta$Parent == maxlev)) ){
+    stop("Entries found in Parent at the highest aggregation level. At the highest aggregation level
+         there are no parents, so so Parent should be NA.")
+  }
+
+  # STRUCTURE CHECKS --------------------------------------------------------
+
   # This function checks, for a given CODE/PARENT pair, whether the parent is in the level
   # immediately above. If not, reports error.
   levcheck <- function(x){
     chld <- x[1]
     prnt <- x[2]
     # level of child
-    chld_lev <- iMeta$LEVEL[iMeta$CODE == chld]
+    chld_lev <- iMeta$Level[iMeta$iCode == chld]
     # if we reach the top level, break
-    if(chld_lev == 1) return(NULL)
+    if(chld_lev == maxlev) return(NULL)
     # level of parent
-    prnt_lev <- iMeta$LEVEL[iMeta$CODE == prnt]
+    prnt_lev <- iMeta$Level[iMeta$iCode == prnt]
     # check if parent is immediately above child
-    if(prnt_lev != (chld_lev - 1)){
+    if(prnt_lev != (chld_lev + 1)){
       stop(paste0(
-        "LEVEL discrepancy detected. A CODE has a PARENT in a LEVEL other than the one immediately above it: ",
-        "CODE = ", chld,
-        ", PARENT = ", prnt))
+        "Level discrepancy detected. An iCode has a Parent in a Level other than the one immediately above it: ",
+        "iCode = ", chld,
+        ", Parent = ", prnt))
     }
   }
-  # run function above on rows of IndData
+  # run function above on rows of iData
   # note, return to a variable just to avoid returning NULL (see func above)
-  check_struct <- apply(iMeta[c("CODE", "PARENT")],
+  check_struct <- apply(iMeta[(iMeta$Type %in% c("Indicator", "Aggregate")) ,c("iCode", "Parent")],
                         MARGIN = 1,
                         levcheck)
 
   if(!quietly){
     message("iMeta checked and OK.")
   }
+}
+
+
+#' Split iData
+#'
+#' Splits `iData` by the `Time` column into multiple `iData` data frames.
+#'
+#' @param iData A data frame of indicator panel data
+#' @param split_to Either `"all"` (one `iData` for each unique entry in `iData$Time`), or a vector containing a
+#' subset of entries in `iData$Time`. In the latter case, `iData`s will only be generated for the entries in this
+#' vector.
+#'
+#' @examples
+#' #
+#'
+#' @return List of `iData` data frames
+split_iData <- function(iData, split_to){
+
+  # this function is only called from new_coin(), so if we are here, then the iData should be valid,
+  # and there should be more than one unique entry in iData$Year.
+
+  if(split_to != "all"){
+
+    if(any(split_to %nin% iData$Time)){
+      stop("One or more entries in split_to is not found in iData$Time.")
+    }
+    iData <- iData[iData$Time %in% split_to]
+  }
+
+  # return list of dfs
+  split(iData, iData$Time)
+
+}
+
+
+#' Make wide structure table
+#'
+#' Takes an iMeta table and outputs a wide format index structure, i.e. a table with one column per
+#' level in the index. This is used in later functions to look up the full "ancestry" of any element
+#' in the index.
+#'
+#' @param iMeta A data frame of indicator metadata. For specs see [check_iMeta()].
+#'
+#' @examples
+#' get_lineage(ASEM_iMeta)
+#'
+#' @return Lineage table as data frame
+get_lineage <- function(iMeta, level_names = NULL){
+
+  # isolate the structural part of iMeta
+  longS <- iMeta[c("iCode", "Parent")]
+  # prep wide version: filter to the indicator level and parent level
+  wideS <- iMeta[iMeta$Type == "Indicator", c("iCode", "Parent")]
+
+  # find max level
+  maxlev <- max(iMeta$Level, na.rm = TRUE)
+
+  # successively add columns by looking up parent codes of last col
+  for(ii in 2:(maxlev-1)){
+    wideS <- cbind(wideS,
+                   longS$Parent[match(wideS[[ii]], longS$iCode)])
+  }
+
+  # rename columns
+  if(is.null(level_names)){
+    level_names <- paste0("Level_", 1:maxlev)
+  } else {
+    if(length(level_names) != ncol(wideS)){
+      stop("level_names is not the same length as the number of levels in the index.")
+    }
+  }
+  colnames(wideS) <- level_names
+
+  wideS
 }
