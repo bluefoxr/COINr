@@ -4,18 +4,52 @@
 \alias{new_coin}
 \title{Create a new coin}
 \usage{
-new_coin(iData, iMeta)
+new_coin(
+  iData,
+  iMeta,
+  exclude = NULL,
+  split_to = NULL,
+  level_names = NULL,
+  quietly = FALSE
+)
 }
 \arguments{
 \item{iData}{The indicator data and metadata of each unit}
 
 \item{iMeta}{Indicator metadata}
+
+\item{exclude}{Optional character vector of any indicator codes (\code{iCode}s) to exclude from the coin(s).}
+
+\item{split_to}{This is used to split panel data into multiple coins, a so-called "purse". Should be either
+\code{"all"}, or a subset of entries in \code{iData$Time}. See Details.}
+
+\item{level_names}{Optional character vector of names of levels. Must have length equal to the number of
+levels in the hierarchy (\code{max(iMeta$Level, na.rm = TRUE)}).}
+
+\item{quietly}{If \code{TRUE}, suppresses all messages}
 }
 \value{
 A "coin" object
 }
 \description{
 Creates a new coin class object.
+}
+\details{
+The \code{exclude} argument can be used to exclude specified indicators. If this is specified, \code{.$Data$Raw}
+will be built excluding these indicators, as will all subsequent build operations. However the full data set
+will still be stored in \code{.$Log$new_coin}. The codes here should correspond to entries in the \code{iMeta$iCode}.
+This option is useful e.g. in generating alternative coins with different indicator sets, and can be included
+as a variable in a sensitivity analysis.
+
+The \code{split_to} argument allows panel data to be used. Panel data must have a \code{Time} column in \code{iData}, which
+consists of some numerical time variable, such as a year. Panel data has multiple observations for each \code{uCode},
+one for each unique entry in \code{Time}. The \code{Time} column is required to be numerical, because it needs to be
+possible to order it. To split panel data, specify \code{split_to = "all"} to split to a single coin for each
+of the unique entries in \code{Time}. Alternatively, you can pass a vector of entries in \code{Time} which allows
+to split to a subset of the entries to \code{Time}.
+
+Splitting panel data results in a so-called "purse" class, which is a data frame of COINs, indexed by \code{Time}.
+See online documentation for more details (\emph{TO ADD}).
 }
 \examples{
 #

@@ -15,7 +15,9 @@ check_iMeta(iMeta, quietly = FALSE)
 Message if everything ok, else error messages.
 }
 \description{
-Checks the format of \code{iMeta} input to \code{\link[=new_coin]{new_coin()}}.
+Checks the format of \code{iMeta} input to \code{\link[=new_coin]{new_coin()}}. This performs a series of thorough checks to make sure
+that \code{iMeta} agrees with the specifications. This also includes checks to make sure the structure makes
+sense, there are no duplicates, and other things. \code{iMeta} must pass this check to build a new coin.
 }
 \details{
 Required columns for \code{iMeta} are:
@@ -63,7 +65,7 @@ The \code{Type} column specifies the type of the entry: \code{Indicator} should 
 \code{Aggregate} for aggregates created by aggregating indicators or other aggregates. Otherwise set to \code{Group}
 if the variable is not used for building the index but instead is for defining groups of units. Set to
 \code{Denominator} if the variable is to be used for scaling (denominating) other indicators. Finally, set to
-\code{Other} if the variable should be ignored but passed through.
+\code{Other} if the variable should be ignored but passed through. Any other entries here will cause an error.
 
 Note: this function requires the columns above as specified, but extra columns can also be added without
 causing errors.

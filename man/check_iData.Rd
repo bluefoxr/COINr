@@ -15,9 +15,22 @@ check_iData(iData, quietly = FALSE)
 Message if everything ok, else error messages.
 }
 \description{
-Checks the format of iData input to \code{\link[=new_coin]{new_coin()}}.
+Checks the format of \code{iData} input to \code{\link[=new_coin]{new_coin()}}. This check must be passed to successfully build a new
+coin.
+}
+\details{
+The restrictions on \code{iData} are not extensive. It should be a data frame with only one required column
+\code{uCode} which gives the code assigned to each unit (alphanumeric, not starting with a number). All other
+columns are defined by corresponding entries in \code{iMeta}, with the following special exceptions:
+\itemize{
+\item \code{Time} is an optional column which allows panel data to be input, consisting of e.g. multiple rows for
+each \code{uCode}: one for each \code{Time} value. This can be used to split a set of panel data into multiple coins
+(a so-called "purse") which can be input to COINr functions. See \code{\link[=new_coin]{new_coin()}} for more details.
+\item \code{uName} is an optional column which specifies a longer name for each unit. If this column is not included,
+unit codes (\code{uCode}) will be used as unit names where required.
+}
 }
 \examples{
-check_iData(IndData_2020)
+check_iData(ASEM_iData)
 
 }
