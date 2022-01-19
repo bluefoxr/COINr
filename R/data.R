@@ -12,6 +12,20 @@
 #' @source \url{https://composite-indicators.jrc.ec.europa.eu/asem-sustainable-connectivity/repository}
 "ASEM_iData"
 
+#' ASEM indicator metadata
+#'
+#' This contains all metadata for ASEM indicators, including names, weights, directions, etc. See the ASEM Portal
+#' for further information and detailed description of each indicator, and
+#' [COINr documentation](https://bluefoxr.github.io/COINrDoc/coins-the-currency-of-coinr.html#indicator-metadata) for the formatting
+#' of this data set.
+#'
+#' This data set is in the new v0.8 format.
+#'
+#' @format A data frame with 68 rows and 9 variables
+#'
+#' @source \url{https://bluefoxr.github.io/COINrDoc/coins-the-currency-of-coinr.html#aggregation-metadata}
+"ASEM_iMeta"
+
 #' ASEM raw indicator data
 #'
 #' A data set containing raw values of indicators for 51 countries, groups and denominators. See the ASEM Portal
