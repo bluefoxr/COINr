@@ -1,4 +1,5 @@
 [![CRAN-update](https://www.r-pkg.org/badges/version-ago/COINr)](https://cran.r-project.org/package=COINr)
+[![CRAN\_Download\_Badge](http://cranlogs.r-pkg.org/badges/COINr)](https://CRAN.R-project.org/package=COINr)
 
 **Full documentation for COINr is available here:** 
 https://bluefoxr.github.io/COINrDoc/
