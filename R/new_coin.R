@@ -60,7 +60,9 @@ new_coin <- function(iData, iMeta, exclude = NULL, split_to = NULL,
 
   # CROSS CHECKS
   # Make sure iData codes are all in iMeta, excluding special codes
+
   iData_codes <- colnames(iData)[colnames(iData) %nin% c("uCode", "uName", "Time")]
+
   if(any(iData_codes %nin% iMeta$iCode)){
     stop("Column names from iData not found in iMeta (excluding special columns).")
   }
@@ -68,6 +70,13 @@ new_coin <- function(iData, iMeta, exclude = NULL, split_to = NULL,
     stop("Entries in iMeta$iCode not found in colnames(iData).")
   }
 
+  # we need indicator codes
+  iCodes <- iMeta$iCode[iMeta$Type == "Indicator"]
+  non_numeric_inds <- !(sapply(iData[iCodes], is.numeric))
+  if(any(non_numeric_inds)){
+    stop("Non-numeric indicators detected. The following have been labelled as 'Indicator' but refer to non-numeric columns in iData (not allowed): \n", paste(iCodes[non_numeric_inds], collapse = ", " ),
+  "\n This may occur if you have imported data with NAs read as strings.")
+  }
 
   # EXCLUDE INDICATORS ------------------------------------------------------
   # Optionally exclude any specified indicators
@@ -95,14 +104,12 @@ new_coin <- function(iData, iMeta, exclude = NULL, split_to = NULL,
 
   # SORT DFS ----------------------------------------------------------------
 
-  # we need indicator codes
-  icodes <- iMeta$iCode[iMeta$Type == "Indicator"]
   # also all codes not indicator codes (excluding uCode)
-  not_icodes <- names(iData)[names(iData) %nin% c("uCode", icodes)]
+  not_icodes <- names(iData)[names(iData) %nin% c("uCode", iCodes)]
 
   # This is not strictly necessary but may help later on
   iMeta <- iMeta[order(iMeta$Level, iMeta$Parent),]
-  iData <- iData[c("uCode", not_icodes, icodes)]
+  iData <- iData[c("uCode", not_icodes, iCodes)]
 
   # iData sorting depends on if we have panel data
   is_panel <- length(unique(iData$Time)) > 1
@@ -129,8 +136,11 @@ new_coin <- function(iData, iMeta, exclude = NULL, split_to = NULL,
     # now split
     iData_list <- split_iData(iData, split_to = split_to)
     # check
-    lapply(iData_list, check_iData)
+    suppressMessages(lapply(iData_list, check_iData))
   } else {
+    if(is_panel){
+      stop("Panel data detected, but you have not specifed split_to - please specify this.")
+    }
     iData_list <- list(iData)
   }
 
@@ -149,7 +159,7 @@ new_coin <- function(iData, iMeta, exclude = NULL, split_to = NULL,
     coin_i <- coin
 
     # Store data (only uCode plus indicators)
-    coin_i$Data$Raw <- iDatai[c("uCode", icodes)]
+    coin_i$Data$Raw <- iDatai[c("uCode", iCodes)]
 
     # alter Log to only include iData of the COIN (not whole panel)
     coin_i$Log$new_coin$iData <- iDatai
@@ -166,7 +176,6 @@ new_coin <- function(iData, iMeta, exclude = NULL, split_to = NULL,
 
   # now run coinmaker on list of iData
   coins <- lapply(iData_list, coinmaker)
-
 
   # TWEAKS AND OUTPUT -------------------------------------------------------
 
@@ -185,7 +194,7 @@ new_coin <- function(iData, iMeta, exclude = NULL, split_to = NULL,
     f_output <- data.frame(Time = coin_times)
     f_output$coin <- coins
 
-    class(f_output) <- "purse"
+    class(f_output) <- c("purse", "data.frame")
   }
 
   f_output
