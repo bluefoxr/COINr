@@ -284,3 +284,78 @@ print.purse <- function(x, ...){
     cat(paste0("  ", dset, " (", nunit, " units)\n"))
   }
 }
+
+#' Check if object is coin class
+#'
+#' @param x An object to be checked.
+#'
+#' @examples
+#' is.coin("not_a_coin")
+#' # add example with coin
+#'
+#' @return Logical
+#'
+#' @export
+
+is.coin <- function(x){
+  inherits(x, "coin")
+}
+
+#' Stop if object is NOT coin class
+#'
+#' This helper function is used inside other functions.
+#'
+#' @param x An object to be checked.
+#'
+#' @return An error if input is not coin class.
+check_coin_input <- function(x){
+  if(!is.coin(x)){
+    stop("Input is not recognised as a coin class object.")
+  }
+}
+
+#' Check for named data set
+#'
+#' A helper function to check if a named data set is present. If not, will cause an informative error.
+#'
+#' @param coin A coin class object
+#' @param dset A character string corresponding to a named data set within `coin$Data`. E.g. `Raw`.
+#'
+#' @examples
+#' #
+#'
+#' @return Error message if `dset` not found.
+check_dset <- function(coin, dset){
+
+  stopifnot(is.coin(coin),
+            is.character(dset),
+            length(dset)==1)
+
+  if(is.null(coin$Data[[dset]])){
+    stop("Required data set '", dset, "' not found in coin object.")
+  }
+}
+
+#' Gets a named data set and performs checks
+#'
+#' A helper function to retrieve a named data set from the coin object. Also performs input checks at the
+#' same time.
+#'
+#' @param coin A coin class object
+#' @param dset A character string corresponding to a named data set within `coin$Data`. E.g. `Raw`.
+#'
+#' @examples
+#' #
+#'
+#' @return Data frame of indicator data.
+#'
+#' @export
+get_dset <- function(coin, dset){
+
+  # Make sure we have a coin class
+  check_coin_input(coin)
+  # check specified dset exists
+  check_dset(coin, dset)
+  # get dset
+  coin$Data[[dset]]
+}
