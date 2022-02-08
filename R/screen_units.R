@@ -7,7 +7,118 @@
 #'
 #' @export
 screen_units <- function (x, ...){
-  UseMethod("testf")
+  UseMethod("screen_units")
+}
+
+
+#' Screen units based on data availability
+#'
+#' Screens units (rows) based on a data availability threshold and presence of zeros. Units can be optionally
+#' "forced" to be included or excluded, making exceptions for the data availability threshold.
+#'
+#' The two main criteria of interest are `NA` values, and zeros. The summary table gives percentages of
+#' `NA` values for each unit, across indicators, and percentage zero values (*as a percentage of non-`NA` values*).
+#' Each unit is flagged as having low data or too many zeros based on thresholds.
+#'
+#' @param x A data frame
+#' @param id_col Name of column of the data frame to be used as the identifier, e.g. normally this would be `uCode`
+#' for indicator data sets used in coins. This must be specified if `Force` is specified.
+#' @param unit_screen Specifies whether and how to screen units based on data availability or zero values.
+#' * If set to `"byNA"`, screens units with data availability below `dat_thresh`
+#' * If set to `"byzeros"`, screens units with non-zero values below `nonzero_thresh`
+#' * If set to `"byNAandzeros"`, screens units based on either of the previous two criteria being true.
+#' @param dat_thresh A data availability threshold (`>= 1` and `<= 0`) used for flagging low data and screening units if `unit_screen != "none"`. Default 0.66.
+#' @param nonzero_thresh As `dat_thresh` but for non-zero values. Defaults to 0.05, i.e. it will flag any units with less than 5% non-zero values (equivalently more than 95% zero values).
+#' @param Force A data frame with any additional units to force inclusion or exclusion. Required columns `uCode`
+#' (unit code(s)) and `Include` (logical: `TRUE` to include and `FALSE` to exclude). Specifications here override
+#' exclusion/inclusion based on data rules.
+#'
+#' @examples
+#' #
+#'
+#' @return Missing data stats and screened data as a list.
+#'
+#' @export
+
+screen_units.data.frame <- function(x, id_col = NULL, unit_screen, dat_thresh = NULL, nonzero_thresh = NULL,
+                              Force = NULL){
+
+
+  # CHECKS ------------------------------------------------------------------
+
+  stopifnot(is.data.frame(x))
+
+  ##----- SET DEFAULTS -------##
+  if(is.null(dat_thresh)){
+    dat_thresh <- 2/3
+  }
+  if(is.null(nonzero_thresh)){
+    nonzero_thresh <- 0.05
+  }
+  stopifnot(dat_thresh >= 0,
+            dat_thresh <= 1,
+            nonzero_thresh >= 0,
+            nonzero_thresh <= 1)
+
+  # GET DATA AVAIL ----------------------------------------------------------
+
+  l <- get_datAvail(x)
+
+  # FLAGS FOR EXCLUSION -----------------------------------------------------
+
+  l <- cbind(l,
+             LowData = l$Dat_Avail < dat_thresh,
+             LowNonZero = l$Non_Zero < nonzero_thresh,
+             LowDatOrZeroFlag = (l$Dat_Avail < dat_thresh) | (l$Non_Zero < nonzero_thresh))
+
+
+  # Now add final column which says if unit is included or not, if asked for
+  if (unit_screen == "byNA"){
+    l$Included <- !l$LowData
+  } else if (unit_screen == "byzeros"){
+    l$Included <- !l$LowNonZero
+  } else if (unit_screen == "byNAandzeros"){
+    l$Included <- !l$LowDatOrZeroFlag
+  } else {
+    stop("unit_screen argument value not recognised...")
+  }
+
+  # FORCE INCLUSION/EXC -----------------------------------------------------
+  # (this is optional)
+
+  if (!is.null(Force)){ # if some countries to force include/exclude
+
+    if(is.null(id_col)){
+      stop("id_col must be specified if Force is specified")
+    }
+
+    # checks
+    stopifnot(!is.null(Force$uCode),
+              !is.null(Force$Include),
+              is.character(Force$uCode),
+              is.logical(Force$Include),
+              is.character(id_col),
+              id_col %in% names(x))
+    if(any(Force$uCode %nin% x[[id_code]])){
+      stop("One or more entries in Force$uCode not found in data frame.")
+    }
+
+    l$Included[l$uCode %in% Force$uCode[Force$Include == TRUE]] <- TRUE
+    l$Included[l$uCode %in% Force$uCode[Force$Include == FALSE]] <- FALSE
+  }
+
+
+  # NEW DSET AND OUTPUT -----------------------------------------------------
+
+  # create new data set which filters out the countries that didn't make the cut
+  ScreenedData <- x[l$Included, ]
+  # units that are removed
+  RemovedUnits <- l$uCode[!(l$Included)]
+
+  # output list
+  list(ScreenedData = ScreenedData,
+       DataSummary = l,
+       RemovedUnits = RemovedUnits)
 }
 
 
@@ -21,152 +132,103 @@ screen_units <- function (x, ...){
 #' `NA` values for each unit, across indicators, and percentage zero values (*as a percentage of non-`NA` values*).
 #' Each unit is flagged as having low data or too many zeros based on thresholds.
 #'
-#' This function currently only supports COINs as inputs, not data frames.
+#' This function currently only supports coins as inputs, not data frames.
 #'
-#' @param COIN The COIN object
+#' @param x A coin
 #' @param dset The data set to be checked/screened
-#' @param ind_thresh A data availability threshold used for flagging low data and screening units if `unit_screen != "none"`. Default 0.66. Specify as a fraction.
-#' @param zero_thresh As ind_thresh but for non-zero values. Defaults to 0.05, i.e. it will flag any units with less than 5% non-zero values (equivalently more than 95% zero values).
 #' @param unit_screen Specifies whether and how to screen units based on data availability or zero values.
-#' * If set to `"none"` (default), does not screen any units.
-#' * If set to `"byNA"`, screens units with data availability below `ind_thresh`
-#' * If set to `"byzeros"`, screens units with non-zero values below `zero_thresh`
+#' * If set to `"byNA"`, screens units with data availability below `dat_thresh`
+#' * If set to `"byzeros"`, screens units with non-zero values below `nonzero_thresh`
 #' * If set to `"byNAandzeros"`, screens units based on either of the previous two criteria being true.
-#' * If you simply want to force a unit or units to be excluded (without any other screening), use the `Force` argument and set `unit_screen = TRUE`.
-#' `unit_screen != "none"` outputs a new data set .$Data$Screened.
-#' @param Force A data frame with any additional countries to force inclusion or exclusion. First column is `"UnitCode"`. Second column `"Status"` either `"Include"` or `"Exclude"` for each country to force.
+#' @param dat_thresh A data availability threshold (`>= 1` and `<= 0`) used for flagging low data and screening units if `unit_screen != "none"`. Default 0.66.
+#' @param nonzero_thresh As `dat_thresh` but for non-zero values. Defaults to 0.05, i.e. it will flag any units with less than 5% non-zero values (equivalently more than 95% zero values).
+#' @param Force A data frame with any additional countries to force inclusion or exclusion. Required columns `uCode`
+#' (unit code(s)) and `Include` (logical: `TRUE` to include and `FALSE` to exclude). Specifications here override
+#' exclusion/inclusion based on data rules.
 #' @param out2 Where to output the results. If `"COIN"` (default for COIN input), appends to updated COIN,
 #' otherwise if `"list"` outputs to data frame.
 #'
-#' @importFrom dplyr select starts_with pull mutate filter
-#'
 #' @examples
-#' # build ASEM COIN
-#' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
-#' # return stats to the COIN, plus screened data set, return to list
-#' ScreenedData <- checkData(ASEM, dset = "Raw", unit_screen = "byNA",
-#' ind_thresh = 0.9, out2 = "list")
-#' # See which units were removed
-#' print(ScreenedData$RemovedUnits)
+#' #
 #'
-#' @return An updated COIN with data frames showing missing data in `.$Analysis`, and if `unit_screen != "none"` outputs a new data set .$Data$Screened.
+#' @return An updated coin with data frames showing missing data in `.$Analysis`, and a new data set `.$Data$Screened`.
 #' If `out2 = "list"` wraps missing data stats and screened data set into a list.
 #'
 #' @export
 
-screen_units.coin <- function(x, dset = NULL, ind_thresh = NULL, zero_thresh = NULL,
-                      unit_screen = "none", Force = NULL, out2 = "COIN"){
-
+screen_units.coin <- function(x, dset, unit_screen, dat_thresh = NULL, nonzero_thresh = NULL,
+                              Force = NULL, out2 = "coin"){
 
   # WRITE LOG ---------------------------------------------------------------
 
-  coin <- write_log(coin)
+  coin <- write_log(x, dont_write = "x")
 
   # GET DSET, CHECKS --------------------------------------------------------
 
   iData <- get_dset(coin, dset)
-  iData_ <- iData[colnames(iData) != "iCode"]
 
-  ##----- SET DEFAULTS -------##
-  # Done here because otherwise if we use regen, this input could be input as NULL
-  if(is.null(ind_thresh)){
-    ind_thresh <- 2/3
-  }
-  if(is.null(zero_thresh)){
-    zero_thresh <- 0.05
-  }
+  # SCREEN DF ---------------------------------------------------------------
 
-  #--- Check data availability by group
+  l_out <- screen_units.data.frame(iData, id_col = "uCode", unit_screen = unit_screen,
+                                   dat_thresh = dat_thresh, nonzero_thresh = nonzero_thresh,
+                                   Force = Force)
 
-  # the easiest way to do this is to loop over groups. Get first the index structure
-  # (selects indicator codes plus all aggregation level columns/codes)
-  agg_levels <- dplyr::select(COIN$Input$IndMeta, "IndCode" | dplyr::starts_with("Agg"))
-
-  data_avail_bygroup <- data.frame("UnitCode" = out1$UnitCodes)
-
-  for (ilev in 1:(ncol(agg_levels)-1)){ # loop over aggregation levels, except the last one
-
-    agg1 <- dplyr::pull(agg_levels,1) # names of indicators
-    agg2 <- dplyr::pull(agg_levels,ilev+1) # names of aggregation groups in the level above
-    agg2_names <- unique(agg2) # only the names of agg level above (no repetitions)
-
-    # pre-allocate a data frame for prc data availability
-    d_avail_lev <- as.data.frame(matrix(NA, nrow = nrow(ind_data_only), ncol = length(agg2_names)))
-
-    for (igroup in 1:length(agg2_names)){ # now looping over groups inside this level
-
-      gname <- agg2_names[igroup] # select group name
-
-      # get indicator codes belonging to group
-      gcodes <- agg1[agg2 == gname]
-      # get corresponding indicator columns
-      ginds <- ind_data_only[gcodes]
-      # now count prc data available and add to data frame
-      d_avail_lev[,igroup] <- 100*rowSums(!is.na(ginds))/ncol(ginds)
-
-    }
-
-    # add column names (aggregation group names) to data availability table
-    colnames(d_avail_lev) <- agg2_names
-    # add to big table
-    data_avail_bygroup <- cbind(data_avail_bygroup, d_avail_lev)
-
-  }
-
-  # Now add final column which says if country is included or not, if asked for
-  if (unit_screen == "byNA"){
-    data_avail <- cbind(data_avail, Included = data_avail$LowDataAll == FALSE)
-  } else if (unit_screen == "byzeros"){
-    data_avail <- cbind(data_avail, Included = data_avail$ZeroFlag == FALSE)
-  } else if (unit_screen == "byNAandzeros"){
-    data_avail <- cbind(data_avail, Included = data_avail$LowDatOrZeroFlag == FALSE)
-  } else if (unit_screen == "none") {
-    data_avail <- cbind(data_avail, Included = TRUE)
+  # output list
+  if(out2 == "list"){
+    l_out
   } else {
-    stop("unit_screen argument value not recognised...")
+    coin <- write_dset(coin, l_out$ScreenedData, dset = "Screened")
+    write2coin(coin, l_out[names(l_out != "ScreenedData")], out2, "Analysis", "Screened")
   }
+}
 
-  if (!is.null(Force)){ # if some countries to force include/exclude
-    # convert to logical
-    Force[2] <- Force[2]=="Include"
-    # substitute in output table
+#' Screen units based on data availability
+#'
+#' Screens units based on a data availability threshold and presence of zeros. Units can be optionally
+#' "forced" to be included or excluded, making exceptions for the data availability threshold.
+#'
+#' The two main criteria of interest are `NA` values, and zeros. The summary table gives percentages of
+#' `NA` values for each unit, across indicators, and percentage zero values (*as a percentage of non-`NA` values*).
+#' Each unit is flagged as having low data or too many zeros based on thresholds.
+#'
+#' This function currently only supports coins as inputs, not data frames.
+#'
+#' @param x A purse object
+#' @param dset The data set to be checked/screened
+#' @param unit_screen Specifies whether and how to screen units based on data availability or zero values.
+#' * If set to `"byNA"`, screens units with data availability below `dat_thresh`
+#' * If set to `"byzeros"`, screens units with non-zero values below `nonzero_thresh`
+#' * If set to `"byNAandzeros"`, screens units based on either of the previous two criteria being true.
+#' @param dat_thresh A data availability threshold (`>= 1` and `<= 0`) used for flagging low data and screening units if `unit_screen != "none"`. Default 0.66.
+#' @param nonzero_thresh As `dat_thresh` but for non-zero values. Defaults to 0.05, i.e. it will flag any units with less than 5% non-zero values (equivalently more than 95% zero values).
+#' @param Force A data frame with any additional countries to force inclusion or exclusion. Required columns `uCode`
+#' (unit code(s)) and `Include` (logical: `TRUE` to include and `FALSE` to exclude). Specifications here override
+#' exclusion/inclusion based on data rules.
+#' @param out2 Where to output the results. If `"COIN"` (default for COIN input), appends to updated COIN,
+#' otherwise if `"list"` outputs to data frame.
+#'
+#' @examples
+#' #
+#'
+#' @return An updated purse with coins screened and updated.
+#'
+#' @export
 
-    data_avail$Included[ data_avail$UnitCode %in% Force$UnitCode[Force$Status == TRUE] ] <- TRUE
-    data_avail$Included[ data_avail$UnitCode %in% Force$UnitCode[Force$Status == FALSE] ] <- FALSE
-  }
+screen_units.purse <- function(x, dset, unit_screen, dat_thresh = NULL, nonzero_thresh = NULL,
+                              Force = NULL){
 
-  if (unit_screen != "none"){
-    # create new data set which filters out the countries that didn't make the cut
-    ScreenedData <- dplyr::filter(out1$ind_data, data_avail$Included)
-    # units that are removed
-    ScreenedUnits <- data_avail$UnitCode[!data_avail$Included]
-  }
+  # input check
+  check_purse(x)
 
-  if (out2 == "list"){
-
-    # write to a list
-    return(list(
-      MissDatSummary = data_avail,
-      MissDatByGroup = data_avail_bygroup,
-      ScreenedData = ScreenedData,
-      RemovedUnits = ScreenedUnits
-    ))
-
-  } else if (out2 == "COIN") {
-
-    # add summary tables to COIN
-    eval(parse(text=paste0("COIN$Analysis$",dset,"$MissDatSummary<- data_avail")))
-    eval(parse(text=paste0("COIN$Analysis$",dset,"$MissDatByGroup<- data_avail_bygroup")))
-
-    if (unit_screen != "none"){
-      COIN$Data$Screened <- ScreenedData
-      eval(parse(text=paste0("COIN$Analysis$",dset,"$RemovedUnits<- ScreenedUnits")))
-    }
-    return(COIN)
-
-  } else {
-    stop("out2 not recognised, should be either COIN or list")
-  }
+  # apply unit screening to each coin
+  x$coin <- lapply(x$coin, function(coin){
+    screen_units.coin(coin, dset = dset, unit_screen = unit_screen,
+                      dat_thresh = dat_thresh, nonzero_thresh = nonzero_thresh,
+                      Force = Force, out2 = "coin")
+  })
+  # make sure still purse class
+  class(x) <- c("purse", "data.frame")
+  x
 }
 
 
@@ -174,9 +236,12 @@ screen_units.coin <- function(x, dset = NULL, ind_thresh = NULL, zero_thresh = N
 #'
 #' Returns a data frame of the data availability of each unit (row).
 #'
+#' @param x Either a coin or a data frame
+#' @param ... Arguments passed to other methods
+#'
 #' @return
 #' @export
-get_datAvail <- function(x){
+get_datAvail <- function(x, ...){
   UseMethod("get_datAvail")
 }
 
@@ -192,16 +257,51 @@ get_datAvail <- function(x){
 #'
 #' @examples
 #' #
-get_datAvail.coin <- function(x, dset){
+get_datAvail.coin <- function(x, dset, out2 = "coin"){
 
   # PREP --------------------------------------------------------------------
 
   iData <- get_dset(x, dset)
+  lin <- coin$Meta$Lineage
 
   # DAT AVAIL AND TABLE -----------------------------------------------------
 
   # call df method
-  get_datAvail(iData)
+  dat_avail <- get_datAvail(iData)
+
+  # generic function to check frac NAs rowwise
+  frc_avail <- function(X){
+    1 - rowMeans(is.na(X))
+  }
+
+  # indicator-level group data avail function
+  group_avail <- function(grp, lev){
+    # get cols of indicators inside group
+    grp_codes <- lin[[1]][lin[[lev]] == grp] |>
+      unique()
+    # get data avail
+    iData[grp_codes] |>
+      frc_avail()
+  }
+
+  # get all data availability, for all groups in all levels
+  # note, this is indicator-level availability
+  for(lev in 2: ncol(lin)){
+    lev_codes <- unique(lin[[lev]])
+    df_lev <- sapply(lev_codes, group_avail, lev)
+    if(lev == 2){
+      dat_avail_group <- data.frame(uCode = iData$uCode, df_lev)
+    } else {
+      dat_avail_group <- cbind(dat_avail_group, df_lev)
+    }
+  }
+
+  # OUTPUT ------------------------------------------------------------------
+
+  l_out <- list(Summary = dat_avail,
+       ByGroup = dat_avail_group)
+
+  write2coin(coin, l_out, out2, "Analysis", dset, "DatAvail")
 
 }
 
@@ -225,7 +325,7 @@ get_datAvail.data.frame <- function(x){
   x_ <- xsplit$numeric
 
 
-  # DAT AVAIL AND TAVLE -----------------------------------------------------
+  # DAT AVAIL AND TABLE -----------------------------------------------------
 
   nabyrow <- rowSums(is.na(x_)) # number of missing data by row
   zerobyrow <- rowSums(x_ == 0, na.rm = TRUE) # number of zeros for each row
