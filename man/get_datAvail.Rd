@@ -4,7 +4,12 @@
 \alias{get_datAvail}
 \title{Get data availability of units}
 \usage{
-get_datAvail(x)
+get_datAvail(x, ...)
+}
+\arguments{
+\item{x}{Either a coin or a data frame}
+
+\item{...}{Arguments passed to other methods}
 }
 \value{
 
