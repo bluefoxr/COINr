@@ -90,6 +90,12 @@ new_coin <- function(iData, iMeta, exclude = NULL, split_to = NULL,
 
     iData <- iData[colnames(iData) %nin% exclude]
     iMeta <- iMeta[iMeta$iCode %nin% exclude, ]
+
+    # if removing indicators results in empty aggregation groups
+    # (childless parents) we have to remove these. Otherwise when
+    # we aggregate, there are aggregation groups with nothing to aggregate.
+    childless <- (iMeta$Level > 1) & (iMeta$iCode %nin% iMeta$Parent)
+    iMeta <- iMeta[!childless, ]
   }
 
   # GENERATE DEFAULT NAMES --------------------------------------------------
@@ -159,7 +165,8 @@ new_coin <- function(iData, iMeta, exclude = NULL, split_to = NULL,
     coin_i <- coin
 
     # Store data (only uCode plus indicators)
-    coin_i$Data$Raw <- iDatai[c("uCode", iCodes)]
+    coin_i <- write_dset(coin_i, iDatai[c("uCode", iCodes)], dset = "Raw",
+                         ignore_class = TRUE)
 
     # alter Log to only include iData of the COIN (not whole panel)
     coin_i$Log$new_coin$iData <- iDatai
