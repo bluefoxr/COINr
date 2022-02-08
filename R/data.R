@@ -1,3 +1,16 @@
+#' ASEM raw panel data
+#'
+#' This is an artificially-generated set of panel data (multiple observations of indicators over time) that
+#' is included to build the example "purse" class, i.e. to build composite indicators over time. This will
+#' eventually be replaced with a better example, i.e. a real data set.
+#'
+#' This data set is in the new v0.8 format.
+#'
+#' @format A data frame with 255 rows and 60 variables.
+#'
+#' @source \url{https://composite-indicators.jrc.ec.europa.eu/asem-sustainable-connectivity/repository}
+"ASEM_iData_p"
+
 #' ASEM raw indicator data
 #'
 #' A data set containing raw values of indicators for 51 countries, groups and denominators. See the ASEM Portal
