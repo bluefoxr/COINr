@@ -4,7 +4,7 @@
 \alias{write_log}
 \title{Write function arguments to log}
 \usage{
-write_log(coin)
+write_log(coin, dont_write = NULL)
 }
 \arguments{
 \item{coin}{A coin class object}
