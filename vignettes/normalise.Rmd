@@ -1,0 +1,265 @@
+---
+title: "Normalising Data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Normalising Data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(COINr)
+```
+
+Normalisation is the operation of bringing indicators onto comparable scales so that they can be aggregated more fairly. To see why this is necessary, consider aggregating GDP values (billions or trillions of dollars) with percentage tertiary graduates (tens of percent). Average values here would make no sense because one is on a completely different scale to the other.
+
+# Approaches
+
+## First: adjust direction
+
+Indicators can either be positively or negatively related to the concept that you are trying to measure. For example, in an index of quality of life, median income would probably be a positive indicator. Prevalence of malnourishment would be a negative indicator (higher values should give lower scores in quality of life).
+
+Accounting for these differences is considered part of the normalisation step. Indicators loaded into COINr should have a "Direction" column in the `IiMeta` input to `new_coin()`, which is 1 for positive indicators, and -1 for negative indicators. With this information, normalisation is a two step procedure:
+
+1. Multiply the values of each indicator by their corresponding direction value (either 1 or -1).
+2. Apply one of the normalisation methods described below.
+
+It's that simple. COINr has this built in, so you don't need to do anything other than specify the directions, and the type of normalisation to apply.
+
+## Linear transformations
+
+Normalisation is relatively simple but there are still a number of different approaches which have different properties.
+
+Perhaps the most straightforward and intuitive option (and therefore probably the most widely used) is called the *min-max* transformation. This is a simple linear function which rescales the indicator to have a minimum value $l$, a maximum value $u$, and consequently a range $u-l$, and is as follows:
+
+$$ \tilde{x}_{\text{min}} = \frac{ x - x_{\text{min}} }{ x_{\text{max}} - x_{\text{min}} } \times (u-l) + l$$
+
+where $\tilde{x}$ is the normalised indicator value. For example, if $l=0$ and $u=100$ this will rescale the indicator to lie exactly onto the interval $[0, 100]$. The transformation is linear because it does not change the *shape* of the distribution, it simply shrinks or expands it, and moves it.
+
+A similar transformation is to take *z-scores*, which instead use the mean and standard deviation as reference points:
+
+$$ \tilde{x}_{\text{min}} = \frac{ x - \mu_x }{ \sigma_x } \times a + b$$
+
+where $\mu_x$ and $\sigma_x$ are the mean and standard deviation of $x$. The indicator is first re-scaled to have mean zero and standard deviation of one. Then it is scaled by a factor $a$ and moved by a distance $b$. This is very similar to the min-max transformation in that it can be reduced to multiplying by a factor and adding a constant, which is the definition of a linear transformation. However, the two approaches have different implications. One is that Z-scores will generally be less sensitive to outliers, because the standard deviation is less dependent on an outlying value than the minimum or maximum.
+
+Following the min-max and z-score, the general linear transformation is defined as:
+
+$$ \tilde{x} = \frac{ x - p }{ q } \times a + b$$
+
+and it is fairly straightforward to see how z-scores and the min-max transformations are special cases of this.
+
+## Nonlinear transformations
+
+A simple nonlinear transformation is the rank transformation.
+
+$$ \tilde{x} = \text{rank}(x)$$
+
+where the ranks should be defined so that the lowest indicator value has a rank of 1, the second lowest a rank of 2, and so on. The rank transformation is attractive because it automatically eliminates any outliers. Therefore there would not usually be any need to treat the data previously. However, it converts detailed indicator scores to simple ranks, which might be too reductionist for some.
+
+It's worth pointing out that there are different ways to rank values, because of how ties (units with the same score) are handled. To read about this, just call `?rank` in R.
+
+Similar approaches to simple ranks include Borda scores, which are simply the ranks described above but minus 1 (so the lowest score is 0 instead of 1), and percentile ranks.
+
+## Distances
+
+Another approach is to use the distance of each score to some reference value. Possibilities here are the (normalised) distance to the maximum value of the indicator:
+
+$$ \tilde{x} = 1 - \frac{\text{max}(x) - x}{\text{max}(x) - \text{min}(x)}$$
+
+the fraction of the maximum value of the indicator:
+
+$$ \tilde{x} = \frac{x}{\text{max}(x)}$$
+
+the distance to a specified unit value in the indicator:
+
+$$ \tilde{x} = 1 - \frac{x_u - x}{\text{max}(x) - \text{min}(x)}$$
+
+where $x_u$ is the value of unit $u$ in the indicator. This is useful for benchmarking against a reference country, for example. Another possibility is to normalise against indicator targets. This approach is used for example in the [EU2020 Index](https://www.sciencedirect.com/science/article/pii/S2665972720300593), which used European targets on environment, education and employment issues (among others).
+
+$$ \tilde{x} = \text{min} \left[1, \  1 - \frac{\text{targ}(x) - x}{\text{max}(x) - \text{min}(x)} \right]$$
+
+where $\text{targ}(x)$ is the target for the indicator. In this case, any value that exceeds the target is set to 1, i.e. exceeding the target is counted the same as exactly meeting it. There is also an issue of what to use to scale the distance: here the range of the indicator is used, but one could also use $\text{targ}(x) - \text{min}(x)$ or perhaps some other range.
+
+A similar approach, sometimes called the "goalposts" or "distance to frontier" method, normalises the indicator by specified upper and lower bounds. This may be used, for example, when there are clear boundaries to the indicator (e.g. [Likert scores](https://en.wikipedia.org/wiki/Likert_scale)), or when the you wish to keep the boundaries fixed across possibly different years of data. The goalposts method looks like this:
+
+$$ \tilde{x} = \text{max} \left(0, \ \text{min} \left[1, \  \frac{x - x_L}{x_U - x_L} \right] \right)$$
+
+where $x_U$ and $x_L$ are the upper and lower bounds, respectively, for the indicator. Any values that are below the lower bound are assigned a score of zero, and any above the upper bound are assigned a score of one. This approach is used by the [European Skills Index](https://www.cedefop.europa.eu/en/events-and-projects/projects/european-skills-index-esi), for example.
+
+# Normalisation in COINr
+
+The normalisation function in COINr is imaginatively named `normalise()`. It has the following main features:
+
+* A wide range of normalisation methods, including the possibility to pass custom functions
+* Customisable parameters for normalisation
+* Possibility to specify detailed individual treatment for each indicator
+
+As of COINr v8, `normalise()` is a generic function with methods for different classes. This means that `normalise()` can be called on coins, but also on data frames, numeric vectors and purses (collections of coins).
+
+## Normalising coins
+
+The `normalise()` method for coins follows the familiar format: you have to specify:
+
+* `x` the coin
+* `default_specs` default specifications to apply to all indicators
+* `indiv_specs` individual specifications to override `default_specs` for specific columns
+* `directions` a data frame specifying directions - this overrides the directions in `iMeta` if specified
+* `out2` whether to output an updated coin or simply a data frame
+
+Let's begin with a simple example. We build the example coin and normalise the raw data.
+
+```{r}
+# build example coin
+coin <- build_example_coin(up_to = "new_coin")
+
+# normalise the raw data set
+coin <- normalise2(coin, dset = "Raw")
+```
+
+We can compare the raw and un-normalised indicators side by side.
+
+*PLACEHOLDER: scatter plot and side by side dist plots of indicators in ggplot2.*
+
+This plot also illustrates the linear nature of the min-max transformation.
+
+The default normalisation uses the min-max approach, scaling indicators onto the $[0, 100]$ interval. But we can change the normalisation type and its parameters using the `default_specs` argument.
+
+```{r}
+coin <- normalise2(coin, dset = "Raw",
+                   default_specs = list(f_n = "minmax",
+                                        f_n_para = list(c(10,2))))
+```
+
+Again, let's plot an example of the result:
+
+*PLACEHOLDER: scatter plot and side by side dist plots of indicators in ggplot2.*
+
+Notice the syntax of `default_specs`. If specified, it takes entries `f_n` (the name of the function to apply to each column) and `f_n_para` (any further arguments to `f_n`, not including `x`). Importantly, `f_n_para` *must* be specified as a list, even if it only contains one parameter.
+
+Since `f_n` points to a function name, any function can be passed to `normalise()` as long as it is available in the namespace. To illustrate, consider an example where we want to categorise into discrete bins. We can use base R's `cut()` function for this purpose. We simply need to specify the number of bins. We could directly call `cut()`, but for clarity we will create a simple wrapper function around it, then pass that function to `normalise()`.
+
+```{r}
+# wrapper function
+f_bin <- function(x, nbins){
+  cut(x, breaks = nbins, labels = FALSE)
+}
+
+# pass wrapper to normalise, specify 5 bins
+coin <- normalise2(coin, dset = "Raw",
+                   default_specs = list(f_n = "f_bin",
+                                        f_n_para = list(nbins = 5)))
+
+get_dset(coin, "Normalised")[1:5] |>
+  head(5)
+```
+
+Generally, the requirements of a function to be passed to `normalise()` are that its first argument should be `x`, a numeric vector, and it should return a numeric vector of the same length as `x`. It should also be able to handle `NA`s. Any further arguments can be passed via the `f_n_para` entry.
+
+By default, the directions are taken from the coin. These will have been specified as the `Direction` column of `iMeta` when constructing a coin with `new_coin()`. However, you can specify different directions using the `directions` argument of `normalise()`: in this case you need to specify a data frame with two columns: `iCode` (with an entry for each indicator code found in the target data set) and `Direction` giving the direction as -1 or 1.
+
+To show an example, we take the existing directions from the coin, modify them slightly, and then run the normalisation function again:
+
+```{r}
+# get directions from coin
+directions <- coin$Meta$Ind[c("iCode", "Direction")]
+
+head(directions, 10)
+```
+
+We'll change the direction of the "Goods" indicator and re-normalise:
+
+```{r}
+# change Goods to -1
+directions$Direction[directions$iCode == "Goods"] <- -1
+
+# re-run (using min max default)
+coin <- normalise2(coin, dset = "Raw", directions = directions)
+```
+
+
+The function looks like this:
+
+```{r, eval=FALSE}
+# don't run this chunk, just for illustration (will throw error if run)
+normalise <- function(COIN, ntype = NULL, npara = NULL,
+                      dset = NULL, directions = NULL, individual = NULL,
+                      indiv_only = FALSE, out2 = NULL){
+```
+
+As an input, it takes a COIN or data frame, as usual. It outputs a new dataset to the COIN `.$Data$Normalised`, or a normalised data frame if `out2 = "df"`. Default normalisation (min-max, scaled between 0 and 100) can be achieved by simply calling:
+
+```{r Default normalise, collapse=T, message=F, warning=F}
+library(COINr)
+# Build ASEM index up to denomination
+ASEM <- assemble(IndData = COINr::ASEMIndData, IndMeta = COINr::ASEMIndMeta, AggMeta = COINr::ASEMAggMeta)
+ASEM <- denominate(ASEM, dset = "Raw")
+
+# Default normalisation (min max scaled between 0 and 100) on denominated data set
+ASEM <- normalise(ASEM, dset = "Denominated")
+
+# compare one of the indicators
+iplotIndDist2(ASEM, dsets = c("Denominated", "Normalised"),
+              icodes = "TertGrad", ptype = "Scatter")
+```
+
+
+
+You can select the normalisation type of the `normalise()` function using the `ntype` and accompanying `npara` arguments, where the latter is an object which specifies any parameters for the type of normalisation selected.
+
+* `ntype = "minmax"` yields a min-max transformation that scales each indicator onto an interval specified by `npara`, e.g. if `npara$minmax = c(0,10)` the indicators will scale to [0, 10].
+* `ntype = "zscore"` scales the indicator to have a mean and standard deviation specified by `npara`, e.g. if `npara$zscore = c(0,1)` the indicator will have mean zero and standard deviation 1.
+* `ntype = "scaled"` is a general linear transformation defined by `npara$scaled = c(a,b)` which subtracts `a` and divides by `b`.
+* `ntype = "goalposts"` is a capped linear transformation (see the "goalposts" method mentioned previously). Here `npara$goalposts = c(l, u, a)`, where `l` is the lower bound, `u` is the upper bound, and `a` is a scaling parameter.
+* `ntype = "rank"` replaces indicator scores with their corresponding ranks, such that the highest scores have the largest rank values. Ties take average rank values. Here `npara` is not used.
+* `ntype = "borda"` is similar to `ntype = "rank"` but uses Borda scores, which are simply rank values minus one. `npara` is not used.
+* `ntype = "prank"` gives percentile ranks. `npara` is not used.
+* `ntype = "fracmax"` scales each indicator by dividing the value by the maximum value of the indicator. `npara` is not used.
+* `ntype = "dist2ref"` gives the distance to a reference unit, defined by `npara`. For example, if `npara$dist2ref = "AUT"` then all scores will be normalised as the distance to the score of unit "AUT" in each indicator (divided by the range of the indicator). This is useful for benchmarking against a set unit, e.g. a reference country. Scores
+* `ntype = "dist2max"` gives the normalised distance to the maximum of each indicator.
+* `ntype = "dist2targ"` gives the normalised distance to indicator targets. Targets are specified, in the `IndMeta` argument of `assemble()`, and will be in the COIN at `.$Input$IndMeta`. Any scores that exceed the target will be capped at a normalised value of one.
+* `ntype = "custom"` allows to pass a custom function to apply to every indicator. For example, `npara$custom = function(x) {x/max(x, na.rm = T)}` would give the "fracmax" normalisation method described above.
+* `ntype = "none"` the indicator is not normalised (this is mainly useful for adjustments and sensitivity analysis).
+
+The `normalise()` function also allows you to specify the directions of the indicators using the argument `directions`. If this is not specified, the directions will be taken from the indicator metadata input to `assemble()`. If they are not present here, all directions will default to positive.
+
+## Individual normalisation
+
+Indicators can be normalised using individual specifications in a similar way to the `treat()` function. This is specified by the following two arguments to `normalise()`:
+
+* `individual` A list of named lists specifiying individual normalisation to apply to specific indicators. Should be structured so that the name of each sublist should be the indicator code. The the list elements are:
+  * `.$ntype` is the type of normalisation to apply (any of the options mentioned above)
+  * `.$npara` is a corresponding object or parameters that are used by ntype
+* `indiv_only` Logical. As with `treat()`, if this is set to `FALSE` (default), then the indicators that are *not* specified in `individual` will be normalised according to the `ntype` and `npara` arguments specified in the function argument. Otherwise if `TRUE`, only the indicators in `individual` will be normalised, and the others will be unaffected.
+
+The easiest way to clarify this is with an example. In the following, we will apply min-max, scaled to [0, 1] to all indicators, except for "Flights" which will be normalised using Borda scores, "Renew" which will remain un-normalised, and "Ship" which will be scaled as a distance to the value of Singapore.
+
+```{r Norm_indiv_example}
+indiv = list(
+  Flights = list(ntype = "borda"),
+  Renew = list(ntype = "none"),
+  Ship = list(ntype = "dist2ref", npara = list(dist2ref = "SGP"))
+)
+
+# Minmax in [0,1] for all indicators, except custom individual normalisation
+# for those described above
+ASEM <- normalise(ASEM, dset = "Denominated", ntype = "minmax", npara = list(minmax = c(0,1)),
+                  individual = indiv, indiv_only = FALSE)
+```
+
+We can visualise the new ranges of the data.
+
+```{r}
+plotIndDist(ASEM, dset = "Normalised",
+            icodes = c("Flights", "Renew", "Ship", "Goods"), type = "Dot")
+```
+
+This example is meant to be illustrative of the functionality of `normalise()`, rather than being a sensible normalisation strategy, because the indicators are now on very different ranges, from the default minmax range of [0, 1] ("Goods" in this case), to the unchanged scale of "Renew" and the Borda rank scale of "Flights". Notice also the scaling of "Ship", which has values above zero because the reference country, Singapore, is does not have the maximum value of the indicator.
+
+In practice, if different normalisation strategies are selected, it is a good idea to keep the indicators on similar ranges, otherwise the effects will be very unequal in the aggregation step.
