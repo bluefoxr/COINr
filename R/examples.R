@@ -92,6 +92,7 @@ build_example_coin <- function(up_to = NULL){
 #' @param up_to The point up to which to build the index. If `NULL`, builds full index. Else specify a `build_*` function
 #' (as a string) - the index will be built up to and including this function. This option is mainly for helping with
 #' function examples. Example: `up_to = "build_normalise"`.
+#' @param quietly If `TRUE`, suppresses all messages.
 #'
 #' @examples
 #' #
@@ -99,7 +100,12 @@ build_example_coin <- function(up_to = NULL){
 #' @return coin class object
 #'
 #' @export
-build_example_purse <- function(up_to = NULL){
+build_example_purse <- function(up_to = NULL, quietly = FALSE){
+
+  if(quietly){
+    purse <- suppressMessages(build_example_purse(up_to = up_to, quietly = FALSE))
+    return(purse)
+  }
 
   if(is.null(up_to)){
     up_to = "theend"
