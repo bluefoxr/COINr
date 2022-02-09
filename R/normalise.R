@@ -1,5 +1,10 @@
 #' Create normalised data set in a purse of coins
 #'
+#' Normalisation is a special case in terms of operating on a purse of coins. This is because, when
+#' dealing with time series data, it is often desirable to normalise over the whole panel data set
+#' rather than independently for each time point. This makes the resulting index and aggregates comparable
+#' over time.
+#'
 #' The same specifications are passed to each coin in the purse. This means that each coin is normalised
 #' using the same set of specifications and directions. If you need control over individual coins, you
 #' will have to normalise coins individually.
@@ -18,22 +23,60 @@
 #' @examples
 #' #
 normalise2.purse <- function(x, dset = NULL, default_specs = NULL, indiv_specs = NULL,
-                             directions = NULL){
+                             directions = NULL, global = TRUE, write_to = NULL){
 
   # input check
   check_purse(x)
 
-  # apply unit screening to each coin
-  x$coin <- lapply(x$coin, function(coin){
-    treat2.coin(coin, dset = dset, default_specs = default_specs,
-                indiv_specs = indiv_specs)
-  })
+  # GET DSETS ---------------------------------------------------------------
+
+  iDatas <- get_dset(x, dset)
+  iDatas_ <- iDatas[names(iDatas) != "Time"]
+
+
+  # GLOBAL NORMALISATION ----------------------------------------------------
+
+  if(global){
+
+    # run global dset through normalise, excluding Time col
+    iDatas_n <- normalise2(iDatas_, default_specs = default_specs,
+                           indiv_specs = indiv_specs, directions = directions)
+    # split by Time
+    iDatas_n_l <- split(iDatas_n, iDatas$Time)
+
+    # now write dsets to coins
+    x$coin <- lapply(x$coin, function(coin){
+
+      # get Time
+      tt <- coin$Meta$Unit$Time[[1]]
+      if(is.null(tt)){
+        stop("Time index is NULL or not found in writing normalised data set to coin.")
+      }
+      # write dset first
+      coin <- write_dset(coin, iDatas_n_l[[which(names(iDatas_n_l) == tt)]], dset = "Normalised")
+
+      # also write to log - we signal that coin can't be regenerated any more
+      coin$Log$can_regen <- FALSE
+      coin$Log$message <- "Coin was normalised inside a purse with global = TRUE. Cannot be regenerated."
+
+      coin
+    })
+
+  } else {
+
+    # apply independent normalisation to each coin
+    x$coin <- lapply(x$coin, function(coin){
+      normalise2.coin(coin, dset = dset, default_specs = default_specs,
+                      indiv_specs = indiv_specs, directions = directions,
+                      out2 = "coin", write_to = write_to)
+    })
+
+  }
+
   # make sure still purse class
-  class(x) <- "purse"
+  class(x) <- c("purse", "data.frame")
   x
 }
-
-
 
 #' Create a normalised data set
 #'
@@ -47,6 +90,8 @@ normalise2.purse <- function(x, dset = NULL, default_specs = NULL, indiv_specs =
 #' If `directions` is not specified, the directions will be taken from the `iMeta` table in the coin, if available.
 #' @param out2 Either `"coin"` to return normalised data set back to the coin, or `df` to simply return a data
 #' frame.
+#' @param write_to Optional character string for naming the data set in the coin. Data will be written to
+#' `.$Data[[write_to]]`. Default is `write_to == "Normalised"`.
 #'
 #' @return
 #' @export
@@ -104,6 +149,10 @@ normalise2.coin <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
 #' If `directions` is not specified, the directions will all be assigned as `1`. Non-numeric columns do not need
 #' to have directions assigned.
 #'
+#' @examples
+#' normalise2(iris) |>
+#' head()
+#'
 #' @return
 #' @export
 normalise2.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL,
@@ -127,7 +176,7 @@ normalise2.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL,
   # SET DEFAULTS ------------------------------------------------------------
 
   # default treatment for all cols
-  specs_def <- list(f_n = "minmax",
+  specs_def <- list(f_n = "n_minmax",
                     f_n_para = list(l_u = c(0,100)))
 
   # modify using input
@@ -159,8 +208,10 @@ normalise2.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL,
       # check if spec for that col
       if(col_name %in% names(indiv_specs)){
         # lookup spec and merge with defaults (overwrites any differences)
-        indiv_specs_col <- indiv_specs[[col_name]]
-        specs <- utils::modifyList(specs_def, indiv_specs_col)
+        specs <- indiv_specs[[col_name]]
+      } else {
+        # otherwise, use defaults
+        specs <- specs_def
       }
     } else {
       # otherwise, use defaults
@@ -179,8 +230,9 @@ normalise2.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL,
 
   # now run function
   # output is one list
-  norm_results <- sapply(names(x), norm_col) |>
+  norm_results <- lapply(names(x), norm_col) |>
     as.data.frame()
+  names(norm_results) <- names(x)
 
   # CHECK and OUTPUT --------------------------------------------------------
   norm_results
@@ -192,9 +244,9 @@ normalise2.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL,
 #'
 #' Normalisation is specified using the `f_n` and `f_n_para` arguments. In these, `f_n` should be a character
 #' string which is the name of a normalisation
-#' function. For example, `f_n = "minmax"` calls the [minmax()] function. `f_n_para` is a list of any
+#' function. For example, `f_n = "n_minmax"` calls the [n_minmax()] function. `f_n_para` is a list of any
 #' further arguments to `f_n`. This means that any function can be passed to [normalise()], as long as its
-#' first argument is `x`, a numeric vector, and it returns a numeric vector of the same length. See [minmax()]
+#' first argument is `x`, a numeric vector, and it returns a numeric vector of the same length. See [n_minmax()]
 #' for an example.
 #'
 #' `f_n_para` is *required* to be a named list. So e.g. if we define a function `f1(x, arg1, arg2)` then we should
@@ -214,7 +266,7 @@ normalise2.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL,
 #' @return An updated GII with normalised data set added
 #'
 #' @export
-normalise2.numeric <- function(x, f_n = "minmax", f_n_para = list(l_u = c(0,100)),
+normalise2.numeric <- function(x, f_n = NULL, f_n_para = NULL,
                                direction = 1){
 
 
@@ -225,8 +277,20 @@ normalise2.numeric <- function(x, f_n = "minmax", f_n_para = list(l_u = c(0,100)
   if(direction %nin% c(-1, 1)){
     stop("direction must be either -1 or 1")
   }
-  if(!is.list(f_n_para)){
-    stop("f_n_para must be a list")
+
+  # DEFAULTS ----------------------------------------------------------------
+
+  # minmax is default
+  if(is.null(f_n)){
+    f_n <- "minmax"
+  }
+  # function args
+  f_args <- list(x = x)
+  if(!is.null(f_n_para)){
+    if(!is.list(f_n_para)){
+      stop("f_n_para must be a list")
+    }
+    f_args <- c(f_args, f_n_para)
   }
 
   # NORMALISE ---------------------------------------------------------------
@@ -235,7 +299,11 @@ normalise2.numeric <- function(x, f_n = "minmax", f_n_para = list(l_u = c(0,100)
   x <- x*direction
 
   # call normalisation function
-  xn <- do.call(what = f_n, args = c(list(x = x), f_n_para))
+  if(f_n == "none"){
+    xn <- x
+  } else {
+    xn <- do.call(what = f_n, args = f_args)
+  }
 
   # CHECK and OUTPUT --------------------------------------------------------
 
@@ -255,10 +323,10 @@ normalise2.numeric <- function(x, f_n = "minmax", f_n_para = list(l_u = c(0,100)
 #'
 #' Normalisation is specified using the `ntype` and `npara` arguments. In these, `ntype` should be a character
 #' string which is the name of a normalisation
-#' function. For example, `ntype = "minmax"` calls the [minmax()] function. `npara` is any
+#' function. For example, `ntype = "n_minmax"` calls the [n_minmax()] function. `npara` is any
 #' further argument to `ntype`. This means that any function can be passed to [normalise()], as long as it
 #' is of the form `f(x, npara)`, where `x` is a vector (i.e. one column of data) and should return a
-#' similar vector of normalised data. See [minmax()] for an example. If a function has more than one
+#' similar vector of normalised data. See [n_minmax()] for an example. If a function has more than one
 #' additional argument, then `npara` can be passed as a list and a wrapper could be created.
 #'
 #' @param x Object to be normalised
@@ -284,12 +352,12 @@ normalise2 <- function(x, ...){
 #'
 #' @examples
 #' x <- runif(20)
-#' minmax(x)
+#' n_minmax(x)
 #'
 #' @return Normalised vector
 #'
 #' @export
-minmax <- function(x, l_u = c(0,100)){
+n_minmax <- function(x, l_u = c(0,100)){
 
   stopifnot(is.numeric(x),
             is.numeric(l_u),
@@ -308,7 +376,7 @@ minmax <- function(x, l_u = c(0,100)){
 #' Scale a vector
 #'
 #' Scales a vector for normalisation using the method applied in the GII2020 for some indicators. This
-#' does `x_scaled <- (x-l)/(u-l) * 100`. Note this is *not* the minmax transformation (see [minmax()]).
+#' does `x_scaled <- (x-l)/(u-l) * 100`. Note this is *not* the minmax transformation (see [n_minmax()]).
 #' This is a linear transformation with shift `u` and scaling factor `u-l`.
 #'
 #' @param x A numeric vector
@@ -316,12 +384,12 @@ minmax <- function(x, l_u = c(0,100)){
 #'
 #' @examples
 #' x <- runif(20)
-#' scaled(x, npara = c(1,10))
+#' n_scaled(x, npara = c(1,10))
 #'
 #' @return Scaled vector
 #'
 #' @export
-scaled <- function(x, npara = c(0,100)){
+n_scaled <- function(x, npara = c(0,100)){
 
   stopifnot(is.numeric(x),
             is.vector(x))
@@ -340,12 +408,12 @@ scaled <- function(x, npara = c(0,100)){
 #'
 #' @examples
 #' x <- runif(20)
-#' zscore(x)
+#' n_zscore(x)
 #'
 #' @return Numeric vector
 #'
 #' @export
-zscore <- function(x, m_sd = c(0,1)){
+n_zscore <- function(x, m_sd = c(0,1)){
 
   stopifnot(is.numeric(x),
             is.numeric(m_sd),
@@ -355,3 +423,278 @@ zscore <- function(x, m_sd = c(0,1)){
 
   (x-mean(x, na.rm = TRUE))/stats::sd(x, na.rm = TRUE)*m_sd[2] + m_sd[1]
 }
+
+
+#' Normalise as distance to maximum value
+#'
+#' A measure of the distance to the maximum value, where the maximum value is the highest-scoring value. The
+#' formula used is:
+#'
+#' $ 1 - (x_{max} - x)/(x_{max} - x_{min}) $
+#'
+#' This means that the closer a value is to the maximum, the higher its score will be. Scores will be in the
+#' range of 0 to 1.
+#'
+#' @param x A numeric vector
+#'
+#' @examples
+#' x <- runif(20)
+#' n_dist2max(x)
+#'
+#' @return Numeric vector
+#'
+#' @export
+n_dist2max <- function(x){
+
+  stopifnot(is.numeric(x))
+
+  minx <- min(x, na.rm = TRUE)
+  maxx <- max(x, na.rm = TRUE)
+  if(minx == maxx){
+    warning("The range of x is 0: returning vector of NaNs")
+  }
+
+  1 - (maxx - x)/(maxx- minx)
+}
+
+
+#' Normalise as distance to reference value
+#'
+#' A measure of the distance to a specific value found in `x`, specified by `iref`. The formula is:
+#'
+#' $ 1 - (x_{ref} - x)/(x_{ref} - x_{min}) $
+#'
+#' Values exceeding `x_ref` can be optionally capped at 1 if `cap_max = TRUE`.
+#'
+#' @param x A numeric vector
+#' @param iref An integer which indexes `x` to specify the reference value. The reference value will be
+#' `x[iref]`.
+#' @param cap_max If `TRUE`, any value of `x` that exceeds `x[iref]` will be assigned a score of 1, otherwise
+#' will have a score greater than 1.
+#'
+#' @examples
+#' x <- runif(20)
+#' n_dist2ref(x)
+#'
+#' @return Numeric vector
+#'
+#' @export
+n_dist2ref <- function(x, iref, cap_max = FALSE){
+
+  stopifnot(is.numeric(x),
+            is.logical(cap_max),
+            is.numeric(iref),
+            length(iref)==1,
+            iref > 0)
+
+  if(iref > length(x)){
+    stop("iref must be an integer in 1:length(x).")
+  }
+
+  minx <- min(x, na.rm = TRUE)
+  # get xref, check if NA
+  xref <- x[iref]
+  if(is.na(xref)){
+    warning("The value of x identified as the reference is NA - returning vector of NAs")
+  }
+
+  y <- 1 - (xref - x)/(xref - minx)
+  if(cap_max){
+    y[y>1] <- 1
+  }
+
+  y
+}
+
+
+#' Normalise as distance to target
+#'
+#' A measure of the distance of each value of `x` to a specified target. The formula is:
+#'
+#' $ 1 - (x_{targ} - x)/(x_{targ} - x_{min}) $
+#'
+#' Values exceeding `x_targ` can be optionally capped at 1 if `cap_max = TRUE`.
+#'
+#' @param x A numeric vector
+#' @param targ An target value
+#' @param cap_max If `TRUE`, any value of `x` that exceeds `targ` will be assigned a score of 1, otherwise
+#' will have a score greater than 1.
+#'
+#' @examples
+#' x <- runif(20)
+#' n_dist2targ(x, 0.8, cap_max = TRUE)
+#'
+#' @return Numeric vector
+#'
+#' @export
+n_dist2targ <- function(x, targ, cap_max = FALSE){
+
+  stopifnot(is.numeric(x),
+            is.numeric(targ),
+            length(targ)==1,
+            is.logical(cap_max))
+
+  if(is.na(targ)){
+    stop("targ is NA")
+  }
+
+  minx <- min(x, na.rm = TRUE)
+  if(targ < minx){
+    warning("targ is less than min(x) - this will produce negative scores.")
+  }
+
+  y <- 1 - (targ - x)/(targ - minx)
+  if(cap_max){
+    y[y>1] <- 1
+  }
+
+  y
+}
+
+
+#' Normalise as fraction of max value
+#'
+#' The ratio of each value of `x` to `max(x)`.
+#'
+#' $ x / x_{max} $
+#'
+#' @param x A numeric vector
+#'
+#' @examples
+#' x <- runif(20)
+#' n_fracmax(x)
+#'
+#' @return Numeric vector
+#'
+#' @export
+n_fracmax <- function(x){
+
+  stopifnot(is.numeric(x))
+
+  maxx <- max(x, na.rm = TRUE)
+
+  x/maxx
+}
+
+
+#' Normalise using percentile ranks
+#'
+#' Calculates percentile ranks of a numeric vector using "sport" ranking. Ranks are calculated by [base::rank()]
+#' and converted to percentile ranks. The `ties.method` can be changed - this is directly passed to
+#' [base::rank()].
+#'
+#' @param x A numeric vector
+#' @param ties.method This argument is passed to [base::rank()] - see there for details.
+#'
+#' @examples
+#' x <- runif(20)
+#' n_prank(x)
+#'
+#' @return Numeric vector
+#'
+#' @export
+n_prank <- function(x, ties.method = "min"){
+
+  stopifnot(is.numeric(x))
+
+  # ranks
+  rx <- rank(x, ties.method = "min", na.last = "keep")
+  # perc ranks
+  (rx - 1) / (sum(!is.na(x)) - 1)
+
+}
+
+
+#' Normalise using ranks
+#'
+#' This is simply a wrapper for [base::rank()]. Higher scores will give higher ranks.
+#'
+#' @param x A numeric vector
+#' @param ties.method This argument is passed to [base::rank()] - see there for details.
+#'
+#' @examples
+#' x <- runif(20)
+#' n_rank(x)
+#'
+#' @return Numeric vector
+#'
+#' @export
+n_rank <- function(x, ties.method = "min"){
+
+  stopifnot(is.numeric(x))
+
+  # ranks
+  rank(x, ties.method = "min", na.last = "keep")
+
+}
+
+#' Normalise using Borda scores
+#'
+#' Calculates Borda scores as rank(x) - 1.
+#'
+#' @param x A numeric vector
+#' @param ties.method This argument is passed to [base::rank()] - see there for details.
+#'
+#' @examples
+#' x <- runif(20)
+#' n_borda(x)
+#'
+#' @return Numeric vector
+#'
+#' @export
+n_borda <- function(x, ties.method = "min"){
+
+  stopifnot(is.numeric(x))
+
+  # ranks
+  rank(x, ties.method = "min", na.last = "keep") - 1
+
+}
+
+
+#' Normalise using goalpost method
+#'
+#' The distance of each value of `x` from the lower "goalpost" to the upper one. Goalposts are specified by
+#' `gposts = c(l, u, a)`, where `l` is the lower bound, `u` is the upper bound, and `a` is a scaling parameter.
+#'
+#' Specify `direction = -1` to "flip" the goalposts. This may be necessary depending on how the goalposts
+#' were defined.
+#'
+#' @param x A numeric vector
+#' @param gposts A numeric vector `c(l, u, a)`, where `l` is the lower bound, `u` is the upper bound,
+#' and `a` is a scaling parameter.
+#' @param direction Either 1 or -1. Set to -1 to flip goalposts.
+#' @param trunc2posts If `TRUE` (default) will truncate any values that fall outside of the goalposts.
+#'
+#' @examples
+#' x <- runif(20)
+#' n_goalposts(x, gposts = c(0.2, 0.8, 1))
+#'
+#' @return Numeric vector
+#'
+#' @export
+n_goalposts <- function(x, gposts, direction = 1, trunc2posts = TRUE){
+
+  stopifnot(is.numeric(x))
+
+  # since indicators arrive with directions possibly reversed (*-1), we have to also multiply GPs by -1
+  if(direction == -1){
+    # here, indicators are multiplied by -1, so need to also multiply goalposts by -1
+    gposts <- -1*gposts
+    # then, the goalpost formula is reversed as well
+    y <- (x-gposts[2])/(gposts[1] - gposts[2])
+  } else {
+    y <- (x-gposts[1])/(gposts[2] - gposts[1])
+  }
+
+  # this is the truncation bit
+  if(trunc2posts){
+    y[y > 1] <- 1
+    y[y < 0] <- 0
+  }
+  # overall scaling
+  y * gposts[3]
+
+}
+
+
