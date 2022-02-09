@@ -10,7 +10,8 @@
   default_specs = NULL,
   indiv_specs = NULL,
   directions = NULL,
-  out2 = "coin"
+  out2 = "coin",
+  write_to = NULL
 )
 }
 \arguments{
@@ -31,6 +32,9 @@ If \code{directions} is not specified, the directions will be taken from the \co
 
 \item{out2}{Either \code{"coin"} to return normalised data set back to the coin, or \code{df} to simply return a data
 frame.}
+
+\item{write_to}{Optional character string for naming the data set in the coin. Data will be written to
+\code{.$Data[[write_to]]}. Default is \code{write_to == "Normalised"}.}
 }
 \value{
 

@@ -27,3 +27,8 @@ to have directions assigned.
 \description{
 Normalise a data frame
 }
+\examples{
+normalise2(iris) |>
+head()
+
+}

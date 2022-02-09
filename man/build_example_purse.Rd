@@ -4,12 +4,14 @@
 \alias{build_example_purse}
 \title{Build example purse}
 \usage{
-build_example_purse(up_to = NULL)
+build_example_purse(up_to = NULL, quietly = FALSE)
 }
 \arguments{
 \item{up_to}{The point up to which to build the index. If \code{NULL}, builds full index. Else specify a \verb{build_*} function
 (as a string) - the index will be built up to and including this function. This option is mainly for helping with
 function examples. Example: \code{up_to = "build_normalise"}.}
+
+\item{quietly}{If \code{TRUE}, suppresses all messages.}
 }
 \value{
 coin class object

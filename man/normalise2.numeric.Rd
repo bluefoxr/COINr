@@ -4,7 +4,7 @@
 \alias{normalise2.numeric}
 \title{Normalise indicator data sets}
 \usage{
-\method{normalise2}{numeric}(x, f_n = "minmax", f_n_para = list(l_u = c(0, 100)), direction = 1)
+\method{normalise2}{numeric}(x, f_n = NULL, f_n_para = NULL, direction = 1)
 }
 \arguments{
 \item{x}{Object to be normalised}
@@ -23,9 +23,9 @@ An updated GII with normalised data set added
 \description{
 Normalisation is specified using the \code{f_n} and \code{f_n_para} arguments. In these, \code{f_n} should be a character
 string which is the name of a normalisation
-function. For example, \code{f_n = "minmax"} calls the \code{\link[=minmax]{minmax()}} function. \code{f_n_para} is a list of any
+function. For example, \code{f_n = "n_minmax"} calls the \code{\link[=n_minmax]{n_minmax()}} function. \code{f_n_para} is a list of any
 further arguments to \code{f_n}. This means that any function can be passed to \code{\link[=normalise]{normalise()}}, as long as its
-first argument is \code{x}, a numeric vector, and it returns a numeric vector of the same length. See \code{\link[=minmax]{minmax()}}
+first argument is \code{x}, a numeric vector, and it returns a numeric vector of the same length. See \code{\link[=n_minmax]{n_minmax()}}
 for an example.
 }
 \details{

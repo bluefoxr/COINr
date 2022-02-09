@@ -9,7 +9,9 @@
   dset = NULL,
   default_specs = NULL,
   indiv_specs = NULL,
-  directions = NULL
+  directions = NULL,
+  global = TRUE,
+  write_to = NULL
 )
 }
 \arguments{
@@ -29,6 +31,12 @@ order of the columns of the data set.}
 An updated purse with new normalised data sets added at \code{.$Data$Normalised} in each coin
 }
 \description{
+Normalisation is a special case in terms of operating on a purse of coins. This is because, when
+dealing with time series data, it is often desirable to normalise over the whole panel data set
+rather than independently for each time point. This makes the resulting index and aggregates comparable
+over time.
+}
+\details{
 The same specifications are passed to each coin in the purse. This means that each coin is normalised
 using the same set of specifications and directions. If you need control over individual coins, you
 will have to normalise coins individually.
