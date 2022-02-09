@@ -158,6 +158,9 @@ new_coin <- function(iData, iMeta, exclude = NULL, split_to = NULL,
   # we also need to forget about splitting, as if we regenerate one of
   # the coins in the purse, this would cause an error
   coin$Log$new_coin$split_to <- NULL
+  # by default we assume the coins can be regenerated. This will only be not TRUE
+  # if we run some global purse methods, like normalise
+  coin$Log$can_regen <- TRUE
 
   coinmaker <- function(iDatai){
 
@@ -499,10 +502,10 @@ check_iMeta <- function(iMeta, quietly = FALSE){
          Weight defined.")
   }
 
-  # Unit should be non-NA except for Groups
-  if( any(is.na(iMeta$Unit) & (iMeta$Type != "Group")) ){
-    stop("NAs detected in Unit: NAs are only allowed in Unit for Type = 'Group'.")
-  }
+  # # Unit should be non-NA except for Groups
+  # if( any(is.na(iMeta$Unit) & (iMeta$Type != "Group")) ){
+  #   stop("NAs detected in Unit: NAs are only allowed in Unit for Type = 'Group'.")
+  # }
 
   # Target be specified for anything at Level 1
   if( any(is.na(iMeta$Target) & (iMeta$Type == "Indicator")) ){
