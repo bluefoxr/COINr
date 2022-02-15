@@ -22,10 +22,11 @@
 #' @param out2 If `"coin"` (default) outputs a coin, else if `"list"`, outputs a list with
 #' `iData` and `iMeta` entries. This may be useful if you want to make further edits before building the coin.
 #'
-#' @return
+#' @return A coin class object
 #' @export
 #'
 #' @examples
+#' #
 COIN2coin <- function(COIN, recover_dsets = FALSE, out2 = "coin"){
 
   if(!is.COIN(COIN)){
