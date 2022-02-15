@@ -133,13 +133,13 @@ impute <- function(COIN, imtype = NULL, dset = NULL,
 
       if (imtype == "agg_mean"){
         # Now get the mean. Had to do in a roundabout way to avoid rowmeans type functions... probably an easier way exists though
-        newcol <- indselect %>% dplyr::rowwise() %>%
-          dplyr::transmute(!!agg_names[agroup] := matrixStats::weightedMean(dplyr::c_across(cols = dplyr::everything()),
-                                                                            w = weights_group, na.rm = TRUE))
+        # newcol <- indselect %>% dplyr::rowwise() %>%
+        #   dplyr::transmute(!!agg_names[agroup] := matrixStats::weightedMean(dplyr::c_across(cols = dplyr::everything()),
+        #                                                                     w = weights_group, na.rm = TRUE))
       } else if (imtype == "agg_median"){
-        newcol <- indselect %>% dplyr::rowwise() %>%
-          dplyr::transmute(!!agg_names[agroup] := matrixStats::weightedMedian(dplyr::c_across(cols = dplyr::everything()),
-                                                                            w = weights_group, na.rm = TRUE))
+        # newcol <- indselect %>% dplyr::rowwise() %>%
+        #   dplyr::transmute(!!agg_names[agroup] := matrixStats::weightedMedian(dplyr::c_across(cols = dplyr::everything()),
+        #                                                                     w = weights_group, na.rm = TRUE))
       }
 
       # get any rows with NAs
