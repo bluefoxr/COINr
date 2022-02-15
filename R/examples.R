@@ -7,6 +7,7 @@
 #' @param up_to The point up to which to build the index. If `NULL`, builds full index. Else specify a `build_*` function
 #' (as a string) - the index will be built up to and including this function. This option is mainly for helping with
 #' function examples. Example: `up_to = "build_normalise"`.
+#' @param quietly If `TRUE`, suppresses all messages.
 #'
 #' @examples
 #' #
@@ -14,7 +15,12 @@
 #' @return coin class object
 #'
 #' @export
-build_example_coin <- function(up_to = NULL){
+build_example_coin <- function(up_to = NULL, quietly = FALSE){
+
+  if(quietly){
+    coin <- suppressMessages(build_example_coin(up_to = up_to, quietly = FALSE))
+    return(coin)
+  }
 
   if(is.null(up_to)){
     up_to = "theend"
@@ -35,53 +41,25 @@ build_example_coin <- function(up_to = NULL){
     return(coin)
   }
 
+  # TREAT data
+  coin <- treat2(coin, dset = "Screened")
+  if(up_to == "treat"){
+    return(coin)
+  }
+
+  # NORMALISE data
+  coin <- normalise2(coin, dset = "Treated")
+  if(up_to == "normalise"){
+    return(coin)
+  }
+
+  # AGGREGATE data
+  coin <- aggregate2(coin, dset = "Normalised")
+  if(up_to == "aggregate"){
+    return(coin)
+  }
+
   coin
-
-  # # TREAT
-  # # individual specifications
-  # indiv_spec <- data.frame(
-  #   CODE = c("FDINetInfl", "PatFam", "MicroLoan"),
-  #   Treat = c("log", "win", "win"),
-  #   Winmax = c(NA, 5, 6),
-  #   forced_win = c(FALSE, FALSE, TRUE)
-  # )
-  # # run data treatment function
-  # GII2020 <- build_treat(GII2020, indiv_spec = indiv_spec,
-  #                        reset_points = data.frame(ISO3 = "RWA", CODE = "MicroLoan"))
-  # if(up_to == "build_treat"){
-  #   return(GII2020)
-  # }
-  #
-  # # NORMALISE
-  # # assemble df for specification of "special cases", i.e. the scaled indicators
-  # nspecs_indiv <- data.frame(
-  #   CODE = GII2::ScalePara_2020$IndCode,
-  #   ntype = "scaled"
-  # )
-  # # add the parameters separately. This is a "list column"
-  # nspecs_indiv$npara <- GII2::ScalePara_2020[c("l","u")] |>
-  #   t() |>
-  #   as.data.frame() |>
-  #   as.list()
-  # # now run the normalise function
-  # GII2020 <- build_normalise(GII2020, default_ntype = "minmax", default_npara = c(0,100),
-  #                            indiv_spec = nspecs_indiv)
-  # if(up_to == "build_normalise"){
-  #   return(GII2020)
-  # }
-  #
-  # # AGGREGATE
-  # GII2020 <- build_aggregate(GII2020)
-  #
-  # if(up_to == "build_aggregate"){
-  #   return(GII2020)
-  # }
-  #
-  # # country profiles
-  # GII2020 <- get_profiles(GII2020)
-  #
-  # GII2020
-
 }
 
 
@@ -121,9 +99,27 @@ build_example_purse <- function(up_to = NULL, quietly = FALSE){
     return(purse)
   }
 
-  # SCREEN economies based on data availability rules
+  # SCREEN
   purse <- screen_units(purse, dset = "Raw", dat_thresh = 0.9, unit_screen = "byNA")
   if(up_to == "screen_units"){
+    return(purse)
+  }
+
+  # TREAT data
+  purse <- treat2(purse, dset = "Screened")
+  if(up_to == "treat"){
+    return(purse)
+  }
+
+  # NORMALISE data
+  purse <- normalise2(purse, dset = "Treated", global = TRUE)
+  if(up_to == "normalise"){
+    return(purse)
+  }
+
+  # AGGREGATE data
+  purse <- aggregate2(purse, dset = "Normalised")
+  if(up_to == "aggregate"){
     return(purse)
   }
 
