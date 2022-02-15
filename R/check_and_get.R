@@ -127,6 +127,8 @@ check_dset <- function(x, dset, ...){
 #'
 #' @param x A purse class object
 #' @param dset A character string corresponding to a named data set within each coin `coin$Data`. E.g. `Raw`.
+#' @param Time Optional time index to extract from a subset of the coins present in the purse. Should be a
+#' vector containing one or more entries in `x$Time` or `NULL` to return all (default).
 #'
 #' @examples
 #' #
@@ -134,13 +136,22 @@ check_dset <- function(x, dset, ...){
 #' @return Data frame of indicator data.
 #'
 #' @export
-get_dset.purse <- function(x, dset){
+get_dset.purse <- function(x, dset, Time = NULL){
 
   # check specified dset exists
   check_dset(x, dset)
 
+  if(!is.null(Time)){
+    if(any(Time %nin% x$Time)){
+      stop("One or more entries in Time not found in the Time column of the purse.")
+    }
+    coins <- x$coin[x$Time %in% Time]
+  } else {
+    coins <- x$coin
+  }
+
   # extract data sets in one df
-  iDatas <- lapply(x$coin, function(coin){
+  iDatas <- lapply(coins, function(coin){
     iData <- get_dset(coin, dset)
     iData <- cbind(Time = coin$Meta$Unit$Time[[1]], iData)
   })
