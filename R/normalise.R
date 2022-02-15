@@ -133,7 +133,7 @@ normalise2.coin <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
     if(is.null(write_to)){
       write_to <- "Normalised"
     }
-    coin <- write_dset(coin, iData_n, dset = write_to)
+    write_dset(coin, iData_n, dset = write_to)
   }
 }
 
