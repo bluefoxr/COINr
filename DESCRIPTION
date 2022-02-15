@@ -26,7 +26,6 @@ Imports:
     openxlsx (>= 4.2.3),
     corrplot (>= 0.84),
     plotly (>= 4.9.3),
-    matrixStats (>= 0.58.0),
     stats,
     rlang (>= 0.4.10),
     purrr (>= 0.3.4),
