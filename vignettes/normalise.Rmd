@@ -133,7 +133,7 @@ The default normalisation uses the min-max approach, scaling indicators onto the
 
 ```{r}
 coin <- normalise2(coin, dset = "Raw",
-                   default_specs = list(f_n = "n_minmax",
+                   default_specs = list(f_n = "n_zscore",
                                         f_n_para = list(c(10,2))))
 ```
 
