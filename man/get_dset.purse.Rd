@@ -4,12 +4,15 @@
 \alias{get_dset.purse}
 \title{Gets a named data set and performs checks}
 \usage{
-\method{get_dset}{purse}(x, dset)
+\method{get_dset}{purse}(x, dset, Time = NULL)
 }
 \arguments{
 \item{x}{A purse class object}
 
 \item{dset}{A character string corresponding to a named data set within each coin \code{coin$Data}. E.g. \code{Raw}.}
+
+\item{Time}{Optional time index to extract from a subset of the coins present in the purse. Should be a
+vector containing one or more entries in \code{x$Time} or \code{NULL} to return all (default).}
 }
 \value{
 Data frame of indicator data.
