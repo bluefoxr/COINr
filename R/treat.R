@@ -22,7 +22,7 @@ treat2.purse <- function(x, dset = NULL, default_specs = NULL, indiv_specs = NUL
                 indiv_specs = indiv_specs)
   })
   # make sure still purse class
-  class(x) <- "purse"
+  class(x) <- c("purse", "data.frame")
   x
 }
 
