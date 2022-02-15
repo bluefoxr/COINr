@@ -1,0 +1,28 @@
+---
+title: "Outlier Treatment"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Outlier Treatment}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(COINr)
+```
+
+
+# Linking other packages
+
+The method of outlier detection in COINr uses a simple metric based on skew and kurtosis. Of course, R has many other packages with more sophisticated approaches to outlier detection.
+
+*TO ADD*
+
+https://easystats.github.io/performance/reference/check_outliers.html
