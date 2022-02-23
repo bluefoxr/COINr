@@ -4,7 +4,13 @@
 \alias{treat2.purse}
 \title{Treat a purse of coins for outliers}
 \usage{
-\method{treat2}{purse}(x, dset = NULL, default_specs = NULL, indiv_specs = NULL)
+\method{treat2}{purse}(
+  x,
+  dset = NULL,
+  default_specs = NULL,
+  indiv_specs = NULL,
+  combine_treat = FALSE
+)
 }
 \arguments{
 \item{x}{A purse object}
@@ -14,6 +20,10 @@
 \item{default_specs}{Default specifications}
 
 \item{indiv_specs}{Individual specifications}
+
+\item{combine_treat}{By default, if \code{f1} fails to pass \code{f_pass}, then \code{f2} is applied to the original \code{x},
+rather than the treated output of \code{f1}. If \code{combine_treat = TRUE}, \code{f2} will instead be applied to the output
+of \code{f1}, so the two treatments will be combined.}
 }
 \value{
 An updated purse with new treated data sets added at \code{.$Data$Treated} in each coin, plus

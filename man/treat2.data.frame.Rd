@@ -4,7 +4,7 @@
 \alias{treat2.data.frame}
 \title{Treat a data frame for outliers}
 \usage{
-\method{treat2}{data.frame}(x, default_specs = NULL, indiv_specs = NULL)
+\method{treat2}{data.frame}(x, default_specs = NULL, indiv_specs = NULL, combine_treat = FALSE)
 }
 \arguments{
 \item{x}{A data frame. Can have both numeric and non-numeric columns.}
@@ -12,6 +12,10 @@
 \item{default_specs}{First stage data treatment function}
 
 \item{indiv_specs}{First stage data treatment function parameters}
+
+\item{combine_treat}{By default, if \code{f1} fails to pass \code{f_pass}, then \code{f2} is applied to the original \code{x},
+rather than the treated output of \code{f1}. If \code{combine_treat = TRUE}, \code{f2} will instead be applied to the output
+of \code{f1}, so the two treatments will be combined.}
 }
 \value{
 A treated data frame of data

@@ -4,7 +4,14 @@
 \alias{treat2.coin}
 \title{Treat a data set in a coin for outliers}
 \usage{
-\method{treat2}{coin}(x, dset, default_specs = NULL, indiv_specs = NULL, out2 = "coin")
+\method{treat2}{coin}(
+  x,
+  dset,
+  default_specs = NULL,
+  indiv_specs = NULL,
+  combine_treat = FALSE,
+  out2 = "coin"
+)
 }
 \arguments{
 \item{x}{A coin}
@@ -14,6 +21,10 @@
 \item{default_specs}{Default specifications}
 
 \item{indiv_specs}{Individual specifications}
+
+\item{combine_treat}{By default, if \code{f1} fails to pass \code{f_pass}, then \code{f2} is applied to the original \code{x},
+rather than the treated output of \code{f1}. If \code{combine_treat = TRUE}, \code{f2} will instead be applied to the output
+of \code{f1}, so the two treatments will be combined.}
 }
 \value{
 An updated coin with a new data set \code{.Data$Treated} added, plus analysis information in
