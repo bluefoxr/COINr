@@ -74,4 +74,18 @@ check_fname <- function(f_name){
   }
 }
 
-
+#' Set default arg
+#'
+#' A shortcut
+#'
+#' @param x The argument
+#' @param x_default The default to set
+#'
+#' @return the parameter
+set_default <- function(x, x_default){
+  if(is.null(x)){
+    x_default
+  } else {
+    x
+  }
+}
