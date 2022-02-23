@@ -165,6 +165,10 @@ get_dset.purse <- function(x, dset, Time = NULL){
 #'
 #' @param x A coin class object
 #' @param dset A character string corresponding to a named data set within `coin$Data`. E.g. `Raw`.
+#' @param also_get A character vector specifying any columns to attach to the data set that are *not*
+#' indicators or aggregates. These will be e.g. `uName`, groups, denominators or columns labelled as "Other"
+#' in `iMeta`. These columns are stored in `.$Meta$Unit` to avoid repetition. Set `also_get = "all"` to
+#' attach all columns.
 #'
 #' @examples
 #' #
@@ -172,12 +176,43 @@ get_dset.purse <- function(x, dset, Time = NULL){
 #' @return Data frame of indicator data.
 #'
 #' @export
-get_dset.coin <- function(x, dset){
+get_dset.coin <- function(x, dset, also_get = NULL){
 
   # check specified dset exists
   check_dset(x, dset)
   # get dset
-  x$Data[[dset]]
+  iData <- x$Data[[dset]]
+
+  if(!is.null(also_get)){
+
+    uMeta <- coin$Meta$Unit
+
+    if(is.null(uMeta)){
+      stop("Unit metadata not found in coin.")
+    }
+
+    if(length(also_get) == 1){
+      if(also_get == "all"){
+        uMeta_codes <- colnames(uMeta)
+      } else {
+        uMeta_codes <- also_get
+      }
+    } else {
+      uMeta_codes <- also_get
+    }
+
+    # check entries in also_get exist
+    if(any(uMeta_codes %nin% colnames(uMeta))){
+      stop("Entries in also_get not recognised - see function help.")
+    }
+
+    uMeta <- uMeta[union("uCode", uMeta_codes)]
+
+    iData <- merge(uMeta, iData, by = "uCode", all.x = FALSE, all.y = TRUE)
+
+  }
+
+  iData
 }
 
 #' Gets a named data set and performs checks
