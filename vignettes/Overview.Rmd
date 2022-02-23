@@ -32,7 +32,7 @@ This vignette introduces a new R package which performs many of the numerical an
 
 ## Constructing composite indicators {#Sec:ContructingCIs}
 
-To begin with, let us define some basic terms The "things" that are being benchmarked/compared by the indicators and composite indicator are more generally referred to as *units*. Units are compared using *indicators*, which are measured variables that are relevant to the overall concept of the composite indicator.
+To begin with, let us define some basic terms. The "things" that are being benchmarked/compared by the indicators and composite indicator are more generally referred to as *units*. Units are compared using *indicators*, which are measured variables that are relevant to the overall concept of the composite indicator.
 
 While the concepts measured by composite indicators differ considerably, the underlying methodology is often fairly similar. Typically, it begins by mapping the concept, which leads to selecting relevant indicators. This is followed by an analysis of the indicators, then normalising them onto a common scale, and aggregating them (often in a hierarchical manner) up to a single index value for each unit. Further optional operations can include imputation of missing data, treatment of outliers, multivariate analysis, weighting, and uncertainty/sensitivity analysis. The European Commission's Joint Research Centre summarises the steps for building a composite indicator as follows:
 

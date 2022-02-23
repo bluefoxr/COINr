@@ -242,7 +242,11 @@ aggregate2(df1, f_ag = "a_amean",
            dat_thresh = 2/3)
 ```
 
-Here we see that the second row is aggregated to give `NA` because it only has 1/3 data availability. 
+Here we see that the second row is aggregated to give `NA` because it only has 1/3 data availability.
+
+## By level
+
+*TO ADD: changing by level*
 
 # Data frames
 
