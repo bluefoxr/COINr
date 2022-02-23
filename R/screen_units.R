@@ -178,7 +178,7 @@ screen_units.coin <- function(x, dset, unit_screen, dat_thresh = NULL, nonzero_t
     l_out
   } else {
     coin <- write_dset(coin, l_out$ScreenedData, dset = "Screened")
-    write2coin(coin, l_out[names(l_out != "ScreenedData")], out2, "Analysis", "Screened")
+    write2coin(coin, l_out[names(l_out) != "ScreenedData"], out2, "Analysis", "Screened")
   }
 }
 
