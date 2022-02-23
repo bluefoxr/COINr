@@ -129,6 +129,10 @@ check_dset <- function(x, dset, ...){
 #' @param dset A character string corresponding to a named data set within each coin `coin$Data`. E.g. `Raw`.
 #' @param Time Optional time index to extract from a subset of the coins present in the purse. Should be a
 #' vector containing one or more entries in `x$Time` or `NULL` to return all (default).
+#' @param also_get A character vector specifying any columns to attach to the data set that are *not*
+#' indicators or aggregates. These will be e.g. `uName`, groups, denominators or columns labelled as "Other"
+#' in `iMeta`. These columns are stored in `.$Meta$Unit` to avoid repetition. Set `also_get = "all"` to
+#' attach all columns, or set `also_get = "none"` to return only numeric columns, i.e. no `uCode` column.
 #'
 #' @examples
 #' #
@@ -136,7 +140,7 @@ check_dset <- function(x, dset, ...){
 #' @return Data frame of indicator data.
 #'
 #' @export
-get_dset.purse <- function(x, dset, Time = NULL){
+get_dset.purse <- function(x, dset, Time = NULL, also_get = NULL){
 
   # check specified dset exists
   check_dset(x, dset)
@@ -152,7 +156,7 @@ get_dset.purse <- function(x, dset, Time = NULL){
 
   # extract data sets in one df
   iDatas <- lapply(coins, function(coin){
-    iData <- get_dset(coin, dset)
+    iData <- get_dset(coin, dset = dset, also_get = also_get)
     iData <- cbind(Time = coin$Meta$Unit$Time[[1]], iData)
   })
   Reduce(rbind, iDatas)
@@ -163,12 +167,17 @@ get_dset.purse <- function(x, dset, Time = NULL){
 #' A helper function to retrieve a named data set from the coin object. Also performs input checks at the
 #' same time.
 #'
+#' If `also_get` is not specified, this will return the indicator columns with the `uCode` identifiers
+#' in the first column. Optionally, `also_get` can be specified to attach other metadata columns, or
+#' to only return the numeric (indicator) columns with no identifiers. This latter option might be useful
+#' for e.g. examining correlations.
+#'
 #' @param x A coin class object
 #' @param dset A character string corresponding to a named data set within `coin$Data`. E.g. `Raw`.
 #' @param also_get A character vector specifying any columns to attach to the data set that are *not*
 #' indicators or aggregates. These will be e.g. `uName`, groups, denominators or columns labelled as "Other"
 #' in `iMeta`. These columns are stored in `.$Meta$Unit` to avoid repetition. Set `also_get = "all"` to
-#' attach all columns.
+#' attach all columns, or set `also_get = "none"` to return only numeric columns, i.e. no `uCode` column.
 #'
 #' @examples
 #' #
@@ -185,31 +194,36 @@ get_dset.coin <- function(x, dset, also_get = NULL){
 
   if(!is.null(also_get)){
 
-    uMeta <- coin$Meta$Unit
+    if(also_get[1] == "none"){
+      iData <- iData[names(iData) != "uCode"]
+    } else {
 
-    if(is.null(uMeta)){
-      stop("Unit metadata not found in coin.")
-    }
+      uMeta <- coin$Meta$Unit
 
-    if(length(also_get) == 1){
-      if(also_get == "all"){
-        uMeta_codes <- colnames(uMeta)
+      if(is.null(uMeta)){
+        stop("Unit metadata not found in coin.")
+      }
+
+      if(length(also_get) == 1){
+        if(also_get == "all"){
+          uMeta_codes <- colnames(uMeta)
+        } else {
+          uMeta_codes <- also_get
+        }
       } else {
         uMeta_codes <- also_get
       }
-    } else {
-      uMeta_codes <- also_get
+
+      # check entries in also_get exist
+      if(any(uMeta_codes %nin% colnames(uMeta))){
+        stop("Entries in also_get not recognised - see function help.")
+      }
+
+      uMeta <- uMeta[union("uCode", uMeta_codes)]
+
+      iData <- merge(uMeta, iData, by = "uCode", all.x = FALSE, all.y = TRUE)
+
     }
-
-    # check entries in also_get exist
-    if(any(uMeta_codes %nin% colnames(uMeta))){
-      stop("Entries in also_get not recognised - see function help.")
-    }
-
-    uMeta <- uMeta[union("uCode", uMeta_codes)]
-
-    iData <- merge(uMeta, iData, by = "uCode", all.x = FALSE, all.y = TRUE)
-
   }
 
   iData
@@ -230,5 +244,230 @@ get_dset.coin <- function(x, dset, also_get = NULL){
 #' @export
 get_dset <- function(x, dset, ...){
   UseMethod("get_dset")
+}
+
+
+#' Get subsets of indicator data
+#'
+#' A flexible function for retrieving data from a coin, from a specified data set. Subsets of data can
+#' be returned based on selection of columns, using the `iCodes` and `Level` arguments, and by filtering
+#' rowwise using the `uCodes` and `use_group` arguments. The `also_get` argument also allows unit metadata
+#' columns to be attached, such as names, groups, and denominators.
+#'
+#' The `iCodes` argument can be used to directly select named indicators, i.e. setting `iCodes = c("a", "b")`
+#' will select indicators "a" and "b", attaching any extra columns specified by `also_get`. However,
+#' using this in conjunction with the `Level` argument returns named groups of indicators. For example,
+#' setting `iCodes = "Group1"` (for e.g. an aggregation group in Level 2) and `Level = 1` will return
+#' all indicators in Level 1, belonging to "Group1".
+#'
+#' Rows can also be subsetted. The `uCodes` argument can be used to select specified units in the same
+#' way as `iCodes`. Additionally, the `use_group` argument filters to specified groups. If `uCodes` is
+#' specified, and `use_group` refers to a named group column, then it will return all units in the
+#' groups that the `uCodes` belong to. This is useful for putting a unit into context with its peers
+#' based on some grouping variable.
+#'
+#' @param coin A coin class object
+#' @param dset Name of a data set found in `.$Data`.
+#' @param iCodes Optional indicator codes to retrieve. If `NULL` (default), returns all iCodes found in
+#' the selected data set. Can also refer to indicator groups. See details.
+#' @param Level Optionally, the level in the hierarchy to extract data from. See details.
+#' @param uCodes Optional unit codes to filter rows of the resulting data set. Can also be used in conjunction
+#' with groups. See details.
+#' @param use_group Optional group to filter rows of the data set. Specified as `list(Group_Var = Group)`,
+#' where `Group_Var` is a Group_ column that must be present in the selected data set, and `Group` is a specified group
+#' inside that grouping variable. This filters the selected data to only include rows from the specified group. Can
+#' also be used in conjunction with `uCodes` -- see details.
+#' @param also_get Optional meta data columns to attach to the data set. See [get_dset()].
+#'
+#' @return
+#' @export
+get_data <- function(coin, dset, iCodes = NULL, Level = NULL, uCodes = NULL,
+                     use_group = NULL, also_get = NULL){
+
+  # CHECKS ------------------------------------------------------------------
+
+  check_coin_input(coin)
+
+  # get iMeta and maxlev
+  iMeta <- coin$Meta$Ind
+  maxlev <- max(iMeta$Level, na.rm = TRUE)
+
+  # check Level
+  if(!is.null(Level)){
+    stopifnot(is.numeric(Level),
+              length(Level) == 1)
+    if(Level %nin% 1:maxlev){
+      stop("Level is not in 1:(max level).")
+    }
+  }
+
+  # check groups and get names
+  if(!is.null(use_group)){
+
+    stopifnot(length(use_group)==1)
+
+    if(is.list(use_group)){
+      groupcol <- names(use_group)
+      groupsel <- use_group[[1]]
+    } else if (is.character(use_group)){
+      groupcol <- use_group
+      groupsel <- NULL
+    }
+  } else {
+    groupcol <- NULL
+    groupsel <- NULL
+  }
+
+  # GET DSET ----------------------------------------------------------------
+
+  # if we have to filter by group, we also have to get group cols
+  # we also probably need uCode in any case (can be deleted later)
+  remove_uCode <- FALSE
+  if(!is.null(also_get)){
+
+    if(is.null(use_group)){
+      # we don't need any group cols, take also_get as is
+      # if none, we still probably need uCode, so set NULL
+      if(also_get == "none"){
+        also_get <- NULL
+        remove_uCode <- TRUE
+      }
+    } else {
+      if(also_get == "none"){
+        also_get <- c("uCode", groupcol)
+      } else {
+        also_get <- unique(c(also_get, groupcol))
+      }
+    }
+  } else {
+    also_get <- groupcol
+  }
+
+  iData <- get_dset(coin, dset = dset, also_get = also_get)
+
+  # make sure group can be found in group col, if specified
+  if(!is.null(groupsel)){
+    if(groupsel %nin% iData[[groupcol]]){
+      stop("Selected group not found in specified group column.")
+    }
+  }
+
+  # col names that are NOT indicators
+  not_iCodes <- names(iData)[names(iData) %in% names(coin$Meta$Unit)]
+
+  # COLUMNS -----------------------------------------------------------------
+
+  # We have iCodes and Level to think about here
+
+  if(!is.null(iCodes)){
+
+    # first check iCodes are findable
+    if(any(iCodes %nin% iMeta$iCode)){
+      stop("One or more iCodes not found in iMeta.")
+    }
+
+    # check which level iCodes are from
+    Lev_iCodes <- unique(iMeta$Level[iMeta$iCode %in% iCodes])
+    # check not from different levels
+    if(length(Lev_iCodes) != 1){
+      stop("iCodes are from different Levels - this is not allowed.")
+    }
+
+    if(is.null(Level)){
+
+      # no Level specified: take iCodes as given
+      cols <- iCodes
+
+    } else {
+
+      # get lineage
+      lin <- coin$Meta$Lineage
+      # get cols to select
+      cols <- lin[[Level]][lin[[Lev_iCodes]] %in% iCodes]
+
+    }
+
+    # select columns
+    if(any(cols %nin% names(iData))){
+      stop("Selected iCodes not found in data set. If Level > 1 you need to target an aggregated data set.")
+    }
+    iData1 <- iData[c(not_iCodes, cols)]
+
+  } else if (!is.null(Level)) {
+
+    # iCodes not specified, but Level specified
+    # This means we take everything from specified level, if available
+    cols <- iMeta$iCode[iMeta$Level == Level]
+    cols <- cols[!is.na(cols)]
+
+    # select columns
+    if(any(cols %nin% names(iData))){
+      stop("Selected iCodes not found in data set. If Level > 1 you need to target an aggregated data set.")
+    }
+    iData1 <- iData[c(not_iCodes, cols)]
+
+  } else {
+
+    # no iCodes or Level specified
+    # no column selection
+    iData1 <- iData
+  }
+
+  # ROWS --------------------------------------------------------------------
+
+  if(!is.null(uCodes)){
+
+    # check uCodes can be found
+    if(any(uCodes %nin% iData$uCode)){
+      stop("One or more uCodes not found in the selected data set.")
+    }
+
+    if(!is.null(use_group)){
+      # We have uCodes AND group specification
+
+      # filter to group(s) containing units
+      if(is.null(groupsel)){
+        # groups containing units
+        uGroups <- unique(iData1[[groupcol]][iData1$uCode %in% uCodes])
+        # filter to these groups
+        iData2 <- iData1[iData1[[groupcol]] %in% uGroups, ]
+      } else {
+        # if we have a specified group within a column, AND uCodes, we give preference to uCodes
+        iData2 <- iData1[iData1$uCode %in% uCodes, ]
+      }
+
+    } else {
+      # no groups specified -
+      # filter to selected units
+      iData2 <- iData1[iData1$uCode %in% uCodes, ]
+    }
+  } else if (!is.null(use_group)){
+
+    # groups specified, but no uCodes
+
+    # select a whole group
+    if(is.null(groupsel)){
+      # silly case where only a col is specified, but no actual group. Hence no filtering
+      iData2 <- iData1
+    } else {
+      # proper group selection
+      iData2 <- iData1[iData1[[groupcol]] == groupsel, ]
+    }
+
+  } else {
+
+    # no row filtering
+    iData2 <- iData1
+
+  }
+
+  # OUTPUT ------------------------------------------------------------------
+
+  if(remove_uCode){
+    iData2 <- iData2[names(iData2) != "uCode"]
+  }
+
+  iData2
+
 }
 
