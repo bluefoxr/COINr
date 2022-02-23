@@ -14,7 +14,7 @@
 \item{also_get}{A character vector specifying any columns to attach to the data set that are \emph{not}
 indicators or aggregates. These will be e.g. \code{uName}, groups, denominators or columns labelled as "Other"
 in \code{iMeta}. These columns are stored in \code{.$Meta$Unit} to avoid repetition. Set \code{also_get = "all"} to
-attach all columns.}
+attach all columns, or set \code{also_get = "none"} to return only numeric columns, i.e. no \code{uCode} column.}
 }
 \value{
 Data frame of indicator data.
@@ -22,6 +22,12 @@ Data frame of indicator data.
 \description{
 A helper function to retrieve a named data set from the coin object. Also performs input checks at the
 same time.
+}
+\details{
+If \code{also_get} is not specified, this will return the indicator columns with the \code{uCode} identifiers
+in the first column. Optionally, \code{also_get} can be specified to attach other metadata columns, or
+to only return the numeric (indicator) columns with no identifiers. This latter option might be useful
+for e.g. examining correlations.
 }
 \examples{
 #

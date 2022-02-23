@@ -4,7 +4,7 @@
 \alias{get_dset.purse}
 \title{Gets a named data set and performs checks}
 \usage{
-\method{get_dset}{purse}(x, dset, Time = NULL)
+\method{get_dset}{purse}(x, dset, Time = NULL, also_get = NULL)
 }
 \arguments{
 \item{x}{A purse class object}
@@ -13,6 +13,11 @@
 
 \item{Time}{Optional time index to extract from a subset of the coins present in the purse. Should be a
 vector containing one or more entries in \code{x$Time} or \code{NULL} to return all (default).}
+
+\item{also_get}{A character vector specifying any columns to attach to the data set that are \emph{not}
+indicators or aggregates. These will be e.g. \code{uName}, groups, denominators or columns labelled as "Other"
+in \code{iMeta}. These columns are stored in \code{.$Meta$Unit} to avoid repetition. Set \code{also_get = "all"} to
+attach all columns, or set \code{also_get = "none"} to return only numeric columns, i.e. no \code{uCode} column.}
 }
 \value{
 Data frame of indicator data.
