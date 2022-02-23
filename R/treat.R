@@ -4,6 +4,9 @@
 #' @param dset The data set to treat in each coin
 #' @param default_specs Default specifications
 #' @param indiv_specs Individual specifications
+#' @param combine_treat By default, if `f1` fails to pass `f_pass`, then `f2` is applied to the original `x`,
+#' rather than the treated output of `f1`. If `combine_treat = TRUE`, `f2` will instead be applied to the output
+#' of `f1`, so the two treatments will be combined.
 #'
 #' @return An updated purse with new treated data sets added at `.$Data$Treated` in each coin, plus
 #' analysis information at `.$Analysis$Treated`
@@ -11,7 +14,8 @@
 #'
 #' @examples
 #' #
-treat2.purse <- function(x, dset = NULL, default_specs = NULL, indiv_specs = NULL){
+treat2.purse <- function(x, dset = NULL, default_specs = NULL, indiv_specs = NULL,
+                         combine_treat = FALSE){
 
   # input check
   check_purse(x)
@@ -19,7 +23,7 @@ treat2.purse <- function(x, dset = NULL, default_specs = NULL, indiv_specs = NUL
   # apply unit screening to each coin
   x$coin <- lapply(x$coin, function(coin){
     treat2.coin(coin, dset = dset, default_specs = default_specs,
-                indiv_specs = indiv_specs)
+                indiv_specs = indiv_specs, combine_treat = combine_treat)
   })
   # make sure still purse class
   class(x) <- c("purse", "data.frame")
@@ -33,6 +37,9 @@ treat2.purse <- function(x, dset = NULL, default_specs = NULL, indiv_specs = NUL
 #' @param dset A named data set available in `.$Data`
 #' @param default_specs Default specifications
 #' @param indiv_specs Individual specifications
+#' @param combine_treat By default, if `f1` fails to pass `f_pass`, then `f2` is applied to the original `x`,
+#' rather than the treated output of `f1`. If `combine_treat = TRUE`, `f2` will instead be applied to the output
+#' of `f1`, so the two treatments will be combined.
 #'
 #' @return An updated coin with a new data set `.Data$Treated` added, plus analysis information in
 #' `.$Analysis$Treated`.
@@ -40,7 +47,8 @@ treat2.purse <- function(x, dset = NULL, default_specs = NULL, indiv_specs = NUL
 #'
 #' @examples
 #' #
-treat2.coin <- function(x, dset, default_specs = NULL, indiv_specs = NULL, out2 = "coin"){
+treat2.coin <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
+                        combine_treat = FALSE, out2 = "coin"){
 
   # WRITE LOG ---------------------------------------------------------------
 
@@ -52,7 +60,8 @@ treat2.coin <- function(x, dset, default_specs = NULL, indiv_specs = NULL, out2 
 
   # TREAT DATA --------------------------------------------------------------
 
-  l_treat <- treat2(iData, default_specs = default_specs, indiv_specs = indiv_specs)
+  l_treat <- treat2(iData, default_specs = default_specs,
+                    indiv_specs = indiv_specs, combine_treat = combine_treat)
 
   # output list
   if(out2 == "list"){
@@ -102,6 +111,9 @@ treat2.coin <- function(x, dset, default_specs = NULL, indiv_specs = NULL, out2 
 #' @param x A data frame. Can have both numeric and non-numeric columns.
 #' @param default_specs First stage data treatment function
 #' @param indiv_specs First stage data treatment function parameters
+#' @param combine_treat By default, if `f1` fails to pass `f_pass`, then `f2` is applied to the original `x`,
+#' rather than the treated output of `f1`. If `combine_treat = TRUE`, `f2` will instead be applied to the output
+#' of `f1`, so the two treatments will be combined.
 #'
 #' @importFrom utils modifyList
 #'
@@ -111,7 +123,7 @@ treat2.coin <- function(x, dset, default_specs = NULL, indiv_specs = NULL, out2 
 #' @return A treated data frame of data
 #'
 #' @export
-treat2.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL){
+treat2.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL, combine_treat = FALSE){
 
 
   # SET DEFAULTS ------------------------------------------------------------
@@ -131,8 +143,15 @@ treat2.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL){
                                        kurt_thresh = 3.5))
   # modify using input
   if(!is.null(default_specs)){
-    stopifnot(is.list(default_specs))
-    specs_def <- utils::modifyList(specs_def, default_specs)
+    if(is.character(default_specs)){
+      stopifnot(length(default_specs) == 1)
+      if(default_specs != "none"){
+        stop("default_specs must either be a list or else 'none'.")
+      }
+    } else {
+      stopifnot(is.list(default_specs))
+      specs_def <- utils::modifyList(specs_def, default_specs)
+    }
   }
 
   # individual: check and flag for later function
@@ -156,17 +175,32 @@ treat2.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL){
     if(indiv){
       # check if spec for that col
       if(col_name %in% names(indiv_specs)){
-        # lookup spec and merge with defaults (overwrites any differences)
+        # lookup spec
         indiv_specs_col <- indiv_specs[[col_name]]
+        # check if "none"
+        if(is.character(indiv_specs_col) && length(indiv_specs_col) == 1){
+          if(indiv_specs_col == "none"){
+            return(list(x = xi))
+          }
+        }
+        # merge with defaults (overwrites any differences)
         specs <- utils::modifyList(specs_def, indiv_specs_col)
+      } else {
+        # otherwise, use defaults
+        specs <- specs_def
       }
     } else {
       # otherwise, use defaults
       specs <- specs_def
+      if(is.character(specs) && length(specs) == 1){
+        if(specs == "none"){
+          return(list(x = xi))
+        }
+      }
     }
 
     # run function
-    do.call("treat2.numeric", c(list(x = xi), specs))
+    do.call("treat2.numeric", c(list(x = xi, combine_treat = combine_treat), specs))
   }
 
   # now run function
@@ -311,6 +345,8 @@ treat2.numeric <- function(x, f1, f1_para = NULL, f2 = NULL, f2_para = NULL,
 
     } else if (is.logical(l)) {
       pass1 <- l
+      # collect outputs for table (not x, and no lists)
+      l_table[[paste0(f_name, suffix)]] <<- pass1
     } else {
       stop("Output of ",f_name,"is not either a list with entry .$Pass or a logical")
     }
@@ -578,6 +614,60 @@ GIIlog <- function(x, na.rm = FALSE){
 
   list(x = x,
        treated = rep("GIIlog", length(x)))
+}
+
+
+#' Log-transform a vector
+#'
+#' Performs a log transform on a numeric vector.
+#'
+#' Specifically, this performs a modified "COIN Tool log" transform: `log(x-min(x) + a)`, where
+#' `a <- 0.01*(max(x)-min(x))`.
+#'
+#' @param x A numeric vector.
+#' @param na.rm Set `TRUE` to remove `NA` values, otherwise returns `NA`.
+#'
+#' @examples
+#' x <- runif(20)
+#' CTlog(x)
+#'
+#' @return A log-transformed vector of data.
+#'
+#' @export
+CTlog <- function(x, na.rm = FALSE){
+
+  stopifnot(is.numeric(x))
+
+  x <- log(x- min(x,na.rm = na.rm) + 0.01*(max(x, na.rm = na.rm)-min(x, na.rm = na.rm)))
+
+  list(x = x,
+       treated = rep("CTlog", length(x)))
+}
+
+#' Log-transform a vector
+#'
+#' Performs a log transform on a numeric vector.
+#'
+#' Specifically, this performs a "COIN Tool log" transform: `log(x-min(x) + 1)`.
+#'
+#' @param x A numeric vector.
+#' @param na.rm Set `TRUE` to remove `NA` values, otherwise returns `NA`.
+#'
+#' @examples
+#' x <- runif(20)
+#' CTlog_orig(x)
+#'
+#' @return A log-transformed vector of data.
+#'
+#' @export
+CTlog_orig <- function(x, na.rm = FALSE){
+
+  stopifnot(is.numeric(x))
+
+  x <- log(x- min(x, na.rm = na.rm) + 1)
+
+  list(x = x,
+       treated = rep("CTlog_orig", length(x)))
 }
 
 
