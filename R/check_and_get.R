@@ -266,7 +266,10 @@ get_dset <- function(x, dset, ...){
 #' groups that the `uCodes` belong to. This is useful for putting a unit into context with its peers
 #' based on some grouping variable.
 #'
-#' @param coin A coin class object
+#' Note that if you want to retreive a whole data set (with no column/row subsetting), use the
+#' [get_dset()] function which should be slightly faster.
+#'
+#' @param x A coin class object
 #' @param dset Name of a data set found in `.$Data`.
 #' @param iCodes Optional indicator codes to retrieve. If `NULL` (default), returns all iCodes found in
 #' the selected data set. Can also refer to indicator groups. See details.
@@ -281,16 +284,18 @@ get_dset <- function(x, dset, ...){
 #'
 #' @return
 #' @export
-get_data <- function(coin, dset, iCodes = NULL, Level = NULL, uCodes = NULL,
+get_data.coin <- function(x, dset, iCodes = NULL, Level = NULL, uCodes = NULL,
                      use_group = NULL, also_get = NULL){
 
   # CHECKS ------------------------------------------------------------------
+
+  x <- coin
 
   check_coin_input(coin)
 
   # get iMeta and maxlev
   iMeta <- coin$Meta$Ind
-  maxlev <- max(iMeta$Level, na.rm = TRUE)
+  maxlev <- coin$Meta$maxlev
 
   # check Level
   if(!is.null(Level)){
@@ -322,7 +327,7 @@ get_data <- function(coin, dset, iCodes = NULL, Level = NULL, uCodes = NULL,
 
   # if we have to filter by group, we also have to get group cols
   # we also probably need uCode in any case (can be deleted later)
-  remove_uCode <- FALSE
+  remove_meta <- FALSE
   if(!is.null(also_get)){
 
     if(is.null(use_group)){
@@ -330,11 +335,12 @@ get_data <- function(coin, dset, iCodes = NULL, Level = NULL, uCodes = NULL,
       # if none, we still probably need uCode, so set NULL
       if(also_get == "none"){
         also_get <- NULL
-        remove_uCode <- TRUE
+        remove_meta <- TRUE
       }
     } else {
       if(also_get == "none"){
         also_get <- c("uCode", groupcol)
+        remove_meta <- TRUE
       } else {
         also_get <- unique(c(also_get, groupcol))
       }
@@ -383,7 +389,7 @@ get_data <- function(coin, dset, iCodes = NULL, Level = NULL, uCodes = NULL,
       # get lineage
       lin <- coin$Meta$Lineage
       # get cols to select
-      cols <- lin[[Level]][lin[[Lev_iCodes]] %in% iCodes]
+      cols <- unique(lin[[Level]][lin[[Lev_iCodes]] %in% iCodes])
 
     }
 
@@ -463,11 +469,169 @@ get_data <- function(coin, dset, iCodes = NULL, Level = NULL, uCodes = NULL,
 
   # OUTPUT ------------------------------------------------------------------
 
-  if(remove_uCode){
-    iData2 <- iData2[names(iData2) != "uCode"]
+  if(remove_meta){
+    iData2 <- iData2[names(iData2) %nin% not_iCodes]
   }
 
   iData2
 
 }
 
+
+#' Get subsets of indicator data
+#'
+#' Purse description.
+#'
+#' @param x A purse class object
+#' @param dset Name of a data set found in `.$Data`.
+#' @param iCodes Optional indicator codes to retrieve. If `NULL` (default), returns all iCodes found in
+#' the selected data set. Can also refer to indicator groups. See details.
+#' @param Level Optionally, the level in the hierarchy to extract data from. See details.
+#' @param uCodes Optional unit codes to filter rows of the resulting data set. Can also be used in conjunction
+#' with groups. See details.
+#' @param use_group Optional group to filter rows of the data set. Specified as `list(Group_Var = Group)`,
+#' where `Group_Var` is a Group_ column that must be present in the selected data set, and `Group` is a specified group
+#' inside that grouping variable. This filters the selected data to only include rows from the specified group. Can
+#' also be used in conjunction with `uCodes` -- see details.
+#' @param Time Optional time index to extract from a subset of the coins present in the purse. Should be a
+#' vector containing one or more entries in `x$Time` or `NULL` to return all (default).
+#' @param also_get Optional meta data columns to attach to the data set. See [get_dset()].
+#'
+#' @return
+#' @export
+get_data.purse <- function(x, dset, iCodes = NULL, Level = NULL, uCodes = NULL,
+                     use_group = NULL, Time = NULL, also_get = NULL){
+
+  # check specified dset exists
+  check_dset(x, dset)
+
+  if(!is.null(Time)){
+    if(any(Time %nin% x$Time)){
+      stop("One or more entries in Time not found in the Time column of the purse.")
+    }
+    coins <- x$coin[x$Time %in% Time]
+  } else {
+    coins <- x$coin
+  }
+
+  # extract data sets in one df
+  iDatas <- lapply(coins, function(coin){
+    iData <- get_data(coin, dset = dset, iCodes = iCodes, Level = Level,
+                      uCodes = uCodes, use_group = use_group, also_get = also_get)
+    iData <- cbind(Time = coin$Meta$Unit$Time[[1]], iData)
+  })
+  Reduce(rbind, iDatas)
+}
+
+
+#' Get subsets of indicator data
+#'
+#' A helper function to retrieve a named data set from coin or purse objects.
+#'
+#' @param x A coin or purse
+#' @param ... Arguments passed to methods
+#'
+#' @examples
+#' #
+#'
+#' @return Data frame of indicator data, indexed also by time if input is a purse.
+#'
+#' @export
+get_data <- function(x, ...){
+  UseMethod("get_data")
+}
+
+
+#' Exract things from iData
+#'
+#' A helper function to separate indicator cols from metadata columns in iMeta.
+#'
+#' @param coin A coin
+#' @param iData An iData format data frame
+#' @param GET What to get
+#'
+#' @examples
+#' #
+#'
+#' @return Data frame of indicator data, indexed also by time if input is a purse.
+extract_iData <- function(coin, iData, GET){
+
+  # indicator cols
+  iCodes <- names(iData)[names(iData) %nin% names(coin$Meta$Unit)]
+
+  if(GET == "iCodes"){
+    iCodes
+  } else if (GET == "iData_"){
+    iData[iCodes]
+  } else if (GET == "meta"){
+    iData[colnames(iData) %nin% iCodes]
+  } else if (GET == "mCodes"){
+    setdiff(colnames(iData), iCodes)
+  }
+
+}
+
+
+#' Get names from codes
+#'
+#' Given either uCodes or iCodes, returns uNames or iNames
+#'
+#' @param coin A coin
+#' @param uCodes Some uCodes
+#' @param iCodes Some iCodes
+#'
+#' @examples
+#' #
+#'
+#' @return Vector of names
+get_names <- function(coin, uCodes = NULL, iCodes = NULL){
+
+  if(!is.null(uCodes) && !is.null(iCodes)){
+    stop("Either uCodes or iCodes, not both.")
+  }
+
+  if(!is.null(uCodes)){
+
+    uNames <- coin$Meta$Unit$uName
+    if(is.null(uNames)){stop("uNames not found")}
+    if(any(uCodes %nin% coin$Meta$Unit$uCode)){
+      stop("One or more uCodes not found in .$Meta$Unit$uCode")
+    }
+    uNames[match(uCodes, coin$Meta$Unit$uCode)]
+
+  } else if (!is.null(iCodes)){
+
+    iNames <- coin$Meta$Ind$iName
+    if(is.null(iNames)){stop("iNames not found")}
+    if(any(iCodes %nin% coin$Meta$Ind$iCode)){
+      stop("One or more iCodes not found in .$Meta$Ind$iCode")
+    }
+    iNames[match(iCodes, coin$Meta$Ind$iCode)]
+
+  }
+
+}
+
+
+#' Get units of indicators
+#'
+#' Given iCodes, returns corresponding units if available.
+#'
+#' @param coin A coin
+#' @param iCodes Some iCodes
+#'
+#' @examples
+#' #
+#'
+#' @return Vector of names
+get_units <- function(coin, iCodes = NULL){
+
+  iUnits <- coin$Meta$Ind$Unit
+  if(is.null(iUnits)){
+    return(NULL)
+  }
+  if(any(iCodes %nin% coin$Meta$Ind$iCode)){
+    stop("One or more iCodes not found in .$Meta$Ind$iCode")
+  }
+  iUnits[match(iCodes, coin$Meta$Ind$iCode)]
+}
