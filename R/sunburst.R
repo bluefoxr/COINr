@@ -35,7 +35,7 @@ plot_framework <- function(coin, type = "sunburst", colour_level = NULL,
 
   # get iMeta
   iMeta <- coin$Meta$Ind[!is.na(coin$Meta$Ind$Level), ]
-  maxlev <- max(iMeta$Level)
+  maxlev <- coin$Meta$maxlev
 
   # DEFAULTS ----------------------------------------------------------------
 
