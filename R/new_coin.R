@@ -159,6 +159,7 @@ new_coin <- function(iData, iMeta, exclude = NULL, split_to = NULL,
   # First make some mods to the "base" coin which are same for all coins
   coin$Meta$Ind <- iMeta
   coin$Meta$Lineage <- get_lineage(iMeta, level_names = level_names)
+  coin$Meta$maxlev <- max(iMeta$Level, na.rm = TRUE)
 
   # we also need to forget about splitting, as if we regenerate one of
   # the coins in the purse, this would cause an error
