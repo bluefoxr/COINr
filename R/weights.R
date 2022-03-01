@@ -24,7 +24,7 @@ get_eff_wts <-  function(coin, out2 = "df"){
   # we need to rescale weights to sum to the weight of the parent
   # needs to be done by working from highest level downwards
 
-  maxlev <- max(iMeta$Level)
+  maxlev <- coin$Meta$maxlev
 
   # index by parent, but highest level has parent = NA which breaks tapply a bit.
   # so assign a fake category just for this operation
