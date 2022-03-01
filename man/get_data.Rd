@@ -4,55 +4,20 @@
 \alias{get_data}
 \title{Get subsets of indicator data}
 \usage{
-get_data(
-  coin,
-  dset,
-  iCodes = NULL,
-  Level = NULL,
-  uCodes = NULL,
-  use_group = NULL,
-  also_get = NULL
-)
+get_data(x, ...)
 }
 \arguments{
-\item{coin}{A coin class object}
+\item{x}{A coin or purse}
 
-\item{dset}{Name of a data set found in \code{.$Data}.}
-
-\item{iCodes}{Optional indicator codes to retrieve. If \code{NULL} (default), returns all iCodes found in
-the selected data set. Can also refer to indicator groups. See details.}
-
-\item{Level}{Optionally, the level in the hierarchy to extract data from. See details.}
-
-\item{uCodes}{Optional unit codes to filter rows of the resulting data set. Can also be used in conjunction
-with groups. See details.}
-
-\item{use_group}{Optional group to filter rows of the data set. Specified as \code{list(Group_Var = Group)},
-where \code{Group_Var} is a Group_ column that must be present in the selected data set, and \code{Group} is a specified group
-inside that grouping variable. This filters the selected data to only include rows from the specified group. Can
-also be used in conjunction with \code{uCodes} -- see details.}
-
-\item{also_get}{Optional meta data columns to attach to the data set. See \code{\link[=get_dset]{get_dset()}}.}
+\item{...}{Arguments passed to methods}
 }
 \value{
-
+Data frame of indicator data, indexed also by time if input is a purse.
 }
 \description{
-A flexible function for retrieving data from a coin, from a specified data set. Subsets of data can
-be returned based on selection of columns, using the \code{iCodes} and \code{Level} arguments, and by filtering
-rowwise using the \code{uCodes} and \code{use_group} arguments. The \code{also_get} argument also allows unit metadata
-columns to be attached, such as names, groups, and denominators.
+A helper function to retrieve a named data set from coin or purse objects.
 }
-\details{
-The \code{iCodes} argument can be used to directly select named indicators, i.e. setting \code{iCodes = c("a", "b")}
-will select indicators "a" and "b", attaching any extra columns specified by \code{also_get}. However,
-using this in conjunction with the \code{Level} argument returns named groups of indicators. For example,
-setting \code{iCodes = "Group1"} (for e.g. an aggregation group in Level 2) and \code{Level = 1} will return
-all indicators in Level 1, belonging to "Group1".
+\examples{
+#
 
-Rows can also be subsetted. The \code{uCodes} argument can be used to select specified units in the same
-way as \code{iCodes}. Additionally, the \code{use_group} argument filters to specified groups. If \code{uCodes} is
-specified, and \code{use_group} refers to a named group column, then it will return all units in the
-groups that the \code{uCodes} belong to. This is useful for putting a unit into context with its peers
-based on some grouping variable.
 }
