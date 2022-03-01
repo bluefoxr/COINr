@@ -89,3 +89,23 @@ set_default <- function(x, x_default){
     x
   }
 }
+
+
+#' Make correlation matrix long
+#'
+#' Only for correlation matrices: make long to avoid reshape2 package or similar.
+#'
+#' @param X a square correlation matrix
+#'
+#' @return A long format data frame
+lengthen <- function(X){
+
+  # make df
+  X <- as.data.frame(X)
+
+  # stack and add names
+  X1 <- cbind(stack(X), rownames(X))
+  names(X1) <- c("Value", "V2", "V1")
+  rev(X1)
+
+}
