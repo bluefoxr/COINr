@@ -325,6 +325,7 @@ iplotMap <- function(COIN, dset = "Raw", isel){
 #' This only works if `dset = "Aggregated"` and `aglev > 1`.
 #' @param from_group Filters the bar chart to a specified group using a group column that is present in the specified
 #' data set. Specified as `list(group_variable = selected_group)`.
+#' @param xlabs Tick labels to display on x axis: either `"UnitCode"` or `"UnitName"`.
 #'
 #' @importFrom plotly plot_ly layout
 #'
@@ -343,7 +344,9 @@ iplotMap <- function(COIN, dset = "Raw", isel){
 #' @export
 
 iplotBar <- function(COIN, dset = "Raw", isel = NULL, usel = NULL, aglev = NULL,
-                     stack_children = FALSE, from_group = NULL){
+                     stack_children = FALSE, from_group = NULL, xlabs = "UnitCode"){
+
+  stopifnot(xlabs %in% c("UnitCode", "UnitName"))
 
   # for a COIN we need to know the aggregation level to make things a bit easier later on
   if(is.null(aglev) & (class(COIN) == "COIN")){
@@ -420,7 +423,7 @@ iplotBar <- function(COIN, dset = "Raw", isel = NULL, usel = NULL, aglev = NULL,
     #colnames(df1)[2] <- "Indicator"
     df1 <- df1[order(df1[[ind_code]], decreasing = TRUE),]
 
-    fig <- plotly::plot_ly(data = df1, x = ~UnitCode, y = ~get(children[1]),
+    fig <- plotly::plot_ly(data = df1, x = ~get(xlabs), y = ~get(children[1]),
                            source = 'barclick', key = ~UnitCode, type = "bar",
                            name = children[1])
 
@@ -471,10 +474,11 @@ iplotBar <- function(COIN, dset = "Raw", isel = NULL, usel = NULL, aglev = NULL,
                              marker = list(color = barcolours))
     } else {
       # otherwise, plot unit codes on x axis
-      fig <- plotly::plot_ly(data = df1, x = ~UnitCode, y = ~get(ind_code),
+      fig <- plotly::plot_ly(data = df1, x = ~get(xlabs), y = ~get(ind_code),
                              source = 'barclick', key = ~UnitCode, type = "bar",
                              marker = list(color = barcolours))
     }
+
 
     fig <- fig %>% layout(title = list(text = indname, y = 0.95),
                           yaxis = list(title = indunit),
