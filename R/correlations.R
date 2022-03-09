@@ -198,7 +198,9 @@ weights2corr <- function(coin, w, Levels = NULL, iCodes = NULL,
 #' @param dset The target data set
 #' @param iCodes An optional list of character vectors where the first entry specifies the indicator/aggregate
 #' codes to correlate against the second entry (also a specification of indicator/aggregate codes).
-#' @param Levels The aggregation levels to take the two groups of indicators from. See [getIn()] for details. Defaults to indicator level.
+#' @param Levels The aggregation levels to take the two groups of indicators from. See [getIn()] for details.
+#' Defaults to indicator level.
+#' @param ... Further arguments to be passed to [get_data()] (`uCodes` and `use_group`).
 #' @param cortype The type of correlation to calculate, either `"pearson"`, `"spearman"`, or `"kendall"`.
 #' @param withparent If `TRUE`, and `aglev[1] != aglev[2]`, will only return correlations of each row with its parent.
 #' @param grouplev The aggregation level to group correlations by if `aglev[1] == aglev[2]`. By default, groups correlations into the
@@ -220,8 +222,7 @@ weights2corr <- function(coin, w, Levels = NULL, iCodes = NULL,
 #' * [plotCorr()] Plot correlation matrices of indicator subsets
 #'
 #' @export
-
-get_corr <- function(coin, dset, iCodes = NULL, Levels = NULL, uCodes = NULL, use_group = NULL,
+get_corr <- function(coin, dset, iCodes = NULL, Levels = NULL, ...,
                      cortype = "pearson", pval = 0.05, withparent = TRUE, grouplev = NULL){
 
 
@@ -248,9 +249,9 @@ get_corr <- function(coin, dset, iCodes = NULL, Levels = NULL, uCodes = NULL, us
 
   # get data sets
   iData1 <- get_data(coin, dset = dset, iCodes = iCodes[[1]],
-                     Level = Levels[[1]], uCodes = uCodes, use_group = use_group, also_get = "none")
+                     Level = Levels[[1]], ..., also_get = "none")
   iData2 <- get_data(coin, dset = dset, iCodes = iCodes[[2]],
-                     Level = Levels[[2]], uCodes = uCodes, use_group = use_group, also_get = "none")
+                     Level = Levels[[2]], ..., also_get = "none")
 
 
   # GET CORRELATIONS --------------------------------------------------------
@@ -409,37 +410,31 @@ get_pvals = function(X, ...) {
 #' This function simply returns Cronbach's alpha. If you want a lot more details on reliability, the 'psych' package has
 #' a much more detailed analysis.
 #'
-#' @param COIN A COIN or a data frame containing only numerical columns of data.
-#' @param dset The data set to check the consistency of.
-#' @param icodes Indicator codes if a subset of `dset` is requested
-#' @param aglev The aggregation level to take `icodes` from (see [getIn()] for details)
+#' @param coin A coin or a data frame containing only numerical columns of data.
+#' @param ... Arguments passed to [get_data()].
 #' @param use Argument to pass to [stats::cor] to calculate the covariance matrix. Default `"pairwise.complete.obs"`.
 #'
 #' @importFrom stats cov
 #'
 #' @examples
-#' # build ASEM COIN
-#' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
-#' # get Cronbach of indicators in Physical pillar
-#' getCronbach(ASEM, dset = "Raw", icodes = "Physical", aglev = 1)
+#' #
 #'
 #' @return Cronbach alpha as a numerical value.
 #'
 #' @export
-
-getCronbach <- function(COIN, dset = "Raw", icodes = NULL,
-                        aglev = NULL, use = "pairwise.complete.obs"){
-
-  if(is.null(aglev)){aglev = 1}
+get_cronbach <- function(coin, ..., use = "pairwise.complete.obs"){
 
   # get data
-  df <- getIn(COIN, dset = dset, icodes = icodes, aglev = aglev)$ind_data_only
+  iData <- get_data(coin, ...)
+
+  # get only indicator cols
+  iData <- extract_iData(coin, iData, "iData_")
 
   # get number of variables
-  k = ncol(df)
+  k = ncol(iData)
 
   # get covariance matrix
-  cvtrix <- stats::cov(df, use = use)
+  cvtrix <- stats::cov(iData, use = use)
 
   # sum of all elements of cov matrix
   sigall <- sum(cvtrix, na.rm = TRUE)
@@ -448,7 +443,6 @@ getCronbach <- function(COIN, dset = "Raw", icodes = NULL,
   sigav <- (sigall - sum(diag(cvtrix), na.rm = TRUE))/(k*(k-1))
 
   # calculate Cronbach alpha
-  cron <- (k^2 * sigav)/sigall
-  return(cron)
+  (k^2 * sigav)/sigall
 
 }
