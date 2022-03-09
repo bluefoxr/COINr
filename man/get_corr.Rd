@@ -9,8 +9,7 @@ get_corr(
   dset,
   iCodes = NULL,
   Levels = NULL,
-  uCodes = NULL,
-  use_group = NULL,
+  ...,
   cortype = "pearson",
   pval = 0.05,
   withparent = TRUE,
@@ -25,7 +24,10 @@ get_corr(
 \item{iCodes}{An optional list of character vectors where the first entry specifies the indicator/aggregate
 codes to correlate against the second entry (also a specification of indicator/aggregate codes).}
 
-\item{Levels}{The aggregation levels to take the two groups of indicators from. See \code{\link[=getIn]{getIn()}} for details. Defaults to indicator level.}
+\item{Levels}{The aggregation levels to take the two groups of indicators from. See \code{\link[=getIn]{getIn()}} for details.
+Defaults to indicator level.}
+
+\item{...}{Further arguments to be passed to \code{\link[=get_data]{get_data()}} (\code{uCodes} and \code{use_group}).}
 
 \item{cortype}{The type of correlation to calculate, either \code{"pearson"}, \code{"spearman"}, or \code{"kendall"}.}
 
