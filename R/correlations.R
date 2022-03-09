@@ -345,8 +345,10 @@ get_corr <- function(coin, dset, iCodes = NULL, Levels = NULL, ...,
 
     # rename corr matrix cols to prepare for join
     colnames(crmat_melt)[3] <- "Correlation"
+    colnames(keeprows) <- colnames(crmat_melt)[1:2]
 
     # now do inner join - we are matching correlation rows that agree with the structure of the index
+    browser()
     crtable <- merge(keeprows, crmat_melt, by = colnames(keeprows))
     # sometimes this throws duplicates, so remove
     crtable <- unique(crtable)
