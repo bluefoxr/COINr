@@ -9,14 +9,14 @@
 #'
 #' Note that this function can only call correlations within the same data set (i.e. only one data set in `.$Data`).
 #'
-#' @param COIN The COIN object
+#' @param coin The coin object
 #' @param dset The target data set.
 #' @param icodes An optional list of character vectors where the first entry specifies the indicator/aggregate
 #' codes to correlate against the second entry (also a specification of indicator/aggregate codes)
-#' @param aglevs The aggregation levels to take the two groups of indicators from. See [getIn()] for details.
+#' @param Levels The aggregation levels to take the two groups of indicators from. See [getIn()] for details.
 #' @param cortype The type of correlation to calculate, either `"pearson"`, `"spearman"`, or `"kendall"` (see [stats::cor()]).
 #' @param withparent If `aglev[1] != aglev[2]`, and equal `"parent"` will only plot correlations of each row with its parent (default).
-#' If `"family"`, plots the lowest aggregation level in `aglevs` against all its parent levels.
+#' If `"family"`, plots the lowest aggregation level in `Levels` against all its parent levels.
 #' If `"none"` plots the full correlation matrix.
 #' @param grouplev The aggregation level to group correlations by if `aglev[1] == aglev[2]`. By default, groups correlations into the
 #' aggregation level above. Set to 0 to disable grouping and plot the full matrix.
@@ -42,10 +42,10 @@
 #' @importFrom ggplot2 ggplot aes geom_tile
 #'
 #' @examples
-#' # build ASEM COIN
+#' # build ASEM coin
 #' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
 #' # correlation data frame of indicators in connectivity sub-index, grouped by pillar
-#' corrs <- plotCorr(ASEM, dset = "Raw", icodes = "Conn", aglevs = 1,
+#' corrs <- plotCorr(ASEM, dset = "Raw", icodes = "Conn", Levels = 1,
 #' showvals = F, out2 = "dflong")
 #' # NOTE to create a plot instead set out2 = "fig"
 #'
@@ -58,22 +58,27 @@
 #' * [getCorr()] Getting correlation matrices of indicator subsets
 #'
 #' @export
-
-plotCorr <- function(COIN, dset = "Raw", icodes = NULL, aglevs = 1, cortype = "pearson",
+plot_corr <- function(coin, dset = "Raw", iCodes = NULL, Levels = 1, cortype = "pearson",
                      withparent = "parent", grouplev = NULL, box_level = NULL, showvals = TRUE, flagcolours = FALSE,
                      flagthresh = c(-0.4, 0.3, 0.9), pval = 0.05, insig_colour = "#F0F0F0",
                      text_colour = NULL, discrete_colours = NULL, box_colour = NULL, out2 = "fig"){
 
-  if (length(icodes) == 1){
-    icodes = rep(icodes, 2)
+
+  # CHECKS ------------------------------------------------------------------
+
+  if (length(iCodes) == 1){
+    iCodes = rep(iCodes, 2)
   }
-  if (length(aglevs) == 1){
-    aglevs = rep(aglevs, 2)
+  if (length(Levels) == 1){
+    Levels = rep(Levels, 2)
   }
-  if (aglevs[2] > aglevs [1]){
-    aglevs <- rev(aglevs)
-    icodes <- rev(icodes)
+  if (Levels[2] > Levels [1]){
+    Levels <- rev(Levels)
+    iCodes <- rev(iCodes)
   }
+
+  # get index structure
+  lin <- coin$Meta$Lineage
 
   ##- GET CORRELATIONS -----------------------------
 
@@ -82,23 +87,20 @@ plotCorr <- function(COIN, dset = "Raw", icodes = NULL, aglevs = 1, cortype = "p
     if(withparent == "none") withparent <- FALSE
     if(withparent == "parent") withparent <- TRUE
 
-    crtable <- getCorr(COIN, dset = dset, icodes = icodes, aglevs = aglevs, cortype = cortype,
-                       pval = pval, withparent = withparent, grouplev = grouplev)
+    crtable <- get_corr(coin, dset = dset, iCodes = iCodes, Levels = Levels, ...,
+                        cortype = cortype, pval = pval, withparent = withparent, grouplev = grouplev)
 
   } else if (withparent == "family"){
 
     # we repeat for all levels above. Start with the first agg level specified
-    aglev1 <- min(aglevs)
-
-    # get index structure
-    agcols <- dplyr::select(COIN$Input$IndMeta, .data$IndCode, dplyr::starts_with("Agg"))
+    aglev1 <- min(Levels)
 
     crtable <- data.frame(Var1 = NA, Var2 = NA, Correlation = NA)
 
-    for (ii in (aglev1 + 1):ncol(agcols)){
-      crtableii <- getCorr(COIN, dset = dset, icodes = icodes, aglevs = c(ii, aglev1), cortype = cortype,
-                           pval = pval, withparent = TRUE, grouplev = grouplev)
-      crtableii$Var1 <- colnames(agcols)[ii]
+    for (ii in (aglev1 + 1):ncol(lin)){
+      crtableii <- get_corr(coin, dset = dset, iCodes = iCodes, Levels = c(ii, aglev1), ...,
+                            cortype = cortype, pval = pval, withparent = TRUE, grouplev = grouplev)
+      crtableii$Var1 <- colnames(lin)[ii]
       crtable <- rbind(crtable, crtableii)
     }
     crtable <- crtable[-1,]
@@ -120,15 +122,13 @@ plotCorr <- function(COIN, dset = "Raw", icodes = NULL, aglevs = 1, cortype = "p
 
     # sometimes these orderings come out not sorted according to higher aggregation levels
     # Here we sort them according to the order in IndMeta (which is already sorted)
-    # First get index structure...
-    aggcols <- dplyr::select(COIN$Input$IndMeta, .data$IndCode, dplyr::starts_with("Agg"))
     # Order first set (unless family plot in which case no, cos messes up)
     if(withparent != "family"){
-      c1 <- unlist(aggcols[aglevs[1]])
+      c1 <- unlist(lin[Levels[1]])
       ord1 <- unique(c1[c1 %in% ord1])
     }
     # Order second set
-    c2 <- unlist(aggcols[aglevs[2]])
+    c2 <- unlist(lin[Levels[2]])
     ord2 <- unique(c2[c2 %in% ord2])
     if(withparent ==  "family"){
       ord2 <-rev(ord2)
@@ -217,7 +217,7 @@ plotCorr <- function(COIN, dset = "Raw", icodes = NULL, aglevs = 1, cortype = "p
       # for family, we always plot boxes
 
       # isolate cols of things we are correlating. Here all levels above current.
-      acls <- unique(aggcols[min(aglevs):ncol(aggcols)])
+      acls <- unique(lin[min(Levels):ncol(lin)])
       # filter out to current set of indicators
       acls <- acls[unlist(acls[1]) %in% unlist(unique(crtable[2])), ]
       # now we need to iterate over columns, excluding the first one
@@ -239,12 +239,12 @@ plotCorr <- function(COIN, dset = "Raw", icodes = NULL, aglevs = 1, cortype = "p
 
     } else if(!is.null(box_level)) {
 
-      if(box_level < aglevs[2]+1){
-        stop("box_level must be at least the aggregation level above aglevs.")
+      if(box_level < Levels[2]+1){
+        stop("box_level must be at least the aggregation level above Levels.")
       }
 
       # isolate cols of things we are correlating, plus box level
-      acls <- unique(aggcols[c(aglevs[1], box_level)])
+      acls <- unique(lin[c(Levels[1], box_level)])
       # filter out to current set of indicators
       acls <- acls[unlist(acls[1]) %in% unlist(unique(crtable[1])), ]
       # we need four vectors for annotate: xmin, xmax, ymin and ymax
@@ -261,13 +261,13 @@ plotCorr <- function(COIN, dset = "Raw", icodes = NULL, aglevs = 1, cortype = "p
       # we have to subtract from the length.
       xstarts <- starts - 0.5
       xends <- ends - 0.5
-      if(aglevs[1]==aglevs[2]){
+      if(Levels[1]==Levels[2]){
         yends <- length(ord1) - xends + 1
         ystarts <- length(ord1) - xstarts + 1
       } else {
 
         # isolate cols of things we are correlating, plus box level
-        acls <- unique(aggcols[c(aglevs[2], box_level)])
+        acls <- unique(lin[c(Levels[2], box_level)])
         # filter out to current set of indicators
         acls <- acls[unlist(acls[1]) %in% unlist(unique(crtable[2])), ]
         # get parent codes
@@ -301,58 +301,5 @@ plotCorr <- function(COIN, dset = "Raw", icodes = NULL, aglevs = 1, cortype = "p
     return(crtable)
 
   }
-
-}
-
-
-#' Cronbach's alpha
-#'
-#' Calculates Cronbach's alpha, a measure of statistical reliability. Cronbach's alpha is a simple measure
-#' of "consistency" of a data set, where a high value implies higher reliability/consistency.
-#'
-#' This function simply returns Cronbach's alpha. If you want a lot more details on reliability, the 'psych' package has
-#' a much more detailed analysis.
-#'
-#' @param COIN A COIN or a data frame containing only numerical columns of data.
-#' @param dset The data set to check the consistency of.
-#' @param icodes Indicator codes if a subset of `dset` is requested
-#' @param aglev The aggregation level to take `icodes` from (see [getIn()] for details)
-#' @param use Argument to pass to [stats::cor] to calculate the covariance matrix. Default `"pairwise.complete.obs"`.
-#'
-#' @importFrom stats cov
-#'
-#' @examples
-#' # build ASEM COIN
-#' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
-#' # get Cronbach of indicators in Physical pillar
-#' getCronbach(ASEM, dset = "Raw", icodes = "Physical", aglev = 1)
-#'
-#' @return Cronbach alpha as a numerical value.
-#'
-#' @export
-
-getCronbach <- function(COIN, dset = "Raw", icodes = NULL,
-                        aglev = NULL, use = "pairwise.complete.obs"){
-
-  if(is.null(aglev)){aglev = 1}
-
-  # get data
-  df <- getIn(COIN, dset = dset, icodes = icodes, aglev = aglev)$ind_data_only
-
-  # get number of variables
-  k = ncol(df)
-
-  # get covariance matrix
-  cvtrix <- stats::cov(df, use = use)
-
-  # sum of all elements of cov matrix
-  sigall <- sum(cvtrix, na.rm = TRUE)
-
-  # mean of all elements except diagonal
-  sigav <- (sigall - sum(diag(cvtrix), na.rm = TRUE))/(k*(k-1))
-
-  # calculate Cronbach alpha
-  cron <- (k^2 * sigav)/sigall
-  return(cron)
 
 }
