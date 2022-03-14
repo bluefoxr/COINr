@@ -161,11 +161,8 @@ COINToolIn <- function(fname, makecodes = FALSE, oldtool = FALSE){
 #' @param maxword The maximum number of words to use in building a short name (default 2)
 #' @param maxlet The number of letters to take from each word (default 4)
 #'
-#' @importFrom stringr str_to_title
-#'
 #' @examples
-#' # generate codes for indicators in the ASEM data set (first five only)
-#' names2Codes(ASEMIndMeta$IndName[1:5], maxlet = 3)
+#' #
 #'
 #' @seealso
 #' * [COINToolIn()] Import data from the COIN Tool (Excel).
@@ -185,12 +182,15 @@ names2Codes <- function(cvec, maxword=2, maxlet=4){
     cvecii <- cvec[ii]
 
     # first, split into separate elements using spaces, and remove words less than four chars
-    st2 <- strsplit(gsub('\\b\\w{1,3}\\s','',cvecii), " +") %>% unlist()
+    st2 <- unlist(strsplit(gsub('\\b\\w{1,3}\\s','',cvecii), " +"))
 
     nwords <- min(c(length(st2),maxword))
 
     # now take first 3 words, take first 4 chars of each word
-    st3 <- substr(st2[1:nwords],start=1,stop=maxlet) %>% stringr::str_to_title()
+    st3 <- substr(st2[1:nwords],start=1,stop=maxlet)
+
+    # capitalise first letter of each word
+    st3 <- gsub("\\b([[:lower:]])([[:lower:]]+)", "\\U\\1\\L\\2", st3, perl = TRUE)
 
     # collapse back to one string and add to new vector
     codes[ii] <- paste(st3, collapse = '')
