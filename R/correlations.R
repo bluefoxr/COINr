@@ -187,10 +187,30 @@ weights2corr <- function(coin, w, Levels = NULL, iCodes = NULL,
 }
 
 
-#' Get different types of correlation matrices
+#' Get correlations
 #'
-#' Helper function for getting correlations between indicators. This retrieves subsets of correlation
-#' matrices between different aggregation levels, in different formats.
+#' Helper function for getting correlations between indicators and aggregates. This retrieves subsets of correlation
+#' matrices between different aggregation levels, in different formats. By default, it will return a
+#' long-form data frame, unless `make_long = FALSE`.
+#'
+#' This function allows you to obtain correlations between any subset of indicators or aggregates, from
+#' any data set present in a coin. Indicator selection is performed using [get_data()]. Two different
+#' indicator sets can be correlated against each other by specifying `iCodes` and `Levels` as vectors.
+#'
+#' The correlation type can be specified by the `cortype` argument, which is passed to [stats::cor()].
+#'
+#' The `withparent` argument will optionally only return correlations which correspond to the structure
+#' of the index. For example, if `Levels = c(1,2)` (i.e. we wish to correlate indicators from Level 1 with
+#' aggregates from Level 2), and we set `withparent = TRUE`, only the correlations between each indicator
+#' and its parent group will be returned (not correlations between indicators and other aggregates to which
+#' it does not belong). This can be useful to check whether correlations of an indicator/aggregate with
+#' any of its parent groups exceeds or falls below thresholds.
+#'
+#' Similarly, the `grouplev` argument can be used to restrict correlations to within groups corresponding
+#' to the index structure. Setting e.g. `grouplev = 2` will only return correlations within the groups
+#' defined at Level 2.
+#'
+#' The `grouplev` and `withparent` options are disabled if `make_long = FALSE`.
 #'
 #' Note that this function can only call correlations within the same data set (i.e. only one data set in `.$Data`).
 #'
@@ -198,33 +218,34 @@ weights2corr <- function(coin, w, Levels = NULL, iCodes = NULL,
 #' @param dset The target data set
 #' @param iCodes An optional list of character vectors where the first entry specifies the indicator/aggregate
 #' codes to correlate against the second entry (also a specification of indicator/aggregate codes).
-#' @param Levels The aggregation levels to take the two groups of indicators from. See [getIn()] for details.
+#' @param Levels The aggregation levels to take the two groups of indicators from. See [get_data()] for details.
 #' Defaults to indicator level.
 #' @param ... Further arguments to be passed to [get_data()] (`uCodes` and `use_group`).
 #' @param cortype The type of correlation to calculate, either `"pearson"`, `"spearman"`, or `"kendall"`.
 #' @param withparent If `TRUE`, and `aglev[1] != aglev[2]`, will only return correlations of each row with its parent.
-#' @param grouplev The aggregation level to group correlations by if `aglev[1] == aglev[2]`. By default, groups correlations into the
-#' aggregation level above. Set to 0 to disable grouping and return the full matrix.
+#' @param grouplev The aggregation level to group correlations by if `aglev[1] == aglev[2]`. Requires that
+#' `make_long = TRUE`.
 #' @param pval The significance level for including correlations. Correlations with \eqn{p > pval} will be returned as `NA`.
 #' Default 0.05. Set to 0 to disable this.
+#' @param make_long Logical: if `TRUE`, returns correlations in long format (default), else if `FALSE`
+#' returns in wide format. Note that if wide format is requested, features specified by `grouplev`
+#' and `withparent` are not supported.
 #'
 #' @importFrom stats cor
 #'
 #' @examples
-#' # build ASEM coin
-#' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
-#' # correlations of indicators in Political pillar
-#' corrs <- getCorr(ASEM, dset = "Raw", iCodes = "Political", Levels = 1)
+#' #
 #'
-#' @return A data frame of correlation values in long format. Correlations with \eqn{p > pval} will be returned as `NA`.
+#' @return A data frame of pairwise correlation values in wide or long format (see `make_long`).
+#' Correlations with \eqn{p > pval} will be returned as `NA`.
 #'
 #' @seealso
 #' * [plotCorr()] Plot correlation matrices of indicator subsets
 #'
 #' @export
 get_corr <- function(coin, dset, iCodes = NULL, Levels = NULL, ...,
-                     cortype = "pearson", pval = 0.05, withparent = TRUE, grouplev = NULL){
-
+                     cortype = "pearson", pval = 0.05, withparent = FALSE,
+                     grouplev = NULL, make_long = TRUE){
 
   # CHECKS ------------------------------------------------------------------
 
@@ -245,6 +266,37 @@ get_corr <- function(coin, dset, iCodes = NULL, Levels = NULL, ...,
     iCodes <- rev(iCodes)
   }
 
+  # GET FAM (RECURSIVE) -----------------------------------------------------
+
+  if(!is.logical(withparent)){
+    stopifnot(is.character(withparent),
+              length(withparent)==1)
+    if(withparent != "family"){
+      stop("withparent not recognised - should be either logical or 'family'.")
+    }
+
+    lin <- coin$Meta$Lineage
+
+    if(ncol(lin) <= Levels[1]){
+      stop("If withparent = 'family', Levels[1] cannot be the top level.")
+    }
+
+    par_levs <- (Levels[1] + 1) : ncol(lin)
+
+    cr_fam <- lapply(par_levs, function(lev){
+      cmat <- get_corr(coin, dset = dset, iCodes = iCodes, Levels = c(Levels[1], lev),
+               cortype = cortype, pval = pval, withparent = TRUE, grouplev = grouplev,
+               make_long = TRUE, ... = ...)
+      # rename to level
+      cmat[1] <- names(lin)[lev]
+      cmat
+    })
+
+    cr_fam <- Reduce(rbind, cr_fam)
+
+    return(cr_fam)
+  }
+
   # GET DATA ----------------------------------------------------------------
 
   # get data sets
@@ -253,13 +305,11 @@ get_corr <- function(coin, dset, iCodes = NULL, Levels = NULL, ...,
   iData2 <- get_data(coin, dset = dset, iCodes = iCodes[[2]],
                      Level = Levels[[2]], ..., also_get = "none")
 
-
   # GET CORRELATIONS --------------------------------------------------------
 
   # get corr matrix
   crmat <- stats::cor(iData1, iData2,
                       use = "pairwise.complete.obs", method = cortype)
-  crmat <- round(crmat,2)
 
   # set insignificant correlations to zero if requested
   if(pval > 0){
@@ -304,59 +354,69 @@ get_corr <- function(coin, dset, iCodes = NULL, Levels = NULL, ...,
   ##- GROUP ----------------------------------------
   # If correlating against the same level, only show within groups if asked
 
-  # first, if grouplev not specified, group by level above
+  if(!is.null(grouplev)){
 
-  if(is.null(grouplev)) grouplev <- Levels[1] + 1
+    if(!make_long){
+      warning("Grouping is not supported for make_long = FALSE. Set make_long = TRUE to group.")
+    } else {
 
-  if ((grouplev > 0) & (Levels[1] == Levels[2])){
+      if (Levels[1] == Levels[2]){
 
-    # get index structure
-    lin <- coin$Meta$Lineage
+        # get index structure
+        lin <- coin$Meta$Lineage
 
-    if(grouplev <= Levels[1]){
-      stop("grouplev must be at least the aggregation level above Levels.")
+        if(grouplev <= Levels[1]){
+          stop("grouplev must be at least the aggregation level above Levels.")
+        }
+
+        if(grouplev > ncol(lin)){
+          stop("Grouping level is out of range - should be between 2 and ", ncol(lin), " or zero to turn off.")
+        }
+
+        # select cols corresponding to current level, plus the one above
+        # remember here we are correlating a level against itself, so Levels[1]==Levels[2]
+        lin <- lin[c(Levels[1], grouplev)]
+        # get unique groups in level above
+        lev2 <- unique(lin[[2]])
+
+        # initialise df for recording entries of corr matrix to keep
+        keeprows <- data.frame(Var1 = NA, Var2 = NA)
+
+        # loop over the levels above
+        for (lev2ii in lev2){
+          # get child codes
+          lev1 <- lin[lin[2]==lev2ii, 1]
+          lev1 <- unique(unlist(lev1, use.names = FALSE)) # otherwise it is still a tibble, also remove dups
+          # get all 2-way combos of these codes
+          lev1pairs <- expand.grid(lev1, lev1)
+          # add to df
+          keeprows <- rbind(keeprows, lev1pairs)
+        }
+        # remove first row (dummy)
+        keeprows <- keeprows[-1,]
+
+        # rename corr matrix cols to prepare for join
+        colnames(crmat_melt)[3] <- "Correlation"
+        colnames(keeprows) <- colnames(crmat_melt)[1:2]
+
+        # now do inner join - we are matching correlation rows that agree with the structure of the index
+        crtable <- merge(keeprows, crmat_melt, by = colnames(keeprows))
+        # sometimes this throws duplicates, so remove
+        crtable <- unique(crtable)
+
+      }
+
     }
+  }
 
-    if(grouplev > ncol(lin)){
-      stop("Grouping level is out of range - should be between 2 and ", ncol(lin), " or zero to turn off.")
-    }
+  colnames(crtable) <- c("Var1", "Var2", "Correlation")
 
-    # select cols corresponding to current level, plus the one above
-    # remember here we are correlating a level against itself, so Levels[1]==Levels[2]
-    lin <- lin[c(Levels[1], grouplev)]
-    # get unique groups in level above
-    lev2 <- unique(lin[[2]])
-
-    # initialise df for recording entries of corr matrix to keep
-    keeprows <- data.frame(Var1 = NA, Var2 = NA)
-
-    # loop over the levels above
-    for (lev2ii in lev2){
-      # get child codes
-      lev1 <- lin[lin[2]==lev2ii, 1]
-      lev1 <- unique(unlist(lev1, use.names = FALSE)) # otherwise it is still a tibble, also remove dups
-      # get all 2-way combos of these codes
-      lev1pairs <- expand.grid(lev1, lev1)
-      # add to df
-      keeprows <- rbind(keeprows, lev1pairs)
-    }
-    # remove first row (dummy)
-    keeprows <- keeprows[-1,]
-
-    # rename corr matrix cols to prepare for join
-    colnames(crmat_melt)[3] <- "Correlation"
-    colnames(keeprows) <- colnames(crmat_melt)[1:2]
-
-    # now do inner join - we are matching correlation rows that agree with the structure of the index
-    browser()
-    crtable <- merge(keeprows, crmat_melt, by = colnames(keeprows))
-    # sometimes this throws duplicates, so remove
-    crtable <- unique(crtable)
-
+  # widen or not
+  if(!make_long){
+    crtable <- widen(crtable)
   }
 
   crtable
-
 }
 
 
