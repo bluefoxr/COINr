@@ -6,11 +6,12 @@
 \usage{
 plot_corr(
   coin,
-  dset = "Raw",
+  dset = NULL,
   iCodes = NULL,
   Levels = 1,
+  ...,
   cortype = "pearson",
-  withparent = "parent",
+  withparent = FALSE,
   grouplev = NULL,
   box_level = NULL,
   showvals = TRUE,
