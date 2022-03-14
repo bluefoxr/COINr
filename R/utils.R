@@ -97,6 +97,8 @@ set_default <- function(x, x_default){
 #'
 #' @param X a square correlation matrix
 #'
+#' @importFrom utils stack
+#'
 #' @return A long format data frame
 lengthen <- function(X){
 
@@ -104,8 +106,51 @@ lengthen <- function(X){
   X <- as.data.frame(X)
 
   # stack and add names
-  X1 <- cbind(stack(X), rownames(X))
+  X1 <- cbind(utils::stack(X), rownames(X))
   names(X1) <- c("Value", "V2", "V1")
+  X1$V2 <- as.character(X1$V2)
   rev(X1)
 
+}
+
+
+#' Make long df wide
+#'
+#' This is a quick function for making a long-format data frame wide. It is limited in scope, assumes
+#' that the input is a data frame with three columns: one of which is numeric, and the other two are
+#' character vectors. The numeric column will be widened, and the other two columns will be used
+#' for row and column names.
+#'
+#' @param X a long format data frame
+#'
+#' @importFrom utils unstack
+#'
+#' @return A wide format data frame
+widen <- function(X){
+
+  stopifnot(ncol(X) == 3)
+
+  # make df
+  X <- as.data.frame(X)
+
+  # find numeric col
+  num_cols <- sapply(X, is.numeric)
+  if(sum(num_cols) > 1){
+    stop("More than one numeric column found")
+  }
+  if(sum(num_cols) == 0){
+    stop("No numeric columns found.")
+  }
+
+  # rearrange to get numeric col first
+  X <- X[c(which(num_cols), which(!num_cols))]
+
+  # order
+  X <- X[order(X[[3]], X[[2]]),]
+
+  # unstack and add row names
+  Xw <- utils::unstack(X[1:2])
+  row.names(Xw) <- unique(X[[3]])
+
+  Xw
 }
