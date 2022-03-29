@@ -21,20 +21,13 @@ LazyData: true
 RoxygenNote: 7.1.1
 Imports: 
     dplyr (>= 1.0.4),
-    magrittr (>= 2.0.1),
-    reshape2 (>= 1.4.4),
     openxlsx (>= 4.2.3),
-    corrplot (>= 0.84),
     stats,
     rlang (>= 0.4.10),
     purrr (>= 0.3.4),
-    tidyr (>= 1.1.2),
-    stringr (>= 1.4.0),
-    e1071 (>= 1.7-4),
     tibble (>= 3.0.6),
     ggplot2 (>= 3.3.3),
     readxl (>= 1.3.1),
-    Amelia,
     rmarkdown,
     utils
 Depends: 
