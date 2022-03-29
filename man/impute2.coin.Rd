@@ -11,8 +11,7 @@
   f_i_para = NULL,
   impute_by = "column",
   group_level = NULL,
-  norm_specs = NULL,
-  ...,
+  normalise_first = NULL,
   out2 = "coin",
   write_to = NULL
 )
@@ -22,17 +21,19 @@
 
 \item{dset}{A data set within the coin}
 
-\item{f_i}{An imputation function}
+\item{f_i}{An imputation function. See details.}
 
-\item{f_i_para}{Further arguments to pass to \code{f_i}}
+\item{f_i_para}{Further arguments to pass to \code{f_i}, other than \code{x}. See details.}
 
-\item{impute_by}{s}
+\item{impute_by}{xx}
 
-\item{group_level}{xx}
+\item{group_level}{A level of the framework to use for grouping indicators. This is only
+relevant if \code{impute_by = "row"}. In that case, indicators will be split into their groups at the
+level specified by \code{group_level}, and imputation will be performed across rows of the group, rather
+than the whole data set. This can make more sense because indicators within a group are likely to be
+more similar.}
 
-\item{norm_specs}{xx}
-
-\item{...}{further arguments to be passed to \code{\link[=normalise]{normalise()}}}
+\item{normalise_first}{xx}
 
 \item{out2}{Either \code{"coin"} to return normalised data set back to the coin, or \code{df} to simply return a data
 frame.}
@@ -44,7 +45,9 @@ frame.}
 
 }
 \description{
-Impute a data set in a coin
+If \code{normalise_first = TRUE} (default for \code{impute_by = "row"}), indicators will be
+normalised first using the min-max method, and returned to their original scales after
+imputation.
 }
 \examples{
 #
