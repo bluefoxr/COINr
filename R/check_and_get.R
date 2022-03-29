@@ -333,12 +333,12 @@ get_data.coin <- function(x, dset, iCodes = NULL, Level = NULL, uCodes = NULL,
     if(is.null(use_group)){
       # we don't need any group cols, take also_get as is
       # if none, we still probably need uCode, so set NULL
-      if(also_get == "none"){
+      if(also_get[1] == "none"){
         also_get <- NULL
         remove_meta <- TRUE
       }
     } else {
-      if(also_get == "none"){
+      if(also_get[1] == "none"){
         also_get <- c("uCode", groupcol)
         remove_meta <- TRUE
       } else {
