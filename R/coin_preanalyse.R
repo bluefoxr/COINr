@@ -17,10 +17,8 @@
 #' @param t_missing Missing data threshold, in percent.
 #' @param IQR_coef Interquartile range coefficient, used for identifying outliers.
 #'
-#' @importFrom e1071 skewness kurtosis
 #' @importFrom purrr map_dbl
 #' @importFrom dplyr if_else n_distinct
-#' @importFrom corrplot cor.mtest
 #' @importFrom tibble tibble add_column
 #' @importFrom stats IQR cor median sd
 #'
@@ -60,8 +58,8 @@ getStats <- function(COIN, icodes = NULL, dset = "Raw", out2 = "COIN", cortype =
   imin <- ind_data_only %>% purrr::map_dbl(min, na.rm = T) # min
   imax <- ind_data_only %>% purrr::map_dbl(max, na.rm = T) # max
   istd <- ind_data_only %>% purrr::map_dbl(stats::sd, na.rm = T) # std
-  iskew <- ind_data_only %>% purrr::map_dbl(e1071::skewness, na.rm = T, type = 2) # skew
-  ikurt <- ind_data_only %>% purrr::map_dbl(e1071::kurtosis, na.rm = T, type = 2) # kurtosis
+  iskew <- ind_data_only %>% purrr::map_dbl(skew, na.rm = TRUE) # skew
+  ikurt <- ind_data_only %>% purrr::map_dbl(kurt, na.rm = TRUE) # kurtosis
   ina <- ind_data_only %>% purrr::map_dbl(~sum(is.na(.x)), na.rm = T) # n. missing
   fraczero <- ind_data_only %>% purrr::map_dbl(~{sum(.x == 0, na.rm = TRUE)}/nrow(ind_data_only)) # frac zeros
   iprcna <- (1-ina/nrow(ind_data_only)) * 100  # percent available data
@@ -111,7 +109,7 @@ getStats <- function(COIN, icodes = NULL, dset = "Raw", out2 = "COIN", cortype =
   # indicator correlations
   corr_ind <- stats::cor(ind_data_only, method = cortype, use = "pairwise.complete.obs") # get correlation matrix, just indicators
   diag(corr_ind) <- NA # replace 1s with NAs since we are not interested in them
-  p_ind <- corrplot::cor.mtest(ind_data_only, method = cortype) # p values
+  # p_ind <- get_pvals() # corrplot::cor.mtest(ind_data_only, method = cortype) # p values
 
   # check for collinearity
   maxcor <- sapply(as.data.frame(abs(corr_ind)), max, na.rm = T) # the max absolute correlations
