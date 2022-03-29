@@ -203,3 +203,199 @@ get_unit_summary <- function(coin, usel, Levels, dset = "Aggregated", nround = 2
   roundDF(tabout, nround)
 
 }
+
+
+#' Generate strengths and weaknesses for a specified unit
+#'
+#' Generates a table of strengths and weaknesses for a selected unit, based on ranks, or ranks within
+#' a specified grouping variable.
+#'
+#' This currently only works at the indicator level. Indicators with `NA` values for the selected unit are ignored.
+#' Strengths and weaknesses mean the `topN`-ranked indicators for the selected unit. Effectively, this takes the rank that the
+#' selected unit has in each indicator, sorts the ranks, and takes the top N highest and lowest.
+#'
+#' This function must be used with a little care: indicators should be adjusted for their directions before use,
+#' otherwise a weakness might be counted as a strength, and vice versa. Use the `adjust_direction` parameter
+#' to help here.
+#'
+#' A further useful parameter is `unq_discard`, which also filters out any indicators with a low number of
+#' unique values, based on a specified threshold. Also `min_discard` which filters out any indicators which
+#' have the minimum rank.
+#'
+#' The best way to use this function is to play around with the settings a little bit. The reason being that
+#' in practice, indicators have very different distributions and these can sometimes lead to unexpected
+#' outcomes. An example is if you have an indicator with 50% zero values, and the rest non-zero (but unique).
+#' Using the sport ranking system, all units with zero values will receive a rank which is equal to the number
+#' of units divided by two. This then might be counted as a "strength" for some units with overall low scores.
+#' But a zero value can hardly be called a strength. This is where the `min_discard` function can help out.
+#'
+#' Problems such as these mainly arise when e.g. generating a large number of country profiles.
+#'
+#' @param coin A coin
+#' @param dset The data set to extract indicator data from, to use as strengths and weaknesses.
+#' @param usel A selected unit code
+#' @param topN The top N indicators to report
+#' @param bottomN The bottom N indicators to report
+#' @param withcodes If `TRUE` (default), also includes a column of indicator codes. Setting to `FALSE` may be more useful
+#' in generating reports, where codes are not helpful.
+#' @param use_group An optional grouping variable to use for reporting
+#' in-group ranks. Specifying this will report the ranks of the selected unit within the group of `use_group`
+#' to which it belongs.
+#' @param unq_discard Optional parameter for handling discrete indicators. Some indicators may be binary
+#' variables of the type "yes = 1", "no = 0". These may be picked up as strengths or weaknesses, when they
+#' may not be wanted to be highlighted, since e.g. maybe half of units will have a zero or a one. This argument
+#' takes a number between 0 and 1 specifying a unique value threshold for ignoring indicators as strengths. E.g.
+#' setting `prc_unq_discard = 0.2` will ensure that only indicators with at least 20% unique values will be
+#' highlighted as strengths or weaknesses. Set to `NULL` to disable (default).
+#' @param min_discard If `TRUE` (default), discards any strengths which correspond to the minimum rank for the given
+#' indicator. See details.
+#' @param report_level Aggregation level to report parent codes from. For example, setting
+#' `report_level = 2` (default) will add a column to the strengths and weaknesses tables which reports the aggregation
+#' group from level 2, to which each reported indicator belongs.
+#' @param with_units If `TRUE` (default), includes indicator units in output tables.
+#' @param adjust_direction If `TRUE`, will adjust directions of indicators according to the "Direction" column
+#' of `IndMeta`. By default, this is `TRUE` *if* `dset = "Raw"`, and `FALSE` otherwise.
+#'
+#' @examples
+#' #
+#'
+#' @return A list containing a data frame `.$Strengths`, and a data frame `.$Weaknesses`.
+#' Each data frame has columns with indicator code, name, rank and value (for the selected unit).
+#'
+#' @export
+
+get_str_weak <- function(coin, dset = NULL, usel = NULL, topN = 5, bottomN = 5, withcodes = TRUE,
+                             use_group = NULL, unq_discard = NULL, min_discard = TRUE, report_level = NULL,
+                             with_units = TRUE, adjust_direction = NULL){
+
+  # PREP --------------------------------------------------------------------
+
+  # get iMeta
+  iMeta_ <- coin$Meta$Ind[coin$Meta$Ind$Type == "Indicator", ]
+
+  # indicator codes
+  iCodes <- iMeta_$iCode
+
+  stopifnot(length(usel) == 1,
+            is.character(usel),
+            topN %in% 1:length(iCodes),
+            bottomN %in% 1:length(iCodes),
+            is.logical(withcodes),
+            unq_discard >= 0,
+            unq_discard <= 1,
+            is.logical(min_discard),
+            report_level %in% 2:max(iMeta_$Level),
+            is.logical(with_units))
+
+  # scores
+  if(is.null(dset)) dset <- "Raw"
+  data_scrs <- get_dset(coin, dset = dset, also_get = use_group)
+
+  if(usel %nin% data_scrs$uCode){
+    stop("usel not found in selected data set!")
+  }
+
+  # first, we have to adjust for direction
+  if(is.null(adjust_direction)){
+    if(dset == "Raw"){
+      adjust_direction <- TRUE
+    } else {
+      adjust_direction <- FALSE
+    }
+  }
+  stopifnot(is.logical(adjust_direction))
+
+
+  # GET S&W -----------------------------------------------------------------
+
+  # make a copy to adjust by direction
+  data_scrs1 <- data_scrs
+
+  if(adjust_direction){
+    # note: directions are in the same order as iCodes
+    directions <- iMeta_$Direction
+    data_scrs1[iCodes] <- as.data.frame(mapply(`*`, data_scrs1[iCodes], directions))
+  }
+
+  data_rnks <- rankDF(data_scrs1, use_group = use_group)
+
+  # unique value filtering
+  if(!is.null(unq_discard)){
+    # find fraction of unique vals for each indicator
+    frc_unique <- apply(data_scrs[iCodes], MARGIN = 2,
+                        function(x){
+                          length(unique(x))/length(x)
+                        })
+    # filter indicator codes to only the ones with frac unique above thresh
+    iCodes <- iCodes[frc_unique > unq_discard]
+  }
+
+  # isolate the row and indicator cols
+  rnks_usel <- data_rnks[data_rnks$uCode == usel, iCodes]
+
+  # remove NAs
+  rnks_usel <- rnks_usel[,!is.na(as.numeric(rnks_usel))]
+
+  # Also need to (optionally) remove minimum rank entries
+  # (by min I mean MAX, i.e. min SCORE)
+  if(min_discard){
+    rnks_min <-  as.data.frame(lapply(data_rnks[colnames(rnks_usel)], max, na.rm = T))
+    rnks_usel <- rnks_usel[,!(rnks_usel == rnks_min)]
+  }
+
+  # sort by row values
+  rnks_usel <- rnks_usel[ ,order(as.numeric(rnks_usel[1,]))]
+
+  # get strengths and weaknesses
+  Scodes <- colnames(rnks_usel)[1:topN]
+  Wcodes <- colnames(rnks_usel)[ (ncol(rnks_usel) - bottomN + 1) : ncol(rnks_usel) ]
+
+  # find agg level column of interest
+  if(is.null(report_level)){
+    report_level <- 2
+  }
+  lin <- coin$Meta$Lineage
+  agcolname <- names(lin)[report_level]
+
+
+  # MAKE TABLES -------------------------------------------------------------
+
+  strengths <- data.frame(
+    Code = Scodes,
+    Name = iMeta_$iName[match(Scodes, iMeta_$iCode)],
+    Dimension = lin[[agcolname]][match(Scodes, lin[[1]])],
+    Rank = as.numeric(rnks_usel[Scodes]),
+    Value = signif(as.numeric(data_scrs[data_scrs$uCode == usel ,Scodes]),3)
+  )
+  names(strengths)[3] <- agcolname
+
+  weaks <- data.frame(
+    Code = Wcodes,
+    Name = iMeta_$iName[match(Wcodes, iMeta_$iCode)],
+    Dimension = lin[[agcolname]][match(Wcodes, lin[[1]])],
+    Rank = as.numeric(rnks_usel[Wcodes]),
+    Value = signif(as.numeric(data_scrs[data_scrs$uCode == usel ,Wcodes]),3)
+  )
+  names(weaks)[3] <- agcolname
+
+  # units
+  # if units col exists and requested
+  if(with_units & !is.null(iMeta_$Unit)){
+    strengths$Unit <- iMeta_$Unit[match(Scodes, iMeta_$iCode)]
+    weaks$Unit <- iMeta_$Unit[match(Wcodes, iMeta_$iCode)]
+  }
+
+  # remove indicator codes if needed
+  if(!withcodes){
+    strengths <- strengths[-1]
+    weaks <- weaks[-1]
+  }
+
+
+  # OUTPUT ------------------------------------------------------------------
+
+  list(
+    Strengths = strengths,
+    Weaknesses = weaks
+  )
+}
