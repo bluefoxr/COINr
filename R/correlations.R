@@ -104,7 +104,6 @@ get_hicorr <- function(coin, dset, hicorval = 0.9, cortype = "pearson",
 #' @param cortype Correlation type. Either `"pearson"` (default), `"kendall"` or `"spearman"`. See [stats::cor].
 #' @param withparent Logical: if `TRUE`, only correlates with the parent, e.g. sub-pillars are only correlated with their parent pillars and not others.
 #'
-#' @importFrom reshape2 melt
 #' @importFrom dplyr inner_join
 #'
 #' @return A list where `.$cr` is a vector of correlations between each indicator and the index, and
@@ -161,7 +160,8 @@ weights2corr <- function(coin, w, Levels = NULL, iCodes = NULL,
   agcols <- agcols[Levels]
   # change correlation to long form
   # WHY because this makes a nice table also with names and what is correlated with what
-  crlong <- suppressMessages(reshape2::melt(cr))
+  crlong <- lengthen(cr) # CHECK!!!
+  #crlong <- suppressMessages(reshape2::melt(cr))
   colnames(crlong) <- c(colnames(agcols), "Correlation")
 
   # only correlate with parents, if asked. This is necessary if using inside the rew8r app because
