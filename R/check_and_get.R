@@ -198,7 +198,7 @@ get_dset.coin <- function(x, dset, also_get = NULL){
       iData <- iData[names(iData) != "uCode"]
     } else {
 
-      uMeta <- coin$Meta$Unit
+      uMeta <- x$Meta$Unit
 
       if(is.null(uMeta)){
         stop("Unit metadata not found in coin.")
@@ -289,7 +289,7 @@ get_data.coin <- function(x, dset, iCodes = NULL, Level = NULL, uCodes = NULL,
 
   # CHECKS ------------------------------------------------------------------
 
-  x <- coin
+  coin <- x
 
   check_coin_input(coin)
 
