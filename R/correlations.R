@@ -1,4 +1,81 @@
 
+#' Correlations between indicators and denominators
+#'
+#' Get a data frame containing any correlations between indicators and denominators that exceed a given
+#' threshold. This can be useful when *whether* to denominate an indicator and *by what* may not be obvious.
+#' If an indicator is strongly correlated with a denominator, this may give reason to denominate it by that
+#' denominator.
+#'
+#' @param coin A coin
+#' @param dset A named data set found in `coin$Data`
+#' @param cor_thresh A correlation threshold: the absolute value of any correlations between indicator-denominator pairs above this
+#' threshold will be flagged.
+#' @param cortype The type of correlation: to be passed to the `method` argument of `stats::cor`.
+#' @param nround Optional number of decimal places to round correlation values to. Default 2, set `NULL` to
+#' disable.
+#'
+#' @return A data frame
+#' @export
+#'
+#' @examples
+#' #
+get_denom_corr <- function(coin, dset, cor_thresh = 0.6, cortype = "pearson", nround = 2){
+
+  # indicator data
+  # get everything at this point to ensure matching rows
+  iData <- get_dset(coin, dset = dset, also_get = "all")
+
+  # iMeta
+  iMeta <- coin$Meta$Ind
+
+  # only the indicator data
+  iData_ <- iData[iMeta$iCode[iMeta$Type == "Indicator"]]
+
+  # only the denoms
+  den_codes <- iMeta$iCode[iMeta$Type == "Denominator"]
+  if(length(den_codes) == 0){
+    stop("No denominators found. Denominators should be labelled as 'Denominator' in iMeta.")
+  }
+  if(any(den_codes %nin% names(iData))){
+    stop("Denominators not found - they are present in iMeta but not found in selected data set.")
+  }
+  denoms <- iData[den_codes]
+
+  # GET CORRS ---------------------------------------------------------------
+
+  # get correlations
+  corr_ind <- stats::cor(iData_, denoms, method = cortype, use = "pairwise.complete.obs")
+
+  # make long
+  crtable <- lengthen(corr_ind)
+
+
+  # FIND HI CORRS -----------------------------------------------------------
+
+  # remove self-correlations
+  crtable <- crtable[crtable$V1 != crtable$V2, ]
+  # remove NAs
+  crtable <- crtable[!is.na(crtable$Value), ]
+
+  # now filter to only high or low correlations
+  crtable <- crtable[abs(crtable$Value) > cor_thresh, ]
+
+  # CLEAN AND OUTPUT --------------------------------------------------------
+
+  # col names
+  colnames(crtable) <- c("Ind", "Denom", "Corr")
+
+  # round
+  if(!is.null(nround)){
+    crtable$Corr <- round(crtable$Corr, nround)
+  }
+
+  # sort
+  crtable <- crtable[order(crtable$Ind),]
+
+  crtable
+}
+
 
 #' Find highly-correlated indicators within groups
 #'
@@ -7,24 +84,22 @@
 #'
 #' @param coin A coin class object
 #' @param dset The data set to use for correlations.
-#' @param hicorval A threshold to flag high correlation. Default 0.9.
+#' @param cor_thresh A threshold to flag high correlation. Default 0.9.
 #' @param grouplev The level to group indicators in. E.g. if `grouplev = 2` it will look for high correlations between indicators that
 #' belong to the same group in Level 2.
 #' @param cortype The type of correlation, either `"pearson"` (default), `"spearman"` or `"kendall"`. See [stats::cor].
 #' @param roundto Number of decimal places to round correlations to. Default 3. Set `NULL` to disable rounding.
+#' @param thresh_type Either `"high"`, which will only flag correlations *above* `cor_thresh`, or `"low"`,
+#' which will only flag correlations *below* `cor_thresh`.
 #'
 #' @examples
 #' #
-#'
-#' @seealso
-#' * [rew8r()] Interactive app for adjusting weights and seeing effects on correlations
-#' * [getCorr()] Get correlations between indicators/levels
 #'
 #' @return A data frame with one entry for every indicator pair that is highly correlated within the same group, at the specified level.
 #' Pairs are only reported once, i.e. only uses the upper triangle of the correlation matrix.
 #'
 #' @export
-get_hicorr <- function(coin, dset, hicorval = 0.9, cortype = "pearson",
+get_corr_flags <- function(coin, dset, cor_thresh = 0.9, thresh_type = "high", cortype = "pearson",
                      grouplev = NULL, roundto = 3){
 
 
@@ -32,12 +107,14 @@ get_hicorr <- function(coin, dset, hicorval = 0.9, cortype = "pearson",
 
   grouplev <- set_default(grouplev, 2)
 
+  stopifnot(thresh_type %in% c("high", "low"))
+
   if(grouplev > coin$Meta$maxlev){
     stop("grouplev is greater than the maximum level of ", coin$Meta$maxlev)
   }
 
-  stopifnot(hicorval <= 1,
-            hicorval >= 0)
+  stopifnot(cor_thresh <= 1,
+            cor_thresh >= -1)
 
   iData <- get_dset(coin, dset, also_get = "none")
 
@@ -71,9 +148,12 @@ get_hicorr <- function(coin, dset, hicorval = 0.9, cortype = "pearson",
   # remove NAs
   crtable <- crtable[!is.na(crtable$Value), ]
 
-  # now filter to only high correlations
-  crtable <- crtable[abs(crtable$Value) > hicorval, ]
-
+  # now filter to only high or low correlations
+  if(thresh_type == "high"){
+    crtable <- crtable[crtable$Value > cor_thresh, ]
+  } else {
+    crtable <- crtable[crtable$Value < cor_thresh, ]
+  }
 
   # CLEAN AND OUTPUT --------------------------------------------------------
 
@@ -85,104 +165,6 @@ get_hicorr <- function(coin, dset, hicorval = 0.9, cortype = "pearson",
   }
 
   crtable[c("Group", "Ind1", "Ind2", "Corr")]
-
-}
-
-
-#' Recalculate correlations and ranks based on new weights
-#'
-#' This is a short cut function which takes a new set of indicator weights, and recalculates the coin results
-#' based on these weights. It returns a summary of rankings and the correlations between indicators and index.
-#'
-#' This function is principally used inside [rew8r()]. The `w` argument should be a data frame of weights, of the same format
-#' as the data frames found in `.$Parameters$Weights`.
-#'
-#' @param coin coin object
-#' @param w Full data frame of weights for each level
-#' @param Levels A 2-length vector with two aggregation levels to correlate against each other
-#' @param iCodes List of two character vectors of indicator codes, corresponding to the two aggregation levels
-#' @param cortype Correlation type. Either `"pearson"` (default), `"kendall"` or `"spearman"`. See [stats::cor].
-#' @param withparent Logical: if `TRUE`, only correlates with the parent, e.g. sub-pillars are only correlated with their parent pillars and not others.
-#'
-#' @importFrom dplyr inner_join
-#'
-#' @return A list where `.$cr` is a vector of correlations between each indicator and the index, and
-#' `.$dat` is a data frame of rankings, with unit code, and index, input and output scores
-#'
-#' @examples
-#' # build ASEM coin up to aggregation
-#' ASEM <- build_ASEM()
-#' # get correlations between pillars (level 2) and index (level 4)
-#' # original weights used just for demonstration, normally you would alter first.
-#' l <- weights2corr(ASEM, ASEM$Parameters$Weights$Original, Levels = c(2,4))
-#'
-#' @seealso
-#' * [rew8r()] Interactive app for adjusting weights and seeing effects on correlations
-#' * [getCorr()] Get correlations between indicators/levels
-#'
-#' @export
-
-weights2corr <- function(coin, w, Levels = NULL, iCodes = NULL,
-                         cortype = "pearson", withparent = TRUE){
-
-  if(is.null(Levels)){
-    Levels <- c(1, coin$Parameters$Nlevels)
-  }
-
-  if(is.null(coin$Method$aggregate)){
-    stop("You have not yet aggregated your data. This needs to be done first.")
-  }
-
-  # aggregate
-  coin2 <- aggregate(coin, agtype = coin$Method$aggregate$agtype,
-                     agweights = w,
-                     dset = coin$Method$aggregate$dset,
-                     agtype_bylevel = coin$Method$aggregate$agtype_bylevel,
-                     agfunc = coin$Method$aggregate$agfunc
-  )
-
-  # get data to correlate against each other
-  out1 <- getIn(coin2, dset = "Aggregated", iCodes = iCodes[[1]], aglev = Levels[1])
-  idata1 <- out1$ind_data_only
-  idata2 <- getIn(coin2, dset = "Aggregated", iCodes = iCodes[[2]], aglev = Levels[2])$ind_data_only
-  # table of results data
-  dfres <- coin2$Data$Aggregated[c("UnitName",
-                                   coin$Parameters$AggCodes[[length(coin$Parameters$AggCodes)]],
-                                   coin$Parameters$AggCodes[[length(coin$Parameters$AggCodes)-1]])]
-  dfres <- cbind("Rank"=rank(coin2$Data$Aggregated$Index*-1, ties.method = "min"), dfres)
-  # get correlations
-  cr = stats::cor(idata1, idata2, method = cortype, use = "pairwise.complete.obs")
-
-  # get index structure
-  agcols <- dplyr::select(coin$Input$IndMeta, .data$IndCode, dplyr::starts_with("Agg"))
-
-  # select cols corresponding to what is being correlated against what
-  agcols <- agcols[Levels]
-  # change correlation to long form
-  # WHY because this makes a nice table also with names and what is correlated with what
-  crlong <- lengthen(cr) # CHECK!!!
-  #crlong <- suppressMessages(reshape2::melt(cr))
-  colnames(crlong) <- c(colnames(agcols), "Correlation")
-
-  # only correlate with parents, if asked. This is necessary if using inside the rew8r app because
-  # we need a vector output. Also, it is the most relevant information.
-  if (withparent & ncol(cr)>1){
-
-    # now do inner join - we are matching correlation rows that agree with the structure of the index
-    crtable <- dplyr::inner_join(agcols, crlong, by = colnames(agcols))
-
-  } else {
-    crtable <- crlong
-  }
-  # sometimes this throws duplicates, so remove
-  crtable <- unique(crtable)
-
-  # now we want the correlations...
-  out <- list(cr = crtable,
-              dat = dfres,
-              iCodes1 = out1$ind_names)
-
-  return(out)
 
 }
 
