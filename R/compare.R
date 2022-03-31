@@ -57,12 +57,15 @@ compare_coins <- function(coin1, coin2, dset, iCode, also_get = NULL, compare_by
     stop("Different metadata columns returned by coin1 and coin2.")
   }
 
-  m1 <- df12[paste0(m1_codes, ".x")]
-  m2 <- df12[paste0(m2_codes, ".y")]
-  # replace any NAs from one df with the other
-  # from here m1 is what we will put in the output table
-  m1[is.na(m1)] <- m2[is.na(m1)]
-  colnames(m1) <- gsub('.x', '', colnames(m1))
+  # sort out meta cols, if there are any
+  if(length(m1_codes) > 0){
+    m1 <- df12[paste0(m1_codes, ".x")]
+    m2 <- df12[paste0(m2_codes, ".y")]
+    # replace any NAs from one df with the other
+    # from here m1 is what we will put in the output table
+    m1[is.na(m1)] <- m2[is.na(m1)]
+    colnames(m1) <- gsub('.x', '', colnames(m1))
+  }
 
   # get iCode cols
   idat1 <- df12[[paste0(iCode,".x")]]
@@ -71,14 +74,20 @@ compare_coins <- function(coin1, coin2, dset, iCode, also_get = NULL, compare_by
   # OUTPUT ------------------------------------------------------------------
 
   # assemble the table
-  dfout <- data.frame(uCode = df12$uCode,
-                      m1, # meta data excluding uCode
-                      coin.1 = idat1,
-                      coin.2 = idat2,
-                      Diff = idat1 - idat2,
-                      Abs.diff = abs(idat1 - idat2))
-
-  dfout
+  if(length(m1_codes) > 0){
+    data.frame(uCode = df12$uCode,
+               m1, # meta data excluding uCode
+               coin.1 = idat1,
+               coin.2 = idat2,
+               Diff = idat1 - idat2,
+               Abs.diff = abs(idat1 - idat2))
+  } else {
+    data.frame(uCode = df12$uCode,
+               coin.1 = idat1,
+               coin.2 = idat2,
+               Diff = idat1 - idat2,
+               Abs.diff = abs(idat1 - idat2))
+  }
 }
 
 
