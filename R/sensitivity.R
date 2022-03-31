@@ -1,4 +1,83 @@
 
+#' Sensitivity and uncertainty analysis
+#'
+#' @param coin A coin
+#' @param SA_specs Specifications of the input uncertainties
+#' @param N The number of regenerations
+#' @param SA_type The type of analysis to run. `"UA"` runs an uncertainty analysis. `"SA"` runs a sensitivity
+#' analysis (which anyway includes an uncertainty analysis).
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' #
+get_sensitivity <- function(coin, SA_specs, N, SA_type = "UA"){
+
+
+  # CHECKS ------------------------------------------------------------------
+
+  check_coin_input(coin)
+  stopifnot(is.list(SA_specs),
+            is.numeric(N),
+            length(N) == 1,
+            N > 2,
+            SA_type %in% c("SA", "UA"))
+
+  # check format of SA_specs
+  check_specs <- sapply(SA_specs, function(li){
+    !is.null(li$Name) & !is.null(li$Address) & !is.null(li$Distribution) & !is.null(li$Type)
+  })
+
+  if(any(!check_specs)){
+    stop("One or more entries in SA_specs is missing either the $Name, $Address or $Distribution entries.")
+  }
+
+
+  # PREP --------------------------------------------------------------------
+
+  # number of uncertain input paras
+  d <- length(SA_specs)
+
+  # get sample
+  if(SA_type == "UA"){
+
+    # a random (uniform) sample
+    XX <- matrix(runif(d*N), nrow = N, ncol = d)
+
+  } else {
+
+    if(d==1){
+      stop("Only one uncertain input defined. It is not meaningful to run a sensitivity analysis
+      with only one input variable. Consider changing SA_type to \"UA\".")
+    }
+
+    # use standard MC estimators of sensitivity indices
+    XX <- SA_sample(N, d)
+
+  }
+
+  # convert sample to parameters (data frame with list cols?)
+  XX_p <- mapply(function(x, spec){
+    sample_2_para(x, distribution = spec$Distribution, dist_type = spec$Type)
+  }, XX, SA_specs, SIMPLIFY = FALSE)
+
+
+  # RUN COINS ---------------------------------------------------------------
+
+  # use trycatch
+
+  # store results
+
+
+  # POST --------------------------------------------------------------------
+
+
+
+
+}
+
+
 #' Convert a numeric sample to parameter values
 #'
 #' Converts a numeric sample `x`, which should have values between 0 and 1, to a corresponding vector or list of
