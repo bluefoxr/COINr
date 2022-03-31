@@ -160,6 +160,8 @@ new_coin <- function(iData, iMeta, exclude = NULL, split_to = NULL,
   coin$Meta$Ind <- iMeta
   coin$Meta$Lineage <- get_lineage(iMeta, level_names = level_names)
   coin$Meta$maxlev <- max(iMeta$Level, na.rm = TRUE)
+  coin$Meta$Weights$Original <- iMeta[iMeta$Type %in% c("Indicator", "Aggregate"),
+                                      c("iCode", "Level", "Weight")]
 
   # we also need to forget about splitting, as if we regenerate one of
   # the coins in the purse, this would cause an error
@@ -275,6 +277,8 @@ check_iData <- function(iData, quietly = FALSE){
     }
     # flag if panel data: more than one unique value in Time
     is_panel <- length(unique(iData$Time)) > 1
+  } else {
+    is_panel <- FALSE
   }
 
   # uName
