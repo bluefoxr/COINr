@@ -66,100 +66,130 @@ get_eff_wts <-  function(coin, out2 = "df"){
 }
 
 
-
-
 #' Weight optimisation
 #'
 #' This function provides optimised weights to agree with a pre-specified vector of "target importances".
 #'
 #' This is a linear version of the weight optimisation proposed in this paper: \doi{10.1016/j.ecolind.2017.03.056}.
-#' Weights are optimised to agree with a pre-specified vector of "importances". The optimised weights are returned back to the COIN.
+#' Weights are optimised to agree with a pre-specified vector of "importances". The optimised weights are returned back to the coin.
 #'
 #' See the [chapter in the COINr online documentation](https://bluefoxr.github.io/COINrDoc/weighting-1.html#automatic-re-weighting)
 #' for more details.
 #'
-#' @param COIN COIN object
+#' @param coin coin object
 #' @param itarg a vector of (relative) target importances. For example, `c(1,2,1)` would specify that the second
 #' indicator should be twice as "important" as the other two.
-#' @param aglev The aggregation level to apply the weight adjustment to.
+#' @param Level The aggregation level to apply the weight adjustment to.
 #' @param cortype The type of correlation to use - can be either `"pearson"`, `"spearman"` or `"kendall"`. See [stats::cor].
 #' @param optype The optimisation type. Either `"balance"`, which aims to balance correlations
 #' according to a vector of "importances" specified by `itarg` (default), or `"infomax"` which aims to maximise
-#' overall correlations. *This latter option is experimental and may not yet work very well*.
-#' @param toler Tolerance for convergence. Defaults to 0.001 (decrease for more accuracy, increase if convergence problems).
+#' overall correlations.
+#' @param toler Tolerance for convergence. Defaults to 0.1 (decrease for more accuracy, increase if convergence problems).
 #' @param maxiter Maximum number of iterations. Default 500.
-#' @param out2 Where to output the results. If `"COIN"` (default for COIN input), appends to updated COIN,
+#' @param out2 Where to output the results. If `"coin"` (default for coin input), appends to updated coin,
 #' creating a new list of weights in `.$Parameters$Weights`. Otherwise if `"list"` outputs to a list (default).
+#' @param dset Name of the aggregated data set found in `coin$Data` which results from calling [aggregate2()].
+#' @param w_name Name to write the optimised weight set to, if `out2 = "coin"`
 #'
 #' @importFrom stats optim
 #'
 #' @examples
-#' # build ASEM COIN up to aggregation
-#' ASEM <- build_ASEM()
-#' # optimise sub-pillar weights to give equal correlations with index
-#' ASEM <- weightOpt(ASEM, itarg = "equal", aglev = 3, out2 = "COIN")
+#' #
 #'
-#' @seealso
-#' * [rew8r()] Interactive app for adjusting weights and seeing effects on correlations
-#' * [getPCA()] PCA, including weights from PCA
-#'
-#' @return If `out2 = "COIN"` returns an updated COIN object with a new set of weights in `.$Parameters$Weights`, plus
+#' @return If `out2 = "coin"` returns an updated coin object with a new set of weights in `.$Meta$Weights`, plus
 #' details of the optimisation in `.$Analysis`.
 #' Else if `out2 = "list"` the same outputs (new weights plus details of optimisation) are wrapped in a list.
 #'
 #' @export
+get_opt_weights <- function(coin, itarg = NULL, dset, Level, cortype = "pearson", optype = "balance",
+                      toler = NULL, maxiter = NULL, w_name = NULL, out2 = "list"){
 
-weightOpt <- function(COIN, itarg, aglev, cortype = "pearson", optype = "balance",
-                      toler = NULL, maxiter = NULL, out2 = NULL){
+  # PREP --------------------------------------------------------------------
+
+  stopifnot(optype %in% c("balance", "infomax"),
+            out2 %in% c("list", "coin"))
+
+  # number of weights at specified level
+  n_w <- sum(coin$Meta$Weights$Original == Level)
+
+  if(optype == "infomax"){
+    itarg <- NULL
+  }
 
   # if equal influence requested
-  if(is.character(itarg)){
-    if(itarg == "equal"){
-      itarg <- rep(1, sum(COIN$Parameters$Weights$Original$AgLevel == aglev))
-    } else {
-      stop("itarg not recognised - should be either numeric vector or \"equal\" ")
+  if(!is.null(itarg)){
+    if(is.character(itarg)){
+      if(itarg == "equal"){
+        itarg <- rep(1, n_w)
+      } else {
+        stop("itarg not recognised - should be either numeric vector or \"equal\" ")
+      }
+    }
+  } else {
+    if(optype == "balance"){
+      stop("If optype = 'balance' you must specify itarg.")
     }
   }
 
-  if(length(itarg) != sum(COIN$Parameters$Weights$Original$AgLevel == aglev) ){
-    stop("itarg is not the correct length for the specified aglev")
-  }
+  if (optype == "balance"){
+    if(length(itarg) != n_w){
+      stop("itarg is not the correct length for the specified Level")
+    }
 
-  itarg <- itarg/sum(itarg)
+    itarg <- itarg/sum(itarg)
+  }
 
   # we need to define an objective function. The idea here is to make a function, which when you
   # put in a set of weights, gives you the correlations
 
+  # get original weights
+  w0 <- coin$Meta$Weights$Original
+
+  # make a null object for storing correlations in - this will be updated by the function below.
+  crs_out <- NULL
+
   objfunc <- function(w){
 
-    # get full list of weights
-    wlist <- COIN$Parameters$Weights$Original
+    w <- w/sum(w)
+    wlist <- w0
     # modify appropriate level to current vector of weights
-    wlist$Weight[wlist$AgLevel == aglev] <- w
+    wlist$Weight[wlist$Level == Level] <- w
     # re-aggregate using these weights, get correlations
-    crs <- weights2corr(COIN, wlist, aglevs = c(aglev, COIN$Parameters$Nlevels),
+    crs <- weights2corr(coin, dset = dset, w = wlist, Levels = c(Level, coin$Meta$maxlev),
                         cortype = cortype)$cr$Correlation
 
     if (optype == "balance"){
       # normalise so they sum to 1
-      crs <- crs/sum(crs)
+      crs_n <- crs/sum(crs)
       # the output is the sum of the squared differences (note, could also log this)
-      sqdiff <- sum((itarg - crs)^2)/length(crs)
+      sqdiff <- log(sum((itarg - crs_n)^2)/length(crs_n))
     } else if (optype == "infomax"){
-      # the output is the sum of the squared differences (note, could also log this)
-      sqdiff <- log(sum(1 - crs))/length(crs)
+      # the output is the sum of the correlations *-1
+      sqdiff <- sum(crs)*-1
+      # assign to crs_n for export outside function
+      crs_n <- crs
     }
-    message("iterating... squared difference = ", sqdiff)
-    return(sqdiff)
+    # send outside function
+    crs_out <<- crs_n
+    message("iterating... objective function = ", sqdiff)
+    sqdiff
 
   }
 
   # defaults for tolerance and max iterations
-  if(is.null(toler)){toler <- 0.001}
+  if(is.null(toler)){toler <- 0.1}
   if(is.null(maxiter)){maxiter <- 500}
 
+
+  # get initial values
+  if(optype == "balance"){
+    init_vals <- itarg
+  } else {
+    init_vals <- w0$Weight[w0$Level == Level]
+  }
+
   # run optimisation
-  optOut <- stats::optim(par = itarg, fn = objfunc, control = list(
+  optOut <- stats::optim(par = init_vals, fn = objfunc, control = list(
     reltol = toler,
     maxit = maxiter
   ))
@@ -171,33 +201,100 @@ weightOpt <- function(COIN, itarg, aglev, cortype = "pearson", optype = "balance
          You can try increasing the number of iterations and/or the tolerance.")
   }
 
+  # get optimised weights at level
+  wopt <- optOut$par
+  # normalise to sum to 1
+  wopt <- wopt/sum(wopt)
   # get full list of weights
-  wopt <- COIN$Parameters$Weights$Original
+  wopt_full <- w0
   # modify appropriate level to optimised vector of weights
-  wopt$Weight[wopt$AgLevel == aglev] <- optOut$par
+  wopt_full$Weight[wopt_full$Level == Level] <- wopt
 
-  if(is.null(out2)){out2 <- "list"}
+  # results df
+  desired <- if(is.null(itarg)){NA}else{itarg}
+  df_res <- data.frame(
+    Desired = desired,
+    Obtained = crs_out,
+    OptWeight = wopt
+  )
 
-  if (out2 == "COIN"){
-    wname <- paste0("OptimsedLev", aglev)
-    COIN$Parameters$Weights[[wname]] <- wopt
-    COIN$Analysis$Weights[[wname]] <- list(OptResults = optOut,
-                                           CorrResults = data.frame(
-                                             Desired = itarg,
-                                             Obtained = crs <- weights2corr(COIN, wopt, aglevs = c(aglev, COIN$Parameters$Nlevels),
-                                                                            cortype = cortype)$cr$Correlation,
-                                             OptWeight = optOut$par
-                                           ))
-    return(COIN)
+  if (out2 == "coin"){
+    if(is.null(w_name)){
+      w_name <- paste0("OptimsedLev", Level)
+    }
+    coin$Meta$Weights[[w_name]] <- wopt_full
+    coin$Analysis$Weights[[w_name]] <- list(OptResults = optOut,
+                                            CorrResultsNorm = df_res)
+    coin
   } else {
-    return(list(WeightsOpt = wopt,
-                OptResults = optOut,
-                CorrResults = data.frame(
-                  Desired = itarg,
-                  Obtained = crs <- weights2corr(COIN, wopt, aglevs = c(aglev, COIN$Parameters$Nlevels),
-                                                 cortype = cortype)$cr$Correlation,
-                  OptWeight = optOut$par
-                )))
+    list(WeightsOpt = wopt_full,
+         OptResults = optOut,
+         CorrResultsNorm = df_res)
   }
+}
+
+
+#' Recalculate correlations and ranks based on new weights
+#'
+#' This is a short cut function which takes a new set of indicator weights, and recalculates the coin results
+#' based on these weights. It returns a summary of rankings and the correlations between indicators and index.
+#'
+#' This function is principally used inside [rew8r()]. The `w` argument should be a data frame of weights, of the same format
+#' as the data frames found in `.$Parameters$Weights`.
+#'
+#' @param coin coin object
+#' @param w Full data frame of weights for each level
+#' @param dset Name of the data set that is created when [aggregate2()] is called. This is used to calculated correlations
+#' and to extract the results table. Default `"Aggregated"`.
+#' @param Levels A 2-length vector with two aggregation levels to correlate against each other
+#' @param cortype Correlation type. Either `"pearson"` (default), `"kendall"` or `"spearman"`. See [stats::cor].
+#' @param withparent Logical: if `TRUE`, only correlates with the parent, e.g. sub-pillars are only correlated with
+#' their parent pillars and not others.
+#'
+#' @return A list where `.$cr` is a vector of correlations between each indicator and the index, and
+#' `.$dat` is a data frame of results
+#'
+#' @examples
+#' #
+#'
+#' @export
+weights2corr <- function(coin, w, dset = "Aggregated", Levels = NULL,
+                         cortype = "pearson", withparent = TRUE){
+
+  # PREP --------------------------------------------------------------------
+  # note, many checks are done inside lower-level functions called here
+  # note2: I have removed the iCodes argument. Not sure that it was ever used.
+
+  if(is.null(Levels)){
+    Levels <- c(1, coin$Meta$maxlev)
+  }
+
+  if(is.null(coin$Log$aggregate2)){
+    stop("You have not yet aggregated your data. This needs to be done first.")
+  }
+
+
+  # GET CORR, RES -----------------------------------------------------------
+
+  # update weights
+  coin$Log$aggregate2$w <- w
+
+  # regenerate
+  coin2 <- regen2(coin, from = "aggregate2", quietly = TRUE)
+
+  # get correlations
+  crtable <- get_corr(coin2, dset = dset, Levels = Levels,
+                      cortype = cortype, withparent = withparent)
+
+  # get results
+  dfres <- get_results(coin2, dset = dset, tab_type = "Aggs")
+
+
+  # OUTPUT ------------------------------------------------------------------
+
+  # output list
+  # NOTE: missing iCodes1 entry - not sure if this is used for rew8r and need to understand the context.
+  list(cr = crtable,
+       dat = dfres)
 
 }
