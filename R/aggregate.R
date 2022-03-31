@@ -131,6 +131,7 @@ aggregate2.coin <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, da
     # if w was NULL, get from metadata
     w1 <- coin$Meta$Ind[c("iCode", "Weight")]
   }
+
   # from this point, w1 is either a data frame of weights, or NULL (don't pass weights to f_ag)
 
   # CHECK AND SET f_ag_para -------------------------------------------------
