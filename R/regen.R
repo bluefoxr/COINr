@@ -73,6 +73,9 @@ regen2.coin <- function(x, from = NULL, quietly = TRUE){
 
   stopifnot(is.coin(coin))
 
+
+  # GATHER PARAMS -----------------------------------------------------------
+
   # the full list of function arguments, for each build_ function
   f_logs <- coin$Log
   f_names <- names(f_logs)
@@ -98,6 +101,9 @@ regen2.coin <- function(x, from = NULL, quietly = TRUE){
     }
   }
 
+
+  # RERUN FUNCS -------------------------------------------------------------
+
   # looping over build_ functions
   for (func in f_names){
 
@@ -114,10 +120,25 @@ regen2.coin <- function(x, from = NULL, quietly = TRUE){
 
     # run function at arguments
     if(func == "new_coin"){
+
       if(quietly){
         coin <- suppressMessages( do.call(func, args = f_log) )
       } else {
         coin <- do.call(func, args = f_log)
+      }
+
+      # we also need to pass old weights to new coin
+      wlist_old <- x$Meta$Weights[names(x$Meta$Weights) != "Original"]
+
+      # the only thing to check is whether the iCodes are the same. If not, means that something has happened
+      # to the indicator set, so we don't pass to be safe
+      same_codes <- sapply(wlist_old, function(w){
+        setequal(coin$Meta$Weights$Original$iCode, w$iCode)
+      })
+      if(any(!same_codes)){
+        message("Did not pass additional weight sets in .$Meta$Weights because iCodes do not match new coin.")
+      } else {
+        coin$Meta$Weights <- c(coin$Meta$Weights, wlist_old)
       }
 
     } else {
@@ -131,6 +152,12 @@ regen2.coin <- function(x, from = NULL, quietly = TRUE){
     }
 
   }
+
+
+  # WEIGHTS -----------------------------------------------------------------
+
+
+
   coin
 }
 
@@ -170,17 +197,7 @@ regen2 <- function(x, from = NULL, quietly = TRUE){
 #' Make other changes before re-running using the [regen()] function.
 #'
 #' @examples
-#' # build ASEM example
-#' ASEM <- build_ASEM()
-#' # remove one indicator and regenerate results
-#' ASEM2 <- indChange(ASEM, drop = "UNVote", regen = TRUE)
-#' # compare the differences
-#' CT <- compTable(ASEM, ASEM2, dset = "Aggregated", isel = "Index")
-#'
-#' @seealso
-#' * [regen()] regenerate a coin
-#' * [compTable()] compare two different coins
-#' * [compTableMulti()] compare multiple coins
+#' #
 #'
 #' @return An updated coin, with regenerated results if `regen = TRUE`.
 #'
