@@ -4,7 +4,7 @@
 \alias{COINToolIn}
 \title{Import data directly from COIN Tool}
 \usage{
-COINToolIn(fname, makecodes = FALSE, oldtool = FALSE)
+COINToolIn(fname, makecodes = FALSE, oldtool = FALSE, out2 = "list")
 }
 \arguments{
 \item{fname}{The file name and path to read, e.g. \code{"C:/Documents/COINToolFile.xlsx"}.}
@@ -15,14 +15,12 @@ for indicators, not aggregation groups.}
 
 \item{oldtool}{Logical: if \code{TRUE}, compatible with old COIN Tool (pre-release, early 2019 or earlier).
 There are some minor differences on where the elements are found.}
+
+\item{out2}{Either \code{"list"} (default) to output a list with \code{iData} and \code{iMeta} entries (for input into \code{\link[=new_coin]{new_coin()}}),
+else \code{"coin"} to output a coin.}
 }
 \value{
-A list containing:
-\itemize{
-\item \code{.$IndData} A data frame of imported indicator data to be input as the \code{IndData} argument in \code{\link[=assemble]{assemble()}}.
-\item \code{.$IndMeta} A data frame of imported indicator metadata to be input as the \code{IndMeta} argument in \code{\link[=assemble]{assemble()}}.
-\item \code{.$AggMeta} A data frame of imported aggregation metadata to be input as the \code{AggMeta} argument in \code{\link[=assemble]{assemble()}}.
-}
+Either a list or a coin, depending on \code{out2}
 }
 \description{
 This provides a direct interface for reading a COIN Tool input deck and converting it to COINr.
@@ -50,14 +48,6 @@ files/coin_tool_v1_lite_exampledata.zip", tmpz)
 # Unzip
 CTpath <- unzip(tmpz, exdir = tempdir())
 # Read COIN Tool into R
-l <- COINToolIn(CTpath, makecodes = TRUE)
-# We can finish by assembling it
-CT_exampleCOIN <- assemble(l$IndData, l$IndMeta, l$AggMeta)
-}
+l <- COINToolIn(CTpath, makecodes = TRUE) }
 
-}
-\seealso{
-\itemize{
-\item \code{\link[=coin2Excel]{coin2Excel()}} Export COIN contents to Excel
-}
 }

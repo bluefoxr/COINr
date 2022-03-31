@@ -27,18 +27,6 @@ indicators used in calculating the index results. Any indicators that are added 
 present in the original \code{iData} and \code{iMeta} that were input to \code{new_coin()}.
 }
 \examples{
-# build ASEM example
-ASEM <- build_ASEM()
-# remove one indicator and regenerate results
-ASEM2 <- indChange(ASEM, drop = "UNVote", regen = TRUE)
-# compare the differences
-CT <- compTable(ASEM, ASEM2, dset = "Aggregated", isel = "Index")
+#
 
-}
-\seealso{
-\itemize{
-\item \code{\link[=regen]{regen()}} regenerate a coin
-\item \code{\link[=compTable]{compTable()}} compare two different coins
-\item \code{\link[=compTableMulti]{compTableMulti()}} compare multiple coins
-}
 }
