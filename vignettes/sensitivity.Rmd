@@ -1,0 +1,61 @@
+---
+title: "Sensitivity Analysis"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Sensitivity Analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+#library(COINr)
+```
+
+
+SA specs
+
+```{r}
+# winmax (data treatment)
+l_winmax <- list(Address = "$Log$Treat$default_specs$f1_para$winmax",
+               Distribution = 1:5,
+               Type = "discrete")
+
+# normalisation method
+
+# first, we define the two alternatives: minmax or zscore (along with respective parameters)
+norm_alts <- list(
+  list(f_n = "n_minmax", f_n_para = list(c(1,100))),
+  list(f_n = "n_zscore", f_n_para = list(c(10,2)))
+)
+
+# now put this in a list
+l_norm <- list(Address = "$Log$Normalise$default_specs",
+               Distribution = norm_alts,
+               Type = "discrete")
+
+## aggregation
+l_agg <- list(Address = "$Log$Aggregate$f_ag",
+               Distribution = c("a_amean", "a_gmean"),
+               Type = "discrete")
+
+# create overal specification list
+SA_specs <- list(
+  Winmax = l_winmax,
+  Normalisation = l_norm,
+  Aggregation = l_agg
+)
+```
+
+Run SA
+
+```{r}
+t1 <- get_sensitivity(coin, SA_specs = SA_specs, N = 10, dset = "Aggregated", iCode = "Index")
+```
+
