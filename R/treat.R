@@ -14,7 +14,7 @@
 #'
 #' @examples
 #' #
-treat2.purse <- function(x, dset = NULL, default_specs = NULL, indiv_specs = NULL,
+Treat.purse <- function(x, dset = NULL, default_specs = NULL, indiv_specs = NULL,
                          combine_treat = FALSE){
 
   # input check
@@ -22,7 +22,7 @@ treat2.purse <- function(x, dset = NULL, default_specs = NULL, indiv_specs = NUL
 
   # apply unit screening to each coin
   x$coin <- lapply(x$coin, function(coin){
-    treat2.coin(coin, dset = dset, default_specs = default_specs,
+    Treat.coin(coin, dset = dset, default_specs = default_specs,
                 indiv_specs = indiv_specs, combine_treat = combine_treat)
   })
   # make sure still purse class
@@ -47,7 +47,7 @@ treat2.purse <- function(x, dset = NULL, default_specs = NULL, indiv_specs = NUL
 #'
 #' @examples
 #' #
-treat2.coin <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
+Treat.coin <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
                         combine_treat = FALSE, out2 = "coin"){
 
   # WRITE LOG ---------------------------------------------------------------
@@ -60,7 +60,7 @@ treat2.coin <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
 
   # TREAT DATA --------------------------------------------------------------
 
-  l_treat <- treat2(iData, default_specs = default_specs,
+  l_treat <- Treat(iData, default_specs = default_specs,
                     indiv_specs = indiv_specs, combine_treat = combine_treat)
 
   # output list
@@ -123,7 +123,7 @@ treat2.coin <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
 #' @return A treated data frame of data
 #'
 #' @export
-treat2.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL, combine_treat = FALSE){
+Treat.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL, combine_treat = FALSE){
 
 
   # SET DEFAULTS ------------------------------------------------------------
@@ -135,7 +135,7 @@ treat2.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL, combi
                                    skew_thresh = 2,
                                    kurt_thresh = 3.5,
                                    force_win = FALSE),
-                    f2 = "GIIlog",
+                    f2 = "log_GII",
                     f2_para = list(na.rm = TRUE),
                     f_pass = "check_SkewKurt",
                     f_pass_para = list(na.rm = TRUE,
@@ -200,7 +200,7 @@ treat2.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL, combi
     }
 
     # run function
-    do.call("treat2.numeric", c(list(x = xi, combine_treat = combine_treat), specs))
+    do.call("Treat.numeric", c(list(x = xi, combine_treat = combine_treat), specs))
   }
 
   # now run function
@@ -227,9 +227,7 @@ treat2.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL, combi
 
   # ADD TREATED POINTS
   Treated_Points <- lapply(treat_results, `[[`, "Treated_Points")
-  Treated_Points <- Treated_Points |>
-    tidy_list() |>
-    as.data.frame()
+  Treated_Points <- as.data.frame(tidy_list(Treated_Points))
 
   # output
   l_out <- list(x_treat = x_treat,
@@ -291,7 +289,7 @@ treat2.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL, combi
 #' @return A treated vector of data.
 #'
 #' @export
-treat2.numeric <- function(x, f1, f1_para = NULL, f2 = NULL, f2_para = NULL,
+Treat.numeric <- function(x, f1, f1_para = NULL, f2 = NULL, f2_para = NULL,
                            f_pass, f_pass_para = NULL, combine_treat = FALSE){
 
   # INPUT CHECKS ------------------------------------------------------------
@@ -495,8 +493,8 @@ treat2.numeric <- function(x, f1, f1_para = NULL, f2 = NULL, f2_para = NULL,
 #' @return message
 #'
 #' @export
-treat2 <- function (x, ...){
-  UseMethod("treat2")
+Treat <- function (x, ...){
+  UseMethod("Treat")
 }
 
 
@@ -599,12 +597,12 @@ winsorise <- function(x, na.rm = FALSE, winmax = 5, skew_thresh = 2, kurt_thresh
 #'
 #' @examples
 #' x <- runif(20)
-#' GIIlog(x)
+#' log_GII(x)
 #'
 #' @return A log-transformed vector of data.
 #'
 #' @export
-GIIlog <- function(x, na.rm = FALSE){
+log_GII <- function(x, na.rm = FALSE){
 
   stopifnot(is.numeric(x),
             is.vector(x))
@@ -613,7 +611,7 @@ GIIlog <- function(x, na.rm = FALSE){
          (max(x, na.rm = na.rm)-min(x, na.rm = na.rm)) + 1 )
 
   list(x = x,
-       treated = rep("GIIlog", length(x)))
+       treated = rep("log_GII", length(x)))
 }
 
 
@@ -629,19 +627,19 @@ GIIlog <- function(x, na.rm = FALSE){
 #'
 #' @examples
 #' x <- runif(20)
-#' CTlog(x)
+#' log_CT(x)
 #'
 #' @return A log-transformed vector of data.
 #'
 #' @export
-CTlog <- function(x, na.rm = FALSE){
+log_CT <- function(x, na.rm = FALSE){
 
   stopifnot(is.numeric(x))
 
   x <- log(x- min(x,na.rm = na.rm) + 0.01*(max(x, na.rm = na.rm)-min(x, na.rm = na.rm)))
 
   list(x = x,
-       treated = rep("CTlog", length(x)))
+       treated = rep("log_CT", length(x)))
 }
 
 #' Log-transform a vector
@@ -655,19 +653,19 @@ CTlog <- function(x, na.rm = FALSE){
 #'
 #' @examples
 #' x <- runif(20)
-#' CTlog_orig(x)
+#' log_CT_orig(x)
 #'
 #' @return A log-transformed vector of data.
 #'
 #' @export
-CTlog_orig <- function(x, na.rm = FALSE){
+log_CT_orig <- function(x, na.rm = FALSE){
 
   stopifnot(is.numeric(x))
 
   x <- log(x- min(x, na.rm = na.rm) + 1)
 
   list(x = x,
-       treated = rep("CTlog_orig", length(x)))
+       treated = rep("log_CT_orig", length(x)))
 }
 
 

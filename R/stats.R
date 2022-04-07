@@ -143,7 +143,7 @@ get_stats.data.frame <- function(x, t_skew = 2, t_kurt = 3.5, t_avail = 0.65, t_
 
   # sfs
   if(!is.null(nsignif)){
-    stats_tab <- signifDF(stats_tab, nsignif)
+    stats_tab <- signif_df(stats_tab, nsignif)
   }
 
   stats_tab
