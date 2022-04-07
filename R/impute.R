@@ -16,7 +16,7 @@
 #'
 #' @examples
 #' #
-impute2.purse <- function(x, dset = NULL, f_i = NULL, f_i_para = NULL, impute_by = "column",
+Impute.purse <- function(x, dset = NULL, f_i = NULL, f_i_para = NULL, impute_by = "column",
                          group_level = NULL, normalise_first = NULL, write_to = NULL){
 
   # input check
@@ -24,7 +24,7 @@ impute2.purse <- function(x, dset = NULL, f_i = NULL, f_i_para = NULL, impute_by
 
   # apply unit screening to each coin
   x$coin <- lapply(x$coin, function(coin){
-    impute2.coin(coin, dset = dset, f_i = f_i, f_i_para = f_i_para, impute_by = impute_by,
+    Impute.coin(coin, dset = dset, f_i = f_i, f_i_para = f_i_para, impute_by = impute_by,
                  group_level = group_level, normalise_first = normalise_first, out2 = "coin",
                  write_to = write_to)
   })
@@ -62,7 +62,7 @@ impute2.purse <- function(x, dset = NULL, f_i = NULL, f_i_para = NULL, impute_by
 #'
 #' @examples
 #' #
-impute2.coin <- function(x, dset = NULL, f_i = NULL, f_i_para = NULL, impute_by = "column",
+Impute.coin <- function(x, dset = NULL, f_i = NULL, f_i_para = NULL, impute_by = "column",
                          group_level = NULL, normalise_first = NULL, out2 = "coin",
                          write_to = NULL){
 
@@ -97,7 +97,7 @@ impute2.coin <- function(x, dset = NULL, f_i = NULL, f_i_para = NULL, impute_by 
     directions <- directions$Direction[match(colnames(iData_), directions$iCode)]
 
     # no splitting here = easy
-    iData_i <- impute2.data.frame(iData_, f_i = f_i, f_i_para = f_i_para,
+    iData_i <- Impute.data.frame(iData_, f_i = f_i, f_i_para = f_i_para,
                                   impute_by = impute_by,
                                   normalise_first = normalise_first,
                                   directions = directions)
@@ -121,7 +121,7 @@ impute2.coin <- function(x, dset = NULL, f_i = NULL, f_i_para = NULL, impute_by 
     # now do the imputation
     iData_split_i <- lapply(iData_split, function(dfi){
       directions <- directions$Direction[match(colnames(dfi), directions$iCode)]
-      impute2.data.frame(dfi, f_i = f_i, f_i_para = f_i_para,
+      Impute.data.frame(dfi, f_i = f_i, f_i_para = f_i_para,
                          impute_by = impute_by, normalise_first = normalise_first,
                          directions = directions)
     })
@@ -211,7 +211,7 @@ impute2.coin <- function(x, dset = NULL, f_i = NULL, f_i_para = NULL, impute_by 
 #'
 #' @examples
 #' #
-impute2.data.frame <- function(x, f_i = NULL, f_i_para = NULL, impute_by = "column",
+Impute.data.frame <- function(x, f_i = NULL, f_i_para = NULL, impute_by = "column",
                                normalise_first = NULL, directions = NULL, sfigs = 9){
 
   # CHECKS ------------------------------------------------------------------
@@ -295,18 +295,18 @@ impute2.data.frame <- function(x, f_i = NULL, f_i_para = NULL, impute_by = "colu
   } else if (impute_by == "column") {
 
     if(is.null(f_i_para)){
-      x_imp <- lapply(x_n, impute2.numeric, f_i)
+      x_imp <- lapply(x_n, Impute.numeric, f_i)
     } else {
-      x_imp <- lapply(x_n, impute2.numeric, f_i, f_i_para)
+      x_imp <- lapply(x_n, Impute.numeric, f_i, f_i_para)
     }
 
   } else if (impute_by == "row"){
 
     # work row-wise with apply
     if(is.null(f_i_para)){
-      x_imp <- apply(x_n, 1, impute2.numeric, f_i, simplify = FALSE)
+      x_imp <- apply(x_n, 1, Impute.numeric, f_i, simplify = FALSE)
     } else {
-      x_imp <- apply(x_n, 1, impute2.numeric, f_i, f_i_para, simplify = FALSE)
+      x_imp <- apply(x_n, 1, Impute.numeric, f_i, f_i_para, simplify = FALSE)
     }
 
     # I have to reassemble carefully into a df
@@ -376,7 +376,7 @@ impute2.data.frame <- function(x, f_i = NULL, f_i_para = NULL, impute_by = "colu
 #'
 #' @return An imputed numeric vector of the same length of `x`.
 #' @export
-impute2.numeric <- function(x, f_i = NULL, f_i_para = NULL){
+Impute.numeric <- function(x, f_i = NULL, f_i_para = NULL){
 
 
   # DEFAULTS ----------------------------------------------------------------
@@ -436,8 +436,8 @@ impute2.numeric <- function(x, f_i = NULL, f_i_para = NULL){
 #' @return An object of the same class as `x`, but imputed.
 #'
 #' @export
-impute2 <- function(x, ...){
-  UseMethod("impute2")
+Impute <- function(x, ...){
+  UseMethod("Impute")
 }
 
 #' Impute by mean
