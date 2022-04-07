@@ -35,13 +35,13 @@
 #' # Unzip
 #' CTpath <- unzip(tmpz, exdir = tempdir())
 #' # Read COIN Tool into R
-#' l <- COINToolIn(CTpath, makecodes = TRUE) }
+#' l <- import_COIN_tool(CTpath, makecodes = TRUE) }
 #'
 #' @return Either a list or a coin, depending on `out2`
 #'
 #' @export
 
-COINToolIn <- function(fname, makecodes = FALSE, oldtool = FALSE, out2 = "list"){
+import_COIN_tool <- function(fname, makecodes = FALSE, oldtool = FALSE, out2 = "list"){
 
   #----- GET IndData -----#
 
@@ -128,15 +128,15 @@ COINToolIn <- function(fname, makecodes = FALSE, oldtool = FALSE, out2 = "list")
 
   # generate indicator codes if asked
   if(makecodes){
-    IndMeta$IndCode <- names2Codes(IndMeta$IndName)
+    IndMeta$IndCode <- names_to_codes(IndMeta$IndName)
     colnames(IndData)[3:ncol(IndData)] <- IndMeta$IndCode
-    #AggMetaIn$Code <- names2Codes(AggMetaIn$Name)
+    #AggMetaIn$Code <- names_to_codes(AggMetaIn$Name)
   }
 
   message(paste0("Imported ", ncol(ind_data_only), " indicators and ", nrow(ind_data_only), " units."))
 
   # convert to new coin format (done this way to avoid rewriting the above code)
-  COIN2coin(list(IndData = IndData, IndMeta = IndMeta, AggMeta = AggMetaIn),
+  COIN_to_coin(list(IndData = IndData, IndMeta = IndMeta, AggMeta = AggMetaIn),
             recover_dsets = FALSE, out2 = out2)
 
 
@@ -156,13 +156,13 @@ COINToolIn <- function(fname, makecodes = FALSE, oldtool = FALSE, out2 = "list")
 #' #
 #'
 #' @seealso
-#' * [COINToolIn()] Import data from the COIN Tool (Excel).
+#' * [import_COIN_tool()] Import data from the COIN Tool (Excel).
 #'
 #' @return A corresponding character vector, but with short codes, and no duplicates.
 #'
 #' @export
 
-names2Codes <- function(cvec, maxword=2, maxlet=4){
+names_to_codes <- function(cvec, maxword=2, maxlet=4){
 
   # There is definitely a better way to do this with lapply or similar, but for now...
 
