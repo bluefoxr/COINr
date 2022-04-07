@@ -98,7 +98,7 @@ coin <- build_example_coin(up_to = "new_coin")
 The `treat()` function can be applied directly to a coin with completely default options:
 
 ```{r}
-coin <- treat2(coin, dset = "Raw")
+coin <- Treat(coin, dset = "Raw")
 ```
 
 For each indicator, the `treat()` function:
@@ -134,7 +134,7 @@ specs_def <- list(f1 = "winsorise",
                                  skew_thresh = 2,
                                  kurt_thresh = 3.5,
                                  force_win = FALSE),
-                  f2 = "GIIlog",
+                  f2 = "log_GII",
                   f2_para = list(na.rm = TRUE),
                   f_pass = "check_SkewKurt",
                   f_pass_para = list(na.rm = TRUE,
@@ -165,7 +165,7 @@ To make adjustments, unless we want to redefine everything, we don't need to spe
 
 ```{r}
 # treat with max winsorisation of 3 points
-coin <- treat2(coin, dset = "Raw", default_specs = list(f1_para = list(winmax = 1)))
+coin <- Treat(coin, dset = "Raw", default_specs = list(f1_para = list(winmax = 1)))
 
 # see what happened
 coin$Analysis$Treated$Dets_Table |>
@@ -191,7 +191,7 @@ indiv_specs <- list(
 )
 
 # re-run data treatment
-coin <- treat2(coin, dset = "Raw", indiv_specs = indiv_specs)
+coin <- Treat(coin, dset = "Raw", indiv_specs = indiv_specs)
 ```
 
 The only thing to remember here is to make sure the list is created correctly. Each indicator to assign individual treatment must have its own list - here containing `f1_para`. Then `f1_para` itself is a list of named parameter values for `f1`. Finally, all lists for each indicator have to be wrapped into a single list to pass to `indiv_specs`. This looks a bit convoluted for changing a single parameter, but gives a high degree of control over how data treatment is performed.
@@ -216,7 +216,7 @@ indiv_specs <- list(
 )
 
 # re-run data treatment
-coin <- treat2(coin, dset = "Raw", indiv_specs = indiv_specs)
+coin <- Treat(coin, dset = "Raw", indiv_specs = indiv_specs)
 ```
 
 Now if we examine the treatment table, we will find that these indicators have been excluded from the table, as they were not subjected to treatment.
@@ -238,7 +238,7 @@ outlier_pass <- function(x){
 
 # now call treat(), passing this function
 # we set f_pass_para to NULL to avoid passing default parameters to the new function
-coin <- treat2(coin, dset = "Raw",
+coin <- Treat(coin, dset = "Raw",
                default_specs = list(f_pass = "outlier_pass",
                                     f_pass_para = NULL)
 )
@@ -260,7 +260,7 @@ Treatment of a data frame with `treat()` is effectively the same as treating a c
 df1 <- ASEM_iData[c("Flights", "Goods", "Services")]
 
 # treat the data frame using defaults
-l_treat <- treat2(df1)
+l_treat <- Treat(df1)
 
 str(l_treat, max.level = 1)
 ```
@@ -288,6 +288,6 @@ The purse method for `treat()` is fairly straightforward. It takes almost the sa
 purse <- build_example_purse(up_to = "new_coin", quietly = TRUE)
 
 # apply treatment to all coins in purse (default specs)
-purse <- treat2(purse, dset = "Raw")
+purse <- Treat(purse, dset = "Raw")
 ```
 

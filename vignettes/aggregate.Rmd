@@ -102,7 +102,7 @@ All of these elements are already present in the coin, except the last. For the 
 
 ```{r}
 # aggregate normalised data set
-coin <- aggregate2(coin, dset = "Normalised")
+coin <- Aggregate(coin, dset = "Normalised")
 ```
 
 By default, the aggregation function performs the following steps:
@@ -139,7 +139,7 @@ Let's now explore some of the options of the `aggregate()` function. Like other 
 By default, the arithmetic mean is called but we can easily change this to the geometric mean, for example. However here we run into a problem: the geometric mean will fail if any values to aggregate are less than or equal to zero. So to use the geometric mean we have to re-do the normalisation step to avoid this. Luckily this is straightforward in COINr:
 
 ```{r}
-coin <- normalise2(coin, dset = "Treated",
+coin <- Normalise(coin, dset = "Treated",
                    default_specs = list(f_n = "n_minmax",
                                         f_n_para = list(l_u = c(1,100))))
 ```
@@ -147,7 +147,7 @@ coin <- normalise2(coin, dset = "Treated",
 Now, since the indicators are scaled between 1 and 100 (instead of 0 and 100 as previously), they can be aggregated with the geometric mean.
 
 ```{r}
-coin <- aggregate2(coin, dset = "Normalised",
+coin <- Aggregate(coin, dset = "Normalised",
                    f_ag = "a_gmean")
 ```
 
@@ -174,7 +174,7 @@ Now for an example, we can use the `weightedMedian()` function from the matrixSt
 library(matrixStats)
 
 # aggregate using weightedMedian()
-coin <- aggregate2(coin, dset = "Normalised",
+coin <- Aggregate(coin, dset = "Normalised",
                    f_ag = "weightedMedian",
                    f_ag_para = list(na.rm = TRUE))
 ```
@@ -201,7 +201,7 @@ ci_bod2 <- function(x){
 }
 
 # aggregate
-coin <- aggregate2(coin, dset = "Normalised",
+coin <- Aggregate(coin, dset = "Normalised",
                    f_ag = "ci_bod2", by_df = TRUE, w = "none")
 ```
 
@@ -237,7 +237,7 @@ We will require that at least 2/3 of the indicators should be non-`NA` to give a
 
 ```{r}
 # aggregate with arithmetic mean, equal weight and data avail limit of 2/3
-aggregate2(df1, f_ag = "a_amean",
+Aggregate(df1, f_ag = "a_amean",
            f_ag_para = list(w = c(1,1,1)),
            dat_thresh = 2/3)
 ```
@@ -257,12 +257,12 @@ The `aggregate()` function also works in the same way on data frames. This is pr
 X <- ASEM_iData[12:15]
 
 # normalise to avoid zeros - min max between 1 and 100
-X <- normalise2(X,
+X <- Normalise(X,
                 default_specs = list(f_n = "n_minmax",
                                      f_n_para = list(l_u = c(1,100))))
 
 # aggregate using harmonic mean, with some weights
-y <- aggregate2(X, f_ag = "a_hmean", f_ag_para = list(w = c(1, 1, 2, 1)))
+y <- Aggregate(X, f_ag = "a_hmean", f_ag_para = list(w = c(1, 1, 2, 1)))
 
 cbind(X, y) |>
   head(5) |>
@@ -278,7 +278,7 @@ The purse method for `aggregate()` is straightforward and simply applies the sam
 purse <- build_example_purse(up_to = "normalise", quietly = TRUE)
 
 # aggregate using defaults
-purse <- aggregate2(purse, dset = "Normalised")
+purse <- Aggregate(purse, dset = "Normalised")
 ```
 
 # What next?

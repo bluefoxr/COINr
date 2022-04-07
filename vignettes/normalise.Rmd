@@ -120,7 +120,7 @@ Let's begin with a simple example. We build the example coin and normalise the r
 coin <- build_example_coin(up_to = "new_coin")
 
 # normalise the raw data set
-coin <- normalise2(coin, dset = "Raw")
+coin <- Normalise(coin, dset = "Raw")
 ```
 
 We can compare the raw and un-normalised indicators side by side.
@@ -132,7 +132,7 @@ This plot also illustrates the linear nature of the min-max transformation.
 The default normalisation uses the min-max approach, scaling indicators onto the $[0, 100]$ interval. But we can change the normalisation type and its parameters using the `default_specs` argument.
 
 ```{r}
-coin <- normalise2(coin, dset = "Raw",
+coin <- Normalise(coin, dset = "Raw",
                    default_specs = list(f_n = "n_zscore",
                                         f_n_para = list(c(10,2))))
 ```
@@ -152,7 +152,7 @@ f_bin <- function(x, nbins){
 }
 
 # pass wrapper to normalise, specify 5 bins
-coin <- normalise2(coin, dset = "Raw",
+coin <- Normalise(coin, dset = "Raw",
                    default_specs = list(f_n = "f_bin",
                                         f_n_para = list(nbins = 5)))
 
@@ -180,7 +180,7 @@ We'll change the direction of the "Goods" indicator and re-normalise:
 directions$Direction[directions$iCode == "Goods"] <- -1
 
 # re-run (using min max default)
-coin <- normalise2(coin, dset = "Raw", directions = directions)
+coin <- Normalise(coin, dset = "Raw", directions = directions)
 ```
 
 Finally let's explore how to specify different normalisation methods for different indicators. The `indiv_specs` argument takes a named list for each indicator, and will override the specifications in `default_specs`. If `indiv_specs` is specified, we only need to include sub-lists for indicators that differ from `default_specs`.
@@ -198,7 +198,7 @@ indiv_specs <- list(
 )
 
 # normalise
-coin <- normalise2(coin, dset = "Raw", indiv_specs = indiv_specs)
+coin <- Normalise(coin, dset = "Raw", indiv_specs = indiv_specs)
 
 # a quick look at the first three indicators
 get_dset(coin, "Normalised")[1:4] |>
@@ -218,7 +218,7 @@ In practice, if different normalisation strategies are selected, it is a good id
 Normalising a data frame is very similar to normalising a coin, except the input is a data frame and output is also a data frame.
 
 ```{r}
-mtcars_n <- normalise2(mtcars, default_specs = list(f_n = "n_dist2max"))
+mtcars_n <- Normalise(mtcars, default_specs = list(f_n = "n_dist2max"))
 
 head(mtcars_n)
 ```
@@ -226,7 +226,7 @@ head(mtcars_n)
 As with coins, columns can be normalised with individual specifications using the `indiv_spec` argument in exactly the same way as with a coin. Note that non-numeric columns are always ignored:
 
 ```{r}
-normalise2(iris) |>
+Normalise(iris) |>
   head()
 ```
 
@@ -237,7 +237,7 @@ There is also a method for numeric vectors, although usually it is just as easy 
 x <- runif(10)
 
 # normalise using distance to reference (5th data point)
-x_norm <- normalise2(x, f_n = "n_dist2ref", f_n_para = list(iref = 5))
+x_norm <- Normalise(x, f_n = "n_dist2ref", f_n_para = list(iref = 5))
 
 # view side by side
 data.frame(x, x_norm)
@@ -263,7 +263,7 @@ purse <- build_example_purse(quietly = TRUE)
 Normalising a purse works in exactly the same way as normalising a coin, except for the `global` argument. By default, `global = TRUE`, which means that the normalisation will be applied over all time points simultaneously, with the aim of making the index comparable. Here, we will apply the default min-max approach to all coins:
 
 ```{r}
-purse <- normalise2(purse, dset = "Raw", global = TRUE)
+purse <- Normalise(purse, dset = "Raw", global = TRUE)
 ```
 
 Now let's examine the data set of the first coin. We'll see what the max and min of a few indicators is:
@@ -301,7 +301,7 @@ So if you specify to normalise by e.g. rank, ranks will be calculated for all ti
 Normalisation can also be performed independently on each coin, by setting `global = FALSE`.
 
 ```{r}
-purse <- normalise2(purse, dset = "Raw", global = FALSE)
+purse <- Normalise(purse, dset = "Raw", global = FALSE)
 
 # get normalised data of first coin in purse
 x1 <- get_dset(purse$coin[[1]], dset = "Normalised")
