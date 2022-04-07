@@ -88,7 +88,7 @@ get_eff_wts <-  function(coin, out2 = "df"){
 #' @param maxiter Maximum number of iterations. Default 500.
 #' @param out2 Where to output the results. If `"coin"` (default for coin input), appends to updated coin,
 #' creating a new list of weights in `.$Parameters$Weights`. Otherwise if `"list"` outputs to a list (default).
-#' @param dset Name of the aggregated data set found in `coin$Data` which results from calling [aggregate2()].
+#' @param dset Name of the aggregated data set found in `coin$Data` which results from calling [Aggregate()].
 #' @param w_name Name to write the optimised weight set to, if `out2 = "coin"`
 #'
 #' @importFrom stats optim
@@ -244,7 +244,7 @@ get_opt_weights <- function(coin, itarg = NULL, dset, Level, cortype = "pearson"
 #'
 #' @param coin coin object
 #' @param w Full data frame of weights for each level
-#' @param dset Name of the data set that is created when [aggregate2()] is called. This is used to calculated correlations
+#' @param dset Name of the data set that is created when [Aggregate()] is called. This is used to calculated correlations
 #' and to extract the results table. Default `"Aggregated"`.
 #' @param Levels A 2-length vector with two aggregation levels to correlate against each other
 #' @param cortype Correlation type. Either `"pearson"` (default), `"kendall"` or `"spearman"`. See [stats::cor].
@@ -256,8 +256,6 @@ get_opt_weights <- function(coin, itarg = NULL, dset, Level, cortype = "pearson"
 #'
 #' @examples
 #' #
-#'
-#' @export
 weights2corr <- function(coin, w, dset = "Aggregated", Levels = NULL,
                          cortype = "pearson", withparent = TRUE){
 
@@ -269,7 +267,7 @@ weights2corr <- function(coin, w, dset = "Aggregated", Levels = NULL,
     Levels <- c(1, coin$Meta$maxlev)
   }
 
-  if(is.null(coin$Log$aggregate2)){
+  if(is.null(coin$Log$Aggregate)){
     stop("You have not yet aggregated your data. This needs to be done first.")
   }
 
@@ -277,10 +275,10 @@ weights2corr <- function(coin, w, dset = "Aggregated", Levels = NULL,
   # GET CORR, RES -----------------------------------------------------------
 
   # update weights
-  coin$Log$aggregate2$w <- w
+  coin$Log$Aggregate$w <- w
 
   # regenerate
-  coin2 <- regen2(coin, from = "aggregate2", quietly = TRUE)
+  coin2 <- Regen(coin, from = "Aggregate", quietly = TRUE)
 
   # get correlations
   crtable <- get_corr(coin2, dset = dset, Levels = Levels,
