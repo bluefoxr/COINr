@@ -16,7 +16,7 @@
 #'
 #' @examples
 #' #
-aggregate2.purse <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, dat_thresh = NULL,
+Aggregate.purse <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, dat_thresh = NULL,
                              write_to = NULL){
 
   # input check
@@ -24,7 +24,7 @@ aggregate2.purse <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, d
 
   # apply unit screening to each coin
   x$coin <- lapply(x$coin, function(coin){
-    aggregate2.coin(coin, dset, f_ag = f_ag, w = w, f_ag_para = f_ag_para, dat_thresh = dat_thresh,
+    Aggregate.coin(coin, dset, f_ag = f_ag, w = w, f_ag_para = f_ag_para, dat_thresh = dat_thresh,
                     out2 = "coin", write_to = write_to)
   })
   # make sure still purse class
@@ -58,7 +58,7 @@ aggregate2.purse <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, d
 #' @return An updated coin with aggregated data set added
 #'
 #' @export
-aggregate2.coin <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, dat_thresh = NULL,
+Aggregate.coin <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, dat_thresh = NULL,
                             by_df = FALSE, out2 = "coin", write_to = NULL){
 
   # Write to Log ------------------------------------------------------------
@@ -195,7 +195,7 @@ aggregate2.coin <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, da
     if(is.null(w1)){
       aggs <- tapply(imeta_l$iCode, imeta_l$Parent, function(codes){
         # call func
-        do.call("aggregate2",
+        do.call("Aggregate",
                 list(x = indat_ag[codes],
                      f_ag = f_ags[lev-1],
                      f_ag_para = f_ag_paras[[lev-1]],
@@ -207,7 +207,7 @@ aggregate2.coin <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, da
         # get weights
         wts <- w1$Weight[match(codes, w1$iCode)]
         # call func
-        do.call("aggregate2",
+        do.call("Aggregate",
                 list(x = indat_ag[codes],
                      f_ag = f_ags[lev-1],
                      f_ag_para = c(list(w = wts), f_ag_paras[[lev-1]]),
@@ -278,7 +278,7 @@ aggregate2.coin <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, da
 #' @return A numeric vector
 #'
 #' @export
-aggregate2.data.frame <- function(x, f_ag = NULL, f_ag_para = NULL, dat_thresh = NULL,
+Aggregate.data.frame <- function(x, f_ag = NULL, f_ag_para = NULL, dat_thresh = NULL,
                                   by_df = FALSE){
 
   # CHECKS ------------------------------------------------------------------
@@ -368,8 +368,8 @@ aggregate2.data.frame <- function(x, f_ag = NULL, f_ag_para = NULL, dat_thresh =
 #' @return An object similar to the input
 #'
 #' @export
-aggregate2 <- function(x, ...){
-  UseMethod("aggregate2")
+Aggregate <- function(x, ...){
+  UseMethod("Aggregate")
 }
 
 
