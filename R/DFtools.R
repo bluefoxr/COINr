@@ -13,19 +13,19 @@
 #' df <- data.frame(RName = c("A", "B", "C"),
 #' Score1 = runif(3), Score2 = runif(3))
 #' # convert to ranks
-#' rankDF(df)
+#' rank_df(df)
 #' # grouped ranking - use some example data
 #' df1 <- ASEM_iData[c("uCode", "GDP_group", "Goods", "LPI")]
-#' rankDF(df1, use_group = "GDP_group")
+#' rank_df(df1, use_group = "GDP_group")
 #'
 #' @return A data frame equal to the data frame that was input, but with any numerical columns replaced with ranks.
 #'
 #' @seealso
-#' * [roundDF()] Round a data frame to a specified number of decimals.
+#' * [round_df()] Round a data frame to a specified number of decimals.
 #'
 #' @export
 
-rankDF <- function(df, use_group = NULL){
+rank_df <- function(df, use_group = NULL){
 
   if(is.null(use_group)){
     df <- data.frame(
@@ -91,7 +91,7 @@ rankDF <- function(df, use_group = NULL){
 #' # make a change: replace one value in data2 by NA
 #' data2[1,2] <- NA
 #' # compare data frames
-#' compareDF(data1, data2, matchcol = "uCode")
+#' compare_df(data1, data2, matchcol = "uCode")
 #'
 #' @return A list with comparison results. List contains:
 #' * `.$Same`: overall summary: if `TRUE` the data frames are the same according to the rules specified, otherwise `FALSE`.
@@ -104,7 +104,7 @@ rankDF <- function(df, use_group = NULL){
 #'
 #' @export
 
-compareDF <- function(df1, df2, matchcol, sigfigs = 5){
+compare_df <- function(df1, df2, matchcol, sigfigs = 5){
 
   # general checks
   stopifnot(is.data.frame(df1),
@@ -241,18 +241,18 @@ compareDF <- function(df1, df2, matchcol, sigfigs = 5){
 #' # replace sub-pillar codes in ASEM indicator metadata
 #' codeswap <- data.frame(old = c("Conn", "Sust"), new = c("SI1", "SI2"))
 #' # swap codes in both iMeta
-#' replaceDF(ASEM_iMeta, codeswap)
+#' replace_df(ASEM_iMeta, codeswap)
 #'
 #' @return A data frame with replaced values
 #'
 #' @seealso
-#' * [rankDF()] Replace numeric columns of a data frame with ranks.
-#' * [roundDF()] Replace numeric columns of a data frame with rounded values.
-#' * [compareDF()] Detailed comparison of two similar data frames.
+#' * [rank_df()] Replace numeric columns of a data frame with ranks.
+#' * [round_df()] Replace numeric columns of a data frame with rounded values.
+#' * [compare_df()] Detailed comparison of two similar data frames.
 #'
 #' @export
 
-replaceDF <- function(df, lookup){
+replace_df <- function(df, lookup){
 
   # if a vector is input, convert to data frame
   vecflag <- FALSE
@@ -298,16 +298,16 @@ replaceDF <- function(df, lookup){
 #' @param decimals The number of decimal places to round to (default 2)
 #'
 #' @examples
-#' roundDF( as.data.frame(matrix(runif(20),10,2)), decimals = 3)
+#' round_df( as.data.frame(matrix(runif(20),10,2)), decimals = 3)
 #'
 #' @seealso
-#' * [rankDF()] Replace data frame numbers with ranks.
+#' * [rank_df()] Replace data frame numbers with ranks.
 #'
 #' @return A data frame, with any numeric columns rounded to the specified amount.
 #'
 #' @export
 
-roundDF <- function(df, decimals = 2){
+round_df <- function(df, decimals = 2){
   df <- data.frame(
     lapply(df, function(y) if(is.numeric(y)) round(y, decimals) else y)
   )
@@ -324,16 +324,16 @@ roundDF <- function(df, decimals = 2){
 #' @param digits The number of decimal places to round to (default 3)
 #'
 #' @examples
-#' signifDF( as.data.frame(matrix(runif(20),10,2)), digits = 3)
+#' signif_df( as.data.frame(matrix(runif(20),10,2)), digits = 3)
 #'
 #' @seealso
-#' * [rankDF()] Replace data frame numbers with ranks.
+#' * [rank_df()] Replace data frame numbers with ranks.
 #'
 #' @return A data frame, with any numeric columns rounded to the specified amount.
 #'
 #' @export
 
-signifDF <- function(df, digits = 3){
+signif_df <- function(df, digits = 3){
   df <- data.frame(
     lapply(df, function(y) if(is.numeric(y)) signif(y, digits) else y)
   )
