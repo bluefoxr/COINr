@@ -25,8 +25,6 @@
 #' #
 #'
 #' @return Data frame
-#'
-#' @export
 rbind_fill <- function(x1, x2){
 
   if(is.null(names(x1)) || is.null(names(x2))){
@@ -100,16 +98,35 @@ set_default <- function(x, x_default){
 #' @importFrom utils stack
 #'
 #' @return A long format data frame
-lengthen <- function(X){
+lengthen <- function(X, cols = NULL){
 
   # make df
   X <- as.data.frame(X)
 
+  if(!is.null(cols)){
+
+    stopifnot(all(cols %in% names(X)))
+    X_ <- X[cols]
+    X <- X[names(X) %nin% cols]
+    X$V_to_pivot <- rownames(X)
+
+  } else {
+    X_ <- X
+  }
+
   # stack and add names
-  X1 <- cbind(utils::stack(X), rownames(X))
+  X1 <- cbind(utils::stack(X_), rownames(X_))
   names(X1) <- c("Value", "V2", "V1")
   X1$V2 <- as.character(X1$V2)
-  rev(X1)
+  X1 <- rev(X1)
+
+  if(!is.null(cols)){
+    X1 <- merge(X, X1, by.x = "V_to_pivot", by.y = "V1", all = TRUE)
+    X1 <- X1[names(X1) != "V_to_pivot"]
+    names(X1)[names(X1) == "V2"] <- "name"
+  }
+
+  X1
 
 }
 
