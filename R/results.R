@@ -101,18 +101,18 @@ get_results <- function(coin, dset, tab_type = "Summ", also_get = NULL, use = "s
   tabout <- tabout[order(-tabout[[sortcode]]),]
 
   # Rounding
-  tabout <- roundDF(tabout, nround)
+  tabout <- round_df(tabout, nround)
 
   # Ranks
   if(use == "ranks"){
     tabout <- tabout[colnames(tabout) != "Rank"]
-    tabout <- rankDF(tabout)
+    tabout <- rank_df(tabout)
   } else if (use =="groupranks"){
     if(is.null(use_group)){
       stop("If groupranks is specified, you need to also specify use_group.")
     }
     tabout <- tabout[colnames(tabout) != "Rank"]
-    tabout <- rankDF(tabout, use_group = use_group)
+    tabout <- rank_df(tabout, use_group = use_group)
     # sort by group
     tabout <- tabout[order(tabout[[use_group]]),]
   }
@@ -164,7 +164,7 @@ get_unit_summary <- function(coin, usel, Levels, dset = "Aggregated", nround = 2
 
   # get rank and score tables
   scrs <- get_data(coin, dset = dset)
-  rnks <- rankDF(scrs)
+  rnks <- rank_df(scrs)
 
   if(usel %nin% scrs$uCode){
     stop("usel not found in selected data set!")
@@ -200,7 +200,7 @@ get_unit_summary <- function(coin, usel, Levels, dset = "Aggregated", nround = 2
   )
 
   # round
-  roundDF(tabout, nround)
+  round_df(tabout, nround)
 
 }
 
@@ -317,7 +317,7 @@ get_str_weak <- function(coin, dset = NULL, usel = NULL, topN = 5, bottomN = 5, 
     data_scrs1[iCodes] <- as.data.frame(mapply(`*`, data_scrs1[iCodes], directions))
   }
 
-  data_rnks <- rankDF(data_scrs1, use_group = use_group)
+  data_rnks <- rank_df(data_scrs1, use_group = use_group)
 
   # unique value filtering
   if(!is.null(unq_discard)){

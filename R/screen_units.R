@@ -6,8 +6,8 @@
 #' @return message
 #'
 #' @export
-screen_units <- function (x, ...){
-  UseMethod("screen_units")
+Screen <- function (x, ...){
+  UseMethod("Screen")
 }
 
 
@@ -40,7 +40,7 @@ screen_units <- function (x, ...){
 #'
 #' @export
 
-screen_units.data.frame <- function(x, id_col = NULL, unit_screen, dat_thresh = NULL, nonzero_thresh = NULL,
+Screen.data.frame <- function(x, id_col = NULL, unit_screen, dat_thresh = NULL, nonzero_thresh = NULL,
                               Force = NULL){
 
 
@@ -156,7 +156,7 @@ screen_units.data.frame <- function(x, id_col = NULL, unit_screen, dat_thresh = 
 #'
 #' @export
 
-screen_units.coin <- function(x, dset, unit_screen, dat_thresh = NULL, nonzero_thresh = NULL,
+Screen.coin <- function(x, dset, unit_screen, dat_thresh = NULL, nonzero_thresh = NULL,
                               Force = NULL, out2 = "coin"){
 
   # WRITE LOG ---------------------------------------------------------------
@@ -169,7 +169,7 @@ screen_units.coin <- function(x, dset, unit_screen, dat_thresh = NULL, nonzero_t
 
   # SCREEN DF ---------------------------------------------------------------
 
-  l_out <- screen_units.data.frame(iData, id_col = "uCode", unit_screen = unit_screen,
+  l_out <- Screen.data.frame(iData, id_col = "uCode", unit_screen = unit_screen,
                                    dat_thresh = dat_thresh, nonzero_thresh = nonzero_thresh,
                                    Force = Force)
 
@@ -214,7 +214,7 @@ screen_units.coin <- function(x, dset, unit_screen, dat_thresh = NULL, nonzero_t
 #'
 #' @export
 
-screen_units.purse <- function(x, dset, unit_screen, dat_thresh = NULL, nonzero_thresh = NULL,
+Screen.purse <- function(x, dset, unit_screen, dat_thresh = NULL, nonzero_thresh = NULL,
                               Force = NULL){
 
   # input check
@@ -222,7 +222,7 @@ screen_units.purse <- function(x, dset, unit_screen, dat_thresh = NULL, nonzero_
 
   # apply unit screening to each coin
   x$coin <- lapply(x$coin, function(coin){
-    screen_units.coin(coin, dset = dset, unit_screen = unit_screen,
+    Screen.coin(coin, dset = dset, unit_screen = unit_screen,
                       dat_thresh = dat_thresh, nonzero_thresh = nonzero_thresh,
                       Force = Force, out2 = "coin")
   })
@@ -277,11 +277,10 @@ get_datAvail.coin <- function(x, dset, out2 = "coin"){
   # indicator-level group data avail function
   group_avail <- function(grp, lev){
     # get cols of indicators inside group
-    grp_codes <- lin[[1]][lin[[lev]] == grp] |>
-      unique()
+    grp_codes <- unique(lin[[1]][lin[[lev]] == grp])
+
     # get data avail
-    iData[grp_codes] |>
-      frc_avail()
+    frc_avail( iData[grp_codes])
   }
 
   # get all data availability, for all groups in all levels

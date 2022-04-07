@@ -28,14 +28,14 @@
 #' @return Updated purse object with regenerated results.
 #'
 #' @export
-regen2.purse <- function(x, from = NULL, quietly = TRUE){
+Regen.purse <- function(x, from = NULL, quietly = TRUE){
 
   # input check
   check_purse(x)
 
   # regen each coin
   x$coin <- lapply(x$coin, function(coin){
-    regen2.coin(coin, from = from, quietly = quietly)
+    Regen.coin(coin, from = from, quietly = quietly)
   })
   # make sure still purse class
   class(x) <- c("purse", "data.frame")
@@ -67,7 +67,7 @@ regen2.purse <- function(x, from = NULL, quietly = TRUE){
 #' @return Updated coin object with regenerated results.
 #'
 #' @export
-regen2.coin <- function(x, from = NULL, quietly = TRUE){
+Regen.coin <- function(x, from = NULL, quietly = TRUE){
 
   coin <- x
 
@@ -177,8 +177,8 @@ regen2.coin <- function(x, from = NULL, quietly = TRUE){
 #' @return A regenerated object
 #'
 #' @export
-regen2 <- function(x, from = NULL, quietly = TRUE){
-  UseMethod("regen2")
+Regen <- function(x, from = NULL, quietly = TRUE){
+  UseMethod("Regen")
 }
 
 
@@ -242,7 +242,7 @@ change_ind <- function(coin, add = NULL, drop = NULL, regen = FALSE){
 
   # REGEN if asked (nicely)
   if(regen==TRUE){
-    coin <- regen2(coin, quietly = TRUE)
+    coin <- Regen(coin, quietly = TRUE)
     message("coin has been regenerated using new specs.")
   } else {
     message("coin parameters changed but results NOT updated. Use coinr::regen() to regenerate
