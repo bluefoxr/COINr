@@ -35,7 +35,7 @@ plot_dist <- function(coin, ..., type = "Box", normalise = FALSE, default_specs 
 
   # Normalise if required
   if (normalise){
-    iData_ <- normalise2(iData_, default_specs = default_specs)
+    iData_ <- Normalise(iData_, default_specs = default_specs)
   }
 
   # have to put dataframe in long format for ggplot
