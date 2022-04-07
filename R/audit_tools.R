@@ -66,7 +66,7 @@ remove_elements <- function(coin, Level, dset, iCode, quietly = FALSE){
 
   # this function uses setting weights to zero to remove things. In order to do this, we need the weights that were used to aggregate
   # Find which weights were used
-  w_used <- coin$Log$aggregate2$w
+  w_used <- coin$Log$Aggregate$w
 
   # now get the weights, and run some checks
   if(is.null(w_used)){
@@ -93,7 +93,7 @@ remove_elements <- function(coin, Level, dset, iCode, quietly = FALSE){
   } else if (is.data.frame(w_used)){
     wts <- w_used
   } else {
-    stop("Argument 'w' to aggregate2() is not in the correct format. Should be NULL, a character string or data frame.")
+    stop("Argument 'w' to Aggregate() is not in the correct format. Should be NULL, a character string or data frame.")
   }
 
   ##----- Loop over inds or aggs ----
@@ -121,10 +121,10 @@ remove_elements <- function(coin, Level, dset, iCode, quietly = FALSE){
     COIN2$Meta$Weights$Removed1 <- wtsii
 
     # point method
-    COIN2$Log$aggregate2$w <- "Removed1"
+    COIN2$Log$Aggregate$w <- "Removed1"
 
     # regenerate
-    COIN2 <- regen2(COIN2, quietly = TRUE)
+    COIN2 <- Regen(COIN2, quietly = TRUE)
 
     # Extract the output of interest and add to Scores df
     newscores <- get_data(COIN2, dset = dset, iCodes = iCode)
@@ -135,7 +135,7 @@ remove_elements <- function(coin, Level, dset, iCode, quietly = FALSE){
 
   # now we generate tables as the output
   # ranks
-  ranktab <- rankDF(Scores)
+  ranktab <- rank_df(Scores)
   # rank changes
   rankchg <- ranktab
   rankchg[-1] <- apply(rankchg[-1], 2, function(x) rankchg[2] - x)
