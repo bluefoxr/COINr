@@ -22,7 +22,7 @@
 #'
 #' @examples
 #' #
-normalise2.purse <- function(x, dset = NULL, default_specs = NULL, indiv_specs = NULL,
+Normalise.purse <- function(x, dset = NULL, default_specs = NULL, indiv_specs = NULL,
                              directions = NULL, global = TRUE, write_to = NULL){
 
   # input check
@@ -39,7 +39,7 @@ normalise2.purse <- function(x, dset = NULL, default_specs = NULL, indiv_specs =
   if(global){
 
     # run global dset through normalise, excluding Time col
-    iDatas_n <- normalise2(iDatas_, default_specs = default_specs,
+    iDatas_n <- Normalise(iDatas_, default_specs = default_specs,
                            indiv_specs = indiv_specs, directions = directions)
     # split by Time
     iDatas_n_l <- split(iDatas_n, iDatas$Time)
@@ -66,7 +66,7 @@ normalise2.purse <- function(x, dset = NULL, default_specs = NULL, indiv_specs =
 
     # apply independent normalisation to each coin
     x$coin <- lapply(x$coin, function(coin){
-      normalise2.coin(coin, dset = dset, default_specs = default_specs,
+      Normalise.coin(coin, dset = dset, default_specs = default_specs,
                       indiv_specs = indiv_specs, directions = directions,
                       out2 = "coin", write_to = write_to)
     })
@@ -95,7 +95,7 @@ normalise2.purse <- function(x, dset = NULL, default_specs = NULL, indiv_specs =
 #'
 #' @return
 #' @export
-normalise2.coin <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
+Normalise.coin <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
                                   directions = NULL, out2 = "coin", write_to = NULL){
 
   # WRITE LOG ---------------------------------------------------------------
@@ -121,7 +121,7 @@ normalise2.coin <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
 
   # NORMALISE DATA ----------------------------------------------------------
 
-  iData_n <- normalise2(iData_, default_specs = default_specs, indiv_specs = indiv_specs,
+  iData_n <- Normalise(iData_, default_specs = default_specs, indiv_specs = indiv_specs,
                         directions = directions)
   # reunite with uCode col
   iData_n <- cbind(uCode = iData$uCode, iData_n)
@@ -150,17 +150,17 @@ normalise2.coin <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
 #' to have directions assigned.
 #'
 #' @examples
-#' normalise2(iris) |>
-#' head()
+#' iris_norm <- Normalise(iris)
+#' head(iris_norm)
 #'
 #' @return
 #' @export
-normalise2.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL,
+Normalise.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL,
                                directions = NULL){
 
   # CHECKS ------------------------------------------------------------------
 
-  # most input checks are performed in normalise2.numeric()
+  # most input checks are performed in Normalise.numeric()
 
   if(is.null(directions)){
     directions <- data.frame(iCode = names(x),
@@ -225,13 +225,13 @@ normalise2.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL,
     }
 
     # run function
-    do.call("normalise2.numeric", c(list(x = xi), specs))
+    do.call("Normalise.numeric", c(list(x = xi), specs))
   }
 
   # now run function
   # output is one list
-  norm_results <- lapply(names(x), norm_col) |>
-    as.data.frame()
+  norm_results <- as.data.frame(lapply(names(x), norm_col))
+
   names(norm_results) <- names(x)
 
   # CHECK and OUTPUT --------------------------------------------------------
@@ -266,7 +266,7 @@ normalise2.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL,
 #' @return An updated GII with normalised data set added
 #'
 #' @export
-normalise2.numeric <- function(x, f_n = NULL, f_n_para = NULL,
+Normalise.numeric <- function(x, f_n = NULL, f_n_para = NULL,
                                direction = 1){
 
 
@@ -338,8 +338,8 @@ normalise2.numeric <- function(x, f_n = NULL, f_n_para = NULL,
 #' @return An updated GII with normalised data set added
 #'
 #' @export
-normalise2 <- function(x, ...){
-  UseMethod("normalise2")
+Normalise <- function(x, ...){
+  UseMethod("Normalise")
 }
 
 #' Minmax a vector
