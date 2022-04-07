@@ -425,8 +425,8 @@ check_iMeta <- function(iMeta, quietly = FALSE){
   # SPECIFIC COL CHECKS -----------------------------------------------------
 
   # Level should be in 1:100 (not expecting more than 1000 levs)
-  levs <- iMeta$Level[!is.na(iMeta$Level)] |>
-    unique()
+  levs <- unique(iMeta$Level[!is.na(iMeta$Level)])
+
   if(any(levs %nin% 1:1000)){
     stop("Level column has unexpected entries. Expected as positive integers.")
   }
