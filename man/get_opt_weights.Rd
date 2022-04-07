@@ -23,7 +23,7 @@ get_opt_weights(
 \item{itarg}{a vector of (relative) target importances. For example, \code{c(1,2,1)} would specify that the second
 indicator should be twice as "important" as the other two.}
 
-\item{dset}{Name of the aggregated data set found in \code{coin$Data} which results from calling \code{\link[=aggregate2]{aggregate2()}}.}
+\item{dset}{Name of the aggregated data set found in \code{coin$Data} which results from calling \code{\link[=Aggregate]{Aggregate()}}.}
 
 \item{Level}{The aggregation level to apply the weight adjustment to.}
 

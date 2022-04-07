@@ -4,7 +4,7 @@
 \alias{lengthen}
 \title{Make correlation matrix long}
 \usage{
-lengthen(X)
+lengthen(X, cols = NULL)
 }
 \arguments{
 \item{X}{a square correlation matrix}

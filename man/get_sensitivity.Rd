@@ -4,7 +4,16 @@
 \alias{get_sensitivity}
 \title{Sensitivity and uncertainty analysis}
 \usage{
-get_sensitivity(coin, SA_specs, N, SA_type = "UA")
+get_sensitivity(
+  coin,
+  SA_specs,
+  N,
+  SA_type = "UA",
+  dset,
+  iCode,
+  Nboot = NULL,
+  quietly = FALSE
+)
 }
 \arguments{
 \item{coin}{A coin}
@@ -15,6 +24,12 @@ get_sensitivity(coin, SA_specs, N, SA_type = "UA")
 
 \item{SA_type}{The type of analysis to run. \code{"UA"} runs an uncertainty analysis. \code{"SA"} runs a sensitivity
 analysis (which anyway includes an uncertainty analysis).}
+
+\item{dset}{The data set to extract the target variable from (passed to \code{\link[=get_data]{get_data()}}).}
+
+\item{iCode}{The variable within \code{dset} to use as the target variable (passed to \code{\link[=get_data]{get_data()}}).}
+
+\item{quietly}{Set to \code{TRUE} to suppress progress messages.}
 }
 \value{
 
