@@ -44,7 +44,7 @@ compare_coins <- function(coin1, coin2, dset, iCode, also_get = NULL, compare_by
   # merge the two tables and convert to ranks if needed
   df12 <- merge(df1, df2, by = "uCode", all.x = TRUE, all.y = TRUE)
   if(compare_by == "ranks"){
-    df12 <- rankDF(df12)
+    df12 <- rank_df(df12)
   }
 
   # get meta columns for each coin - this needs to be done after merge because there could be some NAs
@@ -206,7 +206,7 @@ compare_coins_multi <- function(coins, dset, iCode, also_get = NULL, tabtype = "
 
   # first convert to ranks if needed (exclude metadata cols)
   if(compare_by == "ranks"){
-    df_CODE[names(df_CODE) %nin% m1_codes] <- rankDF(df_CODE[names(df_CODE) %nin% m1_codes])
+    df_CODE[names(df_CODE) %nin% m1_codes] <- rank_df(df_CODE[names(df_CODE) %nin% m1_codes])
   }
 
   if (tabtype != "Values"){
