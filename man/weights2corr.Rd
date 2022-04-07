@@ -18,7 +18,7 @@ weights2corr(
 
 \item{w}{Full data frame of weights for each level}
 
-\item{dset}{Name of the data set that is created when \code{\link[=aggregate2]{aggregate2()}} is called. This is used to calculated correlations
+\item{dset}{Name of the data set that is created when \code{\link[=Aggregate]{Aggregate()}} is called. This is used to calculated correlations
 and to extract the results table. Default \code{"Aggregated"}.}
 
 \item{Levels}{A 2-length vector with two aggregation levels to correlate against each other}
@@ -42,5 +42,4 @@ as the data frames found in \code{.$Parameters$Weights}.
 }
 \examples{
 #
-
 }
