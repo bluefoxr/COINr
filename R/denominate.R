@@ -21,7 +21,7 @@
 #'
 #' @examples
 #' #
-denominate2.purse <- function(x, dset, denoms = NULL, denomby = NULL, denoms_ID = NULL,
+Denominate.purse <- function(x, dset, denoms = NULL, denomby = NULL, denoms_ID = NULL,
                               f_denom = NULL, write_to = NULL){
 
   # input check
@@ -29,7 +29,7 @@ denominate2.purse <- function(x, dset, denoms = NULL, denomby = NULL, denoms_ID 
 
   # apply denomination to each coin
   x$coin <- lapply(x$coin, function(coin){
-    denominate2.coin(coin, dset = dset, denoms = denoms, denomby = denomby,
+    Denominate.coin(coin, dset = dset, denoms = denoms, denomby = denomby,
                      denoms_ID = denoms_ID, f_denom = f_denom, write_to = write_to, out2 = "coin")
   })
   # make sure still purse class
@@ -59,7 +59,7 @@ denominate2.purse <- function(x, dset, denoms = NULL, denomby = NULL, denoms_ID 
 #'
 #' @examples
 #' #
-denominate2.coin <- function(x, dset, denoms = NULL, denomby = NULL, denoms_ID = NULL,
+Denominate.coin <- function(x, dset, denoms = NULL, denomby = NULL, denoms_ID = NULL,
                                    f_denom = NULL, write_to = NULL, out2 = "coin"){
 
   # WRITE LOG ---------------------------------------------------------------
@@ -86,7 +86,7 @@ denominate2.coin <- function(x, dset, denoms = NULL, denomby = NULL, denoms_ID =
 
   # DENOMINATE --------------------------------------------------------------
 
-  iData_d <- denominate2(iData, denoms = denoms, denomby = denomby,
+  iData_d <- Denominate(iData, denoms = denoms, denomby = denomby,
                          denoms_ID = denoms_ID, f_denom = f_denom)
 
   # Output ------------------------------------------------------------------
@@ -153,7 +153,7 @@ denominate2.coin <- function(x, dset, denoms = NULL, denomby = NULL, denoms_ID =
 #' Denominator = c("GDP", "Population"),
 #' ScaleFactor = c(1, 1000))
 #' # Denominate one by the other
-#' iData_den <- denominate2(iData, denoms, denomby)
+#' iData_den <- Denominate(iData, denoms, denomby)
 #'
 #' @return A data frame of the same size as `x`, with any specified columns denominated according to specifications.
 #'
@@ -161,7 +161,7 @@ denominate2.coin <- function(x, dset, denoms = NULL, denomby = NULL, denoms_ID =
 #' * [WorldDenoms] A data set of some common national-level denominators.
 #'
 #' @export
-denominate2.data.frame <- function(x, denoms, denomby, x_ID = NULL, denoms_ID = NULL,
+Denominate.data.frame <- function(x, denoms, denomby, x_ID = NULL, denoms_ID = NULL,
                                    f_denom = NULL){
 
 
@@ -260,6 +260,6 @@ denominate2.data.frame <- function(x, denoms, denomby, x_ID = NULL, denoms_ID = 
 #' @return message
 #'
 #' @export
-denominate2 <- function (x, ...){
-  UseMethod("denominate2")
+Denominate <- function (x, ...){
+  UseMethod("Denominate")
 }

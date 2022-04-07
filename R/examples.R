@@ -36,25 +36,28 @@ build_example_coin <- function(up_to = NULL, quietly = FALSE){
   }
 
   # SCREEN economies based on data availability rules
-  coin <- screen_units(coin, dset = "Raw", dat_thresh = 0.9, unit_screen = "byNA")
-  if(up_to == "screen_units"){
+  coin <- Screen(coin, dset = "Raw", dat_thresh = 0.9, unit_screen = "byNA")
+  if(up_to == "Screen"){
     return(coin)
   }
 
   # TREAT data
-  coin <- treat2(coin, dset = "Screened")
+  # Explicitly set winmax so that it is easy to find for SA
+  coin <- Treat(coin, dset = "Screened", default_specs = list(f1_para = list(winmax = 5)))
   if(up_to == "treat"){
     return(coin)
   }
 
   # NORMALISE data
-  coin <- normalise2(coin, dset = "Treated")
+  # explicitly set normalisation specs to find for SA
+  coin <- Normalise(coin, dset = "Treated", default_specs = list(f_n = "n_minmax",
+                                                                  f_n_para = list(c(0,100))))
   if(up_to == "normalise"){
     return(coin)
   }
 
   # AGGREGATE data
-  coin <- aggregate2(coin, dset = "Normalised")
+  coin <- Aggregate(coin, dset = "Normalised", f_ag = "a_amean")
   if(up_to == "aggregate"){
     return(coin)
   }
@@ -100,25 +103,25 @@ build_example_purse <- function(up_to = NULL, quietly = FALSE){
   }
 
   # SCREEN
-  purse <- screen_units(purse, dset = "Raw", dat_thresh = 0.9, unit_screen = "byNA")
-  if(up_to == "screen_units"){
+  purse <- Screen(purse, dset = "Raw", dat_thresh = 0.9, unit_screen = "byNA")
+  if(up_to == "Screen"){
     return(purse)
   }
 
   # TREAT data
-  purse <- treat2(purse, dset = "Screened")
+  purse <- Treat(purse, dset = "Screened")
   if(up_to == "treat"){
     return(purse)
   }
 
   # NORMALISE data
-  purse <- normalise2(purse, dset = "Treated", global = TRUE)
+  purse <- Normalise(purse, dset = "Treated", global = TRUE)
   if(up_to == "normalise"){
     return(purse)
   }
 
   # AGGREGATE data
-  purse <- aggregate2(purse, dset = "Normalised")
+  purse <- Aggregate(purse, dset = "Normalised")
   if(up_to == "aggregate"){
     return(purse)
   }

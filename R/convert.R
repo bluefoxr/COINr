@@ -28,7 +28,7 @@
 #'
 #' @examples
 #' #
-COIN2coin <- function(COIN, recover_dsets = FALSE, out2 = "coin"){
+COIN_to_coin <- function(COIN, recover_dsets = FALSE, out2 = "coin"){
 
 
   # Get dfs -----------------------------------------------------------------
