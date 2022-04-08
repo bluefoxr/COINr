@@ -171,3 +171,20 @@ widen <- function(X){
 
   Xw
 }
+
+
+#' Convert iCodes to iNames
+#'
+#' @param coin A coin
+#' @param iCodes A vector of iCodes
+#'
+#' @return Vector of iNames
+codes2names <- function(coin, iCodes){
+
+  iMeta <- coin$Meta$Ind
+
+  stopifnot(all(iCodes %in% iMeta$iCode))
+
+  iMeta$iName[match(iCodes, iMeta$iCode)]
+
+}
