@@ -94,7 +94,7 @@ check_dset.coin <- function(x, dset){
             is.character(dset),
             length(dset)==1)
 
-  if(is.null(x$Data[[dset]])){
+  if(is.null(x$Data[[dset]]) & (dset != "uMeta") ){
     stop("Required data set '", dset, "' not found in coin object.")
   }
 }
@@ -189,42 +189,56 @@ get_dset.coin <- function(x, dset, also_get = NULL){
 
   # check specified dset exists
   check_dset(x, dset)
+
   # get dset
-  iData <- x$Data[[dset]]
+  if(dset != "uMeta"){
 
-  if(!is.null(also_get)){
+    iData <- x$Data[[dset]]
 
-    if(also_get[1] == "none"){
-      iData <- iData[names(iData) != "uCode"]
-    } else {
+    if(!is.null(also_get)){
 
-      uMeta <- x$Meta$Unit
+      if(also_get[1] == "none"){
+        iData <- iData[names(iData) != "uCode"]
+      } else {
 
-      if(is.null(uMeta)){
-        stop("Unit metadata not found in coin.")
-      }
+        uMeta <- x$Meta$Unit
 
-      if(length(also_get) == 1){
-        if(also_get == "all"){
-          uMeta_codes <- colnames(uMeta)
+        if(is.null(uMeta)){
+          stop("Unit metadata not found in coin.")
+        }
+
+        if(length(also_get) == 1){
+          if(also_get == "all"){
+            uMeta_codes <- colnames(uMeta)
+          } else {
+            uMeta_codes <- also_get
+          }
         } else {
           uMeta_codes <- also_get
         }
-      } else {
-        uMeta_codes <- also_get
+
+        # check entries in also_get exist
+        if(any(uMeta_codes %nin% colnames(uMeta))){
+          stop("Entries in also_get not recognised - see function help.")
+        }
+
+        uMeta <- uMeta[union("uCode", uMeta_codes)]
+
+        iData <- merge(uMeta, iData, by = "uCode", all.x = FALSE, all.y = TRUE)
+
       }
-
-      # check entries in also_get exist
-      if(any(uMeta_codes %nin% colnames(uMeta))){
-        stop("Entries in also_get not recognised - see function help.")
-      }
-
-      uMeta <- uMeta[union("uCode", uMeta_codes)]
-
-      iData <- merge(uMeta, iData, by = "uCode", all.x = FALSE, all.y = TRUE)
-
     }
+
+  } else {
+
+    # get uMeta
+    iData <- coin$Meta$Unit
+    if(is.null(iData)){
+      stop("Unit metadata (uMeta) not found in coin!")
+    }
+
   }
+
 
   iData
 }
@@ -303,6 +317,10 @@ get_data.coin <- function(x, dset, iCodes = NULL, Level = NULL, uCodes = NULL,
               length(Level) == 1)
     if(Level %nin% 1:maxlev){
       stop("Level is not in 1:(max level).")
+    }
+    if(dset == "uMeta"){
+      # if it's uMeta we don't worry about levels
+      Level <- NULL
     }
   }
 
@@ -397,7 +415,12 @@ get_data.coin <- function(x, dset, iCodes = NULL, Level = NULL, uCodes = NULL,
     if(any(cols %nin% names(iData))){
       stop("Selected iCodes not found in data set. If Level > 1 you need to target an aggregated data set.")
     }
-    iData1 <- iData[c(not_iCodes, cols)]
+    if(dset == "uMeta"){
+      iData1 <- iData[unique(c("uCode", groupcol, cols, also_get))]
+    } else {
+      iData1 <- iData[c(not_iCodes, cols)]
+    }
+
 
   } else if (!is.null(Level)) {
 
