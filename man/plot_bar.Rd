@@ -39,7 +39,7 @@ plot_bar(
 A ggplot2 plot object.
 }
 \description{
-Bar chart
+Plot bar charts of single indicators, possibly coloured according to a grouping variable.
 }
 \examples{
 #

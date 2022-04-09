@@ -105,6 +105,6 @@ plot_bar <- function(coin, dset, iCode, ..., uLabel = "uCode", axes_label = "iCo
   }
 
 
-  plt
+  plt + ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1))
 
 }
