@@ -117,12 +117,14 @@ Normalise.coin <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
     if(is.null(dirs_c)){
       stop("No directions provided, and no directions found in .$Meta$Ind")
     }
+  } else {
+    dirs_c <- directions
   }
 
   # NORMALISE DATA ----------------------------------------------------------
 
   iData_n <- Normalise(iData_, default_specs = default_specs, indiv_specs = indiv_specs,
-                        directions = directions)
+                        directions = dirs_c)
   # reunite with uCode col
   iData_n <- cbind(uCode = iData$uCode, iData_n)
 
@@ -269,7 +271,6 @@ Normalise.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL,
 Normalise.numeric <- function(x, f_n = NULL, f_n_para = NULL,
                                direction = 1){
 
-
   # CHECKS ------------------------------------------------------------------
 
   # x must be numeric to be here. f_n will be checked by do.call()
@@ -277,6 +278,9 @@ Normalise.numeric <- function(x, f_n = NULL, f_n_para = NULL,
   if(direction %nin% c(-1, 1)){
     stop("direction must be either -1 or 1")
   }
+
+  # change direction
+  x <- x*direction
 
   # DEFAULTS ----------------------------------------------------------------
 
@@ -294,9 +298,6 @@ Normalise.numeric <- function(x, f_n = NULL, f_n_para = NULL,
   }
 
   # NORMALISE ---------------------------------------------------------------
-
-  # change direction
-  x <- x*direction
 
   # call normalisation function
   if(f_n == "none"){
