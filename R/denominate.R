@@ -43,11 +43,11 @@ Denominate.purse <- function(x, dset, denoms = NULL, denomby = NULL, denoms_ID =
 #' @param x A coin class object
 #' @param dset A named data set to be denominated that is present in .$Data
 #' @param denoms A data frame of denominator data. If not specified, will extract any potential denominator columns
-#' that were attached to iData when calling new_coin().
+#' that were attached to `iData` when calling [new_coin()].
 #' @param denomby Optional data frame specifying which indicators should be denominated and by what. If not specified,
-#' looks for a Denominator column in iMeta.
-#' @param denoms_ID An ID column for matching denoms with the data to be denominated. This column should contain
-#' uMeta codes to match with the data set extracted from the coin.
+#' looks for a "Denominator" column in `iMeta`.
+#' @param denoms_ID An ID column for matching `denoms` with the data to be denominated. This column should contain
+#' `uMeta` codes to match with the data set extracted from the coin.
 #' @param f_denom A function which takes two numeric vector arguments and is used to perform the denomination for each
 #' column. By default, this is division, i.e. `x[[col]]/denoms[[col]]` for given columns, but any function can be passed
 #' that takes two numeric vectors as inputs and returns a single numeric vector. See details.
