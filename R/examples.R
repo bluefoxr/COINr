@@ -35,8 +35,20 @@ build_example_coin <- function(up_to = NULL, quietly = FALSE){
     return(coin)
   }
 
+  # DENOMINATE
+  coin <- Denominate(coin, dset = "Raw")
+  if(up_to == "Denominate"){
+    return(coin)
+  }
+
+  # IMPUTE
+  coin <- Impute(coin, dset = "Denominated", f_i = "i_mean_grp", use_group = "EurAsia_group")
+  if(up_to == "Impute"){
+    return(coin)
+  }
+
   # SCREEN economies based on data availability rules
-  coin <- Screen(coin, dset = "Raw", dat_thresh = 0.9, unit_screen = "byNA")
+  coin <- Screen(coin, dset = "Imputed", dat_thresh = 0.9, unit_screen = "byNA")
   if(up_to == "Screen"){
     return(coin)
   }
