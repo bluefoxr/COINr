@@ -13,7 +13,9 @@ plot_bar(
   axes_label = "iCode",
   by_group = NULL,
   dset_label = FALSE,
-  log_scale = FALSE
+  log_scale = FALSE,
+  stack_children = FALSE,
+  bar_colours = NULL
 )
 }
 \arguments{
@@ -29,17 +31,24 @@ plot_bar(
 
 \item{axes_label}{How to label the y axis and group legend: either \code{"uCode"} or \code{"uName"}.}
 
-\item{by_group}{Optional group variable to use to colour bars.}
+\item{by_group}{Optional group variable to use to colour bars. Cannot be used if \code{stack_children = TRUE}.}
 
 \item{dset_label}{Logical: whether to include the data set in the y axis label.}
 
 \item{log_scale}{Logical: if \code{TRUE} uses a log scale for the y axis.}
+
+\item{stack_children}{Logical: if \code{TRUE} and \code{iCode} refers to an aggregate, will plot \code{iCode} with each bar split into
+its underlying component values (the underlying indicators/aggregates used to create \code{iCode}). To use this, you must
+have aggregated your data and \code{dset} must point to a data set where the underlying (child) scores of \code{iCode} are available.}
+
+\item{bar_colours}{Optional vector of colour codes for colouring bars.}
 }
 \value{
 A ggplot2 plot object.
 }
 \description{
-Plot bar charts of single indicators, possibly coloured according to a grouping variable.
+Plot bar charts of single indicators. Bar charts can be coloured by an optional grouping variable \code{by_group}, or if
+\code{iCode} points to an aggregate, setting \code{stack_children = TRUE} will plot \code{iCode} coloured by its underlying scores.
 }
 \examples{
 #
