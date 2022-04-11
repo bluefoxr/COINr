@@ -1,0 +1,121 @@
+---
+title: "Cross-checks"
+output: html_notebook
+---
+
+Cross checking COINr v0.6 against v1.
+
+This file is in the development project of COINr so we assume it is open and available.
+
+We need to load up old COINr which is now called COINr6.
+
+```{r}
+library(COINr6)
+```
+
+We will start by checking the old ASEM example against the new COINr.
+
+```{r}
+c6 <- build_ASEM()
+```
+
+Now we check the data sets step by step.
+
+```{r}
+# get iCodes first
+iCodes <- c6$Input$IndMeta$IndCode
+
+# RAW
+raw6 <- c6$Data$Raw[c("UnitCode", iCodes)]
+names(raw6)[1] <- "uCode"
+
+# New: build coin
+c1 <- new_coin(ASEM_iData, ASEM_iMeta)
+raw1 <- get_dset(c1, "Raw")
+
+# cross-check
+compare_df(raw6, raw1, "uCode")
+
+```
+
+Ok, so far so good. Next thing to check is the denomination function. ASEM example is denominated according to the specs in the metadata.
+
+```{r}
+# v6
+den6 <- c6$Data$Denominated[c("UnitCode", iCodes)]
+names(raw6)[1] <- "uCode"
+
+# denominate v1
+c1 <- Denominate(c1, dset = "Raw")
+den1 <- get_dset(c1, "Denominated")
+
+# cross-check
+compare_df(raw6, raw1, "uCode")
+```
+
+This also checks out fine. Now we move on to imputation.
+
+NOTE: need to sort out how to pass group col to Impute(), since at the moment would need to pass a vector but we just want
+to name a grouping variable as input for coin method.
+
+```{r}
+# v6
+im6 <- c6$Data$Imputed[c("UnitCode", iCodes)]
+names(im6)[1] <- "uCode"
+
+# impute 1
+c1 <- Impute(c1, dset = "Denominated", f_i = "i_mean_grp", use_group = "EurAsia_group")
+im1 <- get_dset(c1, "Imputed")
+
+# cross-check
+compare_df(im6, im1, "uCode")
+```
+
+And this is *also* OK. Now to the part which is probably most likely to go wrong... the data treatment!
+
+```{r}
+# v6
+tr6 <- c6$Data$Treated[c("UnitCode", iCodes)]
+names(tr6)[1] <- "uCode"
+
+# treat v1
+# note: v6 uses ceiling(nUnit * 0.1) as default for winmax, which is 6 here
+c1 <- Treat(c1, dset = "Imputed", default_specs = list(f1_para = list(winmax = 6)))
+tr1 <- get_dset(c1, "Treated")
+
+# cross-check
+compare_df(tr6, tr1, "uCode")
+```
+
+Unbelievably, this is right first time with no tweaks! Should get a medal for this. Right, next thing is the normalisation.
+
+```{r}
+# v6
+n6 <- c6$Data$Normalised[c("UnitCode", iCodes)]
+names(n6)[1] <- "uCode"
+
+# normalise v1
+c1 <- Normalise(c1, dset = "Treated", default_specs = list(f_n = "n_minmax",
+                                                                  f_n_para = list(c(0,100))))
+n1 <- get_dset(c1, "Normalised")
+
+# cross-check
+compare_df(n6, n1, "uCode")
+```
+
+Ok, had to fix an important bug regarding the direction, but now it works. Last thing is aggregation.
+
+```{r}
+# v6
+a6 <- c6$Data$Aggregated[c("UnitCode", iCodes, c6$Input$AggMeta$Code)]
+names(a6)[1] <- "uCode"
+
+# normalise v1
+c1 <- Aggregate(c1, dset = "Normalised", f_ag = "a_amean")
+a1 <- get_dset(c1, "Aggregated")
+
+# cross-check
+compare_df(a6, a1, "uCode")
+```
+
+And that's it! The results are identical.
