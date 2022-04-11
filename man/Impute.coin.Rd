@@ -10,6 +10,7 @@
   f_i = NULL,
   f_i_para = NULL,
   impute_by = "column",
+  use_group = NULL,
   group_level = NULL,
   normalise_first = NULL,
   out2 = "coin",
@@ -26,6 +27,9 @@
 \item{f_i_para}{Further arguments to pass to \code{f_i}, other than \code{x}. See details.}
 
 \item{impute_by}{xx}
+
+\item{use_group}{Optional grouping variable name to pass to imputation function if this supports group
+imputation.}
 
 \item{group_level}{A level of the framework to use for grouping indicators. This is only
 relevant if \code{impute_by = "row"}. In that case, indicators will be split into their groups at the
