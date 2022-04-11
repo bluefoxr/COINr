@@ -46,6 +46,8 @@ Impute.purse <- function(x, dset = NULL, f_i = NULL, f_i_para = NULL, impute_by 
 #' @param f_i An imputation function. See details.
 #' @param f_i_para Further arguments to pass to `f_i`, other than `x`. See details.
 #' @param impute_by xx
+#' @param use_group Optional grouping variable name to pass to imputation function if this supports group
+#' imputation.
 #' @param group_level A level of the framework to use for grouping indicators. This is only
 #' relevant if `impute_by = "row"`. In that case, indicators will be split into their groups at the
 #' level specified by `group_level`, and imputation will be performed across rows of the group, rather
@@ -63,8 +65,8 @@ Impute.purse <- function(x, dset = NULL, f_i = NULL, f_i_para = NULL, impute_by 
 #' @examples
 #' #
 Impute.coin <- function(x, dset = NULL, f_i = NULL, f_i_para = NULL, impute_by = "column",
-                         group_level = NULL, normalise_first = NULL, out2 = "coin",
-                         write_to = NULL){
+                        use_group = NULL, group_level = NULL, normalise_first = NULL, out2 = "coin",
+                        write_to = NULL){
 
   # WRITE LOG ---------------------------------------------------------------
 
@@ -72,8 +74,8 @@ Impute.coin <- function(x, dset = NULL, f_i = NULL, f_i_para = NULL, impute_by =
 
   # GET DSET, DEFAULTS ------------------------------------------------------
 
-  iData <- get_dset(coin, dset)
-  iData_ <- iData[colnames(iData) != "uCode"]
+  iData <- get_dset(coin, dset, use_group)
+  iData_ <- iData[colnames(iData) %nin% c("uCode", use_group)]
 
   # if normalise_first not specified set TRUE if rowwise or FALSE for anything else
   if(is.null(normalise_first)){
@@ -87,6 +89,15 @@ Impute.coin <- function(x, dset = NULL, f_i = NULL, f_i_para = NULL, impute_by =
   # get directions if needed: these are the directions in iMeta
   if(!is.null(normalise_first)){
     directions <- coin$Meta$Ind[c("iCode", "Direction")]
+  }
+
+  # add grouping as parameter if required
+  if(!is.null(use_group)){
+    if(is.null(f_i_para)){
+      f_i_para <- list(f = iData[[use_group]])
+    } else {
+      f_i_para[["f"]] <- iData[[use_group]]
+    }
   }
 
   # IMPUTE DATA ----------------------------------------------------------
