@@ -3,18 +3,18 @@
 #'
 #' Get a data frame containing any correlations between indicators and denominators that exceed a given
 #' threshold. This can be useful when *whether* to denominate an indicator and *by what* may not be obvious.
-#' If an indicator is strongly correlated with a denominator, this may give reason to denominate it by that
+#' If an indicator is strongly correlated with a denominator, this may suggest to denominate it by that
 #' denominator.
 #'
-#' @param coin A coin
-#' @param dset A named data set found in `coin$Data`
+#' @param coin A coin class object.
+#' @param dset The name of the data set to apply the function to, which should be accessible in `.$Data`.
 #' @param cor_thresh A correlation threshold: the absolute value of any correlations between indicator-denominator pairs above this
 #' threshold will be flagged.
 #' @param cortype The type of correlation: to be passed to the `method` argument of `stats::cor`.
 #' @param nround Optional number of decimal places to round correlation values to. Default 2, set `NULL` to
 #' disable.
 #'
-#' @return A data frame
+#' @return A data frame of pairwise correlations that exceed the threshold.
 #' @export
 #'
 #' @examples
@@ -80,10 +80,13 @@ get_denom_corr <- function(coin, dset, cor_thresh = 0.6, cortype = "pearson", nr
 #' Find highly-correlated indicators within groups
 #'
 #' This returns a data frame of any highly correlated indicators within the same aggregation group. The level of the aggregation
-#' group can be controlled by the `grouplev` argument.
+#' grouping can be controlled by the `grouplev` argument.
+#'
+#' This function is motivated by the idea that having very highly-correlated indicators within the same group may
+#' amount to double counting, or possibly redundancy in the framework.
 #'
 #' @param coin A coin class object
-#' @param dset The data set to use for correlations.
+#' @param dset The name of the data set to apply the function to, which should be accessible in `.$Data`.
 #' @param cor_thresh A threshold to flag high correlation. Default 0.9.
 #' @param grouplev The level to group indicators in. E.g. if `grouplev = 2` it will look for high correlations between indicators that
 #' belong to the same group in Level 2.
@@ -196,8 +199,8 @@ get_corr_flags <- function(coin, dset, cor_thresh = 0.9, thresh_type = "high", c
 #'
 #' Note that this function can only call correlations within the same data set (i.e. only one data set in `.$Data`).
 #'
-#' @param coin The coin object
-#' @param dset The target data set
+#' @param coin A coin class coin object
+#' @param dset  The name of the data set to apply the function to, which should be accessible in `.$Data`.
 #' @param iCodes An optional list of character vectors where the first entry specifies the indicator/aggregate
 #' codes to correlate against the second entry (also a specification of indicator/aggregate codes).
 #' @param Levels The aggregation levels to take the two groups of indicators from. See [get_data()] for details.
@@ -222,7 +225,7 @@ get_corr_flags <- function(coin, dset, cor_thresh = 0.9, thresh_type = "high", c
 #' Correlations with \eqn{p > pval} will be returned as `NA`.
 #'
 #' @seealso
-#' * [plotCorr()] Plot correlation matrices of indicator subsets
+#' * [plot_corr()] Plot correlation matrices of indicator subsets
 #'
 #' @export
 get_corr <- function(coin, dset, iCodes = NULL, Levels = NULL, ...,
@@ -236,7 +239,10 @@ get_corr <- function(coin, dset, iCodes = NULL, Levels = NULL, ...,
   # DEFAULTS ----------------------------------------------------------------
 
   # set Levels, repeat iCodes etc if only one input
-  if(is.null(Levels)){Levels = 1}
+  if(is.null(Levels)){Levels <- 1}
+  if(is.null(iCodes)){iCodes <- list(NULL)}
+  stopifnot(is.list(iCodes))
+
   if (length(iCodes) == 1){
     iCodes = rep(iCodes, 2)
   }
