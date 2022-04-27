@@ -232,7 +232,7 @@ sensitivity <- function(COIN, v_targ, SA_specs, N, SA_type = "UA", NrepWeights =
   # of SA_specs. We exclude the weights here as has different structure. If it exists, we add one to the number
   # of parameters, since weights are treated as a single parameter
 
-  paranames <- names(purrr::flatten(SA_specs[-which(names(SA_specs)=="weights")]))
+  paranames <- names(purrr::flatten(SA_specs[names(SA_specs)!="weights"]))
   # get full names, including weights. We need this for labelling later on, as we need to know
   # the order as well
   paranames_all <- names(purrr::flatten(SA_specs))
