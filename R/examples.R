@@ -30,7 +30,7 @@ build_example_coin <- function(up_to = NULL, quietly = FALSE){
   }
 
   # INITIALISE
-  coin <- new_coin(ASEM_iData, ASEM_iMeta, level_names = c("Indicator", "Pillar", "Sub-index", "Index"))
+  coin <- new_coin(COINr::ASEM_iData, COINr::ASEM_iMeta, level_names = c("Indicator", "Pillar", "Sub-index", "Index"))
   if(up_to == "new_coin"){
     return(coin)
   }
@@ -108,7 +108,7 @@ build_example_purse <- function(up_to = NULL, quietly = FALSE){
   }
 
   # INITIALISE
-  purse <- new_coin(ASEM_iData_p, ASEM_iMeta, level_names = c("Indicator", "Pillar", "Sub-index", "Index"),
+  purse <- new_coin(COINr::ASEM_iData_p, COINr::ASEM_iMeta, level_names = c("Indicator", "Pillar", "Sub-index", "Index"),
                     split_to = "all")
   if(up_to == "new_coin"){
     return(purse)
