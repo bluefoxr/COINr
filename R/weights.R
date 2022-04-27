@@ -234,28 +234,25 @@ get_opt_weights <- function(coin, itarg = NULL, dset, Level, cortype = "pearson"
 }
 
 
-#' Recalculate correlations and ranks based on new weights
-#'
-#' This is a short cut function which takes a new set of indicator weights, and recalculates the coin results
-#' based on these weights. It returns a summary of rankings and the correlations between indicators and index.
-#'
-#' This function is principally used inside [rew8r()]. The `w` argument should be a data frame of weights, of the same format
-#' as the data frames found in `.$Parameters$Weights`.
-#'
-#' @param coin coin object
-#' @param w Full data frame of weights for each level
-#' @param dset Name of the data set that is created when [Aggregate()] is called. This is used to calculated correlations
-#' and to extract the results table. Default `"Aggregated"`.
-#' @param Levels A 2-length vector with two aggregation levels to correlate against each other
-#' @param cortype Correlation type. Either `"pearson"` (default), `"kendall"` or `"spearman"`. See [stats::cor].
-#' @param withparent Logical: if `TRUE`, only correlates with the parent, e.g. sub-pillars are only correlated with
-#' their parent pillars and not others.
-#'
-#' @return A list where `.$cr` is a vector of correlations between each indicator and the index, and
-#' `.$dat` is a data frame of results
-#'
-#' @examples
-#' #
+# Recalculate correlations and ranks based on new weights
+#
+# This is a short cut function which takes a new set of indicator weights, and recalculates the coin results
+# based on these weights. It returns a summary of rankings and the correlations between indicators and index.
+#
+# @param coin coin object
+# @param w Full data frame of weights for each level
+# @param dset Name of the data set that is created when [Aggregate()] is called. This is used to calculated correlations
+# and to extract the results table. Default `"Aggregated"`.
+# @param Levels A 2-length vector with two aggregation levels to correlate against each other
+# @param cortype Correlation type. Either `"pearson"` (default), `"kendall"` or `"spearman"`. See [stats::cor].
+# @param withparent Logical: if `TRUE`, only correlates with the parent, e.g. sub-pillars are only correlated with
+# their parent pillars and not others.
+#
+# @return A list where `.$cr` is a vector of correlations between each indicator and the index, and
+# `.$dat` is a data frame of results
+#
+# @examples
+# #
 weights2corr <- function(coin, w, dset = "Aggregated", Levels = NULL,
                          cortype = "pearson", withparent = TRUE){
 
