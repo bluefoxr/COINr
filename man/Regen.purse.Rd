@@ -4,7 +4,7 @@
 \alias{Regen.purse}
 \title{Regenerate a purse}
 \usage{
-\method{Regen}{purse}(x, from = NULL, quietly = TRUE)
+\method{Regen}{purse}(x, from = NULL, quietly = TRUE, ...)
 }
 \arguments{
 \item{x}{A purse class object}
@@ -13,6 +13,8 @@
 than re-running all functions.}
 
 \item{quietly}{If \code{TRUE} (default), messages are suppressed during building.}
+
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
 Updated purse object with regenerated results.
@@ -29,7 +31,7 @@ from, it will not affect the results.
 
 Note that for the moment, regeneration of purses is only partially supported. This is because usually, in the
 normalisation step, it is necessary to normalise across the full panel data set (see the \code{global} argument in
-\code{\link[=normalise]{normalise()}}). At the moment, purse regeneration is performed by regenerating each coin individually, but this
+\code{\link[=Normalise]{Normalise()}}). At the moment, purse regeneration is performed by regenerating each coin individually, but this
 does not allow for global normalisation which has to be done at the purse level. This may be fixed in future
 releases.
 }

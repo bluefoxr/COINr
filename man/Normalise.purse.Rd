@@ -6,12 +6,13 @@
 \usage{
 \method{Normalise}{purse}(
   x,
-  dset = NULL,
+  dset,
   default_specs = NULL,
   indiv_specs = NULL,
   directions = NULL,
   global = TRUE,
-  write_to = NULL
+  write_to = NULL,
+  ...
 )
 }
 \arguments{
@@ -26,6 +27,15 @@
 \item{directions}{If \code{NULL}, extracts directions from indicator metadata, i.e. the \code{iMeta} data frame
 that was passed to \code{\link[=new_coin]{new_coin()}}. Else \code{directions} should be a vector with entries either -1 or 1, in
 order of the columns of the data set.}
+
+\item{global}{Logical: if \code{TRUE}, normalisation is performed "globally" across all coins, by using e.g. the
+max and min of each indicator in any coin. This effectively makes normalised scores comparable between coins
+because they are all scaled using the same parameters. Otherwise if \code{FALSE}, coins are normalised individually.}
+
+\item{write_to}{Optional character string for naming the data set in each coin. Data will be written to
+\code{.$Data[[write_to]]}. Default is \code{write_to == "Normalised"}.}
+
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
 An updated purse with new normalised data sets added at \code{.$Data$Normalised} in each coin

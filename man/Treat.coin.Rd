@@ -10,7 +10,10 @@
   default_specs = NULL,
   indiv_specs = NULL,
   combine_treat = FALSE,
-  out2 = "coin"
+  out2 = "coin",
+  write_to = NULL,
+  write2log = TRUE,
+  ...
 )
 }
 \arguments{
@@ -25,6 +28,16 @@
 \item{combine_treat}{By default, if \code{f1} fails to pass \code{f_pass}, then \code{f2} is applied to the original \code{x},
 rather than the treated output of \code{f1}. If \code{combine_treat = TRUE}, \code{f2} will instead be applied to the output
 of \code{f1}, so the two treatments will be combined.}
+
+\item{out2}{The type of function output: either \code{"coin"} to return an updated coin, or \code{"list"} to return a
+list with treated data and treatment details.}
+
+\item{write_to}{If specified, writes the aggregated data to \code{.$Data[[write_to]]}. Default \code{write_to = "Treated"}.}
+
+\item{write2log}{Logical: if \code{FALSE}, the arguments of this function are not written to the coin log, so this
+function will not be invoked when regenerating. Recommend to keep \code{TRUE} unless you have a good reason to do otherwise.}
+
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
 An updated coin with a new data set \code{.Data$Treated} added, plus analysis information in

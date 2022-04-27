@@ -10,7 +10,9 @@
   unit_screen,
   dat_thresh = NULL,
   nonzero_thresh = NULL,
-  Force = NULL
+  Force = NULL,
+  write_to = NULL,
+  ...
 )
 }
 \arguments{
@@ -33,8 +35,9 @@
 (unit code(s)) and \code{Include} (logical: \code{TRUE} to include and \code{FALSE} to exclude). Specifications here override
 exclusion/inclusion based on data rules.}
 
-\item{out2}{Where to output the results. If \code{"COIN"} (default for COIN input), appends to updated COIN,
-otherwise if \code{"list"} outputs to data frame.}
+\item{write_to}{If specified, writes the aggregated data to \code{.$Data[[write_to]]}. Default \code{write_to = "Screened"}.}
+
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
 An updated purse with coins screened and updated.

@@ -26,7 +26,7 @@ which is generated as a result of running a Monte Carlo sample from \code{\link[
 Then it estimates sensitivity indices using this sample.
 }
 \details{
-This function is built to be used inside \code{\link[=sensitivity]{sensitivity()}}.
+This function is built to be used inside \code{\link[=get_sensitivity]{get_sensitivity()}}.
 See \href{https://bluefoxr.github.io/COINrDoc/sensitivity-analysis.html}{COINr online documentation} for more details.
 }
 \examples{
@@ -51,7 +51,7 @@ SAinds$SensInd
 }
 \seealso{
 \itemize{
-\item \code{\link[=sensitivity]{sensitivity()}} Perform global sensitivity or uncertainty analysis on a COIN
+\item \code{\link[=get_sensitivity]{get_sensitivity()}} Perform global sensitivity or uncertainty analysis on a COIN
 \item \code{\link[=SA_sample]{SA_sample()}} Input design for estimating sensitivity indices
 }
 }

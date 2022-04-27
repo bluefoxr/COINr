@@ -7,7 +7,7 @@
 a_amean(x, w)
 }
 \arguments{
-\item{x}{A numeric vector}
+\item{x}{A numeric vector.}
 
 \item{w}{A vector of numeric weights of the same length as \code{x}.}
 }
@@ -18,7 +18,7 @@ The weighted mean as a scalar value
 The vector of weights \code{w} is relative since the formula is:
 }
 \details{
-$ y = 1(\sum w) \sum wx $
+\deqn{ y = 1(\sum w) \sum wx }
 
 If \code{x} contains \code{NA}s, these \code{x} values and the corresponding \code{w} values are removed before applying the
 formula above.
@@ -26,5 +26,6 @@ formula above.
 \examples{
 x <- c(1:10)
 w <- c(10:1)
+a_amean(x,w)
 
 }

@@ -9,7 +9,7 @@ Treat(x, ...)
 \arguments{
 \item{x}{Thing}
 
-\item{...}{thing}
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
 message

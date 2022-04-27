@@ -4,7 +4,7 @@
 \alias{Normalise.numeric}
 \title{Normalise indicator data sets}
 \usage{
-\method{Normalise}{numeric}(x, f_n = NULL, f_n_para = NULL, direction = 1)
+\method{Normalise}{numeric}(x, f_n = NULL, f_n_para = NULL, direction = 1, ...)
 }
 \arguments{
 \item{x}{Object to be normalised}
@@ -16,15 +16,17 @@ See details.}
 
 \item{direction}{If \code{direction = -1} the highest values of \code{x} will correspond to the lowest
 values of the normalised \code{x}. Else if \code{direction = 1} the direction of \code{x} in unaltered.}
+
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
-An updated GII with normalised data set added
+A normalised numeric vector
 }
 \description{
 Normalisation is specified using the \code{f_n} and \code{f_n_para} arguments. In these, \code{f_n} should be a character
 string which is the name of a normalisation
 function. For example, \code{f_n = "n_minmax"} calls the \code{\link[=n_minmax]{n_minmax()}} function. \code{f_n_para} is a list of any
-further arguments to \code{f_n}. This means that any function can be passed to \code{\link[=normalise]{normalise()}}, as long as its
+further arguments to \code{f_n}. This means that any function can be passed to \code{\link[=Normalise]{Normalise()}}, as long as its
 first argument is \code{x}, a numeric vector, and it returns a numeric vector of the same length. See \code{\link[=n_minmax]{n_minmax()}}
 for an example.
 }

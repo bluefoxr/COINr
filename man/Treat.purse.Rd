@@ -6,10 +6,12 @@
 \usage{
 \method{Treat}{purse}(
   x,
-  dset = NULL,
+  dset,
   default_specs = NULL,
   indiv_specs = NULL,
-  combine_treat = FALSE
+  combine_treat = FALSE,
+  write_to = NULL,
+  ...
 )
 }
 \arguments{
@@ -24,6 +26,10 @@
 \item{combine_treat}{By default, if \code{f1} fails to pass \code{f_pass}, then \code{f2} is applied to the original \code{x},
 rather than the treated output of \code{f1}. If \code{combine_treat = TRUE}, \code{f2} will instead be applied to the output
 of \code{f1}, so the two treatments will be combined.}
+
+\item{write_to}{If specified, writes the aggregated data to \code{.$Data[[write_to]]}. Default \code{write_to = "Treated"}.}
+
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
 An updated purse with new treated data sets added at \code{.$Data$Treated} in each coin, plus

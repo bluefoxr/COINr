@@ -12,7 +12,8 @@
   f2_para = NULL,
   f_pass,
   f_pass_para = NULL,
-  combine_treat = FALSE
+  combine_treat = FALSE,
+  ...
 )
 }
 \arguments{
@@ -26,9 +27,15 @@
 
 \item{f2_para}{First stage data treatment function parameters}
 
+\item{f_pass}{A string specifying an outlier detection function - see details. Default \code{"check_SkewKurt"}}
+
+\item{f_pass_para}{Any further arguments to pass to \code{f_pass()}.}
+
 \item{combine_treat}{By default, if \code{f1} fails to pass \code{f_pass}, then \code{f2} is applied to the original \code{x},
 rather than the treated output of \code{f1}. If \code{combine_treat = TRUE}, \code{f2} will instead be applied to the output
 of \code{f1}, so the two treatments will be combined.}
+
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
 A treated vector of data.

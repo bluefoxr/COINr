@@ -11,7 +11,9 @@
   dat_thresh = NULL,
   nonzero_thresh = NULL,
   Force = NULL,
-  out2 = "coin"
+  out2 = "coin",
+  write_to = NULL,
+  ...
 )
 }
 \arguments{
@@ -36,6 +38,10 @@ exclusion/inclusion based on data rules.}
 
 \item{out2}{Where to output the results. If \code{"COIN"} (default for COIN input), appends to updated COIN,
 otherwise if \code{"list"} outputs to data frame.}
+
+\item{write_to}{If specified, writes the aggregated data to \code{.$Data[[write_to]]}. Default \code{write_to = "Screened"}.}
+
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
 An updated coin with data frames showing missing data in \code{.$Analysis}, and a new data set \code{.$Data$Screened}.

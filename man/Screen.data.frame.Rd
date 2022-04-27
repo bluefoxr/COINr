@@ -10,7 +10,8 @@
   unit_screen,
   dat_thresh = NULL,
   nonzero_thresh = NULL,
-  Force = NULL
+  Force = NULL,
+  ...
 )
 }
 \arguments{
@@ -33,6 +34,8 @@ for indicator data sets used in coins. This must be specified if \code{Force} is
 \item{Force}{A data frame with any additional units to force inclusion or exclusion. Required columns \code{uCode}
 (unit code(s)) and \code{Include} (logical: \code{TRUE} to include and \code{FALSE} to exclude). Specifications here override
 exclusion/inclusion based on data rules.}
+
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
 Missing data stats and screened data as a list.

@@ -4,7 +4,7 @@
 \alias{Regen.coin}
 \title{Regenerate a coin}
 \usage{
-\method{Regen}{coin}(x, from = NULL, quietly = TRUE)
+\method{Regen}{coin}(x, from = NULL, quietly = TRUE, ...)
 }
 \arguments{
 \item{x}{A coin class object}
@@ -13,6 +13,8 @@
 than re-running all functions.}
 
 \item{quietly}{If \code{TRUE} (default), messages are suppressed during building.}
+
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
 Updated coin object with regenerated results.

@@ -17,15 +17,10 @@ and will be re-scaled to sum to 1. If \code{w} is not specified, defaults to equ
 Numeric vector of Copeland scores.
 }
 \description{
-Aggregates a data frame of indicator values into a single column using the Copeland method. This function is used inside
-\code{\link[=aggregate]{aggregate()}}, and calls \code{outrankMatrix()}.
+Aggregates a data frame of indicator values into a single column using the Copeland method.
+This function calls \code{outrankMatrix()}.
 }
 \examples{
-# get a sample of a few indicators
-ind_data <- ASEMIndData[12:16]
-# calculate outranking matrix
-cop_results <- copeland(ind_data)
-# check output
-stopifnot(length(cop_results$Scores) == nrow(ind_data))
+#
 
 }
