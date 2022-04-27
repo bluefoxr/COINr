@@ -1,30 +1,30 @@
 # GENERAL UTILITY FUNCTIONS
 
-#' Not in operator
-#'
-#' For convenience, rather than always `!(x, %in% y)`
-#'
-#' @param x A scalar or vector
-#' @param y A scalar or vector
-#'
-#' @return TRUE if x is not in y, FALSE otherwise
+# Not in operator
+#
+# For convenience, rather than always `!(x, %in% y)`
+#
+# @param x A scalar or vector
+# @param y A scalar or vector
+#
+# @return TRUE if x is not in y, FALSE otherwise
 '%nin%' <- function(x,y){
   !('%in%'(x,y))
 }
 
 
-#' rbind two lists with different names into a data frame
-#'
-#' Performs an `rbind()` operation on two named lists or vectors that do not need to share the same names, but
-#' will match the names and fill any missing cols with `NA`s.
-#'
-#' @param x1 A named list or named vector
-#' @param x2 Another named list or named vector
-#'
-#' @examples
-#' #
-#'
-#' @return Data frame
+# rbind two lists with different names into a data frame
+#
+# Performs an `rbind()` operation on two named lists or vectors that do not need to share the same names, but
+# will match the names and fill any missing cols with `NA`s.
+#
+# @param x1 A named list or named vector
+# @param x2 Another named list or named vector
+#
+# @examples
+# #
+#
+# @return Data frame
 rbind_fill <- function(x1, x2){
 
   if(is.null(names(x1)) || is.null(names(x2))){
@@ -44,42 +44,42 @@ rbind_fill <- function(x1, x2){
 }
 
 
-#' Remove empty components from list
-#'
-#' Short cut for removing any empty components of a list
-#'
-#' @param l A list
-#'
-#' @examples
-#' #
-#'
-#' @return List with empty bits removed
+# Remove empty components from list
+#
+# Short cut for removing any empty components of a list
+#
+# @param l A list
+#
+# @examples
+# #
+#
+# @return List with empty bits removed
 tidy_list <- function(l){
   l[lengths(l) > 0]
 }
 
 
-#' Check availability of function
-#'
-#' Checks if a function is available, and returns an error if not.
-#'
-#' @param f_name
-#'
-#' @return Nothing or error
+# Check availability of function
+#
+# Checks if a function is available, and returns an error if not.
+#
+# @param f_name A string to use to check whether a function exists with that name.
+#
+# @return Nothing or error
 check_fname <- function(f_name){
   if(!(exists(f_name, mode = "function"))){
     stop("function '", f_name, "' not found. must be an accessible function.")
   }
 }
 
-#' Set default arg
-#'
-#' A shortcut
-#'
-#' @param x The argument
-#' @param x_default The default to set
-#'
-#' @return the parameter
+# Set default arg
+#
+# A shortcut
+#
+# @param x The argument
+# @param x_default The default to set
+#
+# @return the parameter
 set_default <- function(x, x_default){
   if(is.null(x)){
     x_default
@@ -89,15 +89,20 @@ set_default <- function(x, x_default){
 }
 
 
-#' Make correlation matrix long
-#'
-#' Only for correlation matrices: make long to avoid reshape2 package or similar.
-#'
-#' @param X a square correlation matrix
-#'
-#' @importFrom utils stack
-#'
-#' @return A long format data frame
+# Data frame or matrix to long form
+#
+# This is a substitute function for tidyr's 'pivot_longer' to avoid dependencies, and behaves in more or
+# less the same way.
+#
+# If `cols` is not specified, assumes a square correlation matrix to convert to long form. If `cols` is
+# specified, this behaves like pivot_longer's "cols" argument.
+#
+# @param X A data frame or square correlation matrix
+# @param cols Columns to pivot into longer format.
+#
+# @importFrom utils stack
+#
+# @return A long format data frame
 lengthen <- function(X, cols = NULL){
 
   # make df
@@ -131,18 +136,18 @@ lengthen <- function(X, cols = NULL){
 }
 
 
-#' Make long df wide
-#'
-#' This is a quick function for making a long-format data frame wide. It is limited in scope, assumes
-#' that the input is a data frame with three columns: one of which is numeric, and the other two are
-#' character vectors. The numeric column will be widened, and the other two columns will be used
-#' for row and column names.
-#'
-#' @param X a long format data frame
-#'
-#' @importFrom utils unstack
-#'
-#' @return A wide format data frame
+# Make long df wide
+#
+# This is a quick function for making a long-format data frame wide. It is limited in scope, assumes
+# that the input is a data frame with three columns: one of which is numeric, and the other two are
+# character vectors. The numeric column will be widened, and the other two columns will be used
+# for row and column names.
+#
+# @param X a long format data frame
+#
+# @importFrom utils unstack
+#
+# @return A wide format data frame
 widen <- function(X){
 
   stopifnot(ncol(X) == 3)
@@ -173,12 +178,12 @@ widen <- function(X){
 }
 
 
-#' Convert iCodes to iNames
-#'
-#' @param coin A coin
-#' @param iCodes A vector of iCodes
-#'
-#' @return Vector of iNames
+# Convert iCodes to iNames
+#
+# @param coin A coin
+# @param iCodes A vector of iCodes
+#
+# @return Vector of iNames
 codes2names <- function(coin, iCodes){
 
   iMeta <- coin$Meta$Ind
@@ -186,5 +191,31 @@ codes2names <- function(coin, iCodes){
   stopifnot(all(iCodes %in% iMeta$iCode))
 
   iMeta$iName[match(iCodes, iMeta$iCode)]
+
+}
+
+
+# Splits data frame into numeric and non-numeric columns
+#
+# @param x A data frame with numeric and non-numeric columns.
+#
+# @return A list with `.$not_numeric` containing a data frame with non-numeric columns, and `.$numeric` being
+# a data frame containing only numeric columns.
+#
+# @examples
+# #
+split_by_numeric <- function(x){
+
+  stopifnot(is.data.frame(x))
+
+  # not numeric cols
+  numeric_cols <- sapply(x, is.numeric)
+
+  if(sum(numeric_cols) == ncol(x)){
+    stop("No numeric cols found in the data frame.")
+  }
+
+  list(not_numeric = x[!numeric_cols],
+       numeric = x[numeric_cols])
 
 }
