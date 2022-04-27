@@ -1,11 +1,8 @@
 #' Import data directly from COIN Tool
 #'
-#' This provides a direct interface for reading a COIN Tool input deck and converting it to COINr.
-#' You need to provide a COIN Tool file, with the "Database" sheet properly compiled.
-#'
-#' The [COIN Tool](https://knowledge4policy.ec.europa.eu/composite-indicators/coin-tool_en) is an Excel-based tool for building composite indicators.
-#'
-#' See [COINr online documentation](https://bluefoxr.github.io/COINrDoc/helper-functions.html#r-interfaces) for more details and an example.
+#' #' The [COIN Tool](https://knowledge4policy.ec.europa.eu/composite-indicators/coin-tool_en) is an Excel-based tool
+#' for building composite indicators. This function provides a direct interface for reading a COIN Tool input deck and
+#' converting it to COINr. You need to provide a COIN Tool file, with the "Database" sheet properly compiled.
 #'
 #' @param fname The file name and path to read, e.g. `"C:/Documents/COINToolFile.xlsx"`.
 #' @param makecodes Logical: if `TRUE`, will generate short indicator codes based on indicator names,
