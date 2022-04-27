@@ -1,7 +1,7 @@
 #' Aggregate indicators
 #'
-#' @param x A purse object
-#' @param dset The data set to treat in each coin
+#' @param x A purse-class object
+#' @param dset The name of the data set to apply the function to, which should be accessible in `.$Data`.
 #' @param f_ag The name of an aggregation function, specified as a string
 #' @param w An optional data frame of weights. If `f_ag` does not require or accept weights, set to `"none"`.
 #' @param f_ag_para Optional parameters to pass to `f_ag`, other than `x` and `w`
@@ -10,14 +10,15 @@
 #' `NA`. Data availability, for a row `x_row` is defined as `sum(!is.na(x_row))/length(x_row)`, i.e. the
 #' fraction of non-`NA` values.
 #' @param write_to If specified, writes the aggregated data to `.$Data[[write_to]]`. Default `write_to = "Aggregated"`.
+#' @param ... arguments passed to or from other methods.
 #'
-#' @return An updated purse with new treated data sets added at `.$Data$Aggregated` in each coin.
+#' @return An updated purse with new treated data sets added at `.$Data[[write_to]]` in each coin.
 #' @export
 #'
 #' @examples
 #' #
 Aggregate.purse <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, dat_thresh = NULL,
-                             write_to = NULL){
+                             write_to = NULL, ...){
 
   # input check
   check_purse(x)
@@ -38,8 +39,23 @@ Aggregate.purse <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, da
 #' Aggregates a named data set specified by `dset` using aggregation function `f_ag`, weights `w`, and optional
 #' function parameters `f_ag_para`.
 #'
-#' @param x The coin object
-#' @param dset The data set to aggregate
+#' Aggregation is performed row-wise using the function `f_ag`, such that for each row `x_row`, the output is
+#' `f_ag(x_row, f_ag_para)`, and for the whole data frame, it outputs a numeric vector. The data frame `x` must
+#' only contain numeric columns.
+#'
+#' The function `f_ag` must be supplied as a string, e.g. `"a_amean"`, and it must take as a minimum an input
+#' `x` which is either a numeric vector (if `by_df = FALSE`), or a data frame (if `by_df = TRUE`). In the former
+#' case `f_ag` should return a single numeric value (i.e. the result of aggregating `x`), or in the latter case
+#' a numeric vector (the result of aggregating the whole data frame in one go).
+#'
+#' `f_ag` can optionally have other parameters, e.g. weights, specified as a list in `f_ag_para`.
+#'
+#' Optionally, a data availability threshold can be assigned below which the aggregated value will return
+#' `NA` (see `dat_thresh` argument). If `by_df = TRUE`, this will however be ignored because aggregation is not
+#' done on individual rows. Note that more complex constraints could be built into `f_ag` if needed.
+#'
+#' @param x A coin class object.
+#' @param dset The name of the data set to apply the function to, which should be accessible in `.$Data`.
 #' @param f_ag The name of an aggregation function, a string
 #' @param w An optional data frame of weights. If `f_ag` does not require accept weights, set to `"none"`.
 #' @param f_ag_para Optional parameters to pass to `f_ag`, other than `x` and `w`
@@ -51,15 +67,17 @@ Aggregate.purse <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, da
 #' details.
 #' @param out2 Either `"coin"` (default) to return updated coin or `"df"` to output the aggregated data set.
 #' @param write_to If specified, writes the aggregated data to `.$Data[[write_to]]`. Default `write_to = "Aggregated"`.
+#' @param ... arguments passed to or from other methods.
 #'
 #' @examples
 #' #
 #'
-#' @return An updated coin with aggregated data set added
+#' @return An updated coin with aggregated data set added at `.$Data[[write_to]]` if `out2 = "coin"`,
+#' else if `out2 = "df"` outputs the aggregated data set as a data frame.
 #'
 #' @export
 Aggregate.coin <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, dat_thresh = NULL,
-                            by_df = FALSE, out2 = "coin", write_to = NULL){
+                            by_df = FALSE, out2 = "coin", write_to = NULL, ...){
 
   # Write to Log ------------------------------------------------------------
 
@@ -271,6 +289,7 @@ Aggregate.coin <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, dat
 #' fraction of non-`NA` values.
 #' @param by_df Controls whether to send a numeric vector to `f_ag` (if `FALSE`, default) or a data frame (if `TRUE`) - see
 #' details.
+#' @param ... arguments passed to or from other methods.
 #'
 #' @examples
 #' #
@@ -279,7 +298,7 @@ Aggregate.coin <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, dat
 #'
 #' @export
 Aggregate.data.frame <- function(x, f_ag = NULL, f_ag_para = NULL, dat_thresh = NULL,
-                                  by_df = FALSE){
+                                  by_df = FALSE, ...){
 
   # CHECKS ------------------------------------------------------------------
   # x must be a df but check all numeric
@@ -357,7 +376,8 @@ Aggregate.data.frame <- function(x, f_ag = NULL, f_ag_para = NULL, dat_thresh = 
 
 #' Aggregate data
 #'
-#' Methods for aggregating numeric vectors, data frames, coins and purses.
+#' Methods for aggregating numeric vectors, data frames, coins and purses. See individual method documentation
+#' for more details, e.g. [Aggregate.coin()].
 #'
 #' @param x Object to be aggregated
 #' @param ... Further arguments to be passed to methods.
@@ -377,17 +397,18 @@ Aggregate <- function(x, ...){
 #'
 #' The vector of weights `w` is relative since the formula is:
 #'
-#' $ y = 1(\sum w) \sum wx $
+#' \deqn{ y = 1(\sum w) \sum wx }
 #'
 #' If `x` contains `NA`s, these `x` values and the corresponding `w` values are removed before applying the
 #' formula above.
 #'
-#' @param x A numeric vector
+#' @param x A numeric vector.
 #' @param w A vector of numeric weights of the same length as `x`.
 #'
 #' @examples
 #' x <- c(1:10)
 #' w <- c(10:1)
+#' a_amean(x,w)
 #'
 #' @return The weighted mean as a scalar value
 #'
@@ -433,7 +454,7 @@ a_amean <- function(x, w){
 #' # a vector of weights
 #' w <- runif(10)
 #' # weighted geometric mean
-#' geoMean(x,w)
+#' a_gmean(x,w)
 #'
 #' @return The geometric mean, as a numeric value.
 #'
@@ -486,7 +507,6 @@ a_gmean <- function(x, w = NULL){
 #' @return Weighted harmonic mean, as a numeric value.
 #'
 #' @export
-
 a_hmean <- function(x, w = NULL){
 
   if(is.null(w)){
@@ -526,7 +546,7 @@ a_hmean <- function(x, w = NULL){
 #'
 #' @examples
 #' # get a sample of a few indicators
-#' ind_data <- COINr::ASEMIndData[12:16]
+#' ind_data <- COINr::ASEM_iData[12:16]
 #' # calculate outranking matrix
 #' outlist <- outrankMatrix(ind_data)
 #' # see fraction of dominant pairs (robustness)
@@ -604,8 +624,8 @@ outrankMatrix <- function(X, w = NULL){
 
 #' Copeland scores
 #'
-#' Aggregates a data frame of indicator values into a single column using the Copeland method. This function is used inside
-#' [aggregate()], and calls `outrankMatrix()`.
+#' Aggregates a data frame of indicator values into a single column using the Copeland method.
+#' This function calls `outrankMatrix()`.
 #'
 #' @param X A numeric data frame or matrix of indicator data, with observations as rows and indicators
 #' as columns. No other columns should be present (e.g. label columns).
@@ -613,12 +633,7 @@ outrankMatrix <- function(X, w = NULL){
 #' and will be re-scaled to sum to 1. If `w` is not specified, defaults to equal weights.
 #'
 #' @examples
-#' # get a sample of a few indicators
-#' ind_data <- ASEMIndData[12:16]
-#' # calculate outranking matrix
-#' cop_results <- copeland(ind_data)
-#' # check output
-#' stopifnot(length(cop_results$Scores) == nrow(ind_data))
+#' #
 #'
 #' @return Numeric vector of Copeland scores.
 #'
