@@ -10,14 +10,15 @@
 #' @param group_level xx
 #' @param normalise_first xx
 #' @param write_to xx
+#' @param ... arguments passed to or from other methods.
 #'
 #' @return An updated purse with imputed data sets added to each coin.
 #' @export
 #'
 #' @examples
 #' #
-Impute.purse <- function(x, dset = NULL, f_i = NULL, f_i_para = NULL, impute_by = "column",
-                         group_level = NULL, normalise_first = NULL, write_to = NULL){
+Impute.purse <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "column",
+                         group_level = NULL, normalise_first = NULL, write_to = NULL, ...){
 
   # input check
   check_purse(x)
@@ -58,15 +59,16 @@ Impute.purse <- function(x, dset = NULL, f_i = NULL, f_i_para = NULL, impute_by 
 #' frame.
 #' @param write_to Optional character string for naming the data set in the coin. Data will be written to
 #' `.$Data[[write_to]]`. Default is `write_to == "Imputed"`.
+#' @param ... arguments passed to or from other methods.
 #'
-#' @return
+#' @return An updated coin
 #' @export
 #'
 #' @examples
 #' #
-Impute.coin <- function(x, dset = NULL, f_i = NULL, f_i_para = NULL, impute_by = "column",
+Impute.coin <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "column",
                         use_group = NULL, group_level = NULL, normalise_first = NULL, out2 = "coin",
-                        write_to = NULL){
+                        write_to = NULL, ...){
 
   # WRITE LOG ---------------------------------------------------------------
 
@@ -172,10 +174,10 @@ Impute.coin <- function(x, dset = NULL, f_i = NULL, f_i_para = NULL, impute_by =
 
 #' Impute a data frame
 #'
-#' Impute a data frame using any function, either columnwise, rowwise or by the whole data frame in one
+#' Impute a data frame using any function, either column-wise, row-wise or by the whole data frame in one
 #' shot.
 #'
-#' This function only accepts data frames with all numeric columns. It imputes any NAs in the data frame
+#' This function only accepts data frames with all numeric columns. It imputes any `NA`s in the data frame
 #' by invoking the function `f_i` and any optional arguments `f_i_para` on each column at a time (if
 #' `impute_by = "column"`), or on each row at a time (if `impute_by = "row"`), or by passing the entire
 #' data frame to `f_i` if `impute_by = "df"`.
@@ -192,7 +194,7 @@ Impute.coin <- function(x, dset = NULL, f_i = NULL, f_i_para = NULL, impute_by =
 #' need to supply a vector of directions. The data will then be normalised using a min-max approach
 #' before imputation, followed by the inverse operation to return the data to the original scales.
 #'
-#' Another approach which gives more control is to simply run [normalise()] first, and work with the
+#' Another approach which gives more control is to simply run [Normalise()] first, and work with the
 #' normalised data from that point onwards. In that case it is better to set `normalise_first = FALSE`,
 #' since by default if `impute_by = "row"` it will be set to `TRUE`.
 #'
@@ -216,14 +218,15 @@ Impute.coin <- function(x, dset = NULL, f_i = NULL, f_i_para = NULL, impute_by =
 #' of `x` - this is only used if `normalise_first = TRUE`. See details.
 #' @param sfigs The number of significant figures to use in comparing non-`NA` values in `x` with their
 #' counterparts in the imputed data frame. Default 9. See details.
+#' @param ... arguments passed to or from other methods.
 #'
-#' @return
+#' @return An imputed data frame
 #' @export
 #'
 #' @examples
 #' #
 Impute.data.frame <- function(x, f_i = NULL, f_i_para = NULL, impute_by = "column",
-                               normalise_first = NULL, directions = NULL, sfigs = 9){
+                               normalise_first = NULL, directions = NULL, sfigs = 9, ...){
 
   # CHECKS ------------------------------------------------------------------
 
@@ -384,10 +387,11 @@ Impute.data.frame <- function(x, f_i = NULL, f_i_para = NULL, impute_by = "colum
 #' @param x A numeric vector, possibly with `NA` values to be imputed.
 #' @param f_i A function that imputes missing values in a numeric vector
 #' @param f_i_para Optional further arguments to be passed to `f_i()`
+#' @param ... arguments passed to or from other methods.
 #'
 #' @return An imputed numeric vector of the same length of `x`.
 #' @export
-Impute.numeric <- function(x, f_i = NULL, f_i_para = NULL){
+Impute.numeric <- function(x, f_i = NULL, f_i_para = NULL, ...){
 
 
   # DEFAULTS ----------------------------------------------------------------
@@ -439,7 +443,7 @@ Impute.numeric <- function(x, f_i = NULL, f_i_para = NULL){
 #' Impute indicator data sets
 #'
 #' @param x Object to be imputed
-#' @param ... Further arguments to be passed to methods.
+#' @param ... arguments passed to or from other methods.
 #'
 #' @examples
 #' #
@@ -512,7 +516,7 @@ i_median <- function(x){
 #' @examples
 #' x <- c(NA, runif(10), NA)
 #' f <- c(rep("a", 6), rep("b", 6))
-#' i_mean_grp(x)
+#' i_mean_grp(x, f)
 #'
 i_mean_grp <- function(x, f){
 
@@ -540,7 +544,7 @@ i_mean_grp <- function(x, f){
 #' @examples
 #' x <- c(NA, runif(10), NA)
 #' f <- c(rep("a", 6), rep("b", 6))
-#' i_median_grp(x)
+#' i_median_grp(x, f)
 #'
 i_median_grp <- function(x, f){
 
