@@ -1,7 +1,8 @@
-# COINr 0.6.1.9000
+# COINr 0.6.2
 
 * Added colour option to `plotframework()`
 * Fixed bug in `compareDF()` (resulting from tibbles vs data frames)
+* Fixed bug in `sensitivity()` causing trouble with running SA with no weights uncertainty specified
 
 # COINr 0.6.1
 

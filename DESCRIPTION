@@ -1,7 +1,7 @@
 Package: COINr
 Type: Package
 Title: Composite Indicator Construction and Analysis
-Version: 0.6.1.9000
+Version: 0.6.2
 Maintainer: William Becker <william.becker@bluefoxdata.eu>
 Description: A comprehensive high-level package for composite indicator construction and analysis. It is a "development environment"
     for composite indicators and scoreboards, which includes utilities for construction (indicator selection, denomination, imputation,
