@@ -16,14 +16,20 @@
 #' @param directions If `NULL`, extracts directions from indicator metadata, i.e. the `iMeta` data frame
 #' that was passed to [new_coin()]. Else `directions` should be a vector with entries either -1 or 1, in
 #' order of the columns of the data set.
+#' @param global Logical: if `TRUE`, normalisation is performed "globally" across all coins, by using e.g. the
+#' max and min of each indicator in any coin. This effectively makes normalised scores comparable between coins
+#' because they are all scaled using the same parameters. Otherwise if `FALSE`, coins are normalised individually.
+#' @param write_to Optional character string for naming the data set in each coin. Data will be written to
+#' `.$Data[[write_to]]`. Default is `write_to == "Normalised"`.
+#' @param ... arguments passed to or from other methods.
 #'
 #' @return An updated purse with new normalised data sets added at `.$Data$Normalised` in each coin
 #' @export
 #'
 #' @examples
 #' #
-Normalise.purse <- function(x, dset = NULL, default_specs = NULL, indiv_specs = NULL,
-                             directions = NULL, global = TRUE, write_to = NULL){
+Normalise.purse <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
+                             directions = NULL, global = TRUE, write_to = NULL, ...){
 
   # input check
   check_purse(x)
@@ -92,15 +98,19 @@ Normalise.purse <- function(x, dset = NULL, default_specs = NULL, indiv_specs = 
 #' frame.
 #' @param write_to Optional character string for naming the data set in the coin. Data will be written to
 #' `.$Data[[write_to]]`. Default is `write_to == "Normalised"`.
+#' @param write2log Logical: if `FALSE`, the arguments of this function are not written to the coin log, so this
+#' function will not be invoked when regenerating. Recommend to keep `TRUE` unless you have a good reason to do otherwise.
+#' @param ... arguments passed to or from other methods.
 #'
-#' @return
+#' @return An updated coin
 #' @export
 Normalise.coin <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
-                                  directions = NULL, out2 = "coin", write_to = NULL){
+                           directions = NULL, out2 = "coin", write_to = NULL,
+                           write2log = TRUE, ...){
 
   # WRITE LOG ---------------------------------------------------------------
 
-  coin <- write_log(x, dont_write = "x")
+  coin <- write_log(x, dont_write = "x", write2log = write2log)
 
   # GET DSET, DEFAULTS ------------------------------------------------------
 
@@ -150,15 +160,16 @@ Normalise.coin <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
 #' * `Direction` numeric vector with entries either `-1` or `1`
 #' If `directions` is not specified, the directions will all be assigned as `1`. Non-numeric columns do not need
 #' to have directions assigned.
+#' @param ... arguments passed to or from other methods.
 #'
 #' @examples
 #' iris_norm <- Normalise(iris)
 #' head(iris_norm)
 #'
-#' @return
+#' @return A normalised data frame
 #' @export
 Normalise.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL,
-                               directions = NULL){
+                               directions = NULL, ...){
 
   # CHECKS ------------------------------------------------------------------
 
@@ -247,7 +258,7 @@ Normalise.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL,
 #' Normalisation is specified using the `f_n` and `f_n_para` arguments. In these, `f_n` should be a character
 #' string which is the name of a normalisation
 #' function. For example, `f_n = "n_minmax"` calls the [n_minmax()] function. `f_n_para` is a list of any
-#' further arguments to `f_n`. This means that any function can be passed to [normalise()], as long as its
+#' further arguments to `f_n`. This means that any function can be passed to [Normalise()], as long as its
 #' first argument is `x`, a numeric vector, and it returns a numeric vector of the same length. See [n_minmax()]
 #' for an example.
 #'
@@ -261,15 +272,16 @@ Normalise.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL,
 #' @param f_n_para Supporting list of arguments for `f_n`. This is required to be a list.
 #' @param direction If `direction = -1` the highest values of `x` will correspond to the lowest
 #' values of the normalised `x`. Else if `direction = 1` the direction of `x` in unaltered.
+#' @param ... arguments passed to or from other methods.
 #'
 #' @examples
 #' #
 #'
-#' @return An updated GII with normalised data set added
+#' @return A normalised numeric vector
 #'
 #' @export
 Normalise.numeric <- function(x, f_n = NULL, f_n_para = NULL,
-                               direction = 1){
+                               direction = 1, ...){
 
   # CHECKS ------------------------------------------------------------------
 
@@ -320,23 +332,13 @@ Normalise.numeric <- function(x, f_n = NULL, f_n_para = NULL,
 }
 
 
-#' Normalise indicator data sets
-#'
-#' Normalisation is specified using the `ntype` and `npara` arguments. In these, `ntype` should be a character
-#' string which is the name of a normalisation
-#' function. For example, `ntype = "n_minmax"` calls the [n_minmax()] function. `npara` is any
-#' further argument to `ntype`. This means that any function can be passed to [normalise()], as long as it
-#' is of the form `f(x, npara)`, where `x` is a vector (i.e. one column of data) and should return a
-#' similar vector of normalised data. See [n_minmax()] for an example. If a function has more than one
-#' additional argument, then `npara` can be passed as a list and a wrapper could be created.
+#' Normalise data
 #'
 #' @param x Object to be normalised
 #' @param ... Further arguments to be passed to methods.
 #'
 #' @examples
 #' #
-#'
-#' @return An updated GII with normalised data set added
 #'
 #' @export
 Normalise <- function(x, ...){
@@ -475,7 +477,7 @@ n_dist2max <- function(x){
 #'
 #' @examples
 #' x <- runif(20)
-#' n_dist2ref(x)
+#' n_dist2ref(x, 5)
 #'
 #' @return Numeric vector
 #'
