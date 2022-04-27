@@ -18,6 +18,9 @@
 #' have aggregated your data and `dset` must point to a data set where the underlying (child) scores of `iCode` are available.
 #' @param bar_colours Optional vector of colour codes for colouring bars.
 #'
+#' @importFrom stats reorder
+#' @importFrom rlang .data
+#'
 #' @return A ggplot2 plot object.
 #' @export
 #'
@@ -106,19 +109,19 @@ plot_bar <- function(coin, dset, iCode, ..., uLabel = "uCode", axes_label = "iCo
 
   # setup: whether to plot by group or not
   if(!is.null(by_group)){
-    plt <- ggplot2::ggplot(iData, ggplot2::aes(x = reorder(.data[["plbs"]], -.data[[iCode]]),
+    plt <- ggplot2::ggplot(iData, ggplot2::aes(x = stats::reorder(.data[["plbs"]], -.data[[iCode]]),
                                              y = .data[[iCode]],
-                                             label = plbs,
+                                             label = .data[["plbs"]],
                                              fill = .data[[by_group]]))
   } else if(stack_children){
-    plt <- ggplot2::ggplot(iData, ggplot2::aes(x = reorder(.data[["plbs"]], -.data[[iCode]]),
+    plt <- ggplot2::ggplot(iData, ggplot2::aes(x = stats::reorder(.data[["plbs"]], -.data[[iCode]]),
                                                y = .data[[iCode]],
-                                               label = plbs,
+                                               label = .data[["plbs"]],
                                                fill = .data[["Component"]]))
   } else {
-    plt <- ggplot2::ggplot(iData, ggplot2::aes(x = reorder(.data[["plbs"]], -.data[[iCode]]),
+    plt <- ggplot2::ggplot(iData, ggplot2::aes(x = stats::reorder(.data[["plbs"]], -.data[[iCode]]),
                                              y = .data[[iCode]],
-                                             label = plbs))
+                                             label = .data[["plbs"]]))
   }
 
   if(stack_children){
