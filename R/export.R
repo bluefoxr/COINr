@@ -18,7 +18,7 @@
 #' @export
 export_to_excel <- function(coin, fname = "coin_export.xlsx", include_log = FALSE){
 
-  stopifnot(is.coin(coin))
+  check_coin_input(coin)
 
   # function to stop tab names exceeding 31 characters, avoiding errors.
   trunc_str <- function(x){
