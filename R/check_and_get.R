@@ -1,17 +1,6 @@
 # FUNCTIONS AND METHODS FOR CHECKING AND GETTING DATA FROM COINS AND PURSES
 
-#' Checks a purse
-#'
-#' Makes sure a purse has the expected format
-#'
-#' @param x An object to check
-#'
-#' @examples
-#' #
-#'
-#' @return Error messages otherwise if successful, nothing.
-#'
-#' @export
+# Check a purse to make sure has the expected format
 check_purse <- function(x){
 
   if(!is.purse(x)){
@@ -35,33 +24,15 @@ check_purse <- function(x){
 }
 
 
-#' Stop if object is NOT coin class
-#'
-#' This helper function is used inside other functions.
-#'
-#' @param x An object to be checked.
-#'
-#' @return An error if input is not coin class.
+#Stop if object is NOT coin class
 check_coin_input <- function(x){
   if(!is.coin(x)){
     stop("Input is not recognised as a coin class object.")
   }
 }
 
-#' Check for named data set
-#'
-#' A helper function to check if a named data set is present. If not, will cause an informative error.
-#'
-#' @param x A purse class object
-#' @param dset A character string corresponding to a named data set within `coin$Data`. E.g. `Raw`.
-#'
-#' @examples
-#' #
-#'
-#' @export
-#'
-#' @return Error message if `dset` not found.
-check_dset.purse <- function(x, dset){
+# Check for named data set
+check_dset.purse <- function(x, dset, ...){
 
   stopifnot(is.purse(x),
             is.character(dset),
@@ -76,19 +47,8 @@ check_dset.purse <- function(x, dset){
 }
 
 
-#' Check for named data set
-#'
-#' A helper function to check if a named data set is present. If not, will cause an informative error.
-#'
-#' @param x A coin class object
-#' @param dset A character string corresponding to a named data set within `coin$Data`. E.g. `Raw`.
-#'
-#' @examples
-#' #
-#' @export
-#'
-#' @return Error message if `dset` not found.
-check_dset.coin <- function(x, dset){
+# Check for named data set
+check_dset.coin <- function(x, dset, ...){
 
   stopifnot(is.coin(x),
             is.character(dset),
@@ -100,20 +60,7 @@ check_dset.coin <- function(x, dset){
 }
 
 
-#' Check for named data set
-#'
-#' A helper function to check if a named data set is present. If not, will cause an informative error.
-#'
-#' @param x A coin or purse
-#' @param dset A character string corresponding to a named data set within `coin$Data`. E.g. `Raw`.
-#' @param ... Other arguments to be passed to methods.
-#'
-#' @examples
-#' #
-#'
-#' @return Error message if `dset` is not found.
-#'
-#' @export
+# Check for named data set
 check_dset <- function(x, dset, ...){
   UseMethod("check_dset")
 }
@@ -126,13 +73,14 @@ check_dset <- function(x, dset, ...){
 #' with a `Time` column.
 #'
 #' @param x A purse class object
-#' @param dset A character string corresponding to a named data set within each coin `coin$Data`. E.g. `Raw`.
+#' @param dset A character string corresponding to a named data set within each coin `.$Data`. E.g. `"Raw"`.
 #' @param Time Optional time index to extract from a subset of the coins present in the purse. Should be a
 #' vector containing one or more entries in `x$Time` or `NULL` to return all (default).
 #' @param also_get A character vector specifying any columns to attach to the data set that are *not*
 #' indicators or aggregates. These will be e.g. `uName`, groups, denominators or columns labelled as "Other"
 #' in `iMeta`. These columns are stored in `.$Meta$Unit` to avoid repetition. Set `also_get = "all"` to
 #' attach all columns, or set `also_get = "none"` to return only numeric columns, i.e. no `uCode` column.
+#' @param ... arguments passed to or from other methods.
 #'
 #' @examples
 #' #
@@ -140,7 +88,7 @@ check_dset <- function(x, dset, ...){
 #' @return Data frame of indicator data.
 #'
 #' @export
-get_dset.purse <- function(x, dset, Time = NULL, also_get = NULL){
+get_dset.purse <- function(x, dset, Time = NULL, also_get = NULL, ...){
 
   # check specified dset exists
   check_dset(x, dset)
@@ -173,11 +121,12 @@ get_dset.purse <- function(x, dset, Time = NULL, also_get = NULL){
 #' for e.g. examining correlations.
 #'
 #' @param x A coin class object
-#' @param dset A character string corresponding to a named data set within `coin$Data`. E.g. `Raw`.
+#' @param dset A character string corresponding to a named data set within `.$Data`. E.g. `"Raw"`.
 #' @param also_get A character vector specifying any columns to attach to the data set that are *not*
 #' indicators or aggregates. These will be e.g. `uName`, groups, denominators or columns labelled as "Other"
 #' in `iMeta`. These columns are stored in `.$Meta$Unit` to avoid repetition. Set `also_get = "all"` to
 #' attach all columns, or set `also_get = "none"` to return only numeric columns, i.e. no `uCode` column.
+#' @param ... arguments passed to or from other methods.
 #'
 #' @examples
 #' #
@@ -185,7 +134,7 @@ get_dset.purse <- function(x, dset, Time = NULL, also_get = NULL){
 #' @return Data frame of indicator data.
 #'
 #' @export
-get_dset.coin <- function(x, dset, also_get = NULL){
+get_dset.coin <- function(x, dset, also_get = NULL, ...){
 
   # check specified dset exists
   check_dset(x, dset)
@@ -232,7 +181,7 @@ get_dset.coin <- function(x, dset, also_get = NULL){
   } else {
 
     # get uMeta
-    iData <- coin$Meta$Unit
+    iData <- x$Meta$Unit
     if(is.null(iData)){
       stop("Unit metadata (uMeta) not found in coin!")
     }
@@ -248,7 +197,8 @@ get_dset.coin <- function(x, dset, also_get = NULL){
 #' A helper function to retrieve a named data set from coin or purse objects.
 #'
 #' @param x A coin or purse
-#' @param dset A character string corresponding to a named data set within `coin$Data`. E.g. `Raw`.
+#' @param dset A character string corresponding to a named data set within `.$Data`. E.g. `"Raw"`.
+#' @param ... arguments passed to or from other methods.
 #'
 #' @examples
 #' #
@@ -280,11 +230,11 @@ get_dset <- function(x, dset, ...){
 #' groups that the `uCodes` belong to. This is useful for putting a unit into context with its peers
 #' based on some grouping variable.
 #'
-#' Note that if you want to retreive a whole data set (with no column/row subsetting), use the
+#' Note that if you want to retrieve a whole data set (with no column/row subsetting), use the
 #' [get_dset()] function which should be slightly faster.
 #'
 #' @param x A coin class object
-#' @param dset Name of a data set found in `.$Data`.
+#' @param dset The name of the data set to apply the function to, which should be accessible in `.$Data`.
 #' @param iCodes Optional indicator codes to retrieve. If `NULL` (default), returns all iCodes found in
 #' the selected data set. Can also refer to indicator groups. See details.
 #' @param Level Optionally, the level in the hierarchy to extract data from. See details.
@@ -294,12 +244,16 @@ get_dset <- function(x, dset, ...){
 #' where `Group_Var` is a Group_ column that must be present in the selected data set, and `Group` is a specified group
 #' inside that grouping variable. This filters the selected data to only include rows from the specified group. Can
 #' also be used in conjunction with `uCodes` -- see details.
-#' @param also_get Optional meta data columns to attach to the data set. See [get_dset()].
+#' @param also_get A character vector specifying any columns to attach to the data set that are *not*
+#' indicators or aggregates. These will be e.g. `uName`, groups, denominators or columns labelled as "Other"
+#' in `iMeta`. These columns are stored in `.$Meta$Unit` to avoid repetition. Set `also_get = "all"` to
+#' attach all columns, or set `also_get = "none"` to return only numeric columns, i.e. no `uCode` column.
+#' @param ... arguments passed to or from other methods.
 #'
-#' @return
+#' @return A data frame of indicator data according to specifications.
 #' @export
 get_data.coin <- function(x, dset, iCodes = NULL, Level = NULL, uCodes = NULL,
-                     use_group = NULL, also_get = NULL){
+                     use_group = NULL, also_get = NULL, ...){
 
   # CHECKS ------------------------------------------------------------------
 
@@ -506,7 +460,7 @@ get_data.coin <- function(x, dset, iCodes = NULL, Level = NULL, uCodes = NULL,
 #' Purse description.
 #'
 #' @param x A purse class object
-#' @param dset Name of a data set found in `.$Data`.
+#' @param dset The name of the data set to apply the function to, which should be accessible in `.$Data`.
 #' @param iCodes Optional indicator codes to retrieve. If `NULL` (default), returns all iCodes found in
 #' the selected data set. Can also refer to indicator groups. See details.
 #' @param Level Optionally, the level in the hierarchy to extract data from. See details.
@@ -518,12 +472,16 @@ get_data.coin <- function(x, dset, iCodes = NULL, Level = NULL, uCodes = NULL,
 #' also be used in conjunction with `uCodes` -- see details.
 #' @param Time Optional time index to extract from a subset of the coins present in the purse. Should be a
 #' vector containing one or more entries in `x$Time` or `NULL` to return all (default).
-#' @param also_get Optional meta data columns to attach to the data set. See [get_dset()].
+#' @param also_get A character vector specifying any columns to attach to the data set that are *not*
+#' indicators or aggregates. These will be e.g. `uName`, groups, denominators or columns labelled as "Other"
+#' in `iMeta`. These columns are stored in `.$Meta$Unit` to avoid repetition. Set `also_get = "all"` to
+#' attach all columns, or set `also_get = "none"` to return only numeric columns, i.e. no `uCode` column.
+#' @param ... arguments passed to or from other methods.
 #'
-#' @return
+#' @return A data frame of indicator data indexed by a "Time" column.
 #' @export
 get_data.purse <- function(x, dset, iCodes = NULL, Level = NULL, uCodes = NULL,
-                     use_group = NULL, Time = NULL, also_get = NULL){
+                     use_group = NULL, Time = NULL, also_get = NULL, ...){
 
   # check specified dset exists
   check_dset(x, dset)
@@ -565,18 +523,7 @@ get_data <- function(x, ...){
 }
 
 
-#' Exract things from iData
-#'
-#' A helper function to separate indicator cols from metadata columns in iMeta.
-#'
-#' @param coin A coin
-#' @param iData An iData format data frame
-#' @param GET What to get
-#'
-#' @examples
-#' #
-#'
-#' @return Data frame of indicator data, indexed also by time if input is a purse.
+# A helper function to separate indicator cols from metadata columns in iMeta.
 extract_iData <- function(coin, iData, GET){
 
   # indicator cols
@@ -595,18 +542,7 @@ extract_iData <- function(coin, iData, GET){
 }
 
 
-#' Get names from codes
-#'
-#' Given either uCodes or iCodes, returns uNames or iNames
-#'
-#' @param coin A coin
-#' @param uCodes Some uCodes
-#' @param iCodes Some iCodes
-#'
-#' @examples
-#' #
-#'
-#' @return Vector of names
+# Given either uCodes or iCodes, returns uNames or iNames
 get_names <- function(coin, uCodes = NULL, iCodes = NULL){
 
   if(!is.null(uCodes) && !is.null(iCodes)){
@@ -636,17 +572,7 @@ get_names <- function(coin, uCodes = NULL, iCodes = NULL){
 }
 
 
-#' Get units of indicators
-#'
-#' Given iCodes, returns corresponding units if available.
-#'
-#' @param coin A coin
-#' @param iCodes Some iCodes
-#'
-#' @examples
-#' #
-#'
-#' @return Vector of names
+# Given iCodes, returns corresponding units if available.
 get_units <- function(coin, iCodes = NULL){
 
   iUnits <- coin$Meta$Ind$Unit
