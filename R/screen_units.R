@@ -32,6 +32,7 @@ Screen <- function (x, ...){
 #' @param Force A data frame with any additional units to force inclusion or exclusion. Required columns `uCode`
 #' (unit code(s)) and `Include` (logical: `TRUE` to include and `FALSE` to exclude). Specifications here override
 #' exclusion/inclusion based on data rules.
+#' @param ... arguments passed to or from other methods.
 #'
 #' @examples
 #' #
@@ -41,7 +42,7 @@ Screen <- function (x, ...){
 #' @export
 
 Screen.data.frame <- function(x, id_col = NULL, unit_screen, dat_thresh = NULL, nonzero_thresh = NULL,
-                              Force = NULL){
+                              Force = NULL, ...){
 
 
   # CHECKS ------------------------------------------------------------------
@@ -99,7 +100,7 @@ Screen.data.frame <- function(x, id_col = NULL, unit_screen, dat_thresh = NULL, 
               is.logical(Force$Include),
               is.character(id_col),
               id_col %in% names(x))
-    if(any(Force$uCode %nin% x[[id_code]])){
+    if(any(Force$uCode %nin% x[[id_col]])){
       stop("One or more entries in Force$uCode not found in data frame.")
     }
 
@@ -147,6 +148,8 @@ Screen.data.frame <- function(x, id_col = NULL, unit_screen, dat_thresh = NULL, 
 #' exclusion/inclusion based on data rules.
 #' @param out2 Where to output the results. If `"COIN"` (default for COIN input), appends to updated COIN,
 #' otherwise if `"list"` outputs to data frame.
+#' @param write_to If specified, writes the aggregated data to `.$Data[[write_to]]`. Default `write_to = "Screened"`.
+#' @param ... arguments passed to or from other methods.
 #'
 #' @examples
 #' #
@@ -157,7 +160,7 @@ Screen.data.frame <- function(x, id_col = NULL, unit_screen, dat_thresh = NULL, 
 #' @export
 
 Screen.coin <- function(x, dset, unit_screen, dat_thresh = NULL, nonzero_thresh = NULL,
-                              Force = NULL, out2 = "coin"){
+                              Force = NULL, out2 = "coin", write_to = NULL, ...){
 
   # WRITE LOG ---------------------------------------------------------------
 
@@ -177,8 +180,11 @@ Screen.coin <- function(x, dset, unit_screen, dat_thresh = NULL, nonzero_thresh 
   if(out2 == "list"){
     l_out
   } else {
-    coin <- write_dset(coin, l_out$ScreenedData, dset = "Screened")
-    write2coin(coin, l_out[names(l_out) != "ScreenedData"], out2, "Analysis", "Screened")
+    if(is.null(write_to)){
+      write_to <- "Screened"
+    }
+    coin <- write_dset(coin, l_out$ScreenedData, dset = write_to)
+    write2coin(coin, l_out[names(l_out) != "ScreenedData"], out2, "Analysis", write_to)
   }
 }
 
@@ -204,8 +210,8 @@ Screen.coin <- function(x, dset, unit_screen, dat_thresh = NULL, nonzero_thresh 
 #' @param Force A data frame with any additional countries to force inclusion or exclusion. Required columns `uCode`
 #' (unit code(s)) and `Include` (logical: `TRUE` to include and `FALSE` to exclude). Specifications here override
 #' exclusion/inclusion based on data rules.
-#' @param out2 Where to output the results. If `"COIN"` (default for COIN input), appends to updated COIN,
-#' otherwise if `"list"` outputs to data frame.
+#' @param write_to If specified, writes the aggregated data to `.$Data[[write_to]]`. Default `write_to = "Screened"`.
+#' @param ... arguments passed to or from other methods.
 #'
 #' @examples
 #' #
@@ -213,9 +219,8 @@ Screen.coin <- function(x, dset, unit_screen, dat_thresh = NULL, nonzero_thresh 
 #' @return An updated purse with coins screened and updated.
 #'
 #' @export
-
 Screen.purse <- function(x, dset, unit_screen, dat_thresh = NULL, nonzero_thresh = NULL,
-                              Force = NULL){
+                         Force = NULL, write_to = NULL, ...){
 
   # input check
   check_purse(x)
@@ -223,8 +228,8 @@ Screen.purse <- function(x, dset, unit_screen, dat_thresh = NULL, nonzero_thresh
   # apply unit screening to each coin
   x$coin <- lapply(x$coin, function(coin){
     Screen.coin(coin, dset = dset, unit_screen = unit_screen,
-                      dat_thresh = dat_thresh, nonzero_thresh = nonzero_thresh,
-                      Force = Force, out2 = "coin")
+                dat_thresh = dat_thresh, nonzero_thresh = nonzero_thresh,
+                Force = Force, out2 = "coin", write_to = write_to)
   })
   # make sure still purse class
   class(x) <- c("purse", "data.frame")
@@ -239,7 +244,6 @@ Screen.purse <- function(x, dset, unit_screen, dat_thresh = NULL, nonzero_thresh
 #' @param x Either a coin or a data frame
 #' @param ... Arguments passed to other methods
 #'
-#' @return
 #' @export
 get_datAvail <- function(x, ...){
   UseMethod("get_datAvail")
@@ -252,17 +256,23 @@ get_datAvail <- function(x, ...){
 #' function ignores any non-numeric columns, and returns a data availability table of numeric columns with non-numeric columns
 #' appended at the beginning.
 #'
-#' @return
+#' @param x A coin
+#' @param dset String indicating name of data set in `.$Data`.
+#' @param out2 Either `"coin"` to output an updated coin or `"list"` to output a list.
+#' @param ... arguments passed to or from other methods.
+#'
+#' @return An updated coin with data availability tables written in `.$Analysis[[dset]]`, or a
+#' list of data availability tables.
 #' @export
 #'
 #' @examples
 #' #
-get_datAvail.coin <- function(x, dset, out2 = "coin"){
+get_datAvail.coin <- function(x, dset, out2 = "coin", ...){
 
   # PREP --------------------------------------------------------------------
 
   iData <- get_dset(x, dset)
-  lin <- coin$Meta$Lineage
+  lin <- x$Meta$Lineage
 
   # DAT AVAIL AND TABLE -----------------------------------------------------
 
@@ -300,7 +310,7 @@ get_datAvail.coin <- function(x, dset, out2 = "coin"){
   l_out <- list(Summary = dat_avail,
        ByGroup = dat_avail_group)
 
-  write2coin(coin, l_out, out2, "Analysis", dset, "DatAvail")
+  write2coin(x, l_out, out2, "Analysis", dset, "DatAvail")
 
 }
 
@@ -311,12 +321,15 @@ get_datAvail.coin <- function(x, dset, out2 = "coin"){
 #' function ignores any non-numeric columns, and returns a data availability table with non-numeric columns
 #' appended at the beginning.
 #'
-#' @return
+#' @param x A data frame
+#' @param ... arguments passed to or from other methods.
+#'
+#' @return A data frame of data availability statistics for each column of `x`.
 #' @export
 #'
 #' @examples
 #' #
-get_datAvail.data.frame <- function(x){
+get_datAvail.data.frame <- function(x, ...){
 
   # PREP --------------------------------------------------------------------
 
@@ -339,29 +352,5 @@ get_datAvail.data.frame <- function(x){
              Dat_Avail = Prc_avail,
              Non_Zero = Prc_nonzero
   )
-
-}
-
-
-#' Splits data frame into numeric and non-numeric columns
-#'
-#' @return A list with `.$not_numeric` containing a data frame with non-numeric columns, and `.$numeric` being
-#' a data frame containing only numeric columns.
-#'
-#' @examples
-#' #
-split_by_numeric <- function(x){
-
-  stopifnot(is.data.frame(x))
-
-  # not numeric cols
-  numeric_cols <- sapply(x, is.numeric)
-
-  if(sum(numeric_cols) == ncol(x)){
-    stop("No numeric cols found in the data frame.")
-  }
-
-  list(not_numeric = x[!numeric_cols],
-       numeric = x[numeric_cols])
 
 }
