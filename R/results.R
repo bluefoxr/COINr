@@ -7,6 +7,8 @@
 #' relevant columns. Scores are also rounded by default, and there is the option to present scores or ranks.
 #'
 #' @param coin The coin object, or a data frame of indicator data
+#' @param dset Name of data set in `.$Data`
+#' @param also_get Names of further columns to attach to table.
 #' @param tab_type The type of table to generate. Either `"Summ"` (a single indicator plus rank), `"Aggs"` (all aggregated
 #' scores/ranks above indicator level), or `"Full"` (all scores/ranks plus all group, denominator columns).
 #' @param use Either `"scores"` (default), `"ranks"`, or `"groupranks"`. For the latter, `use_group` must be specified.
@@ -66,7 +68,7 @@ get_results <- function(coin, dset, tab_type = "Summ", also_get = NULL, use = "s
   if(is.null(order_by)){
     sortcode <- iMeta_ia$iCode[iMeta_ia$Level == coin$Meta$maxlev]
   } else {
-    if(order_by %nin% names(results)){
+    if(order_by %nin% names(iData)){
       stop("'order_by' is not found in the selected data set.")
     }
     sortcode <- order_by
@@ -264,7 +266,7 @@ get_unit_summary <- function(coin, usel, Levels, dset = "Aggregated", nround = 2
 #'
 #' @export
 
-get_str_weak <- function(coin, dset = NULL, usel = NULL, topN = 5, bottomN = 5, withcodes = TRUE,
+get_str_weak <- function(coin, dset, usel = NULL, topN = 5, bottomN = 5, withcodes = TRUE,
                              use_group = NULL, unq_discard = NULL, min_discard = TRUE, report_level = NULL,
                              with_units = TRUE, adjust_direction = NULL){
 
