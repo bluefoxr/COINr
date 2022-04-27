@@ -13,7 +13,7 @@
 #'
 #' Note that for the moment, regeneration of purses is only partially supported. This is because usually, in the
 #' normalisation step, it is necessary to normalise across the full panel data set (see the `global` argument in
-#' [normalise()]). At the moment, purse regeneration is performed by regenerating each coin individually, but this
+#' [Normalise()]). At the moment, purse regeneration is performed by regenerating each coin individually, but this
 #' does not allow for global normalisation which has to be done at the purse level. This may be fixed in future
 #' releases.
 #'
@@ -21,6 +21,7 @@
 #' @param from Optional: a construction function name. If specified, regeneration begins from this function, rather
 #' than re-running all functions.
 #' @param quietly If `TRUE` (default), messages are suppressed during building.
+#' @param ... arguments passed to or from other methods.
 #'
 #' @examples
 #' #
@@ -28,7 +29,7 @@
 #' @return Updated purse object with regenerated results.
 #'
 #' @export
-Regen.purse <- function(x, from = NULL, quietly = TRUE){
+Regen.purse <- function(x, from = NULL, quietly = TRUE, ...){
 
   # input check
   check_purse(x)
@@ -60,6 +61,7 @@ Regen.purse <- function(x, from = NULL, quietly = TRUE){
 #' @param from Optional: a construction function name. If specified, regeneration begins from this function, rather
 #' than re-running all functions.
 #' @param quietly If `TRUE` (default), messages are suppressed during building.
+#' @param ... arguments passed to or from other methods.
 #'
 #' @examples
 #' #
@@ -67,7 +69,7 @@ Regen.purse <- function(x, from = NULL, quietly = TRUE){
 #' @return Updated coin object with regenerated results.
 #'
 #' @export
-Regen.coin <- function(x, from = NULL, quietly = TRUE){
+Regen.coin <- function(x, from = NULL, quietly = TRUE, ...){
 
   coin <- x
 
@@ -194,7 +196,7 @@ Regen <- function(x, from = NULL, quietly = TRUE){
 #' @param drop A character vector of indicator codes to remove (must be present in the original input data)
 #' @param regen Logical (default): if `TRUE`, automatically regenerates the results based on the new specs
 #' Otherwise, just updates the `.$Log` parameters. This latter might be useful if you want to
-#' Make other changes before re-running using the [regen()] function.
+#' Make other changes before re-running using the [Regen()] function.
 #'
 #' @examples
 #' #
