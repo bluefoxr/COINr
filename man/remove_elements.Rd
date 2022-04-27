@@ -7,7 +7,7 @@
 remove_elements(coin, Level, dset, iCode, quietly = FALSE)
 }
 \arguments{
-\item{coin}{The coin, which must be constructed up to and including the aggregation step.}
+\item{coin}{A coin class object, which must be constructed up to and including the aggregation step, i.e. using \code{\link[=Aggregate]{Aggregate()}}.}
 
 \item{Level}{The level at which to remove elements. For example, \code{Level = 1} would check the effect of removing each indicator, one at
 a time. \code{Level = 2} would check the effect of removing each of the aggregation groups above the indicator level, one at a time.}
