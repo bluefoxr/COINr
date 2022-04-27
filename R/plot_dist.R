@@ -3,16 +3,17 @@
 #' Plots indicator distributions using box plots, dot plots, violin plots, violin-dot plots, and histograms.
 #' Supports plotting multiple indicators by calling aggregation groups.
 #'
-#' @param coin The COIN object, or a data frame of indicator data
+#' @param coin The coin object, or a data frame of indicator data
 #' @param ... Arguments passed to [get_data()] (other than `coin`).
-#' @param normalise_data Logical: if `TRUE`, normalises the data first, using `default_specs`. If `FALSE` (default),
+#' @param normalise Logical: if `TRUE`, normalises the data first, using `default_specs`. If `FALSE` (default),
 #' data is not normalised.
-#' @param default_specs Specifications for normalising data if `normalise_data = TRUE`. This is passed to the
-#' `default_specs` argument of [normalise()].
+#' @param default_specs Specifications for normalising data if `normalise = TRUE`. This is passed to the
+#' `default_specs` argument of [Normalise()].
 #' @param type The type of plot. Currently supported `"Box"`, `"Dot"`, `"Violin"`, `"Violindot"`, `"Histogram"`.
 #'
 #' @importFrom utils stack
 #' @importFrom ggplot2 ggplot aes geom_boxplot theme_light geom_dotplot geom_violin geom_histogram labs facet_wrap labs
+#' @importFrom rlang .data
 #'
 #' @examples
 #' #
@@ -111,7 +112,7 @@ plot_dist <- function(coin, ..., type = "Box", normalise = FALSE, default_specs 
 #'
 #' Plots a single indicator as a line of dots, and optionally highlights a selected unit.
 #'
-#' @param COIN The COIN
+#' @param coin The coin
 #' @param ... Arguments to pass to [get_data()]. Note that `iCodes` is required to be of length 1.
 #' @param marker_type The type of marker, either `"circle"` (default) or `"cross"`, or a marker number to pass to ggplot2 (0-25).
 #' @param usel A subset of units to highlight.
@@ -128,6 +129,7 @@ plot_dist <- function(coin, ..., type = "Box", normalise = FALSE, default_specs 
 #' Takes a value between 0 to 2 (higher will probably remove the label from the axis space).
 #'
 #' @importFrom ggplot2 ggplot aes theme_minimal ylab geom_point theme element_blank
+#' @importFrom rlang .data
 #'
 #' @examples
 #' #
@@ -135,7 +137,7 @@ plot_dist <- function(coin, ..., type = "Box", normalise = FALSE, default_specs 
 #' @return A ggplot2 plot object.
 #'
 #' @export
-plot_dot <- function(COIN, ..., usel = NULL, marker_type = "circle", add_stat = NULL,
+plot_dot <- function(coin, ..., usel = NULL, marker_type = "circle", add_stat = NULL,
                      stat_label = NULL, show_ticks = TRUE, plabel = NULL, usel_label = TRUE, vert_adjust = 0.5){
 
   # GET DATA ----------------------------------------------------------------
