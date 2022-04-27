@@ -10,7 +10,8 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  eval = F
 )
 ```
 
@@ -56,6 +57,6 @@ SA_specs <- list(
 Run SA
 
 ```{r}
-t1 <- get_sensitivity(coin, SA_specs = SA_specs, N = 10, dset = "Aggregated", iCode = "Index")
+#t1 <- get_sensitivity(coin, SA_specs = SA_specs, N = 10, dset = "Aggregated", iCode = "Index")
 ```
 
