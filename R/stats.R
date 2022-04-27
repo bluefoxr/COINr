@@ -5,10 +5,12 @@
 #' @param t_avail Data availability threshold. See details.
 #' @param x A coin
 #' @param dset A data set present in `.$Data`
-#' @param ... Other arguments for indicator selection, passed to [get_data()].
 #' @param nsignif Number of significant figures to round the output table to.
 #' @param out2 Either `"df"` (default) to output a data frame of indicator statistics, or "`coin`" to output an
 #' updated coin with the data frame attached under `.$Analysis`.
+#' @param ... arguments passed to or from other methods.
+#' @param t_zero A threshold between 0 and 1 for flagging indicators with high proportion of zeroes. See details.
+#' @param t_unq A threshold between 0 and 1 for flagging indicators with low proportion of unique values. See details.plot
 #'
 #' @examples
 #' #
@@ -16,8 +18,8 @@
 #' @return Either a data frame or updated coin - see `out2`.
 #'
 #' @export
-get_stats.coin <- function(x, dset, ..., t_skew = 2, t_kurt = 3.5, t_avail = 0.65, t_zero = 0.5,
-                                 t_unq = 0.5, nsignif = 3, out2 = "df"){
+get_stats.coin <- function(x, dset, t_skew = 2, t_kurt = 3.5, t_avail = 0.65, t_zero = 0.5,
+                                 t_unq = 0.5, nsignif = 3, out2 = "df", ...){
 
   stopifnot(out2 %in% c("df", "coin"))
 
@@ -25,7 +27,7 @@ get_stats.coin <- function(x, dset, ..., t_skew = 2, t_kurt = 3.5, t_avail = 0.6
   iData <- get_data(x, dset = dset, ...)
 
   # get iData_ (only numeric indicator cols)
-  iData_ <- extract_iData(coin, iData, GET = "iData_")
+  iData_ <- extract_iData(x, iData, GET = "iData_")
 
   # get stats table
   stat_tab <- get_stats(iData_, t_skew = t_skew, t_kurt = t_kurt, t_avail = t_avail, t_zero = t_zero,
@@ -71,13 +73,16 @@ get_stats.coin <- function(x, dset, ..., t_skew = 2, t_kurt = 3.5, t_avail = 0.6
 #' The aim of this table, among other things, is to check the basic statistics of each column/indicator, and identify
 #' any possible issues for each indicator. For example, low data availability, having a high proportion of zeros and/or
 #' a low proportion of unique values. Further, the combination of skew and kurtosis (i.e. the `Flag.SkewKurt` column)
-#' is a simple test for possible outliers, which may require treatment using [treat()].
+#' is a simple test for possible outliers, which may require treatment using [Treat()].
 #'
 #' @param t_skew Absolute skewness threshold. See details.
 #' @param t_kurt Kurtosis threshold. See details.
 #' @param t_avail Data availability threshold. See details.
 #' @param x A data frame with only numeric columns.
 #' @param nsignif Number of significant figures to round the output table to.
+#' @param ... arguments passed to or from other methods.
+#' @param t_zero A threshold between 0 and 1 for flagging indicators with high proportion of zeroes. See details.
+#' @param t_unq A threshold between 0 and 1 for flagging indicators with low proportion of unique values. See details.
 #'
 #' @importFrom stats median sd
 #'
@@ -88,7 +93,7 @@ get_stats.coin <- function(x, dset, ..., t_skew = 2, t_kurt = 3.5, t_avail = 0.6
 #'
 #' @export
 get_stats.data.frame <- function(x, t_skew = 2, t_kurt = 3.5, t_avail = 0.65, t_zero = 0.5,
-                                 t_unq = 0.5, nsignif = 3){
+                                 t_unq = 0.5, nsignif = 3, ...){
 
 
   # CHECKS ------------------------------------------------------------------
