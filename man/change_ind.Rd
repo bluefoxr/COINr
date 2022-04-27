@@ -15,7 +15,7 @@ change_ind(coin, add = NULL, drop = NULL, regen = FALSE)
 
 \item{regen}{Logical (default): if \code{TRUE}, automatically regenerates the results based on the new specs
 Otherwise, just updates the \code{.$Log} parameters. This latter might be useful if you want to
-Make other changes before re-running using the \code{\link[=regen]{regen()}} function.}
+Make other changes before re-running using the \code{\link[=Regen]{Regen()}} function.}
 }
 \value{
 An updated coin, with regenerated results if \code{regen = TRUE}.

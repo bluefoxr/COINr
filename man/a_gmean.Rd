@@ -24,6 +24,6 @@ x <- 1:10
 # a vector of weights
 w <- runif(10)
 # weighted geometric mean
-geoMean(x,w)
+a_gmean(x,w)
 
 }
