@@ -19,7 +19,7 @@
 #' but check that the aggregation method that you are using satisfies this relationship. For example, if the aggregation method does not
 #' use any weights, then setting the weight to zero will have no effect.
 #'
-#' @param coin The coin, which must be constructed up to and including the aggregation step.
+#' @param coin A coin class object, which must be constructed up to and including the aggregation step, i.e. using [Aggregate()].
 #' @param Level The level at which to remove elements. For example, `Level = 1` would check the effect of removing each indicator, one at
 #' a time. `Level = 2` would check the effect of removing each of the aggregation groups above the indicator level, one at a time.
 #' @param iCode A character string indicating the indicator or aggregate code to extract from each iteration. I.e. normally this would be set to
