@@ -1,18 +1,24 @@
 # WRITING TO COINS
 
-#' Write function arguments to log
-#'
-#' This used inside `build_*` functions. It takes the coin object as an input, then writes the arguments of the
-#' current function into the `.$Log` list of the coin object. This is then used as a record of the operations used
-#' to build the coin, and can be edited.
-#'
-#' @param coin A coin class object
-#'
-#' @examples
-#' #
-#'
-#' @return Updated GII2 object with function arguments written to `.$Log`
-write_log <- function(coin, dont_write = NULL){
+# Write function arguments to log
+#
+# This used inside `build_*` functions. It takes the coin object as an input, then writes the arguments of the
+# current function into the `.$Log` list of the coin object. This is then used as a record of the operations used
+# to build the coin, and can be edited.
+#
+# @param coin A coin class object
+# @param dont_write Any variables not to write to the coin
+# @param write2log If `FALSE`, just passes the coin back without writing anything.
+#
+# @examples
+# #
+#
+# @return Updated GII2 object with function arguments written to `.$Log`
+write_log <- function(coin, dont_write = NULL, write2log = TRUE){
+
+  if(!write2log){
+    return(coin)
+  }
 
   # get calling function name and its arguments
   func_args <- as.list(sys.frame(-1))
@@ -36,21 +42,21 @@ write_log <- function(coin, dont_write = NULL){
 
 }
 
-#' Direct function outputs
-#'
-#' Shortcut to be used at end of functions, either attach to coin or output as list.
-#'
-#' @param coin A coin class object
-#' @param l The list to direct
-#' @param out2 Whether list or attach to coin
-#' @param lev1 Address at first lev of coin
-#' @param lev2 Address at second lev of coin
-#' @param lev3 Address at third lev of coin
-#'
-#' @examples
-#' #
-#'
-#' @return Either a list or an updated coin
+# Direct function outputs
+#
+# Shortcut to be used at end of functions, either attach to coin or output as list.
+#
+# @param coin A coin class object
+# @param l The list to direct
+# @param out2 Whether list or attach to coin
+# @param lev1 Address at first lev of coin
+# @param lev2 Address at second lev of coin
+# @param lev3 Address at third lev of coin
+#
+# @examples
+# #
+#
+# @return Either a list or an updated coin
 write2coin <- function(coin, l, out2, lev1, lev2, lev3 = NULL){
 
   check_coin_input(coin)
@@ -73,20 +79,20 @@ write2coin <- function(coin, l, out2, lev1, lev2, lev3 = NULL){
 }
 
 
-#' Write a named data set to coin
-#'
-#' Writes a data set to the coin, and performs some checks in the process.
-#'
-#' @param coin A coin class object
-#' @param x The data to write
-#' @param dset A character string for naming the data, e.g. `Raw`.
-#' @param quietly If `TRUE`, suppresses messages.
-#' @param ignore_class If `TRUE` ignores the class of the input (used for [new_coin()]).
-#'
-#' @examples
-#' #
-#'
-#' @return Updated coin
+# Write a named data set to coin
+#
+# Writes a data set to the coin, and performs some checks in the process.
+#
+# @param coin A coin class object
+# @param x The data to write
+# @param dset A character string for naming the data, e.g. `Raw`.
+# @param quietly If `TRUE`, suppresses messages.
+# @param ignore_class If `TRUE` ignores the class of the input (used for [new_coin()]).
+#
+# @examples
+# #
+#
+# @return Updated coin
 write_dset <- function(coin, x, dset, quietly = FALSE, ignore_class = FALSE){
 
   # checks
