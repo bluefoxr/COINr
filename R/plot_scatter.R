@@ -32,7 +32,9 @@
 #' @param log_scale A 2-length logical vector specifying whether to use log axes for x and y respectively: if `TRUE`,
 #' a log axis will be used. Defaults to not-log.
 #'
-#' @return
+#' @importFrom rlang .data
+#'
+#' @return A ggplot2 object.
 #' @export
 #'
 #' @examples
@@ -92,12 +94,12 @@ plot_scatter <- function(coin, dsets, iCodes, ..., by_group = NULL,
   if(!is.null(by_group)){
     plt <- ggplot2::ggplot(x12, ggplot2::aes(x = .data[[iCodes[1]]],
                                              y = .data[[iCodes[2]]],
-                                             label = plbs,
+                                             label = .data$plbs,
                                              colour = .data[[by_group]]))
   } else {
     plt <- ggplot2::ggplot(x12, ggplot2::aes(x = .data[[iCodes[1]]],
                                              y = .data[[iCodes[2]]],
-                                             label = plbs))
+                                             label = .data$plbs))
   }
 
   # main plot
