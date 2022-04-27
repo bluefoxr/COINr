@@ -9,8 +9,12 @@
 #' @param dset The data set to extract the target variable from (passed to [get_data()]).
 #' @param iCode The variable within `dset` to use as the target variable (passed to [get_data()]).
 #' @param quietly Set to `TRUE` to suppress progress messages.
+#' @param Nboot Number of bootstrap samples to take when estimating confidence intervals on sensitivity
+#' indices.
 #'
-#' @return
+#' @importFrom stats runif
+#'
+#' @return A list of sensitivity analysis data frames
 #' @export
 #'
 #' @examples
@@ -51,7 +55,7 @@ get_sensitivity <- function(coin, SA_specs, N, SA_type = "UA", dset, iCode, Nboo
   if(SA_type == "UA"){
 
     # a random (uniform) sample
-    XX <- matrix(runif(d*N), nrow = N, ncol = d)
+    XX <- matrix(stats::runif(d*N), nrow = N, ncol = d)
 
   } else {
 
@@ -174,21 +178,21 @@ get_sensitivity <- function(coin, SA_specs, N, SA_type = "UA", dset, iCode, Nboo
 }
 
 
-#' Regenerate an edited coin
-#'
-#' This is similar to [edit_coin()] but works with a list of parameters to change, rather than one, and also outputs
-#' a regenerated coin.
-#'
-#' @param l_para A list of parameter values to change. Should be of the format `list(para_name = new_value)`, where
-#' `new_value`
-#' @param addresses A list or character vector of addresses. `names(addresses)` must correspond to `names(l_para)`.
-#' @param coin A coin, to be edited.
-#'
-#' @return A regenerated coin
-#' @export
-#'
-#' @examples
-#' #
+# Regenerate an edited coin
+#
+# This is similar to [edit_coin()] but works with a list of parameters to change, rather than one, and also outputs
+# a regenerated coin.
+#
+# @param l_para A list of parameter values to change. Should be of the format `list(para_name = new_value)`, where
+# `new_value`
+# @param addresses A list or character vector of addresses. `names(addresses)` must correspond to `names(l_para)`.
+# @param coin A coin, to be edited.
+#
+# @return A regenerated coin
+# @export
+#
+# @examples
+# #
 regen_edit <- function(l_para, addresses, coin){
 
   d <- length(l_para)
@@ -219,30 +223,30 @@ regen_edit <- function(l_para, addresses, coin){
 }
 
 
-#' Convert a numeric sample to parameter values
-#'
-#' Converts a numeric sample `x`, which should have values between 0 and 1, to a corresponding vector or list of
-#' parameter values, based on `distribution`.
-#'
-#' The `distribution` argument specifies how to map `x` to parameter values and can be used in two different ways,
-#' depending on `dist_type`. If `dist_type = "discrete"`, then `distribution` should be a vector or list of alternative
-#' parameter values (or objects). Each entry of `x` is mapped to an entry from `distribution` by treating `distribution`
-#' as a discrete uniform distribution over its entries.
-#'
-#' If `dist_type = "continuous"`, `distribution` is assumed to be a continuous uniform distribution, such that
-#' `distribution` is a 2-length numeric vector with the first value being the lower bound, and the second value the
-#' upper bound. For example, if `distribution = c(5, 10)`, then `x` will be mapped onto a continuous uniform distribution
-#' bounded by 5 and 10.
-#'
-#' @param distribution The distribution to sample using `x` - see details.
-#' @param dist_type Either `"discrete"` or `"continuous"` - see details.
-#' @param checks Logical: if `TRUE` runs some checks on inputs, set to `FALSE` to increase speed slightly.
-#' @param x A numeric vector with values between 0 and 1
-#'
-#' @return
-#'
-#' @examples
-#' #
+# Convert a numeric sample to parameter values
+#
+# Converts a numeric sample `x`, which should have values between 0 and 1, to a corresponding vector or list of
+# parameter values, based on `distribution`.
+#
+# The `distribution` argument specifies how to map `x` to parameter values and can be used in two different ways,
+# depending on `dist_type`. If `dist_type = "discrete"`, then `distribution` should be a vector or list of alternative
+# parameter values (or objects). Each entry of `x` is mapped to an entry from `distribution` by treating `distribution`
+# as a discrete uniform distribution over its entries.
+#
+# If `dist_type = "continuous"`, `distribution` is assumed to be a continuous uniform distribution, such that
+# `distribution` is a 2-length numeric vector with the first value being the lower bound, and the second value the
+# upper bound. For example, if `distribution = c(5, 10)`, then `x` will be mapped onto a continuous uniform distribution
+# bounded by 5 and 10.
+#
+# @param distribution The distribution to sample using `x` - see details.
+# @param dist_type Either `"discrete"` or `"continuous"` - see details.
+# @param checks Logical: if `TRUE` runs some checks on inputs, set to `FALSE` to increase speed slightly.
+# @param x A numeric vector with values between 0 and 1
+#
+# @return A vector or list of parameter values.
+#
+# @examples
+# #
 sample_2_para <- function(x, distribution, dist_type = "discrete", checks = TRUE){
 
   if(checks){
@@ -285,22 +289,22 @@ sample_2_para <- function(x, distribution, dist_type = "discrete", checks = TRUE
 }
 
 
-#' Edit objects inside a coin
-#'
-#' Changes the object found at `address` to `new_value`.
-#'
-#' @param coin A coin
-#' @param address A string specifying the location in the coin of the object to edit. This should begin with `"$"`, omitting the coin itself
-#' in the address. E.g. if you target `coin$x$y$z` enter `"$x$y$z"`.
-#' @param new_value The new value to assign at `address`.
-#' @param checks Logical: if `TRUE`, runs some basic checks, otherwise omitted if `FALSE`. Setting `FALSE` may speed
-#' things up a bit in sensitivity analysis, for example.
-#'
-#' @return An updated coin
-#' @export
-#'
-#' @examples
-#' #
+# Edit objects inside a coin
+#
+# Changes the object found at `address` to `new_value`.
+#
+# @param coin A coin
+# @param address A string specifying the location in the coin of the object to edit. This should begin with `"$"`, omitting the coin itself
+# in the address. E.g. if you target `coin$x$y$z` enter `"$x$y$z"`.
+# @param new_value The new value to assign at `address`.
+# @param checks Logical: if `TRUE`, runs some basic checks, otherwise omitted if `FALSE`. Setting `FALSE` may speed
+# things up a bit in sensitivity analysis, for example.
+#
+# @return An updated coin
+# @export
+#
+# @examples
+# #
 edit_coin <- function(coin, address, new_value, checks = TRUE){
 
   # checks
@@ -328,7 +332,7 @@ edit_coin <- function(coin, address, new_value, checks = TRUE){
 #' which is generated as a result of running a Monte Carlo sample from [SA_sample()] through a system.
 #' Then it estimates sensitivity indices using this sample.
 #'
-#' This function is built to be used inside [sensitivity()].
+#' This function is built to be used inside [get_sensitivity()].
 #' See [COINr online documentation](https://bluefoxr.github.io/COINrDoc/sensitivity-analysis.html) for more details.
 #'
 #' @param yy A vector of model output values, as a result of a \eqn{N(d+2)} Monte Carlo design.
@@ -359,14 +363,13 @@ edit_coin <- function(coin, address, new_value, checks = TRUE){
 #' # Notice that total order indices have narrower confidence intervals than first order.
 #'
 #' @seealso
-#' * [sensitivity()] Perform global sensitivity or uncertainty analysis on a COIN
+#' * [get_sensitivity()] Perform global sensitivity or uncertainty analysis on a COIN
 #' * [SA_sample()] Input design for estimating sensitivity indices
 #'
 #' @return A list with the output variance, plus a data frame of first order and total order sensitivity indices for
 #' each variable, as well as bootstrapped confidence intervals if `!is.null(Nboot)`.
 #'
 #' @export
-
 SA_estimate <- function(yy, N, d, Nboot = NULL){
 
   # put into matrix format: just the ABis
@@ -446,13 +449,15 @@ SA_estimate <- function(yy, N, d, Nboot = NULL){
 #' Generate sample for sensitivity analysis
 #'
 #' Generates an input sample for a Monte Carlo estimation of global sensitivity indices. Used in
-#' the [sensitivity()] function. The total sample size will be \eqn{N(d+2)}.
+#' the [get_sensitivity()] function. The total sample size will be \eqn{N(d+2)}.
 #'
 #' This function generates a Monte Carlo sample as described e.g. in the [Global Sensitivity Analysis: The Primer book](https://onlinelibrary.wiley.com/doi/book/10.1002/9780470725184).
 #' See also [COINr online documentation](https://bluefoxr.github.io/COINrDoc/sensitivity-analysis.html).
 #'
 #' @param N The number of sample points per dimension.
 #' @param d The dimensionality of the sample
+#'
+#' @importFrom stats runif
 #'
 #' @examples
 #' # sensitivity analysis sample for 3 dimensions with 100 points per dimension
@@ -461,14 +466,14 @@ SA_estimate <- function(yy, N, d, Nboot = NULL){
 #' @return A matrix with \eqn{N(d+2)} rows and `d` columns.
 #'
 #' @seealso
-#' * [sensitivity()] Perform global sensitivity or uncertainty analysis on a COIN.
+#' * [get_sensitivity()] Perform global sensitivity or uncertainty analysis on a COIN.
 #' * [SA_estimate()] Estimate sensitivity indices from system output, as a result of input design from SA_sample().
 #'
 #' @export
 SA_sample <- function(N, d){
 
   # a random (uniform) sample
-  Xbase <- matrix(runif(d*N*2), nrow = N, ncol = d*2)
+  Xbase <- matrix(stats::runif(d*N*2), nrow = N, ncol = d*2)
   # get first half
   XA <- Xbase[, 1:d]
   # get second half
@@ -515,7 +520,7 @@ SA_sample <- function(N, d){
 #'
 #' @seealso
 #' * [get_sensitivity()] Perform global sensitivity or uncertainty analysis on a coin
-#' * [plot_SA()] Plot sensitivity indices following a sensitivity analysis.
+#' * [plot_sensitivity()] Plot sensitivity indices following a sensitivity analysis.
 #'
 #' @return A plot of rank confidence intervals, generated by 'ggplot2'.
 #'
@@ -605,6 +610,7 @@ plot_uncertainty <- function(SAresults, plot_units = NULL, order_by = "nominal",
 #'
 #' @importFrom ggplot2 ggplot aes geom_bar labs theme_minimal geom_errorbar coord_polar theme_void
 #' @importFrom ggplot2 facet_wrap
+#' @importFrom rlang .data
 #'
 #' @examples
 #' #
