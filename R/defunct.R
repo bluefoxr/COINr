@@ -285,7 +285,3 @@ weightOpt <- function(...){
   defunct_message()
   .Defunct("get_opt_weights")
 }
-
-weights2corr <- function(...){
-  stop("This function is no longer exported into the COINr namespace and is for internal use only.")
-}
