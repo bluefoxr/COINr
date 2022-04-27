@@ -5,15 +5,16 @@
 #' parents of each indicator. Also supports discrete colour maps using `flagcolours`, different types of correlation, and groups
 #' plots by higher aggregation levels.
 #'
-#' This function calls [getCorr()].
+#' This function calls [get_corr()].
 #'
 #' Note that this function can only call correlations within the same data set (i.e. only one data set in `.$Data`).
 #'
 #' @param coin The coin object
 #' @param dset The target data set.
-#' @param icodes An optional list of character vectors where the first entry specifies the indicator/aggregate
+#' @param iCodes An optional list of character vectors where the first entry specifies the indicator/aggregate
 #' codes to correlate against the second entry (also a specification of indicator/aggregate codes)
-#' @param Levels The aggregation levels to take the two groups of indicators from. See [getIn()] for details.
+#' @param Levels The aggregation levels to take the two groups of indicators from. See [get_data()] for details.
+#' @param ... Optional further arguments to pass to [get_data()].
 #' @param cortype The type of correlation to calculate, either `"pearson"`, `"spearman"`, or `"kendall"` (see [stats::cor()]).
 #' @param withparent If `aglev[1] != aglev[2]`, and equal `"parent"` will only plot correlations of each row with its parent (default).
 #' If `"family"`, plots the lowest aggregation level in `Levels` against all its parent levels.
@@ -40,25 +41,18 @@
 #' present a table of the data in a report.
 #'
 #' @importFrom ggplot2 ggplot aes geom_tile
+#' @importFrom rlang .data
 #'
 #' @examples
-#' # build ASEM coin
-#' ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
-#' # correlation data frame of indicators in connectivity sub-index, grouped by pillar
-#' corrs <- plotCorr(ASEM, dset = "Raw", icodes = "Conn", Levels = 1,
-#' showvals = F, out2 = "dflong")
-#' # NOTE to create a plot instead set out2 = "fig"
+#' #
 #'
 #' @return If `out2 = "fig"` returns a plot generated with **ggplot2**. These can be edited further with **ggplot2** commands.
 #' If `out2 = "dflong"` returns the correlation matrix as a data frame in long form, if `out2 = "dfwide"`,
 #' returns the correlation matrix in wide form. The last option here is probably useful if you want to
 #' present a table of the data in a report.
 #'
-#' @seealso
-#' * [getCorr()] Getting correlation matrices of indicator subsets
-#'
 #' @export
-plot_corr <- function(coin, dset = NULL, iCodes = NULL, Levels = 1, ..., cortype = "pearson",
+plot_corr <- function(coin, dset, iCodes = NULL, Levels = 1, ..., cortype = "pearson",
                      withparent = FALSE, grouplev = NULL, box_level = NULL, showvals = TRUE, flagcolours = FALSE,
                      flagthresh = c(-0.4, 0.3, 0.9), pval = 0.05, insig_colour = "#F0F0F0",
                      text_colour = NULL, discrete_colours = NULL, box_colour = NULL, out2 = "fig"){
