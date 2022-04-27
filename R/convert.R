@@ -23,7 +23,7 @@
 #' @param out2 If `"coin"` (default) outputs a coin, else if `"list"`, outputs a list with
 #' `iData` and `iMeta` entries. This may be useful if you want to make further edits before building the coin.
 #'
-#' @return A coin class object
+#' @return A coin class object if `out2 = "coin"`, else a list of data frames if `out2 = "list"`.
 #' @export
 #'
 #' @examples
@@ -33,7 +33,7 @@ COIN_to_coin <- function(COIN, recover_dsets = FALSE, out2 = "coin"){
 
   # Get dfs -----------------------------------------------------------------
 
-  if(!is.COIN(COIN)){
+  if(!inherits(COIN, "COIN")){
 
     intype <- "list"
 
