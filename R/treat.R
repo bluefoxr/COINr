@@ -7,6 +7,8 @@
 #' @param combine_treat By default, if `f1` fails to pass `f_pass`, then `f2` is applied to the original `x`,
 #' rather than the treated output of `f1`. If `combine_treat = TRUE`, `f2` will instead be applied to the output
 #' of `f1`, so the two treatments will be combined.
+#' @param write_to If specified, writes the aggregated data to `.$Data[[write_to]]`. Default `write_to = "Treated"`.
+#' @param ... arguments passed to or from other methods.
 #'
 #' @return An updated purse with new treated data sets added at `.$Data$Treated` in each coin, plus
 #' analysis information at `.$Analysis$Treated`
@@ -14,16 +16,16 @@
 #'
 #' @examples
 #' #
-Treat.purse <- function(x, dset = NULL, default_specs = NULL, indiv_specs = NULL,
-                         combine_treat = FALSE){
+Treat.purse <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
+                         combine_treat = FALSE, write_to = NULL, ...){
 
   # input check
   check_purse(x)
 
-  # apply unit screening to each coin
+  # apply treatment to each coin
   x$coin <- lapply(x$coin, function(coin){
     Treat.coin(coin, dset = dset, default_specs = default_specs,
-                indiv_specs = indiv_specs, combine_treat = combine_treat)
+                indiv_specs = indiv_specs, combine_treat = combine_treat, write_to = write_to)
   })
   # make sure still purse class
   class(x) <- c("purse", "data.frame")
@@ -40,6 +42,12 @@ Treat.purse <- function(x, dset = NULL, default_specs = NULL, indiv_specs = NULL
 #' @param combine_treat By default, if `f1` fails to pass `f_pass`, then `f2` is applied to the original `x`,
 #' rather than the treated output of `f1`. If `combine_treat = TRUE`, `f2` will instead be applied to the output
 #' of `f1`, so the two treatments will be combined.
+#' @param out2 The type of function output: either `"coin"` to return an updated coin, or `"list"` to return a
+#' list with treated data and treatment details.
+#' @param write2log Logical: if `FALSE`, the arguments of this function are not written to the coin log, so this
+#' function will not be invoked when regenerating. Recommend to keep `TRUE` unless you have a good reason to do otherwise.
+#' @param write_to If specified, writes the aggregated data to `.$Data[[write_to]]`. Default `write_to = "Treated"`.
+#' @param ... arguments passed to or from other methods.
 #'
 #' @return An updated coin with a new data set `.Data$Treated` added, plus analysis information in
 #' `.$Analysis$Treated`.
@@ -48,11 +56,11 @@ Treat.purse <- function(x, dset = NULL, default_specs = NULL, indiv_specs = NULL
 #' @examples
 #' #
 Treat.coin <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
-                        combine_treat = FALSE, out2 = "coin"){
+                       combine_treat = FALSE, out2 = "coin", write_to = NULL, write2log = TRUE, ...){
 
   # WRITE LOG ---------------------------------------------------------------
 
-  coin <- write_log(x, dont_write = "x")
+  coin <- write_log(x, dont_write = "x", write2log = write2log)
 
   # GET DSET, CHECKS --------------------------------------------------------
 
@@ -67,8 +75,11 @@ Treat.coin <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
   if(out2 == "list"){
     l_treat
   } else {
-    coin <- write_dset(coin, l_treat$x_treat, dset = "Treated")
-    write2coin(coin, l_treat[names(l_treat) != "x_treat"], out2, "Analysis", "Treated")
+    if(is.null(write_to)){
+      write_to <- "Treated"
+    }
+    coin <- write_dset(coin, l_treat$x_treat, dset = write_to)
+    write2coin(coin, l_treat[names(l_treat) != "x_treat"], out2, "Analysis", write_to)
   }
 
 }
@@ -114,6 +125,7 @@ Treat.coin <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
 #' @param combine_treat By default, if `f1` fails to pass `f_pass`, then `f2` is applied to the original `x`,
 #' rather than the treated output of `f1`. If `combine_treat = TRUE`, `f2` will instead be applied to the output
 #' of `f1`, so the two treatments will be combined.
+#' @param ... arguments passed to or from other methods.
 #'
 #' @importFrom utils modifyList
 #'
@@ -123,7 +135,7 @@ Treat.coin <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
 #' @return A treated data frame of data
 #'
 #' @export
-Treat.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL, combine_treat = FALSE){
+Treat.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL, combine_treat = FALSE, ...){
 
 
   # SET DEFAULTS ------------------------------------------------------------
@@ -282,6 +294,9 @@ Treat.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL, combin
 #' @param combine_treat By default, if `f1` fails to pass `f_pass`, then `f2` is applied to the original `x`,
 #' rather than the treated output of `f1`. If `combine_treat = TRUE`, `f2` will instead be applied to the output
 #' of `f1`, so the two treatments will be combined.
+#' @param f_pass A string specifying an outlier detection function - see details. Default `"check_SkewKurt"`
+#' @param f_pass_para Any further arguments to pass to `f_pass()`.
+#' @param ... arguments passed to or from other methods.
 #'
 #' @examples
 #' #
@@ -290,7 +305,7 @@ Treat.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL, combin
 #'
 #' @export
 Treat.numeric <- function(x, f1, f1_para = NULL, f2 = NULL, f2_para = NULL,
-                           f_pass, f_pass_para = NULL, combine_treat = FALSE){
+                           f_pass, f_pass_para = NULL, combine_treat = FALSE, ...){
 
   # INPUT CHECKS ------------------------------------------------------------
 
@@ -488,7 +503,7 @@ Treat.numeric <- function(x, f1, f1_para = NULL, f2 = NULL, f2_para = NULL,
 #' Treat data
 #'
 #' @param x Thing
-#' @param ... thing
+#' @param ... arguments passed to or from other methods.
 #'
 #' @return message
 #'
