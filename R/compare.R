@@ -115,6 +115,9 @@ compare_coins <- function(coin1, coin2, dset, iCode, also_get = NULL, compare_by
 #' results of each coin will be merged using the `uCode`s within each coin. If this is specified, results will be
 #' merged additionally using the metadata columns. This means that coins must share the same metadata columns that
 #' are returned as a result of `also_get`.
+#' @param compare_by Either `"ranks"` which produces a comparison using ranks, or else `"scores"`, which instead
+#' uses scores. Note that scores may be very different if the methodology is different from one coin to another,
+#' e.g. for different normalisation methods.
 #'
 #' @return Data frame unless `tabtype = "All"`, in which case a list of three data frames is returned.
 #'
@@ -127,7 +130,9 @@ compare_coins_multi <- function(coins, dset, iCode, also_get = NULL, tabtype = "
 
   # if all tabtypes are requested, recursively call the function
   if(tabtype == "All"){
-    tablist <- lapply(tabtypes, function(x){compare_multi(coins, x, ibase)})
+    tablist <- lapply(tabtypes, function(x){
+      compare_coins_multi(coins, dset = dset, iCode = iCode, also_get = also_get, tabtype = x,
+                          ibase = ibase, sort_table = sort_table, compare_by = compare_by)})
     names(tablist) <- tabtypes
     return(tablist)
   }
