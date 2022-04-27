@@ -2,7 +2,7 @@
 % Please edit documentation in R/normalise.R
 \name{Normalise}
 \alias{Normalise}
-\title{Normalise indicator data sets}
+\title{Normalise data}
 \usage{
 Normalise(x, ...)
 }
@@ -11,17 +11,8 @@ Normalise(x, ...)
 
 \item{...}{Further arguments to be passed to methods.}
 }
-\value{
-An updated GII with normalised data set added
-}
 \description{
-Normalisation is specified using the \code{ntype} and \code{npara} arguments. In these, \code{ntype} should be a character
-string which is the name of a normalisation
-function. For example, \code{ntype = "n_minmax"} calls the \code{\link[=n_minmax]{n_minmax()}} function. \code{npara} is any
-further argument to \code{ntype}. This means that any function can be passed to \code{\link[=normalise]{normalise()}}, as long as it
-is of the form \code{f(x, npara)}, where \code{x} is a vector (i.e. one column of data) and should return a
-similar vector of normalised data. See \code{\link[=n_minmax]{n_minmax()}} for an example. If a function has more than one
-additional argument, then \code{npara} can be passed as a list and a wrapper could be created.
+Normalise data
 }
 \examples{
 #

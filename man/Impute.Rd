@@ -9,7 +9,7 @@ Impute(x, ...)
 \arguments{
 \item{x}{Object to be imputed}
 
-\item{...}{Further arguments to be passed to methods.}
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
 An object of the same class as \code{x}, but imputed.

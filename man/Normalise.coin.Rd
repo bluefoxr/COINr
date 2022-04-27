@@ -11,7 +11,9 @@
   indiv_specs = NULL,
   directions = NULL,
   out2 = "coin",
-  write_to = NULL
+  write_to = NULL,
+  write2log = TRUE,
+  ...
 )
 }
 \arguments{
@@ -35,9 +37,14 @@ frame.}
 
 \item{write_to}{Optional character string for naming the data set in the coin. Data will be written to
 \code{.$Data[[write_to]]}. Default is \code{write_to == "Normalised"}.}
+
+\item{write2log}{Logical: if \code{FALSE}, the arguments of this function are not written to the coin log, so this
+function will not be invoked when regenerating. Recommend to keep \code{TRUE} unless you have a good reason to do otherwise.}
+
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
-
+An updated coin
 }
 \description{
 Create a normalised data set

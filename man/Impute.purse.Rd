@@ -6,13 +6,14 @@
 \usage{
 \method{Impute}{purse}(
   x,
-  dset = NULL,
+  dset,
   f_i = NULL,
   f_i_para = NULL,
   impute_by = "column",
   group_level = NULL,
   normalise_first = NULL,
-  write_to = NULL
+  write_to = NULL,
+  ...
 )
 }
 \arguments{
@@ -31,6 +32,8 @@
 \item{normalise_first}{xx}
 
 \item{write_to}{xx}
+
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
 An updated purse with imputed data sets added to each coin.

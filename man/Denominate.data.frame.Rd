@@ -4,7 +4,15 @@
 \alias{Denominate.data.frame}
 \title{Denominate data sets by other variables}
 \usage{
-\method{Denominate}{data.frame}(x, denoms, denomby, x_ID = NULL, denoms_ID = NULL, f_denom = NULL)
+\method{Denominate}{data.frame}(
+  x,
+  denoms,
+  denomby,
+  x_ID = NULL,
+  denoms_ID = NULL,
+  f_denom = NULL,
+  ...
+)
 }
 \arguments{
 \item{x}{A data frame of data to be denominated. Columns to be denominated must be numeric, but any columns not
@@ -28,6 +36,8 @@ dollars, dividing will create very small numbers (order 1e-10 and smaller) which
 \item{f_denom}{A function which takes two numeric vector arguments and is used to perform the denomination for each
 column. By default, this is division, i.e. \code{x[[col]]/denoms[[col]]} for given columns, but any function can be passed
 that takes two numeric vectors as inputs and returns a single numeric vector. See details.}
+
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
 A data frame of the same size as \code{x}, with any specified columns denominated according to specifications.

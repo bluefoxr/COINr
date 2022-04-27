@@ -13,13 +13,14 @@
   dat_thresh = NULL,
   by_df = FALSE,
   out2 = "coin",
-  write_to = NULL
+  write_to = NULL,
+  ...
 )
 }
 \arguments{
-\item{x}{The coin object}
+\item{x}{A coin class object.}
 
-\item{dset}{The data set to aggregate}
+\item{dset}{The name of the data set to apply the function to, which should be accessible in \code{.$Data}.}
 
 \item{f_ag}{The name of an aggregation function, a string}
 
@@ -38,13 +39,32 @@ details.}
 \item{out2}{Either \code{"coin"} (default) to return updated coin or \code{"df"} to output the aggregated data set.}
 
 \item{write_to}{If specified, writes the aggregated data to \code{.$Data[[write_to]]}. Default \code{write_to = "Aggregated"}.}
+
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
-An updated coin with aggregated data set added
+An updated coin with aggregated data set added at \code{.$Data[[write_to]]} if \code{out2 = "coin"},
+else if \code{out2 = "df"} outputs the aggregated data set as a data frame.
 }
 \description{
 Aggregates a named data set specified by \code{dset} using aggregation function \code{f_ag}, weights \code{w}, and optional
 function parameters \code{f_ag_para}.
+}
+\details{
+Aggregation is performed row-wise using the function \code{f_ag}, such that for each row \code{x_row}, the output is
+\code{f_ag(x_row, f_ag_para)}, and for the whole data frame, it outputs a numeric vector. The data frame \code{x} must
+only contain numeric columns.
+
+The function \code{f_ag} must be supplied as a string, e.g. \code{"a_amean"}, and it must take as a minimum an input
+\code{x} which is either a numeric vector (if \code{by_df = FALSE}), or a data frame (if \code{by_df = TRUE}). In the former
+case \code{f_ag} should return a single numeric value (i.e. the result of aggregating \code{x}), or in the latter case
+a numeric vector (the result of aggregating the whole data frame in one go).
+
+\code{f_ag} can optionally have other parameters, e.g. weights, specified as a list in \code{f_ag_para}.
+
+Optionally, a data availability threshold can be assigned below which the aggregated value will return
+\code{NA} (see \code{dat_thresh} argument). If \code{by_df = TRUE}, this will however be ignored because aggregation is not
+done on individual rows. Note that more complex constraints could be built into \code{f_ag} if needed.
 }
 \examples{
 #

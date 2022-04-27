@@ -4,7 +4,14 @@
 \alias{Aggregate.data.frame}
 \title{Aggregate data frame}
 \usage{
-\method{Aggregate}{data.frame}(x, f_ag = NULL, f_ag_para = NULL, dat_thresh = NULL, by_df = FALSE)
+\method{Aggregate}{data.frame}(
+  x,
+  f_ag = NULL,
+  f_ag_para = NULL,
+  dat_thresh = NULL,
+  by_df = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{Object to be aggregated}
@@ -20,6 +27,8 @@ fraction of non-\code{NA} values.}
 
 \item{by_df}{Controls whether to send a numeric vector to \code{f_ag} (if \code{FALSE}, default) or a data frame (if \code{TRUE}) - see
 details.}
+
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
 A numeric vector

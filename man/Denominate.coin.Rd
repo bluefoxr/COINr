@@ -12,13 +12,14 @@
   denoms_ID = NULL,
   f_denom = NULL,
   write_to = NULL,
-  out2 = "coin"
+  out2 = "coin",
+  ...
 )
 }
 \arguments{
 \item{x}{A coin class object}
 
-\item{dset}{A named data set to be denominated that is present in .$Data}
+\item{dset}{The name of the data set to apply the function to, which should be accessible in \code{.$Data}.}
 
 \item{denoms}{A data frame of denominator data. If not specified, will extract any potential denominator columns
 that were attached to \code{iData} when calling \code{\link[=new_coin]{new_coin()}}.}
@@ -36,9 +37,11 @@ that takes two numeric vectors as inputs and returns a single numeric vector. Se
 \item{write_to}{If specified, writes the aggregated data to \code{.$Data[[write_to]]}. Default \code{write_to = "Denominated"}.}
 
 \item{out2}{Either \code{"coin"} (default) to return updated coin or \code{"df"} to output the aggregated data set.}
+
+\item{...}{arguments passed to or from other methods}
 }
 \value{
-
+An updated coin if \code{out2 = "coin"}, else a data frame of denominated data if \code{out2 = "df"}.
 }
 \description{
 Denominate data set in a coin

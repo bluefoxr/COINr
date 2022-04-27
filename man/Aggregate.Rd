@@ -15,7 +15,8 @@ Aggregate(x, ...)
 An object similar to the input
 }
 \description{
-Methods for aggregating numeric vectors, data frames, coins and purses.
+Methods for aggregating numeric vectors, data frames, coins and purses. See individual method documentation
+for more details, e.g. \code{\link[=Aggregate.coin]{Aggregate.coin()}}.
 }
 \examples{
 #

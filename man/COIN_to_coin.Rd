@@ -17,7 +17,7 @@ AggMeta entries.}
 \code{iData} and \code{iMeta} entries. This may be useful if you want to make further edits before building the coin.}
 }
 \value{
-A coin class object
+A coin class object if \code{out2 = "coin"}, else a list of data frames if \code{out2 = "list"}.
 }
 \description{
 Converts an older COIN class to the newer coin class. Note that there are some limitations to this. First,

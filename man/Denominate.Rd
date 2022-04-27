@@ -7,9 +7,9 @@
 Denominate(x, ...)
 }
 \arguments{
-\item{x}{Thing}
+\item{x}{Object to be denominated}
 
-\item{...}{thing}
+\item{...}{arguments passed to or from other methods}
 }
 \value{
 message
@@ -17,4 +17,7 @@ message
 \description{
 "Denominates" or "scales" variables by other variables. Typically this is done by dividing extensive variables such as
 GDP by a scaling variable such as population, to give an intensive variable (GDP per capita).
+}
+\details{
+See documentation for individual methods: \code{\link[=Denominate.data.frame]{Denominate.data.frame()}}, \code{\link[=Denominate.coin]{Denominate.coin()}} and \code{\link[=Denominate.purse]{Denominate.purse()}}.
 }

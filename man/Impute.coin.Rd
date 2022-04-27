@@ -6,7 +6,7 @@
 \usage{
 \method{Impute}{coin}(
   x,
-  dset = NULL,
+  dset,
   f_i = NULL,
   f_i_para = NULL,
   impute_by = "column",
@@ -14,7 +14,8 @@
   group_level = NULL,
   normalise_first = NULL,
   out2 = "coin",
-  write_to = NULL
+  write_to = NULL,
+  ...
 )
 }
 \arguments{
@@ -44,9 +45,11 @@ frame.}
 
 \item{write_to}{Optional character string for naming the data set in the coin. Data will be written to
 \code{.$Data[[write_to]]}. Default is \code{write_to == "Imputed"}.}
+
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
-
+An updated coin
 }
 \description{
 If \code{normalise_first = TRUE} (default for \code{impute_by = "row"}), indicators will be

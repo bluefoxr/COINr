@@ -4,7 +4,7 @@
 \alias{Impute.numeric}
 \title{Impute a numeric vector}
 \usage{
-\method{Impute}{numeric}(x, f_i = NULL, f_i_para = NULL)
+\method{Impute}{numeric}(x, f_i = NULL, f_i_para = NULL, ...)
 }
 \arguments{
 \item{x}{A numeric vector, possibly with \code{NA} values to be imputed.}
@@ -12,6 +12,8 @@
 \item{f_i}{A function that imputes missing values in a numeric vector}
 
 \item{f_i_para}{Optional further arguments to be passed to \code{f_i()}}
+
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
 An imputed numeric vector of the same length of \code{x}.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/denominate.R
 \name{Denominate.purse}
 \alias{Denominate.purse}
-\title{Title}
+\title{Denominate a data set}
 \usage{
 \method{Denominate}{purse}(
   x,
@@ -11,21 +11,22 @@
   denomby = NULL,
   denoms_ID = NULL,
   f_denom = NULL,
-  write_to = NULL
+  write_to = NULL,
+  ...
 )
 }
 \arguments{
 \item{x}{A purse class object}
 
-\item{dset}{A named data set to be denominated that is present in .$Data}
+\item{dset}{The name of the data set to apply the function to, which should be accessible in \code{.$Data}.}
 
 \item{denoms}{A data frame of denominator data. If not specified, will extract any potential denominator columns
-that were attached to iData when calling new_coin().}
+that were attached to \code{iData} when calling \code{\link[=new_coin]{new_coin()}}.}
 
 \item{denomby}{Optional data frame specifying which indicators should be denominated and by what. If not specified,
 looks for a Denominator column in iMeta.}
 
-\item{denoms_ID}{An ID column for matching denoms with the data to be denominated. This column should contain
+\item{denoms_ID}{An ID column for matching \code{denoms} with the data to be denominated. This column should contain
 uMeta codes to match with the data set extracted from the coin.}
 
 \item{f_denom}{A function which takes two numeric vector arguments and is used to perform the denomination for each
@@ -33,12 +34,14 @@ column. By default, this is division, i.e. \code{x[[col]]/denoms[[col]]} for giv
 that takes two numeric vectors as inputs and returns a single numeric vector. See details.}
 
 \item{write_to}{If specified, writes the aggregated data to \code{.$Data[[write_to]]}. Default \code{write_to = "Denominated"}.}
+
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
-
+An updated purse
 }
 \description{
-Title
+Denominate a data set
 }
 \examples{
 #

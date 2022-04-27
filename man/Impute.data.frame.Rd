@@ -11,7 +11,8 @@
   impute_by = "column",
   normalise_first = NULL,
   directions = NULL,
-  sfigs = 9
+  sfigs = 9,
+  ...
 )
 }
 \arguments{
@@ -34,16 +35,18 @@ of \code{x} - this is only used if \code{normalise_first = TRUE}. See details.}
 
 \item{sfigs}{The number of significant figures to use in comparing non-\code{NA} values in \code{x} with their
 counterparts in the imputed data frame. Default 9. See details.}
+
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
-
+An imputed data frame
 }
 \description{
-Impute a data frame using any function, either columnwise, rowwise or by the whole data frame in one
+Impute a data frame using any function, either column-wise, row-wise or by the whole data frame in one
 shot.
 }
 \details{
-This function only accepts data frames with all numeric columns. It imputes any NAs in the data frame
+This function only accepts data frames with all numeric columns. It imputes any \code{NA}s in the data frame
 by invoking the function \code{f_i} and any optional arguments \code{f_i_para} on each column at a time (if
 \code{impute_by = "column"}), or on each row at a time (if \code{impute_by = "row"}), or by passing the entire
 data frame to \code{f_i} if \code{impute_by = "df"}.
@@ -60,7 +63,7 @@ more sensible results can be obtained. There are two options to pre-normalise: f
 need to supply a vector of directions. The data will then be normalised using a min-max approach
 before imputation, followed by the inverse operation to return the data to the original scales.
 
-Another approach which gives more control is to simply run \code{\link[=normalise]{normalise()}} first, and work with the
+Another approach which gives more control is to simply run \code{\link[=Normalise]{Normalise()}} first, and work with the
 normalised data from that point onwards. In that case it is better to set \code{normalise_first = FALSE},
 since by default if \code{impute_by = "row"} it will be set to \code{TRUE}.
 

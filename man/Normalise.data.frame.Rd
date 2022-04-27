@@ -4,7 +4,7 @@
 \alias{Normalise.data.frame}
 \title{Normalise a data frame}
 \usage{
-\method{Normalise}{data.frame}(x, default_specs = NULL, indiv_specs = NULL, directions = NULL)
+\method{Normalise}{data.frame}(x, default_specs = NULL, indiv_specs = NULL, directions = NULL, ...)
 }
 \arguments{
 \item{x}{A data frame}
@@ -20,9 +20,11 @@
 If \code{directions} is not specified, the directions will all be assigned as \code{1}. Non-numeric columns do not need
 to have directions assigned.
 }}
+
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
-
+A normalised data frame
 }
 \description{
 Normalise a data frame

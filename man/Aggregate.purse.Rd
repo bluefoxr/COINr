@@ -11,13 +11,14 @@
   w = NULL,
   f_ag_para = NULL,
   dat_thresh = NULL,
-  write_to = NULL
+  write_to = NULL,
+  ...
 )
 }
 \arguments{
-\item{x}{A purse object}
+\item{x}{A purse-class object}
 
-\item{dset}{The data set to treat in each coin}
+\item{dset}{The name of the data set to apply the function to, which should be accessible in \code{.$Data}.}
 
 \item{f_ag}{The name of an aggregation function, specified as a string}
 
@@ -31,9 +32,11 @@ within an aggregation group has data availability lower than this threshold, the
 fraction of non-\code{NA} values.}
 
 \item{write_to}{If specified, writes the aggregated data to \code{.$Data[[write_to]]}. Default \code{write_to = "Aggregated"}.}
+
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
-An updated purse with new treated data sets added at \code{.$Data$Aggregated} in each coin.
+An updated purse with new treated data sets added at \code{.$Data[[write_to]]} in each coin.
 }
 \description{
 Aggregate indicators
