@@ -45,6 +45,6 @@ for more details.
 \seealso{
 \itemize{
 \item \code{\link[=get_sensitivity]{get_sensitivity()}} Perform global sensitivity or uncertainty analysis on a coin
-\item \code{\link[=plot_SA]{plot_SA()}} Plot sensitivity indices following a sensitivity analysis.
+\item \code{\link[=plot_sensitivity]{plot_sensitivity()}} Plot sensitivity indices following a sensitivity analysis.
 }
 }

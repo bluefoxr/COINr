@@ -51,7 +51,7 @@ plot but some labels may be missing. Else if \code{FALSE}, all labels are plotte
 a log axis will be used. Defaults to not-log.}
 }
 \value{
-
+A ggplot2 object.
 }
 \description{
 This is a convenient quick scatter plot function for plotting any two variables x and y in a coin against each other.

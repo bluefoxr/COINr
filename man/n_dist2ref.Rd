@@ -28,6 +28,6 @@ Values exceeding \code{x_ref} can be optionally capped at 1 if \code{cap_max = T
 }
 \examples{
 x <- runif(20)
-n_dist2ref(x)
+n_dist2ref(x, 5)
 
 }

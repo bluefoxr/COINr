@@ -22,6 +22,6 @@ Groups are defined by the \code{f} argument.
 \examples{
 x <- c(NA, runif(10), NA)
 f <- c(rep("a", 6), rep("b", 6))
-i_median_grp(x)
+i_median_grp(x, f)
 
 }

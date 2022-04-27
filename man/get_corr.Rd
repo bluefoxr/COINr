@@ -18,9 +18,9 @@ get_corr(
 )
 }
 \arguments{
-\item{coin}{The coin object}
+\item{coin}{A coin class coin object}
 
-\item{dset}{The target data set}
+\item{dset}{The name of the data set to apply the function to, which should be accessible in \code{.$Data}.}
 
 \item{iCodes}{An optional list of character vectors where the first entry specifies the indicator/aggregate
 codes to correlate against the second entry (also a specification of indicator/aggregate codes).}
@@ -81,6 +81,6 @@ Note that this function can only call correlations within the same data set (i.e
 }
 \seealso{
 \itemize{
-\item \code{\link[=plotCorr]{plotCorr()}} Plot correlation matrices of indicator subsets
+\item \code{\link[=plot_corr]{plot_corr()}} Plot correlation matrices of indicator subsets
 }
 }

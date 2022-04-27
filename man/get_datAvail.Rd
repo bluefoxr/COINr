@@ -11,9 +11,6 @@ get_datAvail(x, ...)
 
 \item{...}{Arguments passed to other methods}
 }
-\value{
-
-}
 \description{
 Returns a data frame of the data availability of each unit (row).
 }

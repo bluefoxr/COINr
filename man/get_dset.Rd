@@ -9,7 +9,9 @@ get_dset(x, dset, ...)
 \arguments{
 \item{x}{A coin or purse}
 
-\item{dset}{A character string corresponding to a named data set within \code{coin$Data}. E.g. \code{Raw}.}
+\item{dset}{A character string corresponding to a named data set within \code{.$Data}. E.g. \code{"Raw"}.}
+
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
 Data frame of indicator data, indexed also by time if input is a purse.

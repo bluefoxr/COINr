@@ -38,9 +38,3 @@ from previous time points. It will replace using the most recently available poi
 #
 
 }
-\seealso{
-\itemize{
-\item \code{\link[=assemble]{assemble()}} Assemble a COIN - this function optionally calls \code{\link[=extractYear]{extractYear()}}.
-\item \code{\link[=impute]{impute()}} Impute data using other imputation options (not using panel data).
-}
-}

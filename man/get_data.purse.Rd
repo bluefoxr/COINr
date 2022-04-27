@@ -12,13 +12,14 @@
   uCodes = NULL,
   use_group = NULL,
   Time = NULL,
-  also_get = NULL
+  also_get = NULL,
+  ...
 )
 }
 \arguments{
 \item{x}{A purse class object}
 
-\item{dset}{Name of a data set found in \code{.$Data}.}
+\item{dset}{The name of the data set to apply the function to, which should be accessible in \code{.$Data}.}
 
 \item{iCodes}{Optional indicator codes to retrieve. If \code{NULL} (default), returns all iCodes found in
 the selected data set. Can also refer to indicator groups. See details.}
@@ -36,10 +37,15 @@ also be used in conjunction with \code{uCodes} -- see details.}
 \item{Time}{Optional time index to extract from a subset of the coins present in the purse. Should be a
 vector containing one or more entries in \code{x$Time} or \code{NULL} to return all (default).}
 
-\item{also_get}{Optional meta data columns to attach to the data set. See \code{\link[=get_dset]{get_dset()}}.}
+\item{also_get}{A character vector specifying any columns to attach to the data set that are \emph{not}
+indicators or aggregates. These will be e.g. \code{uName}, groups, denominators or columns labelled as "Other"
+in \code{iMeta}. These columns are stored in \code{.$Meta$Unit} to avoid repetition. Set \code{also_get = "all"} to
+attach all columns, or set \code{also_get = "none"} to return only numeric columns, i.e. no \code{uCode} column.}
+
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
-
+A data frame of indicator data indexed by a "Time" column.
 }
 \description{
 Purse description.

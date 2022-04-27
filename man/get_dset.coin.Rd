@@ -4,17 +4,19 @@
 \alias{get_dset.coin}
 \title{Gets a named data set and performs checks}
 \usage{
-\method{get_dset}{coin}(x, dset, also_get = NULL)
+\method{get_dset}{coin}(x, dset, also_get = NULL, ...)
 }
 \arguments{
 \item{x}{A coin class object}
 
-\item{dset}{A character string corresponding to a named data set within \code{coin$Data}. E.g. \code{Raw}.}
+\item{dset}{A character string corresponding to a named data set within \code{.$Data}. E.g. \code{"Raw"}.}
 
 \item{also_get}{A character vector specifying any columns to attach to the data set that are \emph{not}
 indicators or aggregates. These will be e.g. \code{uName}, groups, denominators or columns labelled as "Other"
 in \code{iMeta}. These columns are stored in \code{.$Meta$Unit} to avoid repetition. Set \code{also_get = "all"} to
 attach all columns, or set \code{also_get = "none"} to return only numeric columns, i.e. no \code{uCode} column.}
+
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
 Data frame of indicator data.

@@ -17,7 +17,7 @@ get_corr_flags(
 \arguments{
 \item{coin}{A coin class object}
 
-\item{dset}{The data set to use for correlations.}
+\item{dset}{The name of the data set to apply the function to, which should be accessible in \code{.$Data}.}
 
 \item{cor_thresh}{A threshold to flag high correlation. Default 0.9.}
 
@@ -37,7 +37,11 @@ Pairs are only reported once, i.e. only uses the upper triangle of the correlati
 }
 \description{
 This returns a data frame of any highly correlated indicators within the same aggregation group. The level of the aggregation
-group can be controlled by the \code{grouplev} argument.
+grouping can be controlled by the \code{grouplev} argument.
+}
+\details{
+This function is motivated by the idea that having very highly-correlated indicators within the same group may
+amount to double counting, or possibly redundancy in the framework.
 }
 \examples{
 #

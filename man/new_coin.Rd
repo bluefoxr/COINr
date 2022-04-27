@@ -53,8 +53,4 @@ See online documentation for more details (\emph{TO ADD}).
 }
 \examples{
 #
-
-}
-\seealso{
-
 }

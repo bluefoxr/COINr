@@ -6,7 +6,7 @@
 \usage{
 plot_corr(
   coin,
-  dset = NULL,
+  dset,
   iCodes = NULL,
   Levels = 1,
   ...,
@@ -30,7 +30,12 @@ plot_corr(
 
 \item{dset}{The target data set.}
 
-\item{Levels}{The aggregation levels to take the two groups of indicators from. See \code{\link[=getIn]{getIn()}} for details.}
+\item{iCodes}{An optional list of character vectors where the first entry specifies the indicator/aggregate
+codes to correlate against the second entry (also a specification of indicator/aggregate codes)}
+
+\item{Levels}{The aggregation levels to take the two groups of indicators from. See \code{\link[=get_data]{get_data()}} for details.}
+
+\item{...}{Optional further arguments to pass to \code{\link[=get_data]{get_data()}}.}
 
 \item{cortype}{The type of correlation to calculate, either \code{"pearson"}, \code{"spearman"}, or \code{"kendall"} (see \code{\link[stats:cor]{stats::cor()}}).}
 
@@ -68,9 +73,6 @@ colour map if \code{flagcolours = TRUE} (from high to low correlation categories
 \item{out2}{If \code{"fig"} returns a plot, if \code{"dflong"} returns the correlation matrix in long form, if \code{"dfwide"},
 returns the correlation matrix in wide form. The last option here is probably useful if you want to
 present a table of the data in a report.}
-
-\item{icodes}{An optional list of character vectors where the first entry specifies the indicator/aggregate
-codes to correlate against the second entry (also a specification of indicator/aggregate codes)}
 }
 \value{
 If \code{out2 = "fig"} returns a plot generated with \strong{ggplot2}. These can be edited further with \strong{ggplot2} commands.
@@ -85,21 +87,11 @@ parents of each indicator. Also supports discrete colour maps using \code{flagco
 plots by higher aggregation levels.
 }
 \details{
-This function calls \code{\link[=getCorr]{getCorr()}}.
+This function calls \code{\link[=get_corr]{get_corr()}}.
 
 Note that this function can only call correlations within the same data set (i.e. only one data set in \code{.$Data}).
 }
 \examples{
-# build ASEM coin
-ASEM <- assemble(IndData = ASEMIndData, IndMeta = ASEMIndMeta, AggMeta = ASEMAggMeta)
-# correlation data frame of indicators in connectivity sub-index, grouped by pillar
-corrs <- plotCorr(ASEM, dset = "Raw", icodes = "Conn", Levels = 1,
-showvals = F, out2 = "dflong")
-# NOTE to create a plot instead set out2 = "fig"
+#
 
-}
-\seealso{
-\itemize{
-\item \code{\link[=getCorr]{getCorr()}} Getting correlation matrices of indicator subsets
-}
 }

@@ -11,7 +11,8 @@
   t_avail = 0.65,
   t_zero = 0.5,
   t_unq = 0.5,
-  nsignif = 3
+  nsignif = 3,
+  ...
 )
 }
 \arguments{
@@ -23,7 +24,13 @@
 
 \item{t_avail}{Data availability threshold. See details.}
 
+\item{t_zero}{A threshold between 0 and 1 for flagging indicators with high proportion of zeroes. See details.}
+
+\item{t_unq}{A threshold between 0 and 1 for flagging indicators with low proportion of unique values. See details.}
+
 \item{nsignif}{Number of significant figures to round the output table to.}
+
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
 A data frame of statistics for each indicator column
@@ -56,7 +63,7 @@ flagged as \code{"LOW"}, otherwise \code{"ok"}.
 The aim of this table, among other things, is to check the basic statistics of each column/indicator, and identify
 any possible issues for each indicator. For example, low data availability, having a high proportion of zeros and/or
 a low proportion of unique values. Further, the combination of skew and kurtosis (i.e. the \code{Flag.SkewKurt} column)
-is a simple test for possible outliers, which may require treatment using \code{\link[=treat]{treat()}}.
+is a simple test for possible outliers, which may require treatment using \code{\link[=Treat]{Treat()}}.
 }
 \examples{
 #

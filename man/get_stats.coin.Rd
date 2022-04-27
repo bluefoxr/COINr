@@ -7,14 +7,14 @@
 \method{get_stats}{coin}(
   x,
   dset,
-  ...,
   t_skew = 2,
   t_kurt = 3.5,
   t_avail = 0.65,
   t_zero = 0.5,
   t_unq = 0.5,
   nsignif = 3,
-  out2 = "df"
+  out2 = "df",
+  ...
 )
 }
 \arguments{
@@ -22,18 +22,22 @@
 
 \item{dset}{A data set present in \code{.$Data}}
 
-\item{...}{Other arguments for indicator selection, passed to \code{\link[=get_data]{get_data()}}.}
-
 \item{t_skew}{Absolute skewness threshold. See details.}
 
 \item{t_kurt}{Kurtosis threshold. See details.}
 
 \item{t_avail}{Data availability threshold. See details.}
 
+\item{t_zero}{A threshold between 0 and 1 for flagging indicators with high proportion of zeroes. See details.}
+
+\item{t_unq}{A threshold between 0 and 1 for flagging indicators with low proportion of unique values. See details.plot}
+
 \item{nsignif}{Number of significant figures to round the output table to.}
 
 \item{out2}{Either \code{"df"} (default) to output a data frame of indicator statistics, or "\code{coin}" to output an
 updated coin with the data frame attached under \code{.$Analysis}.}
+
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
 Either a data frame or updated coin - see \code{out2}.

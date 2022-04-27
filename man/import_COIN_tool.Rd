@@ -23,13 +23,9 @@ else \code{"coin"} to output a coin.}
 Either a list or a coin, depending on \code{out2}
 }
 \description{
-This provides a direct interface for reading a COIN Tool input deck and converting it to COINr.
-You need to provide a COIN Tool file, with the "Database" sheet properly compiled.
-}
-\details{
-The \href{https://knowledge4policy.ec.europa.eu/composite-indicators/coin-tool_en}{COIN Tool} is an Excel-based tool for building composite indicators.
-
-See \href{https://bluefoxr.github.io/COINrDoc/helper-functions.html#r-interfaces}{COINr online documentation} for more details and an example.
+#' The \href{https://knowledge4policy.ec.europa.eu/composite-indicators/coin-tool_en}{COIN Tool} is an Excel-based tool
+for building composite indicators. This function provides a direct interface for reading a COIN Tool input deck and
+converting it to COINr. You need to provide a COIN Tool file, with the "Database" sheet properly compiled.
 }
 \examples{
 \dontrun{

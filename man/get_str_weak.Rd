@@ -6,7 +6,7 @@
 \usage{
 get_str_weak(
   coin,
-  dset = NULL,
+  dset,
   usel = NULL,
   topN = 5,
   bottomN = 5,

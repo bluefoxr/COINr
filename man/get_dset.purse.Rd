@@ -4,12 +4,12 @@
 \alias{get_dset.purse}
 \title{Gets a named data set and performs checks}
 \usage{
-\method{get_dset}{purse}(x, dset, Time = NULL, also_get = NULL)
+\method{get_dset}{purse}(x, dset, Time = NULL, also_get = NULL, ...)
 }
 \arguments{
 \item{x}{A purse class object}
 
-\item{dset}{A character string corresponding to a named data set within each coin \code{coin$Data}. E.g. \code{Raw}.}
+\item{dset}{A character string corresponding to a named data set within each coin \code{.$Data}. E.g. \code{"Raw"}.}
 
 \item{Time}{Optional time index to extract from a subset of the coins present in the purse. Should be a
 vector containing one or more entries in \code{x$Time} or \code{NULL} to return all (default).}
@@ -18,6 +18,8 @@ vector containing one or more entries in \code{x$Time} or \code{NULL} to return 
 indicators or aggregates. These will be e.g. \code{uName}, groups, denominators or columns labelled as "Other"
 in \code{iMeta}. These columns are stored in \code{.$Meta$Unit} to avoid repetition. Set \code{also_get = "all"} to
 attach all columns, or set \code{also_get = "none"} to return only numeric columns, i.e. no \code{uCode} column.}
+
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
 Data frame of indicator data.

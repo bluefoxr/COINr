@@ -19,8 +19,12 @@ get_results(
 \arguments{
 \item{coin}{The coin object, or a data frame of indicator data}
 
+\item{dset}{Name of data set in \code{.$Data}}
+
 \item{tab_type}{The type of table to generate. Either \code{"Summ"} (a single indicator plus rank), \code{"Aggs"} (all aggregated
 scores/ranks above indicator level), or \code{"Full"} (all scores/ranks plus all group, denominator columns).}
+
+\item{also_get}{Names of further columns to attach to table.}
 
 \item{use}{Either \code{"scores"} (default), \code{"ranks"}, or \code{"groupranks"}. For the latter, \code{use_group} must be specified.}
 

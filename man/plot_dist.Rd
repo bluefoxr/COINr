@@ -7,17 +7,17 @@
 plot_dist(coin, ..., type = "Box", normalise = FALSE, default_specs = NULL)
 }
 \arguments{
-\item{coin}{The COIN object, or a data frame of indicator data}
+\item{coin}{The coin object, or a data frame of indicator data}
 
 \item{...}{Arguments passed to \code{\link[=get_data]{get_data()}} (other than \code{coin}).}
 
 \item{type}{The type of plot. Currently supported \code{"Box"}, \code{"Dot"}, \code{"Violin"}, \code{"Violindot"}, \code{"Histogram"}.}
 
-\item{default_specs}{Specifications for normalising data if \code{normalise_data = TRUE}. This is passed to the
-\code{default_specs} argument of \code{\link[=normalise]{normalise()}}.}
-
-\item{normalise_data}{Logical: if \code{TRUE}, normalises the data first, using \code{default_specs}. If \code{FALSE} (default),
+\item{normalise}{Logical: if \code{TRUE}, normalises the data first, using \code{default_specs}. If \code{FALSE} (default),
 data is not normalised.}
+
+\item{default_specs}{Specifications for normalising data if \code{normalise = TRUE}. This is passed to the
+\code{default_specs} argument of \code{\link[=Normalise]{Normalise()}}.}
 }
 \value{
 A ggplot2 plot object.

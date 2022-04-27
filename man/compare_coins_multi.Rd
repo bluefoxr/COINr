@@ -38,6 +38,10 @@ are returned as a result of \code{also_get}.}
 \item{ibase}{The index of the coin to use as a base comparison (default first coin in list)}
 
 \item{sort_table}{If TRUE, sorts by the base COIN (\code{ibase}) (default).}
+
+\item{compare_by}{Either \code{"ranks"} which produces a comparison using ranks, or else \code{"scores"}, which instead
+uses scores. Note that scores may be very different if the methodology is different from one coin to another,
+e.g. for different normalisation methods.}
 }
 \value{
 Data frame unless \code{tabtype = "All"}, in which case a list of three data frames is returned.

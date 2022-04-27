@@ -26,7 +26,7 @@ Constructs an outranking matrix based on a data frame of indicator data and corr
 }
 \examples{
 # get a sample of a few indicators
-ind_data <- COINr::ASEMIndData[12:16]
+ind_data <- COINr::ASEM_iData[12:16]
 # calculate outranking matrix
 outlist <- outrankMatrix(ind_data)
 # see fraction of dominant pairs (robustness)

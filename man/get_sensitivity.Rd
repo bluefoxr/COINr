@@ -29,10 +29,13 @@ analysis (which anyway includes an uncertainty analysis).}
 
 \item{iCode}{The variable within \code{dset} to use as the target variable (passed to \code{\link[=get_data]{get_data()}}).}
 
+\item{Nboot}{Number of bootstrap samples to take when estimating confidence intervals on sensitivity
+indices.}
+
 \item{quietly}{Set to \code{TRUE} to suppress progress messages.}
 }
 \value{
-
+A list of sensitivity analysis data frames
 }
 \description{
 Sensitivity and uncertainty analysis

@@ -7,9 +7,9 @@
 get_denom_corr(coin, dset, cor_thresh = 0.6, cortype = "pearson", nround = 2)
 }
 \arguments{
-\item{coin}{A coin}
+\item{coin}{A coin class object.}
 
-\item{dset}{A named data set found in \code{coin$Data}}
+\item{dset}{The name of the data set to apply the function to, which should be accessible in \code{.$Data}.}
 
 \item{cor_thresh}{A correlation threshold: the absolute value of any correlations between indicator-denominator pairs above this
 threshold will be flagged.}
@@ -20,12 +20,12 @@ threshold will be flagged.}
 disable.}
 }
 \value{
-A data frame
+A data frame of pairwise correlations that exceed the threshold.
 }
 \description{
 Get a data frame containing any correlations between indicators and denominators that exceed a given
 threshold. This can be useful when \emph{whether} to denominate an indicator and \emph{by what} may not be obvious.
-If an indicator is strongly correlated with a denominator, this may give reason to denominate it by that
+If an indicator is strongly correlated with a denominator, this may suggest to denominate it by that
 denominator.
 }
 \examples{

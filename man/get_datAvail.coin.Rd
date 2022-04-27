@@ -4,10 +4,20 @@
 \alias{get_datAvail.coin}
 \title{Get data availability of units}
 \usage{
-\method{get_datAvail}{coin}(x, dset, out2 = "coin")
+\method{get_datAvail}{coin}(x, dset, out2 = "coin", ...)
+}
+\arguments{
+\item{x}{A coin}
+
+\item{dset}{String indicating name of data set in \code{.$Data}.}
+
+\item{out2}{Either \code{"coin"} to output an updated coin or \code{"list"} to output a list.}
+
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
-
+An updated coin with data availability tables written in \code{.$Analysis[[dset]]}, or a
+list of data availability tables.
 }
 \description{
 Returns a data frame of the data availability of each unit (row) in a given data set, as well as percentage of zeros. This

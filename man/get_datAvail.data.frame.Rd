@@ -4,10 +4,15 @@
 \alias{get_datAvail.data.frame}
 \title{Get data availability of units}
 \usage{
-\method{get_datAvail}{data.frame}(x)
+\method{get_datAvail}{data.frame}(x, ...)
+}
+\arguments{
+\item{x}{A data frame}
+
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
-
+A data frame of data availability statistics for each column of \code{x}.
 }
 \description{
 Returns a data frame of the data availability of each unit (row), as well as percentage of zeros. This

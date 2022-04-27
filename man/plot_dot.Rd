@@ -5,7 +5,7 @@
 \title{Dot plots of single indicator with highlighting}
 \usage{
 plot_dot(
-  COIN,
+  coin,
   ...,
   usel = NULL,
   marker_type = "circle",
@@ -18,7 +18,7 @@ plot_dot(
 )
 }
 \arguments{
-\item{COIN}{The COIN}
+\item{coin}{The coin}
 
 \item{...}{Arguments to pass to \code{\link[=get_data]{get_data()}}. Note that \code{iCodes} is required to be of length 1.}
 
