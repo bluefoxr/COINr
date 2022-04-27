@@ -1,28 +1,28 @@
 # DENOMINATION TOOLS
 
-#' Title
+#' Denominate a data set
 #'
 #' @param x A purse class object
-#' @param dset A named data set to be denominated that is present in .$Data
+#' @param dset The name of the data set to apply the function to, which should be accessible in `.$Data`.
 #' @param denoms A data frame of denominator data. If not specified, will extract any potential denominator columns
-#' that were attached to iData when calling new_coin().
+#' that were attached to `iData` when calling [new_coin()].
 #' @param denomby Optional data frame specifying which indicators should be denominated and by what. If not specified,
 #' looks for a Denominator column in iMeta.
-#' @param denoms_ID An ID column for matching denoms with the data to be denominated. This column should contain
+#' @param denoms_ID An ID column for matching `denoms` with the data to be denominated. This column should contain
 #' uMeta codes to match with the data set extracted from the coin.
 #' @param f_denom A function which takes two numeric vector arguments and is used to perform the denomination for each
 #' column. By default, this is division, i.e. `x[[col]]/denoms[[col]]` for given columns, but any function can be passed
 #' that takes two numeric vectors as inputs and returns a single numeric vector. See details.
 #' @param write_to If specified, writes the aggregated data to `.$Data[[write_to]]`. Default `write_to = "Denominated"`.
+#' @param ... arguments passed to or from other methods.
 #'
-#'
-#' @return
+#' @return An updated purse
 #' @export
 #'
 #' @examples
 #' #
 Denominate.purse <- function(x, dset, denoms = NULL, denomby = NULL, denoms_ID = NULL,
-                              f_denom = NULL, write_to = NULL){
+                              f_denom = NULL, write_to = NULL, ...){
 
   # input check
   check_purse(x)
@@ -41,7 +41,7 @@ Denominate.purse <- function(x, dset, denoms = NULL, denomby = NULL, denoms_ID =
 #' Denominate data set in a coin
 #'
 #' @param x A coin class object
-#' @param dset A named data set to be denominated that is present in .$Data
+#' @param dset The name of the data set to apply the function to, which should be accessible in `.$Data`.
 #' @param denoms A data frame of denominator data. If not specified, will extract any potential denominator columns
 #' that were attached to `iData` when calling [new_coin()].
 #' @param denomby Optional data frame specifying which indicators should be denominated and by what. If not specified,
@@ -53,14 +53,15 @@ Denominate.purse <- function(x, dset, denoms = NULL, denomby = NULL, denoms_ID =
 #' that takes two numeric vectors as inputs and returns a single numeric vector. See details.
 #' @param write_to If specified, writes the aggregated data to `.$Data[[write_to]]`. Default `write_to = "Denominated"`.
 #' @param out2 Either `"coin"` (default) to return updated coin or `"df"` to output the aggregated data set.
+#' @param ... arguments passed to or from other methods
 #'
-#' @return
+#' @return An updated coin if `out2 = "coin"`, else a data frame of denominated data if `out2 = "df"`.
 #' @export
 #'
 #' @examples
 #' #
 Denominate.coin <- function(x, dset, denoms = NULL, denomby = NULL, denoms_ID = NULL,
-                                   f_denom = NULL, write_to = NULL, out2 = "coin"){
+                            f_denom = NULL, write_to = NULL, out2 = "coin", ...){
 
   # WRITE LOG ---------------------------------------------------------------
 
@@ -100,10 +101,6 @@ Denominate.coin <- function(x, dset, denoms = NULL, denomby = NULL, denoms_ID = 
     }
     write_dset(coin, iData_d, dset = write_to)
   }
-
-
-
-
 }
 
 
@@ -142,6 +139,7 @@ Denominate.coin <- function(x, dset, denoms = NULL, denomby = NULL, denoms_ID = 
 #' @param f_denom A function which takes two numeric vector arguments and is used to perform the denomination for each
 #' column. By default, this is division, i.e. `x[[col]]/denoms[[col]]` for given columns, but any function can be passed
 #' that takes two numeric vectors as inputs and returns a single numeric vector. See details.
+#' @param ... arguments passed to or from other methods.
 #'
 #' @examples
 #' # Get a sample of indicator data (note must be indicators plus a "UnitCode" column)
@@ -162,7 +160,7 @@ Denominate.coin <- function(x, dset, denoms = NULL, denomby = NULL, denoms_ID = 
 #'
 #' @export
 Denominate.data.frame <- function(x, denoms, denomby, x_ID = NULL, denoms_ID = NULL,
-                                   f_denom = NULL){
+                                   f_denom = NULL, ...){
 
 
   # CHECKS ------------------------------------------------------------------
@@ -254,8 +252,10 @@ Denominate.data.frame <- function(x, denoms, denomby, x_ID = NULL, denoms_ID = N
 #' "Denominates" or "scales" variables by other variables. Typically this is done by dividing extensive variables such as
 #' GDP by a scaling variable such as population, to give an intensive variable (GDP per capita).
 #'
-#' @param x Thing
-#' @param ... thing
+#' See documentation for individual methods: [Denominate.data.frame()], [Denominate.coin()] and [Denominate.purse()].
+#'
+#' @param x Object to be denominated
+#' @param ... arguments passed to or from other methods
 #'
 #' @return message
 #'
