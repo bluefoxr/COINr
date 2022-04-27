@@ -29,10 +29,6 @@
 #'
 #' @examples
 #' #
-#'
-#' @seealso
-#'
-#'
 #' @return A "coin" object
 #'
 #' @export
@@ -568,20 +564,14 @@ check_iMeta <- function(iMeta, quietly = FALSE){
   }
 }
 
-
-#' Split iData
-#'
-#' Splits `iData` by the `Time` column into multiple `iData` data frames.
-#'
-#' @param iData A data frame of indicator panel data
-#' @param split_to Either `"all"` (one `iData` for each unique entry in `iData$Time`), or a vector containing a
-#' subset of entries in `iData$Time`. In the latter case, `iData`s will only be generated for the entries in this
-#' vector.
-#'
-#' @examples
-#' #
-#'
-#' @return List of `iData` data frames
+# Splits `iData` by the `Time` column into multiple `iData` data frames.
+#
+# @param iData A data frame of indicator panel data
+# @param split_to Either `"all"` (one `iData` for each unique entry in `iData$Time`), or a vector containing a
+# subset of entries in `iData$Time`. In the latter case, `iData`s will only be generated for the entries in this
+# vector.
+#
+# @return List of `iData` data frames
 split_iData <- function(iData, split_to){
 
   # this function is only called from new_coin(), so if we are here, then the iData should be valid,
@@ -601,18 +591,14 @@ split_iData <- function(iData, split_to){
 }
 
 
-#' Make wide structure table
-#'
-#' Takes an iMeta table and outputs a wide format index structure, i.e. a table with one column per
-#' level in the index. This is used in later functions to look up the full "ancestry" of any element
-#' in the index.
-#'
-#' @param iMeta A data frame of indicator metadata. For specs see [check_iMeta()].
-#'
-#' @examples
-#' get_lineage(ASEM_iMeta)
-#'
-#' @return Lineage table as data frame
+# Takes an iMeta table and outputs a wide format index structure, i.e. a table with one column per
+# level in the index. This is used in later functions to look up the full "ancestry" of any element
+# in the index.
+#
+# @param iMeta A data frame of indicator metadata. For specs see [check_iMeta()].
+# @param level_names A character vector of names of each level in the hierarchy.
+#
+# @return Lineage table as data frame
 get_lineage <- function(iMeta, level_names = NULL){
 
   # isolate the structural part of iMeta
@@ -669,10 +655,6 @@ get_lineage <- function(iMeta, level_names = NULL){
 #' * `.$iData_imp`: An `iData` format data frame with missing data imputed using previous time points (where possible).
 #' * `.$DataT`: A data frame in the same format as `iData`, where each entry shows which time point each data point
 #' came from.
-#'
-#' @seealso
-#' * [assemble()] Assemble a COIN - this function optionally calls [extractYear()].
-#' * [impute()] Impute data using other imputation options (not using panel data).
 #'
 #' @export
 
