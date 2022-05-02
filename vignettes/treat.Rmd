@@ -19,6 +19,8 @@ knitr::opts_chunk$set(
 library(COINr)
 ```
 
+ADD: qTreat and remove spiel
+
 # Introduction
 
 Data treatment is the process of altering indicators to improve their statistical properties, mainly for the purposes of aggregation. Data treatment is a delicate subject, because it essentially involves changing the values of certain observations, or transforming an entire distribution. This entails balancing two opposing considerations:

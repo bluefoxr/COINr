@@ -19,6 +19,12 @@ knitr::opts_chunk$set(
 #library(COINr)
 ```
 
+* get_sensitivity
+* SA_estimate
+* SA_sample
+* plot_sensitivity
+* plot_uncertainty
+* remove_elements
 
 SA specs
 

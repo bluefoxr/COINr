@@ -1,8 +1,8 @@
 ---
-title: "Normalising Data"
+title: "Normalisation"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Normalising Data}
+  %\VignetteIndexEntry{Normalisation}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -18,6 +18,8 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(COINr)
 ```
+
+ADD: qNormalise and remove spiel not related to COINr
 
 Normalisation is the operation of bringing indicators onto comparable scales so that they can be aggregated more fairly. To see why this is necessary, consider aggregating GDP values (billions or trillions of dollars) with percentage tertiary graduates (tens of percent). Average values here would make no sense because one is on a completely different scale to the other.
 
