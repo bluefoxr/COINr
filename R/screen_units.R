@@ -63,7 +63,7 @@ Screen.data.frame <- function(x, id_col = NULL, unit_screen, dat_thresh = NULL, 
 
   # GET DATA AVAIL ----------------------------------------------------------
 
-  l <- get_datAvail(x)
+  l <- get_data_avail(x)
 
   # FLAGS FOR EXCLUSION -----------------------------------------------------
 
@@ -245,8 +245,8 @@ Screen.purse <- function(x, dset, unit_screen, dat_thresh = NULL, nonzero_thresh
 #' @param ... Arguments passed to other methods
 #'
 #' @export
-get_datAvail <- function(x, ...){
-  UseMethod("get_datAvail")
+get_data_avail <- function(x, ...){
+  UseMethod("get_data_avail")
 }
 
 
@@ -267,7 +267,7 @@ get_datAvail <- function(x, ...){
 #'
 #' @examples
 #' #
-get_datAvail.coin <- function(x, dset, out2 = "coin", ...){
+get_data_avail.coin <- function(x, dset, out2 = "coin", ...){
 
   # PREP --------------------------------------------------------------------
 
@@ -277,7 +277,7 @@ get_datAvail.coin <- function(x, dset, out2 = "coin", ...){
   # DAT AVAIL AND TABLE -----------------------------------------------------
 
   # call df method
-  dat_avail <- get_datAvail(iData)
+  dat_avail <- get_data_avail(iData)
 
   # generic function to check frac NAs rowwise
   frc_avail <- function(X){
@@ -329,7 +329,7 @@ get_datAvail.coin <- function(x, dset, out2 = "coin", ...){
 #'
 #' @examples
 #' #
-get_datAvail.data.frame <- function(x, ...){
+get_data_avail.data.frame <- function(x, ...){
 
   # PREP --------------------------------------------------------------------
 
