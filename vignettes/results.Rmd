@@ -1,0 +1,23 @@
+---
+title: "Presenting Results"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Presenting Results}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(COINr)
+```
+
+* get_results
+* get_str_weak
+* get_unit_summary

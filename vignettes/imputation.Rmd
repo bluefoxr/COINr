@@ -1,0 +1,210 @@
+---
+title: "Imputation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Imputation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Introduction
+
+Imputation is the process of estimating missing data points. To get started with imputation, a reasonable first step is to see how much missing data we have in the data set. We begin by building the example coin, up the point of assembling the coin, but not any further:
+
+```{r}
+library(COINr)
+
+ASEM <- build_example_coin(up_to = "new_coin", quietly = TRUE)
+```
+
+To check missing data, the `get_data_avail()` function can be used. It can output to either the coin or to a list -- here we output to a list to readily display the results.
+
+```{r}
+l_avail <- get_data_avail(ASEM, dset = "Raw", out2 = "list")
+```
+
+The output list has data availability by unit:
+
+```{r}
+head(l_avail$Summary)
+```
+
+The lowest data availability by unit is:
+
+```{r}
+min(l_avail$Summary$Dat_Avail)
+```
+
+We can also check data availability by indicator. This is done by calling `get_stats()`:
+
+```{r}
+df_avail <- get_stats(ASEM, dset = "Raw", out2 = "df")
+
+head(df_avail[c("iCode", "N.Avail", "Frc.Avail")], 10)
+```
+
+By indicator, the minimum data availability is:
+
+```{r}
+min(df_avail$Frc.Avail)
+```
+
+With missing data, several options are available:
+
+1. Leave it as it is and aggregate anyway (there is also the option for data availability thresholds during aggregation - see [Aggregation](aggregate.html))
+2. Consider removing indicators that have low data availability (this has to be done manually becaus it affects the structure of the index)
+3. Consider removing units that have low data availability (see [Unit Screening](screening.html))
+4. Impute missing data
+
+These options can also be combined. Here, we focus on the option of imputation.
+
+# The `Impute()` function
+
+The `Impute()` function is a flexible function that imputes missing data in a data set using any suitable function that can be passed to it. In fact, `Impute()` is a *generic*, and has methods for coins, data frames, numeric vectors and purses.
+
+## Data frames
+
+Let's begin by examining the data frame method of `Impute()`, since it is easier to see what's going on. We will use a small data frame which is easy to visualise:
+
+```{r}
+# some data to use as an example
+# this is a selected portion of the data with some missing values
+df1 <-  ASEM_iData[37:46, 36:39]
+print(df1, row.names = FALSE)
+```
+
+In the simplest case, imputation can be performed column-wise, i.e. by imputing each indicator one at a time:
+
+```{r}
+Impute(df1, f_i = "i_mean")
+```
+
+Here, the "Raw" data set has been imputed by substituting missing values with the mean of the non-`NA` values for each column. This is performed by setting `f_i = "i_mean"`. The `f_i` argument refers to a function that imputes a numeric vector - in this case the built-in `i_mean()` function:
+
+```{r}
+# demo of i_mean() function, which is built in to COINr
+x <- c(1,2,3,4, NA)
+i_mean(x)
+```
+
+The key concept here is that the simple function `i_mean()` is applied by `Impute()` to each column. This idea of passing simpler functions is used in several key COINr functions, and allows great flexibility because more sophisticated imputation methods can be used from other packages, for example.
+
+For now let's explore the options native to COINr. We can also apply the `i_median()` function in the same way to substitute with the indicator median. Adding a little complexity, we can also impute by mean or median, but within unit (row) groups. Let's assume that the first five rows in our data frame belong to a group "a", and the remaining five to a different group "b". In practice, these could be e.g. GDP, population or wealth groups for countries - we might hypothesise that it is better to replace `NA` values with the median inside a group, rather than the overall median, because countries within groups are more similar.
+
+To do this on a data frame we can use the `i_median_grp()` function, which requires an additional argument `f`: a grouping variable. This is passed through `Impute()` using the `f_i_para` argument which takes any additional parameters top `f_i` apart from the data to be imputed.
+
+```{r}
+# row grouping
+groups <- c(rep("a", 5), rep("b", 5))
+
+# impute
+dfi2 <- Impute(df1, f_i = "i_median_grp", f_i_para = list(f = groups))
+
+# display
+print(dfi2, row.names = FALSE)
+```
+
+The `f_i_para` argument requires a named list of additional parameter values. This allows functions of any complexity to be passed to `Impute()`. By default, `Impute()` applies `f_i` to each column of data, so `f_i` is expected to take a numeric vector as its first input, and specifically have the format `function(x, f_i_para)` where `x` is a numeric vector and `...` are further arguments. This means that the first argument of `f_i` *must* be called "x". To use functions that don't have `x` as a first argument, you would have to write a wrapper function.
+
+Other than imputing by column, we can also impute by row. This only really makes sense if the indicators are on a common scale, i.e. if they are normalised first (or perhaps if they already share the same units). To impute by row, set `impute_by = "row"`. In our example data set we have indicators on rather different scales. Let's see what happens if we impute by row mean but *don't* normalise:
+
+```{r}
+Impute(df1, f_i = "i_mean", impute_by = "row", normalise_first = FALSE)
+```
+
+This imputes some silly values, particularly in "CultGood", because "Pat" has much higher values. Clearly this is not a sensible strategy, unless all indicators are on the same scale. We can however normalise first, impute, then return indicators to their original scales:
+
+```{r}
+Impute(df1, f_i = "i_mean", impute_by = "row", normalise_first = TRUE, directions = rep(1,4))
+```
+
+This additionally required to specify the `directions` argument because we need to know which direction each indicator runs in (whether they are positive or negative indicators). In our case all indicators are positive. See the vignette on [Normalisation](normalise.html) for more details on indicator directions.
+
+The values imputed in this way are more realistic. Essentially we are replacing each missing value with the average (normalised) score of the other indicators, for a given unit. However this also only makes sense if the indicators/columns are similar to one another: high values of one would likely imply high values in the other.
+
+Behind the scenes, setting `normalise_first = TRUE` first normalises each column using a min-max method, then performs the imputation, then returns the indicators to the orginal scales using the inverse transformation. Another approach which gives more control is to simply run `Normalise()` first, and work with the normalised data from that point onwards. In that case it is better to set `normalise_first = FALSE`, since by default if `impute_by = "row"` it will be set to `TRUE`.
+
+As a final point on data frames, we can set `impute_by = "df"` to pass the entire data frame to `f_i`, which may be useful for more sophisticated multivariate imputation methods. But what's the point of using `Impute()` then, you may ask? First, because when imputing coins, we can impute by indicator groups (see next section); and second, `Impute()` performs some checks to ensure that non-`NA` values are not altered.
+
+## Coins
+
+Imputing coins is similar to imputing data frames because the coin method of `Impute()` calls the data frame method. Please read that section first if you have not already done so. However, for coins there are some additional function arguments.
+
+In the simple case we impute a named data set `dset` using the function `f_i`: e.g. if we want to impute the "Raw" data set using indicator median values:
+
+```{r}
+ASEM <- Impute(ASEM, dset = "Raw", f_i = "i_mean")
+
+ASEM
+```
+
+Here, `Impute()` extracts the "Raw" data set as a data frame, imputes it using the data frame method (see previous section), then saves it as a new data set in the coin. Here, the data set is called "Imputed" but can be named otherwise using the `write_to` argument.
+
+We can also impute by group using a grouped imputation function. Since unit groups are stored within the coin (variables labelled as "Group" in `iMeta`), these can be called directly using the `use_group` argument (without having to specify the `f_i_para` argument):
+
+
+```{r}
+ASEM <- Impute(ASEM, dset = "Raw", f_i = "i_mean_grp", use_group = "GDP_group", )
+```
+
+This has imputed each indicator using its GDP group mean.
+
+Row-wise imputation works in the same way as with a data frame, by setting `impute_by = "row"`. However, this is particularly useful in conjunction with the `group_level` argument. If this is specified, rather than imputing across the entire row of data, it splits rows into indicator groups, using the structure of the index. For example:
+
+```{r}
+ASEM <- Impute(ASEM, dset = "Raw", f_i = "i_mean", impute_by = "row",
+               group_level = 2, normalise_first = TRUE)
+```
+
+Here, the `group_level` argument specifies which level-grouping of the indicators to use. In the ASEM example here, we are using level 2 groups, so it is substituting missing values with the average normalised score within each sub-pillar (in the ASEM example level 2 is called "sub-pillars").
+
+Imputation in this way has an important relationship with aggregation. This is because if we *don't* impute, then in the aggregation step, if we take the mean of a group of indicators, and there is a `NA` present, this value is excluded from the mean calculation. Doing this is mathematically equivalent to assigning the mean to that missing value and then taking the mean of all of the indicators. This is sometimes known as "shadow imputation". Therefore, one reason to use this imputation method is to see which values are being implicitly assigned as a result of excluding missing values from the aggregation step.
+
+# Purses
+
+Purse imputation is very similar to coin imputation, because by default the purse method of `Impute()` imputes each coin separately. There is one exception to this: if `f_i = "impute_panel`, the data sets inside the purse are imputed using the last available data point, using the `impute_panel()`
+function. In this case, coins are not imputed individually, but treated as a single data set. In this
+case, optionally set `f_i_para = list(max_time = .)` where `.` should be substituted with the maximum
+number of time points to search backwards for a non-`NA` value. See `impute_panel()` for more details.
+No further arguments need to be passed to `impute_panel()`.
+
+It is difficult to show this working without a contrived example, so let's contrive one. We take the example panel data set `ASEM_iData_p`, and introduce a missing value `NA` in the indicator "LPI" for unit "GB", for year 2022.
+
+```{r}
+# copy
+dfp <- ASEM_iData_p
+
+# create NA for GB in 2022
+dfp$LPI[dfp$uCode == "GB" & dfp$Time == 2022] <- NA
+```
+
+This data point has a value for the previous year, 2021. Let's see what it is:
+
+```{r}
+dfp$LPI[dfp$uCode == "GB" & dfp$Time == 2021]
+```
+
+Now let's build the purse and impute the raw data set.
+
+```{r}
+# build purse
+ASEMp <- new_coin(dfp, ASEM_iMeta, split_to = "all", quietly = TRUE)
+
+# impute raw data using latest available value
+ASEMp <- Impute(ASEMp, dset = "Raw", f_i = "impute_panel")
+```
+
+Now we check whether our imputed point is what we expect: we would expect that our `NA` is now replaced with the 2021 value as found previously. To get at the data we can use the `get_data()` function.
+
+```{r}
+get_data(ASEMp, dset = "Imputed", iCodes = "LPI", uCodes = "GB", Time = 2021)
+```
+
+And indeed this corresponds to what we expect.

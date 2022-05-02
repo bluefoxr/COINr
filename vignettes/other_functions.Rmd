@@ -1,0 +1,42 @@
+---
+title: "Other Functions"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Other Functions}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(COINr)
+```
+
+# Accessing indicator data
+
+get_data
+get_dset
+
+# Import and export
+
+export_to_excel
+import_coin_tool
+
+# Converting from older COINr versions
+
+COIN2coin
+
+# Other useful functions
+
+names_to_codes
+rank_df
+replace_df
+round_df
+signif_df
+

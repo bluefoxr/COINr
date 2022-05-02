@@ -1,0 +1,29 @@
+---
+title: "Analysis"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(COINr)
+```
+
+* get_corr
+* get_pvals
+* get_corr_flags
+* get_dat_avail
+* get_denom_corr
+* get_eff_weights
+* get_cronbach
+* get_PCA
+* get_stats

@@ -1,0 +1,136 @@
+---
+title: "Overview"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Overview}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Introduction
+
+This vignette introduces the **COINr package**. COINr is a high-level R package which is the first fully-flexible development and analysis environment for composite indicators and scoreboards.
+
+This vignette is one of several vignettes which document the package. Here, the aim is to give a quick introduction and overview of the package. The other vignettes are:
+
+* [Building coins](coins.html)
+* [Normalisation](normalise.html)
+* [Aggregation](aggregate.html)
+* [Sensitivity and Uncertainty analysis](sensitivity.html)
+* [Outlier Treatment](treat.html)
+* [Adjustments and Comparisons](adjustments.html)
+
+As of COINr v1.0.0 some radical changes have been introduced. Most notably for existing users, is the change in syntax. This is an unfortunate one-off necessity and the changes (and how to survive them, or roll back to the old version of COINr) are described in an extra vignette:
+
+* [Changes in v1.0](v1.html)
+
+# Installation
+
+COINr is on CRAN and can be installed by running:
+
+```{r InstallCOINrC, eval=FALSE}
+install.packages("COINr")
+```
+
+Or simply browsing for the package in R Studio. The CRAN version will be updated every 1-2 months or so. If you want the very latest version in the meantime (I am usually adding features and fixing bugs as I find them), you can install the development version from GitHub. First, install the 'remotes' package if you don't already have it, then run:
+
+```{r InstallCOINr, eval=FALSE}
+remotes::install_github("bluefoxr/COINr")
+```
+
+This should directly install the package from Github, without any other steps. You may be asked to update packages. This might not be strictly necessary, so you can also try skipping this step if you prefer.
+
+Once the package is installed, it can be loaded as follows:
+
+```{r setup}
+library(COINr)
+```
+
+# Features
+
+The main features of the COINr package are those for building the composite indicator by performing operations on the data, those for analysing/post-processing, and those for visualisation. Here, the main functions are briefly listed.
+
+**Building** functions begin with a capital letter, except for `new_coin()` which is used to initialise a coin object
+
+Function              Description                                 
+------------------    ---------------------------------------------------------------
+`new_coin()`          Initialise a coin object given indicator data and metadata
+`Screen()`            Screen units based on data availability rules
+`Denominate()`        Denominate/scale indicators by other indicators
+`Impute()`            Impute missing data
+`Treat()`             Treat outliers and skewed distributions
+`Normalise()`         Normalise indicators onto a common scale         
+`Aggregate()`         Aggregate indicators using weighted mean
+
+**Analysing** functions include those for comparisons, for economy profiles, and ex-post counterfactuals.
+
+Function                Description                                 
+------------------      ---------------------------------------------------------------
+`get_corr()`            Get correlations between any indicator/aggregate sets
+`get_corr_flags()`      Find high or low-correlated indicators within groups
+`get_cronbach()`        Get Cronbach's alpha for any set of indicators
+`get_data()`            Get subsets of indicator data        
+`get_datAvail()`        Get data availability details of each unit
+`get_SaW()`             Get overall strengths and weaknesses of each economy
+`get_SaW_IG()`          Get strengths and weaknesses of each economy, by income groups
+`xPost()`               Calculate ex-post counterfactuals
+
+
+**Other** functions include exports, conversion to COIN and example generation.
+
+Function                Description                                 
+------------------      ---------------------------------------------------------------
+`build_example_coin()`  Build example coin using ASEM data set
+`build_example_purse()` Build example purse using ASEM data set
+`export_to_Excel()`     Exports all data frames in the coin object to an Excel workbook
+`COIN_to_coin()`        Convert an older "COIN" class object to a newer "coin" class object
+
+
+**Adjustment and comparison** functions
+
+Function                  Description                                 
+------------------        ---------------------------------------------------------------
+`Regen()`                 Regenerate results of a coin object
+`change_ind()`            Add and remove indicators
+`compare_coins()`         Exports all data frames in the COINr object to an Excel workbook
+`compare_coins_multi()`   Convert a COINr class object to a COIN class object, for use in the 'COINr' package
+
+
+All functions are fully documented and individual function help can be accessed in the usual way by `?function_name`.
+
+The COINr package is loosely object oriented, in the sense that the COINr model is encapsulated in an S3 class called "COINr" (see example below), although no formal methods are defined. Most of the main functions listed in the previous tables take this COINr class as the main input and output with other function arguments specifying how to apply the function. E.g. the syntax is typically:
+
+```{r, eval=F}
+# GII <- GII_function(GII, function_arguments)
+```
+
+This makes the construction of the GII quite straightforward, as we see in the other vignettes. It also allows the GII to be copied, adjusted and compared, and quickly exported.
+
+# Quick example
+
+The COINr package contains the data set that was used to calculate the GII model in 2020. This can be accessed, after loading the package, as follows:
+
+```{r}
+# first few rows of example data
+# head(IndData_2020, 5)
+# head(IndMeta_2020, 5)
+# head(EconMeta_2020, 5)
+```
+
+This is just the raw input data. To actually calculate the model (i.e. the index results), there is a short-cut function. Apart from calculating the results, it also calculates all data required for economy profiles.
+
+```{r}
+# GII2020 <- example_GII2020()
+# 
+# # note the class
+# class(GII2020)
+```
+
+The COINr object is a multilevel list containing all data, parameters and results of the GII, which can be explored in R Studio using e.g. `View(GII2020)`. The `example_GII2020()` function calls a number of the functions described in the previous section. The details of these operations, and more on the structure of the COINr object, are described in the other vignettes.
