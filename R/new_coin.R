@@ -16,7 +16,7 @@
 #' to split to a subset of the entries to `Time`.
 #'
 #' Splitting panel data results in a so-called "purse" class, which is a data frame of COINs, indexed by `Time`.
-#' See online documentation for more details (*TO ADD*).
+#' See `vignette("panel_data")` and `vignette("coins")` for more details.
 #'
 #' @param iData The indicator data and metadata of each unit
 #' @param iMeta Indicator metadata
@@ -28,7 +28,23 @@
 #' @param quietly If `TRUE`, suppresses all messages
 #'
 #' @examples
-#' #
+#' # build a coin using example data frames
+#' ASEM_coin <- new_coin(iData = ASEM_iData,
+#'                       iMeta = ASEM_iMeta,
+#'                       level_names = c("Indicator", "Pillar", "Sub-index", "Index"))
+#' # view coin contents
+#' ASEM_coin
+#'
+#' # build example purse class
+#' ASEM_purse <- new_coin(iData = ASEM_iData_p,
+#'                        iMeta = ASEM_iMeta,
+#'                        split_to = "all",
+#'                        quietly = TRUE)
+#' # view purse contents
+#' ASEM_purse
+#'
+#' # see vignette("coins") for further info
+#'
 #' @return A "coin" object
 #'
 #' @export
@@ -173,7 +189,7 @@ new_coin <- function(iData, iMeta, exclude = NULL, split_to = NULL,
 
     # Store data (only uCode plus indicators)
     coin_i <- write_dset(coin_i, iDatai[c("uCode", iCodes)], dset = "Raw",
-                         ignore_class = TRUE)
+                         ignore_class = TRUE, quietly = quietly)
 
     # alter Log to only include iData of the COIN (not whole panel)
     coin_i$Log$new_coin$iData <- iDatai
@@ -239,7 +255,6 @@ new_coin <- function(iData, iMeta, exclude = NULL, split_to = NULL,
 #' @return Message if everything ok, else error messages.
 #'
 #' @export
-
 check_iData <- function(iData, quietly = FALSE){
 
   # check is df
@@ -380,7 +395,6 @@ check_iData <- function(iData, quietly = FALSE){
 #' @return Message if everything ok, else error messages.
 #'
 #' @export
-
 check_iMeta <- function(iMeta, quietly = FALSE){
 
   # INITIAL CHECKS ----------------------------------------------------------
@@ -630,166 +644,3 @@ get_lineage <- function(iMeta, level_names = NULL){
 
 
 }
-
-
-#' Impute panel data
-#'
-#' Given a data frame of the `iData` format, with a time-index column and a unit ID column `unit_col`, imputes the
-#' remaining numeric columns using the latest available time point. This function is optionally called inside [new_coin()].
-#'
-#' This presumes that there are multiple observations for each unit code, i.e. one per time point. It then searches for any missing values in the target year, and replaces them with the equivalent points
-#' from previous time points. It will replace using the most recently available point.
-#'
-#' @param iData A data frame of indicator data, containing a time index column `time_col`, a unit code column `unit_col`,
-#' and other numerical columns to be imputed.
-#' @param time_col The name of a column found in `iData` to be used as the time index column. Must point to a numeric column.
-#' @param unit_col The name of a column found in `iData` to be used as the unit code/ID column. Must point to a character column.
-#' @param max_time The maximum number of time points to look backwards to impute from. E.g. if `max_time = 1`, if an
-#' `NA` is found at time $t$, it will only look for a replacement value at $t-1$ but not in any time points before that.
-#' By default, searches all time points available.
-#'
-#' @examples
-#' #
-#'
-#' @return A list containing:
-#' * `.$iData_imp`: An `iData` format data frame with missing data imputed using previous time points (where possible).
-#' * `.$DataT`: A data frame in the same format as `iData`, where each entry shows which time point each data point
-#' came from.
-#'
-#' @export
-
-impute_panel <- function(iData, time_col = NULL, unit_col = NULL, max_time = NULL){
-
-
-  # DEFAULTS ----------------------------------------------------------------
-
-  if(is.null(time_col)){
-    time_col <- "Time"
-  }
-  if(is.null(unit_col)){
-    unit_col <- "uCode"
-  }
-
-  # CHECKS ------------------------------------------------------------------
-
-  stopifnot(is.character(time_col),
-            length(time_col) == 1,
-            is.character(unit_col),
-            length(unit_col) == 1)
-
-  if(is.null(iData[[time_col]])){
-    stop("No Time column found - use 'time_col' argument.")
-  }
-  if(is.null(iData[[unit_col]])){
-    stop("No unit column found - use 'unit_col' argument.")
-  }
-  if(!is.numeric(iData[[time_col]])){
-    stop("time_col refers to a non-numeric column")
-  }
-  if(!is.character(iData[[unit_col]])){
-    stop("unit_col refers to a non-character column")
-  }
-
-  not_numeric <- !sapply(iData[colnames(iData) %nin% c(time_col, unit_col)], is.numeric)
-  if(any(not_numeric)){
-    stop("Non-numeric columns found other than time_col and unit_col - cannot impute.")
-  }
-
-  # See what times are in iData
-  yrs <- sort(unique(iData[[time_col]]), decreasing = TRUE)
-
-  if(length(yrs)==1){
-    stop("Cannot impute by latest time point because only one time point of data is available.")
-  }
-
-
-  # FUNC TO IMPUTE ----------------------------------------------------------
-  # Function to impute a data set from a single time point, using previous years of data
-  # I have to do this unit by unit... this is the safest way to deal with the possibility of
-  # (a) different ordering of units
-  # (b) subsets of units being available for different years
-  # Since the each year of the data comes from the same table, column ordering is consistent so
-  # I don't have to worry about that.
-
-  impute_year <- function(use_year){
-
-    # data from year
-    iData_yr <- iData[iData[[time_col]] == use_year, ]
-
-    # here I prep a data frame which will record the year used for each data point
-    # we only make changes to this when a point is imputed
-    DataYears <- iData_yr
-    DataYears[colnames(DataYears) %nin% c(time_col, unit_col)] <- use_year
-    DataYears[is.na(iData_yr)] <- NA
-
-    # previous years
-    olderyrs <- yrs[yrs < use_year]
-    if(length(olderyrs) == 0){
-      return(
-        list(iData = iData_yr, DataT = DataYears)
-      )
-    }
-
-    # only look up max number of points backwards
-    if(!is.null(max_time)){
-      olderyrs <- olderyrs[1:min(c(max_time, length(olderyrs)))]
-    }
-
-    # find ucodes of rows with nas
-    nacodes <- iData_yr[[unit_col]][rowSums(is.na(iData_yr)) > 0]
-
-    for(ucode in nacodes){
-
-      irow <- iData_yr[iData_yr[[unit_col]] == ucode, ]
-
-      # otherwise, we have to go year by year
-      for(oldyr in olderyrs){
-
-        # get row of same unit, for a previous year
-        irowold <- iData[(iData[[time_col]] == oldyr) & (iData[[unit_col]] == ucode), ]
-        # substitute in any missing values
-        # first, get the equivalent entries of the old row (corresponding to NAs in new row)
-        irowold_replace <- irowold[, as.logical(is.na(irow))]
-        # and the names
-        names_irowold <- names(irowold)[as.logical(is.na(irow))]
-        # replace them into the new row
-        irow[, names_irowold] <- irowold_replace
-        # find which indicators were imputed here
-        ind_imp <- names_irowold[!as.logical(is.na(irowold_replace))]
-        # record what happened in datayears
-        DataYears[DataYears[[unit_col]] == ucode, colnames(DataYears) %in% ind_imp] <- oldyr
-        # check if we need to carry on
-        if(all(!is.na(irow))){break}
-
-      }
-
-      # replace with imputed row
-      iData_yr[iData_yr[[unit_col]] == ucode, ] <- irow
-
-    }
-
-    # output list
-    list(iData = iData_yr, DataT = DataYears)
-
-  }
-
-  # apply function to all years of data
-  l_imp <- lapply(yrs, impute_year)
-
-  # reassemble data frame
-  iData_imp <- lapply(rev(l_imp),  `[[`, "iData")
-  iData_imp <- Reduce(rbind, iData_imp)
-
-  stopifnot(nrow(iData_imp) == nrow(iData),
-            ncol(iData_imp) == ncol(iData))
-
-  # get data times
-  DataT <- lapply(l_imp,  `[[`, "DataT")
-  DataT <- Reduce(rbind, DataT)
-
-  # return imputed data
-  list(iData_imp = iData_imp,
-       DataT = DataT)
-
-}
-
