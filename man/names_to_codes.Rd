@@ -26,6 +26,6 @@ Intended for use when importing from the COIN Tool.
 }
 \seealso{
 \itemize{
-\item \code{\link[=import_COIN_tool]{import_COIN_tool()}} Import data from the COIN Tool (Excel).
+\item \code{\link[=import_coin_tool]{import_coin_tool()}} Import data from the COIN Tool (Excel).
 }
 }

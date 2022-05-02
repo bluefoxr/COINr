@@ -49,8 +49,24 @@ of the unique entries in \code{Time}. Alternatively, you can pass a vector of en
 to split to a subset of the entries to \code{Time}.
 
 Splitting panel data results in a so-called "purse" class, which is a data frame of COINs, indexed by \code{Time}.
-See online documentation for more details (\emph{TO ADD}).
+See \code{vignette("panel_data")} and \code{vignette("coins")} for more details.
 }
 \examples{
-#
+# build a coin using example data frames
+ASEM_coin <- new_coin(iData = ASEM_iData,
+                      iMeta = ASEM_iMeta,
+                      level_names = c("Indicator", "Pillar", "Sub-index", "Index"))
+# view coin contents
+ASEM_coin
+
+# build example purse class
+ASEM_purse <- new_coin(iData = ASEM_iData_p,
+                       iMeta = ASEM_iMeta,
+                       split_to = "all",
+                       quietly = TRUE)
+# view purse contents
+ASEM_purse
+
+# see vignette("coins") for further info
+
 }
