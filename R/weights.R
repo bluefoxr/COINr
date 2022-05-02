@@ -6,7 +6,7 @@
 #' @return Either an iMeta data frame with effective weights as an added column, or an updated coin with effective
 #' weights added to `.$Meta$Ind`.
 #' @export
-get_eff_wts <-  function(coin, out2 = "df"){
+get_eff_weights <-  function(coin, out2 = "df"){
 
 
   # PREP --------------------------------------------------------------------
