@@ -32,13 +32,13 @@
 #' # Unzip
 #' CTpath <- unzip(tmpz, exdir = tempdir())
 #' # Read COIN Tool into R
-#' l <- import_COIN_tool(CTpath, makecodes = TRUE) }
+#' l <- import_coin_tool(CTpath, makecodes = TRUE) }
 #'
 #' @return Either a list or a coin, depending on `out2`
 #'
 #' @export
 
-import_COIN_tool <- function(fname, makecodes = FALSE, oldtool = FALSE, out2 = "list"){
+import_coin_tool <- function(fname, makecodes = FALSE, oldtool = FALSE, out2 = "list"){
 
   #----- GET IndData -----#
 
@@ -153,7 +153,7 @@ import_COIN_tool <- function(fname, makecodes = FALSE, oldtool = FALSE, out2 = "
 #' #
 #'
 #' @seealso
-#' * [import_COIN_tool()] Import data from the COIN Tool (Excel).
+#' * [import_coin_tool()] Import data from the COIN Tool (Excel).
 #'
 #' @return A corresponding character vector, but with short codes, and no duplicates.
 #'
