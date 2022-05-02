@@ -58,8 +58,13 @@ Normalise.purse <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
       if(is.null(tt)){
         stop("Time index is NULL or not found in writing normalised data set to coin.")
       }
+
+      if(is.null(write_to)){
+        write_to <- "Normalised"
+      }
+
       # write dset first
-      coin <- write_dset(coin, iDatas_n_l[[which(names(iDatas_n_l) == tt)]], dset = "Normalised")
+      coin <- write_dset(coin, iDatas_n_l[[which(names(iDatas_n_l) == tt)]], dset = write_to)
 
       # also write to log - we signal that coin can't be regenerated any more
       coin$Log$can_regen <- FALSE
