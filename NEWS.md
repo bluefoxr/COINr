@@ -1,5 +1,7 @@
 # COINr 0.6.2
 
+* Fixed bug in `aggregate()` which was wrongly assigning weights in some circumstances (note this is a fairly
+significant bug - worth re-running your results as it may have affected them)
 * Added colour option to `plotframework()`
 * Fixed bug in `compareDF()` (resulting from tibbles vs data frames)
 * Fixed bug in `sensitivity()` causing trouble with running SA with no weights uncertainty specified
