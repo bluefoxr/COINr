@@ -50,7 +50,7 @@ plot_framework <- function(coin, type = "sunburst", colour_level = NULL,
 
   # check if EffWeight present, if not, get
   if(is.null(iMeta$EffWeight)){
-    coin <- get_eff_wts(coin, out2 = "coin")
+    coin <- get_eff_weights(coin, out2 = "coin")
     # get iMeta
     iMeta <- coin$Meta$Ind[!is.na(coin$Meta$Ind$Parent), ]
   }
