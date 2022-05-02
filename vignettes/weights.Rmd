@@ -1,0 +1,22 @@
+---
+title: "Weights"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Weights}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(COINr)
+```
+
+* get_opt_weights
+* get_PCA (need a new func get_PCA_weights)
