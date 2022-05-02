@@ -11,7 +11,6 @@
   impute_by = "column",
   normalise_first = NULL,
   directions = NULL,
-  sfigs = 9,
   ...
 )
 }
@@ -32,9 +31,6 @@ imputation. By default this is \code{FALSE} unless \code{impute_by = "row"}. See
 
 \item{directions}{A vector of directions: either -1 or 1 to indicate the direction of each column
 of \code{x} - this is only used if \code{normalise_first = TRUE}. See details.}
-
-\item{sfigs}{The number of significant figures to use in comparing non-\code{NA} values in \code{x} with their
-counterparts in the imputed data frame. Default 9. See details.}
 
 \item{...}{arguments passed to or from other methods.}
 }

@@ -21,13 +21,15 @@
 \arguments{
 \item{x}{A coin class object}
 
-\item{dset}{A data set within the coin}
+\item{dset}{The name of the data set to apply the function to, which should be accessible in \code{.$Data}.}
 
 \item{f_i}{An imputation function. See details.}
 
 \item{f_i_para}{Further arguments to pass to \code{f_i}, other than \code{x}. See details.}
 
-\item{impute_by}{xx}
+\item{impute_by}{Specifies how to impute: if \code{"column"}, passes each column (indicator) separately as a numerical
+vector to \code{f_i}; if \code{"row"}, passes each \emph{row} separately; and if \code{"df"} passes the entire data set (data frame) to
+\code{f_i}. The function called by \code{f_i} should be compatible with the type of data passed to it.}
 
 \item{use_group}{Optional grouping variable name to pass to imputation function if this supports group
 imputation.}
@@ -38,7 +40,8 @@ level specified by \code{group_level}, and imputation will be performed across r
 than the whole data set. This can make more sense because indicators within a group are likely to be
 more similar.}
 
-\item{normalise_first}{xx}
+\item{normalise_first}{Logical: if \code{TRUE}, each column is normalised using a min-max operation before
+imputation. By default this is \code{FALSE} unless \code{impute_by = "row"}. See details.}
 
 \item{out2}{Either \code{"coin"} to return normalised data set back to the coin, or \code{df} to simply return a data
 frame.}
@@ -52,9 +55,34 @@ frame.}
 An updated coin
 }
 \description{
-If \code{normalise_first = TRUE} (default for \code{impute_by = "row"}), indicators will be
-normalised first using the min-max method, and returned to their original scales after
-imputation.
+This imputes any \code{NA}s in the data set specified by \code{dset}
+by invoking the function \code{f_i} and any optional arguments \code{f_i_para} on each column at a time (if
+\code{impute_by = "column"}), or on each row at a time (if \code{impute_by = "row"}), or by passing the entire
+data frame to \code{f_i} if \code{impute_by = "df"}.
+}
+\details{
+The function \code{f_i} needs to be able to accept with the data class passed to it - if
+\code{impute_by} is \code{"row"} or \code{"column"} this will be a numeric vector, or if \code{"df"} it will be a data
+frame.
+
+When imputing row-wise, prior normalisation of the data is recommended. This is because imputation
+will use e.g. the mean of the unit values over all indicators (columns). If the indicators are on
+very different scales, the result will likely make no sense. If the indicators are normalised first,
+more sensible results can be obtained. There are two options to pre-normalise: first is by setting
+\code{normalise_first = TRUE} - this is anyway the default if \code{impute_by = "row"}. In this case, you also
+need to supply a vector of directions. The data will then be normalised using a min-max approach
+before imputation, followed by the inverse operation to return the data to the original scales.
+
+Another approach which gives more control is to simply run \code{\link[=Normalise]{Normalise()}} first, and work with the
+normalised data from that point onwards. In that case it is better to set \code{normalise_first = FALSE},
+since by default if \code{impute_by = "row"} it will be set to \code{TRUE}.
+
+Checks are made on the format of the data returned by imputation functions, to ensure the
+type and that non-\code{NA} values have not been inadvertently altered. This latter check is allowed
+a degree of tolerance for numerical precision, controlled by the \code{sfigs} argument. This is because
+if the data frame is normalised, and/or depending on the imputation function, there may be a very
+small differences. By default \code{sfigs = 9}, meaning that the non-\code{NA} values pre and post-imputation
+are compared to 9 significant figures.
 }
 \examples{
 #

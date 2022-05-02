@@ -29,3 +29,14 @@ function offers a few extra advantages, such as checking the input and output fo
 sure the resulting imputed vector agrees with the input. It will also skip imputation entirely if
 there are no \code{NA}s at all.
 }
+\examples{
+# a vector with a missing value
+x <- 1:10
+x[3] <- NA
+x
+
+# impute using median
+# this calls COINr's i_median() function
+Impute(x, f_i = "i_median")
+
+}
