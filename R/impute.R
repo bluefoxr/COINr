@@ -1,15 +1,35 @@
 # IMPUTATION
 
-#' Impute indicators
+#' Impute data sets in a purse
+#'
+#' This function imputes the target data set `dset` in each coin using the imputation function `f_i`. This is performed
+#' in the same way as the coin method [Impute.coin()], but with one "special case" for panel data. If `f_i = "impute_panel`,
+#' the data sets inside the purse are imputed using the last available data point, using the [impute_panel()]
+#' function. In this case, coins are not imputed individually, but treated as a single data set. In this
+#' case, optionally set `f_i_para = list(max_time = .)` where `.` should be substituted with the maximum
+#' number of time points to search backwards for a non-`NA` value. See [impute_panel()] for more details.
+#' No further arguments need to be passed to [impute_panel()]. See `vignette("imputation")` for more
+#' details.
 #'
 #' @param x A purse object
-#' @param dset The data set to impute in each coin
-#' @param f_i xx
-#' @param f_i_para xx
-#' @param impute_by xx
-#' @param group_level xx
-#' @param normalise_first xx
-#' @param write_to xx
+#' @param dset The name of the data set to apply the function to, which should be accessible in `.$Data`.
+#' @param f_i An imputation function. For the "purse" class, if `f_i = "impute_panel` this is a special
+#' case See details.
+#' @param f_i_para Further arguments to pass to `f_i`, other than `x`. See details.
+#' @param impute_by Specifies how to impute: if `"column"`, passes each column (indicator) separately as a numerical
+#' vector to `f_i`; if `"row"`, passes each *row* separately; and if `"df"` passes the entire data set (data frame) to
+#' `f_i`. The function called by `f_i` should be compatible with the type of data passed to it.
+#' @param group_level A level of the framework to use for grouping indicators. This is only
+#' relevant if `impute_by = "row"`. In that case, indicators will be split into their groups at the
+#' level specified by `group_level`, and imputation will be performed across rows of the group, rather
+#' than the whole data set. This can make more sense because indicators within a group are likely to be
+#' more similar.
+#' @param use_group Optional grouping variable name to pass to imputation function if this supports group
+#' imputation.
+#' @param normalise_first Logical: if `TRUE`, each column is normalised using a min-max operation before
+#' imputation. By default this is `FALSE` unless `impute_by = "row"`. See details.
+#' @param write_to Optional character string for naming the resulting data set in each coin. Data will be written to
+#' `.$Data[[write_to]]`. Default is `write_to == "Imputed"`.
 #' @param ... arguments passed to or from other methods.
 #'
 #' @return An updated purse with imputed data sets added to each coin.
@@ -18,17 +38,66 @@
 #' @examples
 #' #
 Impute.purse <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "column",
-                         group_level = NULL, normalise_first = NULL, write_to = NULL, ...){
+                         group_level = NULL, use_group = NULL, normalise_first = NULL,
+                         write_to = NULL, ...){
 
   # input check
   check_purse(x)
 
-  # apply unit screening to each coin
-  x$coin <- lapply(x$coin, function(coin){
-    Impute.coin(coin, dset = dset, f_i = f_i, f_i_para = f_i_para, impute_by = impute_by,
-                 group_level = group_level, normalise_first = normalise_first, out2 = "coin",
-                 write_to = write_to)
-  })
+  if(f_i == "impute_panel"){
+
+    # this is a special case
+    iDatas <- get_dset(x, dset)
+
+    # impute
+    l_imp <- impute_panel(iDatas, max_time = f_i_para$max_time)
+
+    # extract imputed data
+    iDatas_i <- l_imp$iData_imp
+
+    # split by Time
+    iDatas_i_l <- split(iDatas_i, iDatas$Time)
+
+    # now write dsets to coins
+    x$coin <- lapply(x$coin, function(coin){
+
+      # get Time
+      tt <- coin$Meta$Unit$Time[[1]]
+      if(is.null(tt)){
+        stop("Time index is NULL or not found in writing imputed data set to coin.")
+      }
+
+      if(is.null(write_to)){
+        write_to <- "Imputed"
+      }
+
+      # isolate data from the time point
+      iData_write <- iDatas_i_l[[which(names(iDatas_i_l) == tt)]]
+      # remove Time column
+      iData_write <- iData_write[names(iData_write) != "Time"]
+
+      # write dset first
+      coin <- write_dset(coin, iData_write, dset = write_to)
+
+      # also write to log - we signal that coin can't be regenerated any more
+      coin$Log$can_regen <- FALSE
+      coin$Log$message <- "Coin was imputed inside a purse with using panel imputation. Cannot be regenerated."
+
+      coin
+    })
+
+  } else {
+
+    # apply unit screening to each coin
+    x$coin <- lapply(x$coin, function(coin){
+      Impute.coin(coin, dset = dset, f_i = f_i, f_i_para = f_i_para, impute_by = impute_by,
+                  group_level = group_level, use_group = use_group,
+                  normalise_first = normalise_first, out2 = "coin",
+                  write_to = write_to)
+    })
+
+  }
+
 
   # make sure still purse class
   class(x) <- c("purse", "data.frame")
@@ -38,15 +107,41 @@ Impute.purse <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "colu
 
 #' Impute a data set in a coin
 #'
-#' If `normalise_first = TRUE` (default for `impute_by = "row"`), indicators will be
-#' normalised first using the min-max method, and returned to their original scales after
-#' imputation.
+#' This imputes any `NA`s in the data set specified by `dset`
+#' by invoking the function `f_i` and any optional arguments `f_i_para` on each column at a time (if
+#' `impute_by = "column"`), or on each row at a time (if `impute_by = "row"`), or by passing the entire
+#' data frame to `f_i` if `impute_by = "df"`.
+#'
+#' The function `f_i` needs to be able to accept with the data class passed to it - if
+#' `impute_by` is `"row"` or `"column"` this will be a numeric vector, or if `"df"` it will be a data
+#' frame.
+#'
+#' When imputing row-wise, prior normalisation of the data is recommended. This is because imputation
+#' will use e.g. the mean of the unit values over all indicators (columns). If the indicators are on
+#' very different scales, the result will likely make no sense. If the indicators are normalised first,
+#' more sensible results can be obtained. There are two options to pre-normalise: first is by setting
+#' `normalise_first = TRUE` - this is anyway the default if `impute_by = "row"`. In this case, you also
+#' need to supply a vector of directions. The data will then be normalised using a min-max approach
+#' before imputation, followed by the inverse operation to return the data to the original scales.
+#'
+#' Another approach which gives more control is to simply run [Normalise()] first, and work with the
+#' normalised data from that point onwards. In that case it is better to set `normalise_first = FALSE`,
+#' since by default if `impute_by = "row"` it will be set to `TRUE`.
+#'
+#' Checks are made on the format of the data returned by imputation functions, to ensure the
+#' type and that non-`NA` values have not been inadvertently altered. This latter check is allowed
+#' a degree of tolerance for numerical precision, controlled by the `sfigs` argument. This is because
+#' if the data frame is normalised, and/or depending on the imputation function, there may be a very
+#' small differences. By default `sfigs = 9`, meaning that the non-`NA` values pre and post-imputation
+#' are compared to 9 significant figures.
 #'
 #' @param x A coin class object
-#' @param dset A data set within the coin
+#' @param dset The name of the data set to apply the function to, which should be accessible in `.$Data`.
 #' @param f_i An imputation function. See details.
 #' @param f_i_para Further arguments to pass to `f_i`, other than `x`. See details.
-#' @param impute_by xx
+#' @param impute_by Specifies how to impute: if `"column"`, passes each column (indicator) separately as a numerical
+#' vector to `f_i`; if `"row"`, passes each *row* separately; and if `"df"` passes the entire data set (data frame) to
+#' `f_i`. The function called by `f_i` should be compatible with the type of data passed to it.
 #' @param use_group Optional grouping variable name to pass to imputation function if this supports group
 #' imputation.
 #' @param group_level A level of the framework to use for grouping indicators. This is only
@@ -54,7 +149,8 @@ Impute.purse <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "colu
 #' level specified by `group_level`, and imputation will be performed across rows of the group, rather
 #' than the whole data set. This can make more sense because indicators within a group are likely to be
 #' more similar.
-#' @param normalise_first xx
+#' @param normalise_first Logical: if `TRUE`, each column is normalised using a min-max operation before
+#' imputation. By default this is `FALSE` unless `impute_by = "row"`. See details.
 #' @param out2 Either `"coin"` to return normalised data set back to the coin, or `df` to simply return a data
 #' frame.
 #' @param write_to Optional character string for naming the data set in the coin. Data will be written to
@@ -216,8 +312,6 @@ Impute.coin <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "colum
 #' imputation. By default this is `FALSE` unless `impute_by = "row"`. See details.
 #' @param directions A vector of directions: either -1 or 1 to indicate the direction of each column
 #' of `x` - this is only used if `normalise_first = TRUE`. See details.
-#' @param sfigs The number of significant figures to use in comparing non-`NA` values in `x` with their
-#' counterparts in the imputed data frame. Default 9. See details.
 #' @param ... arguments passed to or from other methods.
 #'
 #' @return An imputed data frame
@@ -226,7 +320,7 @@ Impute.coin <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "colum
 #' @examples
 #' #
 Impute.data.frame <- function(x, f_i = NULL, f_i_para = NULL, impute_by = "column",
-                               normalise_first = NULL, directions = NULL, sfigs = 9, ...){
+                               normalise_first = NULL, directions = NULL, ...){
 
   # CHECKS ------------------------------------------------------------------
 
@@ -361,7 +455,7 @@ Impute.data.frame <- function(x, f_i = NULL, f_i_para = NULL, impute_by = "colum
   x <- as.data.frame(lapply(x, as.numeric))
   row.names(x) <- attr(x_imp, "row.names")
 
-  if(!identical(signif(x_check, sfigs), signif(x, sfigs))){
+  if(!isTRUE(all.equal(x_check, x))){
     stop("Differences detected in non-NA values of imputed data frame.")
   }
 
@@ -391,8 +485,18 @@ Impute.data.frame <- function(x, f_i = NULL, f_i_para = NULL, impute_by = "colum
 #'
 #' @return An imputed numeric vector of the same length of `x`.
 #' @export
+#'
+#' @examples
+#' # a vector with a missing value
+#' x <- 1:10
+#' x[3] <- NA
+#' x
+#'
+#' # impute using median
+#' # this calls COINr's i_median() function
+#' Impute(x, f_i = "i_median")
+#'
 Impute.numeric <- function(x, f_i = NULL, f_i_para = NULL, ...){
-
 
   # DEFAULTS ----------------------------------------------------------------
 
@@ -431,7 +535,7 @@ Impute.numeric <- function(x, f_i = NULL, f_i_para = NULL, ...){
   if(!is.numeric(xi)){
     stop("imputed vector is not numeric")
   }
-  if(any(xi[!nas] != xi[!nas])){
+  if(any(xi[!nas] != x[!nas])){
     stop("One or more non-NA values of x has changed as a result of imputation. Check the behaviour of the imputation function.")
   }
 
@@ -555,4 +659,198 @@ i_median_grp <- function(x, f){
   x_split <- split(x, f)
   x_split <- lapply(x_split, i_median)
   unsplit(x_split, f)
+}
+
+#' Impute panel data
+#'
+#' Given a data frame of panel data, with a time-index column `time_col` and a unit ID column `unit_col`, imputes other
+#' columns using the entry from the latest available time point.
+#'
+#' This presumes that there are multiple observations for each unit code, i.e. one per time point. It then searches for any missing values in the target year, and replaces them with the equivalent points
+#' from previous time points. It will replace using the most recently available point.
+#'
+#' @param iData A data frame of indicator data, containing a time index column `time_col`, a unit code column `unit_col`,
+#' and other numerical columns to be imputed.
+#' @param time_col The name of a column found in `iData` to be used as the time index column. Must point to a numeric column.
+#' @param unit_col The name of a column found in `iData` to be used as the unit code/ID column. Must point to a character column.
+#' @param cols Optionally, a character vector of names of columns to impute. If `NULL` (default), all columns apart from `time_col` and
+#' `unit_col` will be imputed where possible.
+#' @param max_time The maximum number of time points to look backwards to impute from. E.g. if `max_time = 1`, if an
+#' `NA` is found at time \eqn{t}, it will only look for a replacement value at \eqn{t-1} but not in any time points before that.
+#' By default, searches all time points available.
+#'
+#' @examples
+#' # Copy example panel data
+#' iData_p <- ASEM_iData_p
+#'
+#' # we introduce two NAs: one for NZ in 2022 in LPI indicator
+#' iData_p$LPI[iData_p$uCode == "NZ" & iData_p$Time == 2022] <-  NA
+#' # one for AT, also in 2022, but for Flights indicator
+#' iData_p$Flights[iData_p$uCode == "AT" & iData_p$Time == 2022] <- NA
+#'
+#' # impute: target only the two columns where NAs introduced
+#' l_imp <- impute_panel(iData_p, cols = c("LPI", "Flights"))
+#' # get imputed df
+#' iData_imp <- l_imp$iData_imp
+#'
+#' # check the output is what we expect: both NAs introduced should now have 2021 values
+#' iData_imp$LPI[iData_imp$uCode == "NZ" & iData_imp$Time == 2022] ==
+#'   ASEM_iData_p$LPI[ASEM_iData_p$uCode == "NZ" & ASEM_iData_p$Time == 2021]
+#'
+#' iData_imp$Flights[iData_imp$uCode == "AT" & iData_imp$Time == 2022] ==
+#'   ASEM_iData_p$Flights[ASEM_iData_p$uCode == "AT" & ASEM_iData_p$Time == 2021]
+#'
+#' @return A list containing:
+#' * `.$iData_imp`: An `iData` format data frame with missing data imputed using previous time points (where possible).
+#' * `.$DataT`: A data frame in the same format as `iData`, where each entry shows which time point each data point
+#' came from.
+#'
+#' @export
+impute_panel <- function(iData, time_col = NULL, unit_col = NULL, cols = NULL, max_time = NULL){
+
+
+  # DEFAULTS ----------------------------------------------------------------
+
+  if(is.null(time_col)){
+    time_col <- "Time"
+  }
+  if(is.null(unit_col)){
+    unit_col <- "uCode"
+  }
+
+  # CHECKS ------------------------------------------------------------------
+
+  stopifnot(is.character(time_col),
+            length(time_col) == 1,
+            is.character(unit_col),
+            length(unit_col) == 1)
+
+  if(is.null(iData[[time_col]])){
+    stop("No Time column found - use 'time_col' argument.")
+  }
+  if(is.null(iData[[unit_col]])){
+    stop("No unit column found - use 'unit_col' argument.")
+  }
+  if(!is.numeric(iData[[time_col]])){
+    stop("time_col refers to a non-numeric column")
+  }
+  if(!is.character(iData[[unit_col]])){
+    stop("unit_col refers to a non-character column")
+  }
+
+  if(is.null(cols)){
+    cols <- setdiff(names(iData), c(time_col, unit_col))
+  }
+  if(any(cols %nin% names(iData))){
+    stop("One or more entries in 'cols' not found in names(iData).")
+  }
+
+  # not_numeric <- !sapply(iData[colnames(iData) %nin% c(time_col, unit_col)], is.numeric)
+  # if(any(not_numeric)){
+  #   stop("Non-numeric columns found other than time_col and unit_col - cannot impute.")
+  # }
+
+  # See what times are in iData
+  yrs <- sort(unique(iData[[time_col]]), decreasing = TRUE)
+
+  if(length(yrs)==1){
+    stop("Cannot impute by latest time point because only one time point of data is available.")
+  }
+
+  # From here I will reduce iData to only the cols to be imputed. Will be put back later
+  iData_orig <- iData
+  iData <- iData[c(time_col, unit_col, cols)]
+
+  # FUNC TO IMPUTE ----------------------------------------------------------
+  # Function to impute a data set from a single time point, using previous years of data
+  # I have to do this unit by unit... this is the safest way to deal with the possibility of
+  # (a) different ordering of units
+  # (b) subsets of units being available for different years
+  # Since the each year of the data comes from the same table, column ordering is consistent so
+  # I don't have to worry about that.
+
+  impute_year <- function(use_year){
+
+    # data from year
+    iData_yr <- iData[iData[[time_col]] == use_year, ]
+
+    # here I prep a data frame which will record the year used for each data point
+    # we only make changes to this when a point is imputed
+    DataYears <- iData_yr
+    DataYears[colnames(DataYears) %nin% c(time_col, unit_col)] <- use_year
+    DataYears[is.na(iData_yr)] <- NA
+
+    # previous years
+    olderyrs <- yrs[yrs < use_year]
+    if(length(olderyrs) == 0){
+      return(
+        list(iData = iData_yr, DataT = DataYears)
+      )
+    }
+
+    # only look up max number of points backwards
+    if(!is.null(max_time)){
+      olderyrs <- olderyrs[1:min(c(max_time, length(olderyrs)))]
+    }
+
+    # find ucodes of rows with nas
+    nacodes <- iData_yr[[unit_col]][rowSums(is.na(iData_yr)) > 0]
+
+    for(ucode in nacodes){
+
+      irow <- iData_yr[iData_yr[[unit_col]] == ucode, ]
+
+      # otherwise, we have to go year by year
+      for(oldyr in olderyrs){
+
+        # get row of same unit, for a previous year
+        irowold <- iData[(iData[[time_col]] == oldyr) & (iData[[unit_col]] == ucode), ]
+        # substitute in any missing values
+        # first, get the equivalent entries of the old row (corresponding to NAs in new row)
+        irowold_replace <- irowold[, as.logical(is.na(irow))]
+        # and the names
+        names_irowold <- names(irowold)[as.logical(is.na(irow))]
+        # replace them into the new row
+        irow[, names_irowold] <- irowold_replace
+        # find which indicators were imputed here
+        ind_imp <- names_irowold[!as.logical(is.na(irowold_replace))]
+        # record what happened in datayears
+        DataYears[DataYears[[unit_col]] == ucode, colnames(DataYears) %in% ind_imp] <- oldyr
+        # check if we need to carry on
+        if(all(!is.na(irow))){break}
+
+      }
+
+      # replace with imputed row
+      iData_yr[iData_yr[[unit_col]] == ucode, ] <- irow
+
+    }
+
+    # output list
+    list(iData = iData_yr, DataT = DataYears)
+
+  }
+
+  # apply function to all years of data
+  l_imp <- lapply(yrs, impute_year)
+
+  # reassemble data frame
+  iData_imp <- lapply(rev(l_imp),  `[[`, "iData")
+  iData_imp <- Reduce(rbind, iData_imp)
+
+  stopifnot(nrow(iData_imp) == nrow(iData),
+            ncol(iData_imp) == ncol(iData))
+
+  # get data times
+  DataT <- lapply(l_imp,  `[[`, "DataT")
+  DataT <- Reduce(rbind, DataT)
+
+  # return iData to its full form if cols was specified
+  iData_imp_full <- iData_orig
+  iData_imp_full[c(time_col, unit_col, cols)] <- iData_imp[c(time_col, unit_col, cols)]
+
+  # return imputed data
+  list(iData_imp = iData_imp_full,
+       DataT = DataT)
+
 }
