@@ -85,5 +85,12 @@ small differences. By default \code{sfigs = 9}, meaning that the non-\code{NA} v
 are compared to 9 significant figures.
 }
 \examples{
-#
+#' # build coin
+coin <- build_example_coin(up_to = "new_coin")
+
+# impute raw data set using population groups
+# output to data frame directly
+Impute(coin, dset = "Raw", f_i = "i_mean_grp",
+               use_group = "Pop_group", out2 = "df")
+
 }
