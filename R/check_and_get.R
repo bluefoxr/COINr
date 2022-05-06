@@ -286,6 +286,9 @@ get_data.coin <- function(x, dset, iCodes = NULL, Level = NULL, uCodes = NULL,
     if(is.list(use_group)){
       groupcol <- names(use_group)
       groupsel <- use_group[[1]]
+      if(length(groupsel) > 1){
+        stop("Only one group can be selected by groupsel.")
+      }
     } else if (is.character(use_group)){
       groupcol <- use_group
       groupsel <- NULL
