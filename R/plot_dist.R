@@ -4,7 +4,9 @@
 #' Supports plotting multiple indicators by calling aggregation groups.
 #'
 #' @param coin The coin object, or a data frame of indicator data
-#' @param ... Arguments passed to [get_data()] (other than `coin`).
+#' @param dset The name of the data set to apply the function to, which should be accessible in `.$Data`.
+#' @param iCodes Indicator code(s) to plot. See details.
+#' @param ... Further arguments passed to [get_data()] (other than `coin`, `dset` and `iCodes`).
 #' @param normalise Logical: if `TRUE`, normalises the data first, using `default_specs`. If `FALSE` (default),
 #' data is not normalised.
 #' @param default_specs Specifications for normalising data if `normalise = TRUE`. This is passed to the
@@ -21,12 +23,12 @@
 #' @return A ggplot2 plot object.
 #'
 #' @export
-plot_dist <- function(coin, ..., type = "Box", normalise = FALSE, default_specs = NULL){
+plot_dist <- function(coin, dset, iCodes, ..., type = "Box", normalise = FALSE, default_specs = NULL){
 
   # GET DATA ----------------------------------------------------------------
 
   # get data set
-  iData <- get_data(coin, ...)
+  iData <- get_data(coin, dset = dset, iCodes = iCodes, ...)
 
   # col names that are NOT indicators
   not_iCodes <- names(iData)[names(iData) %in% names(coin$Meta$Unit)]
