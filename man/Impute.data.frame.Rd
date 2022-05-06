@@ -71,5 +71,20 @@ small differences. By default \code{sfigs = 9}, meaning that the non-\code{NA} v
 are compared to 9 significant figures.
 }
 \examples{
-#
+# a df of random numbers
+X <- as.data.frame(matrix(runif(50), 10, 5))
+
+# introduce NAs (2 in 3 of 5 cols)
+X[sample(1:10, 2), 1] <- NA
+X[sample(1:10, 2), 3] <- NA
+X[sample(1:10, 2), 5] <- NA
+
+# impute using column mean
+Impute(X, f_i = "i_mean")
+
+# impute using row median (no normalisation)
+Impute(X, f_i = "i_median", impute_by = "row",
+       normalise_first = FALSE)
+
+
 }

@@ -62,5 +62,5 @@ No further arguments need to be passed to \code{\link[=impute_panel]{impute_pane
 details.
 }
 \examples{
-#
+# see vignette("imputation")
 }

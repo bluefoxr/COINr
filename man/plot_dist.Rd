@@ -4,12 +4,24 @@
 \alias{plot_dist}
 \title{Static indicator distribution plots}
 \usage{
-plot_dist(coin, ..., type = "Box", normalise = FALSE, default_specs = NULL)
+plot_dist(
+  coin,
+  dset,
+  iCodes,
+  ...,
+  type = "Box",
+  normalise = FALSE,
+  default_specs = NULL
+)
 }
 \arguments{
 \item{coin}{The coin object, or a data frame of indicator data}
 
-\item{...}{Arguments passed to \code{\link[=get_data]{get_data()}} (other than \code{coin}).}
+\item{dset}{The name of the data set to apply the function to, which should be accessible in \code{.$Data}.}
+
+\item{iCodes}{Indicator code(s) to plot. See details.}
+
+\item{...}{Further arguments passed to \code{\link[=get_data]{get_data()}} (other than \code{coin}, \code{dset} and \code{iCodes}).}
 
 \item{type}{The type of plot. Currently supported \code{"Box"}, \code{"Dot"}, \code{"Violin"}, \code{"Violindot"}, \code{"Histogram"}.}
 
