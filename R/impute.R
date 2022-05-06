@@ -36,7 +36,7 @@
 #' @export
 #'
 #' @examples
-#' #
+#' # see vignette("imputation")
 Impute.purse <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "column",
                          group_level = NULL, use_group = NULL, normalise_first = NULL,
                          write_to = NULL, ...){
@@ -161,7 +161,14 @@ Impute.purse <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "colu
 #' @export
 #'
 #' @examples
-#' #
+#' #' # build coin
+#' coin <- build_example_coin(up_to = "new_coin")
+#'
+#' # impute raw data set using population groups
+#' # output to data frame directly
+#' Impute(coin, dset = "Raw", f_i = "i_mean_grp",
+#'                use_group = "Pop_group", out2 = "df")
+#'
 Impute.coin <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "column",
                         use_group = NULL, group_level = NULL, normalise_first = NULL, out2 = "coin",
                         write_to = NULL, ...){
@@ -318,7 +325,22 @@ Impute.coin <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "colum
 #' @export
 #'
 #' @examples
-#' #
+#' # a df of random numbers
+#' X <- as.data.frame(matrix(runif(50), 10, 5))
+#'
+#' # introduce NAs (2 in 3 of 5 cols)
+#' X[sample(1:10, 2), 1] <- NA
+#' X[sample(1:10, 2), 3] <- NA
+#' X[sample(1:10, 2), 5] <- NA
+#'
+#' # impute using column mean
+#' Impute(X, f_i = "i_mean")
+#'
+#' # impute using row median (no normalisation)
+#' Impute(X, f_i = "i_median", impute_by = "row",
+#'        normalise_first = FALSE)
+#'
+#'
 Impute.data.frame <- function(x, f_i = NULL, f_i_para = NULL, impute_by = "column",
                                normalise_first = NULL, directions = NULL, ...){
 
