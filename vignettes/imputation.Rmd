@@ -65,11 +65,9 @@ With missing data, several options are available:
 
 These options can also be combined. Here, we focus on the option of imputation.
 
-# The `Impute()` function
+# Data frames
 
 The `Impute()` function is a flexible function that imputes missing data in a data set using any suitable function that can be passed to it. In fact, `Impute()` is a *generic*, and has methods for coins, data frames, numeric vectors and purses.
-
-## Data frames
 
 Let's begin by examining the data frame method of `Impute()`, since it is easier to see what's going on. We will use a small data frame which is easy to visualise:
 
@@ -133,7 +131,7 @@ Behind the scenes, setting `normalise_first = TRUE` first normalises each column
 
 As a final point on data frames, we can set `impute_by = "df"` to pass the entire data frame to `f_i`, which may be useful for more sophisticated multivariate imputation methods. But what's the point of using `Impute()` then, you may ask? First, because when imputing coins, we can impute by indicator groups (see next section); and second, `Impute()` performs some checks to ensure that non-`NA` values are not altered.
 
-## Coins
+# Coins
 
 Imputing coins is similar to imputing data frames because the coin method of `Impute()` calls the data frame method. Please read that section first if you have not already done so. However, for coins there are some additional function arguments.
 
