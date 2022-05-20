@@ -1,6 +1,6 @@
 #' Static heatmaps of correlation matrices
 #'
-#' Generates heatmaps of correlation matrices using **ggplot2**. This enables correlating any set of indicators against any other,
+#' Generates heatmaps of correlation matrices using ggplot2. This enables correlating any set of indicators against any other,
 #' and supports calling named aggregation groups of indicators. The `withparent` argument generates tables of correlations only with
 #' parents of each indicator. Also supports discrete colour maps using `flagcolours`, different types of correlation, and groups
 #' plots by higher aggregation levels.
@@ -16,9 +16,9 @@
 #' @param Levels The aggregation levels to take the two groups of indicators from. See [get_data()] for details.
 #' @param ... Optional further arguments to pass to [get_data()].
 #' @param cortype The type of correlation to calculate, either `"pearson"`, `"spearman"`, or `"kendall"` (see [stats::cor()]).
-#' @param withparent If `aglev[1] != aglev[2]`, and equal `"parent"` will only plot correlations of each row with its parent (default).
+#' @param withparent If `aglev[1] != aglev[2]`, and equal `TRUE` will only plot correlations of each row with its parent.
 #' If `"family"`, plots the lowest aggregation level in `Levels` against all its parent levels.
-#' If `"none"` plots the full correlation matrix.
+#' If `FALSE` plots the full correlation matrix (default).
 #' @param grouplev The aggregation level to group correlations by if `aglev[1] == aglev[2]`. By default, groups correlations into the
 #' aggregation level above. Set to 0 to disable grouping and plot the full matrix.
 #' @param box_level The aggregation level to draw boxes around if `aglev[1] == aglev[2]`.
@@ -36,26 +36,25 @@
 #' @param discrete_colours An optional 4-length character vector of colour codes or names to define the discrete
 #' colour map if `flagcolours = TRUE` (from high to low correlation categories). Defaults to a green/blue/grey/purple.
 #' @param box_colour The line colour of grouping boxes, default black.
-#' @param out2 If `"fig"` returns a plot, if `"dflong"` returns the correlation matrix in long form, if `"dfwide"`,
-#' returns the correlation matrix in wide form. The last option here is probably useful if you want to
-#' present a table of the data in a report.
 #'
 #' @importFrom ggplot2 ggplot aes geom_tile
 #' @importFrom rlang .data
 #'
 #' @examples
-#' #
+#' # build example coin
+#' coin <- build_example_coin(up_to = "Normalise", quietly = TRUE)
 #'
-#' @return If `out2 = "fig"` returns a plot generated with **ggplot2**. These can be edited further with **ggplot2** commands.
-#' If `out2 = "dflong"` returns the correlation matrix as a data frame in long form, if `out2 = "dfwide"`,
-#' returns the correlation matrix in wide form. The last option here is probably useful if you want to
-#' present a table of the data in a report.
+#' # plot correlations between indicators in Sust group, using Normalised dset
+#' plot_corr(coin, dset = "Normalised", iCodes = list("Sust"),
+#'           grouplev = 2, flagcolours = TRUE)
+#'
+#' @return A plot object generated with ggplot2, which can be edited further with ggplot2 commands.
 #'
 #' @export
 plot_corr <- function(coin, dset, iCodes = NULL, Levels = 1, ..., cortype = "pearson",
                      withparent = FALSE, grouplev = NULL, box_level = NULL, showvals = TRUE, flagcolours = FALSE,
                      flagthresh = c(-0.4, 0.3, 0.9), pval = 0.05, insig_colour = "#F0F0F0",
-                     text_colour = NULL, discrete_colours = NULL, box_colour = NULL, out2 = "fig"){
+                     text_colour = NULL, discrete_colours = NULL, box_colour = NULL){
 
 
   # NOTE SET grouplev default to level + 1
@@ -73,37 +72,6 @@ plot_corr <- function(coin, dset, iCodes = NULL, Levels = 1, ..., cortype = "pea
     Levels <- rev(Levels)
     iCodes <- rev(iCodes)
   }
-
-
-  #
-  # ##- GET CORRELATIONS -----------------------------
-  #
-  # if(withparent == "none" | withparent == "parent"){
-  #
-  #   if(withparent == "none") withparent <- FALSE
-  #   if(withparent == "parent") withparent <- TRUE
-  #
-  #   crtable <- get_corr(coin, dset = dset, iCodes = iCodes, Levels = Levels, ...,
-  #                       cortype = cortype, pval = pval, withparent = withparent, grouplev = grouplev)
-  #
-  # } else if (withparent == "family"){
-  #
-  #   # we repeat for all levels above. Start with the first agg level specified
-  #   aglev1 <- min(Levels)
-  #
-  #   crtable <- data.frame(Var1 = NA, Var2 = NA, Correlation = NA)
-  #
-  #   for (ii in (aglev1 + 1):ncol(lin)){
-  #     crtableii <- get_corr(coin, dset = dset, iCodes = iCodes, Levels = c(ii, aglev1), ...,
-  #                           cortype = cortype, pval = pval, withparent = TRUE, grouplev = grouplev)
-  #     crtableii$Var1 <- colnames(lin)[ii]
-  #     crtable <- rbind(crtable, crtableii)
-  #   }
-  #   crtable <- crtable[-1,]
-  #
-  # } else {
-  #   stop("withfamily should be either 'none', 'parent' or 'family'.")
-  # }
 
   crtable <- get_corr(coin, dset = dset, iCodes = iCodes, Levels = Levels,
                       ... = ..., cortype = cortype, pval = pval, withparent = withparent,

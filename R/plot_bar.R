@@ -8,8 +8,8 @@
 #' @param dset Data set from which to extract the variable to plot. Passed to [get_data()].
 #' @param iCode Code of variable or indicator to plot. Passed to [get_data()].
 #' @param ... Further arguments to pass to [get_data()], e.g. for filtering units.
-#' @param uLabel How to label units: either `"iCode"`, or `"iName"`.
-#' @param axes_label How to label the y axis and group legend: either `"uCode"` or `"uName"`.
+#' @param uLabel How to label units: either `"uCode"`, or `"uName"`.
+#' @param axes_label How to label the y axis and group legend: either `"iCode"` or `"iName"`.
 #' @param by_group Optional group variable to use to colour bars. Cannot be used if `stack_children = TRUE`.
 #' @param dset_label Logical: whether to include the data set in the y axis label.
 #' @param log_scale Logical: if `TRUE` uses a log scale for the y axis.
@@ -25,7 +25,12 @@
 #' @export
 #'
 #' @examples
-#' #
+#' # build example coin
+#' coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
+#'
+#' # bar plot of CO2 by GDP per capita group
+#' plot_bar(coin, dset = "Raw", iCode = "CO2",
+#'          by_group = "GDPpc_group", axes_label = "iName")
 plot_bar <- function(coin, dset, iCode, ..., uLabel = "uCode", axes_label = "iCode",
                      by_group = NULL, dset_label = FALSE, log_scale = FALSE, stack_children = FALSE,
                      bar_colours = NULL){

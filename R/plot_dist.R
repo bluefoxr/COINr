@@ -18,12 +18,17 @@
 #' @importFrom rlang .data
 #'
 #' @examples
-#' #
+#' # build example coin
+#' coin <- build_example_coin(up_to = "new_coin")
+#'
+#' # plot all indicators in P2P group
+#' plot_dist(coin, dset = "Raw", iCodes = "P2P", Level = 1, type = "Violindot")
 #'
 #' @return A ggplot2 plot object.
 #'
 #' @export
-plot_dist <- function(coin, dset, iCodes, ..., type = "Box", normalise = FALSE, default_specs = NULL){
+plot_dist <- function(coin, dset, iCodes, ..., type = "Box", normalise = FALSE,
+                      default_specs = NULL){
 
   # GET DATA ----------------------------------------------------------------
 
@@ -115,14 +120,17 @@ plot_dist <- function(coin, dset, iCodes, ..., type = "Box", normalise = FALSE, 
 #' Plots a single indicator as a line of dots, and optionally highlights a selected unit.
 #'
 #' @param coin The coin
-#' @param ... Arguments to pass to [get_data()]. Note that `iCodes` is required to be of length 1.
+#' @param dset The name of the data set to apply the function to, which should be accessible in `.$Data`.
+#' @param iCode Code of indicator or aggregate found in `dset`. Required to be of length 1.
+#' @param Level The level in the hierarchy to extract data from. See [get_data()].
+#' @param ... Further arguments to pass to [get_data()], other than those explicitly specified here.
 #' @param marker_type The type of marker, either `"circle"` (default) or `"cross"`, or a marker number to pass to ggplot2 (0-25).
 #' @param usel A subset of units to highlight.
 #' @param add_stat A statistic to overlay, either `"mean"`, `"median"` or else a specified value.
 #' @param stat_label An optional string to use as label at the point specified by `add_stat`.
 #' @param show_ticks Set `FALSE` to remove axis ticks.
-#' @param plabel Controls the labelling of the indicator. If not specified, returns the indicator name,
-#' plus units if found. Otherwise if `"indname"`, returns only indicator name, if `"indname+unit"`, returns
+#' @param plabel Controls the labelling of the indicator. If `NULL` (default), returns the indicator code.
+#' Otherwise if `"iName"`, returns only indicator name, if `"iName+unit"`, returns
 #' indicator name plus unit (if found), if `"unit"` returns only unit (if found), otherwise if `"none"`,
 #' displays no text. Finally, any other string can be passed, so e.g. `"My indicator"` will display this on the
 #' axis.
@@ -134,17 +142,23 @@ plot_dist <- function(coin, dset, iCodes, ..., type = "Box", normalise = FALSE, 
 #' @importFrom rlang .data
 #'
 #' @examples
-#' #
+#' # build example coin
+#' coin <- build_example_coin(up_to = "new_coin")
+#'
+#' # dot plot of LPI, highlighting two countries and with median shown
+#' plot_dot(coin, dset = "Raw", iCode = "LPI", usel = c("JPN", "ESP"),
+#'          add_stat = "median", stat_label = "Median", plabel = "iName+unit")
 #'
 #' @return A ggplot2 plot object.
 #'
 #' @export
-plot_dot <- function(coin, ..., usel = NULL, marker_type = "circle", add_stat = NULL,
-                     stat_label = NULL, show_ticks = TRUE, plabel = NULL, usel_label = TRUE, vert_adjust = 0.5){
+plot_dot <- function(coin, dset, iCode, Level = NULL, ..., usel = NULL, marker_type = "circle",
+                     add_stat = NULL, stat_label = NULL, show_ticks = TRUE, plabel = NULL,
+                     usel_label = TRUE, vert_adjust = 0.5){
 
   # GET DATA ----------------------------------------------------------------
 
-  iData <- get_data(coin, ...)
+  iData <- get_data(coin, dset = dset, iCodes = iCode, Level = Level)
 
   iData_ <- extract_iData(coin, iData, "iData_")
   if(ncol(iData_) != 1){

@@ -38,7 +38,17 @@
 #' @export
 #'
 #' @examples
-#' #
+#' # build example coin
+#' coin <- build_example_coin(up_to = "new_coin")
+#'
+#' # scatter plot of Flights against Population
+#' # coloured by GDP per capita
+#' # log scale applied to population
+#' plot_scatter(coin, dsets = c("uMeta", "Raw"),
+#'              iCodes = c("Population", "Flights"),
+#'              by_group = "GDPpc_group", log_scale = c(TRUE, FALSE))
+#'
+#'
 plot_scatter <- function(coin, dsets, iCodes, ..., by_group = NULL,
                          alpha = 0.5, axes_label = "iCode", dset_label = TRUE,
                          point_label = NULL, check_overlap = TRUE, log_scale = c(FALSE, FALSE)){
