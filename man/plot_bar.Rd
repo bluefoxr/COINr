@@ -27,9 +27,9 @@ plot_bar(
 
 \item{...}{Further arguments to pass to \code{\link[=get_data]{get_data()}}, e.g. for filtering units.}
 
-\item{uLabel}{How to label units: either \code{"iCode"}, or \code{"iName"}.}
+\item{uLabel}{How to label units: either \code{"uCode"}, or \code{"uName"}.}
 
-\item{axes_label}{How to label the y axis and group legend: either \code{"uCode"} or \code{"uName"}.}
+\item{axes_label}{How to label the y axis and group legend: either \code{"iCode"} or \code{"iName"}.}
 
 \item{by_group}{Optional group variable to use to colour bars. Cannot be used if \code{stack_children = TRUE}.}
 
@@ -51,5 +51,10 @@ Plot bar charts of single indicators. Bar charts can be coloured by an optional 
 \code{iCode} points to an aggregate, setting \code{stack_children = TRUE} will plot \code{iCode} coloured by its underlying scores.
 }
 \examples{
-#
+# build example coin
+coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
+
+# bar plot of CO2 by GDP per capita group
+plot_bar(coin, dset = "Raw", iCode = "CO2",
+         by_group = "GDPpc_group", axes_label = "iName")
 }

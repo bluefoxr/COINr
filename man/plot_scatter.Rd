@@ -65,5 +65,15 @@ This function is powered by ggplot2 and outputs a ggplot2 object. To further cus
 of this function to a variable and use ggplot2 commands to further edit.
 }
 \examples{
-#
+# build example coin
+coin <- build_example_coin(up_to = "new_coin")
+
+# scatter plot of Flights against Population
+# coloured by GDP per capita
+# log scale applied to population
+plot_scatter(coin, dsets = c("uMeta", "Raw"),
+             iCodes = c("Population", "Flights"),
+             by_group = "GDPpc_group", log_scale = c(TRUE, FALSE))
+
+
 }

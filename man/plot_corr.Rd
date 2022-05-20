@@ -21,8 +21,7 @@ plot_corr(
   insig_colour = "#F0F0F0",
   text_colour = NULL,
   discrete_colours = NULL,
-  box_colour = NULL,
-  out2 = "fig"
+  box_colour = NULL
 )
 }
 \arguments{
@@ -39,9 +38,9 @@ codes to correlate against the second entry (also a specification of indicator/a
 
 \item{cortype}{The type of correlation to calculate, either \code{"pearson"}, \code{"spearman"}, or \code{"kendall"} (see \code{\link[stats:cor]{stats::cor()}}).}
 
-\item{withparent}{If \code{aglev[1] != aglev[2]}, and equal \code{"parent"} will only plot correlations of each row with its parent (default).
+\item{withparent}{If \code{aglev[1] != aglev[2]}, and equal \code{TRUE} will only plot correlations of each row with its parent.
 If \code{"family"}, plots the lowest aggregation level in \code{Levels} against all its parent levels.
-If \code{"none"} plots the full correlation matrix.}
+If \code{FALSE} plots the full correlation matrix (default).}
 
 \item{grouplev}{The aggregation level to group correlations by if \code{aglev[1] == aglev[2]}. By default, groups correlations into the
 aggregation level above. Set to 0 to disable grouping and plot the full matrix.}
@@ -69,19 +68,12 @@ otherwise they will be plotted as the colour specified by \code{insig_colour}. S
 colour map if \code{flagcolours = TRUE} (from high to low correlation categories). Defaults to a green/blue/grey/purple.}
 
 \item{box_colour}{The line colour of grouping boxes, default black.}
-
-\item{out2}{If \code{"fig"} returns a plot, if \code{"dflong"} returns the correlation matrix in long form, if \code{"dfwide"},
-returns the correlation matrix in wide form. The last option here is probably useful if you want to
-present a table of the data in a report.}
 }
 \value{
-If \code{out2 = "fig"} returns a plot generated with \strong{ggplot2}. These can be edited further with \strong{ggplot2} commands.
-If \code{out2 = "dflong"} returns the correlation matrix as a data frame in long form, if \code{out2 = "dfwide"},
-returns the correlation matrix in wide form. The last option here is probably useful if you want to
-present a table of the data in a report.
+A plot object generated with ggplot2, which can be edited further with ggplot2 commands.
 }
 \description{
-Generates heatmaps of correlation matrices using \strong{ggplot2}. This enables correlating any set of indicators against any other,
+Generates heatmaps of correlation matrices using ggplot2. This enables correlating any set of indicators against any other,
 and supports calling named aggregation groups of indicators. The \code{withparent} argument generates tables of correlations only with
 parents of each indicator. Also supports discrete colour maps using \code{flagcolours}, different types of correlation, and groups
 plots by higher aggregation levels.
@@ -92,6 +84,11 @@ This function calls \code{\link[=get_corr]{get_corr()}}.
 Note that this function can only call correlations within the same data set (i.e. only one data set in \code{.$Data}).
 }
 \examples{
-#
+# build example coin
+coin <- build_example_coin(up_to = "Normalise", quietly = TRUE)
+
+# plot correlations between indicators in Sust group, using Normalised dset
+plot_corr(coin, dset = "Normalised", iCodes = list("Sust"),
+          grouplev = 2, flagcolours = TRUE)
 
 }

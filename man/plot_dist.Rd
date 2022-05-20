@@ -39,6 +39,10 @@ Plots indicator distributions using box plots, dot plots, violin plots, violin-d
 Supports plotting multiple indicators by calling aggregation groups.
 }
 \examples{
-#
+# build example coin
+coin <- build_example_coin(up_to = "new_coin")
+
+# plot all indicators in P2P group
+plot_dist(coin, dset = "Raw", iCodes = "P2P", Level = 1, type = "Violindot")
 
 }

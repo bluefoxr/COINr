@@ -6,6 +6,9 @@
 \usage{
 plot_dot(
   coin,
+  dset,
+  iCode,
+  Level = NULL,
   ...,
   usel = NULL,
   marker_type = "circle",
@@ -20,7 +23,13 @@ plot_dot(
 \arguments{
 \item{coin}{The coin}
 
-\item{...}{Arguments to pass to \code{\link[=get_data]{get_data()}}. Note that \code{iCodes} is required to be of length 1.}
+\item{dset}{The name of the data set to apply the function to, which should be accessible in \code{.$Data}.}
+
+\item{iCode}{Code of indicator or aggregate found in \code{dset}. Required to be of length 1.}
+
+\item{Level}{The level in the hierarchy to extract data from. See \code{\link[=get_data]{get_data()}}.}
+
+\item{...}{Further arguments to pass to \code{\link[=get_data]{get_data()}}, other than those explicitly specified here.}
 
 \item{usel}{A subset of units to highlight.}
 
@@ -32,8 +41,8 @@ plot_dot(
 
 \item{show_ticks}{Set \code{FALSE} to remove axis ticks.}
 
-\item{plabel}{Controls the labelling of the indicator. If not specified, returns the indicator name,
-plus units if found. Otherwise if \code{"indname"}, returns only indicator name, if \code{"indname+unit"}, returns
+\item{plabel}{Controls the labelling of the indicator. If \code{NULL} (default), returns the indicator code.
+Otherwise if \code{"iName"}, returns only indicator name, if \code{"iName+unit"}, returns
 indicator name plus unit (if found), if \code{"unit"} returns only unit (if found), otherwise if \code{"none"},
 displays no text. Finally, any other string can be passed, so e.g. \code{"My indicator"} will display this on the
 axis.}
@@ -50,6 +59,11 @@ A ggplot2 plot object.
 Plots a single indicator as a line of dots, and optionally highlights a selected unit.
 }
 \examples{
-#
+# build example coin
+coin <- build_example_coin(up_to = "new_coin")
+
+# dot plot of LPI, highlighting two countries and with median shown
+plot_dot(coin, dset = "Raw", iCode = "LPI", usel = c("JPN", "ESP"),
+         add_stat = "median", stat_label = "Median", plabel = "iName+unit")
 
 }
