@@ -47,8 +47,7 @@ corresponding to the first principal component, i.e the weights that maximise th
 by the linear combination of indicators.
 }
 \details{
-Note that \code{getPCA()} is simply a quick wrapper for \code{\link[stats:prcomp]{stats::prcomp()}} which makes PCA on COINs quicker.
-See \href{https://bluefoxr.github.io/COINrDoc/multivariate-analysis.html#pca}{COINr online documentation} for more details and examples.
+Note that \code{getPCA()} is simply a quick wrapper for \code{\link[stats:prcomp]{stats::prcomp()}} which makes PCA on coins quicker.
 }
 \examples{
 #

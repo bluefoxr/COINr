@@ -4,8 +4,7 @@
 #' corresponding to the first principal component, i.e the weights that maximise the variance explained
 #' by the linear combination of indicators.
 #'
-#' Note that `getPCA()` is simply a quick wrapper for [stats::prcomp()] which makes PCA on COINs quicker.
-#' See [COINr online documentation](https://bluefoxr.github.io/COINrDoc/multivariate-analysis.html#pca) for more details and examples.
+#' Note that `getPCA()` is simply a quick wrapper for [stats::prcomp()] which makes PCA on coins quicker.
 #'
 #' @param coin A coin
 #' @param dset The name of the data set in `.$Data` to use.
