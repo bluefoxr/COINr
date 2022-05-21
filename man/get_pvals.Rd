@@ -2,7 +2,7 @@
 % Please edit documentation in R/correlations.R
 \name{get_pvals}
 \alias{get_pvals}
-\title{P-values for correlations in a data frame}
+\title{P-values for correlations in a data frame or matrix}
 \usage{
 get_pvals(X, ...)
 }
@@ -19,4 +19,15 @@ This is a stripped down version of the "cor.mtest()" function from the "corrplot
 the \code{\link[stats:cor.test]{stats::cor.test()}} function to calculate pairwise p-values. Unlike the corrplot version, this
 only calculates p-values, and not confidence intervals. Credit to corrplot for this code, I only
 replicate it here to avoid depending on their package for a single function.
+}
+\examples{
+# a matrix of random numbers, 3 cols
+x <- matrix(runif(30), 10, 3)
+
+# get correlations between cols
+cor(x)
+
+# get p values of correlations between cols
+get_pvals(x)
+
 }

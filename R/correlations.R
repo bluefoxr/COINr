@@ -18,7 +18,12 @@
 #' @export
 #'
 #' @examples
-#' #
+#' # build example coin
+#' coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
+#'
+#' # get correlations >0.7 of any indicator with denominators
+#' get_denom_corr(coin, dset = "Raw", cor_thresh = 0.7)
+#'
 get_denom_corr <- function(coin, dset, cor_thresh = 0.6, cortype = "pearson", nround = 2){
 
   # indicator data
@@ -96,7 +101,12 @@ get_denom_corr <- function(coin, dset, cor_thresh = 0.6, cortype = "pearson", nr
 #' which will only flag correlations *below* `cor_thresh`.
 #'
 #' @examples
-#' #
+#' # build example coin
+#' coin <- build_example_coin(up_to = "Normalise", quietly = TRUE)
+#'
+#' # get correlations between indicator over 0.75 within level 2 groups
+#' get_corr_flags(coin, dset = "Normalised", cor_thresh = 0.75,
+#'                thresh_type = "high", grouplev = 2)
 #'
 #' @return A data frame with one entry for every indicator pair that is highly correlated within the same group, at the specified level.
 #' Pairs are only reported once, i.e. only uses the upper triangle of the correlation matrix.
@@ -219,7 +229,12 @@ get_corr_flags <- function(coin, dset, cor_thresh = 0.9, thresh_type = "high", c
 #' @importFrom stats cor
 #'
 #' @examples
-#' #
+#' # build example coin
+#' coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
+#'
+#' # get correlations
+#' cmat <- get_corr(coin, dset = "Raw", iCodes = list("Environ"),
+#'                  Levels = 1, make_long = FALSE)
 #'
 #' @return A data frame of pairwise correlation values in wide or long format (see `make_long`).
 #' Correlations with \eqn{p > pval} will be returned as `NA`.
@@ -409,7 +424,7 @@ get_corr <- function(coin, dset, iCodes = NULL, Levels = NULL, ...,
 
 
 
-#' P-values for correlations in a data frame
+#' P-values for correlations in a data frame or matrix
 #'
 #' This is a stripped down version of the "cor.mtest()" function from the "corrplot" package. It uses
 #' the [stats::cor.test()] function to calculate pairwise p-values. Unlike the corrplot version, this
@@ -420,6 +435,16 @@ get_corr <- function(coin, dset, iCodes = NULL, Levels = NULL, ...,
 #' @param \dots Additional arguments passed to function [cor.test()], e.g. \code{conf.level = 0.95}.
 #'
 #' @importFrom stats cor.test
+#'
+#' @examples
+#' # a matrix of random numbers, 3 cols
+#' x <- matrix(runif(30), 10, 3)
+#'
+#' # get correlations between cols
+#' cor(x)
+#'
+#' # get p values of correlations between cols
+#' get_pvals(x)
 #'
 #' @return Matrix of p-values
 #' @export
@@ -455,27 +480,37 @@ get_pvals = function(X, ...) {
 #' Cronbach's alpha
 #'
 #' Calculates Cronbach's alpha, a measure of statistical reliability. Cronbach's alpha is a simple measure
-#' of "consistency" of a data set, where a high value implies higher reliability/consistency.
+#' of "consistency" of a data set, where a high value implies higher reliability/consistency. The
+#' selection of indicators via [get_data()] allows to calculate the measure on any group of
+#' indicators or aggregates.
 #'
 #' This function simply returns Cronbach's alpha. If you want a lot more details on reliability, the 'psych' package has
 #' a much more detailed analysis.
 #'
 #' @param coin A coin or a data frame containing only numerical columns of data.
-#' @param ... Arguments passed to [get_data()].
+#' @param ... Further arguments passed to [get_data()], other than those explicitly specified here.
 #' @param use Argument to pass to [stats::cor] to calculate the covariance matrix. Default `"pairwise.complete.obs"`.
+#' @param dset The name of the data set to apply the function to, which should be accessible in `.$Data`.
+#' @param iCodes Indicator codes to retrieve. If `NULL` (default), returns all iCodes found in
+#' the selected data set. See [get_data()].
+#' @param Level The level in the hierarchy to extract data from. See [get_data()].
 #'
 #' @importFrom stats cov
 #'
 #' @examples
-#' #
+#' # build example coin
+#' coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
+#'
+#' # Cronbach's alpha for the "P2P" group
+#' get_cronbach(coin, dset = "Raw", iCodes = "P2P", Level = 1)
 #'
 #' @return Cronbach alpha as a numerical value.
 #'
 #' @export
-get_cronbach <- function(coin, ..., use = "pairwise.complete.obs"){
+get_cronbach <- function(coin, dset, iCodes, Level, ..., use = "pairwise.complete.obs"){
 
   # get data
-  iData <- get_data(coin, ...)
+  iData <- get_data(coin, dset = dset, iCodes = iCodes, Level = Level, ...)
 
   # get only indicator cols
   iData <- extract_iData(coin, iData, "iData_")

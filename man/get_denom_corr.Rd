@@ -29,5 +29,10 @@ If an indicator is strongly correlated with a denominator, this may suggest to d
 denominator.
 }
 \examples{
-#
+# build example coin
+coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
+
+# get correlations >0.7 of any indicator with denominators
+get_denom_corr(coin, dset = "Raw", cor_thresh = 0.7)
+
 }

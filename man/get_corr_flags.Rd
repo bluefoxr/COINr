@@ -44,6 +44,11 @@ This function is motivated by the idea that having very highly-correlated indica
 amount to double counting, or possibly redundancy in the framework.
 }
 \examples{
-#
+# build example coin
+coin <- build_example_coin(up_to = "Normalise", quietly = TRUE)
+
+# get correlations between indicator over 0.75 within level 2 groups
+get_corr_flags(coin, dset = "Normalised", cor_thresh = 0.75,
+               thresh_type = "high", grouplev = 2)
 
 }

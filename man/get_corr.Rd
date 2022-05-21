@@ -76,7 +76,12 @@ The \code{grouplev} and \code{withparent} options are disabled if \code{make_lon
 Note that this function can only call correlations within the same data set (i.e. only one data set in \code{.$Data}).
 }
 \examples{
-#
+# build example coin
+coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
+
+# get correlations
+cmat <- get_corr(coin, dset = "Raw", iCodes = list("Environ"),
+                 Levels = 1, make_long = FALSE)
 
 }
 \seealso{
