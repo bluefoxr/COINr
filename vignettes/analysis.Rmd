@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 This vignette describes the "analysis" features of COINr. By this, we mean functions that retrieve statistical measures from the coin in various ways. This excludes things like sensitivity analysis, which involves tinkering with the construction methodology.
 
-In short, here we discuss obtaining indicator statistics, correlations, data availability, and some slightly more complex ideas such as effective weights, Cronbach's alpha and principal component analysis.
+In short, here we discuss obtaining indicator statistics, correlations, data availability, and some slightly more complex ideas such as Cronbach's alpha and principal component analysis.
 
 # Indicator statistics
 
@@ -154,12 +154,30 @@ This simply calculates Cronbach's alpha (a measure of statistical consistency) f
 Another multivariate analysis tool is principal component analysis (PCA). Although, like correlation, this is built into base R, the `get_PCA()` function makes it easier to obtain PCA for groups of indicators, following the structure of the index.
 
 ```{r}
-l_pca <- get_PCA(coin, dset = "Raw", iCodes = "Sust")
+l_pca <- get_PCA(coin, dset = "Raw", iCodes = "Sust", out2 = "list")
 ```
 
-NOTE: I need to maybe make an extra func here get_PCA_weights(), then keep get_PCA() for just the PCA output.
+The function can return its results either as a list, or appended to the coin if `out2 = "coin"`. Here the output is a list and we will explore its output. First note the warnings above due to missing data, which can be suppressed using `nowarnings = TRUE`. The output list looks like this:
 
+```{r}
+str(l_pca, max.level = 1)
+```
 
-# Effective weights
+I.e. we have a data frame of "PCA weights" and some PCA results. We ignore the weights for the moment and look closer at the PCA results:
 
-* get_eff_weights
+```{r}
+str(l_pca$PCAresults, max.level = 2)
+```
+
+By default, `get_PCA()` will run a separate PCA for each aggregation group within the specified level. In this case, it has run three: one for each of the "Environ", "Social" and "SusEcFin" groups. Each of these contains `wts`, a set of PCA weights for that group, `PCAres`, which is the direct output of `stats::prcomp()`, and `iCodes`, which is the corresponding vector of indicator codes for the group.
+
+We can do some basic PCA analysis using base R's tools using the "PCAres" objects, e.g.:
+
+```{r}
+# summarise PCA results for "Social" group
+summary(l_pca$PCAresults$Social$PCAres)
+```
+
+See `stats::prcomp()` and elsewhere for more resources on PCA in R.
+
+Now turning to the weighting, `get_PCA()` also outputs a set of "PCA weights". These are output attached to the list as shown above, or if `out2 = "coin"`, will be written to the weights list inside the coin if `weights_to` is also specified. See the [Weights](weights.html) vignette for some more details on this. Note that PCA weights come with a number of caveats: please read the documentation for `get_PCA()` for a discussion on this.
