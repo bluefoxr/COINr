@@ -92,6 +92,13 @@ plot_scatter <- function(coin, dsets, iCodes, ..., by_group = NULL,
 
   x12 <- merge(x1, x2, by = c("uCode", also_get), all = FALSE)
 
+  # if we have the same indicator plotted against itself, have to rename
+  iCodes_orig <- iCodes
+  if(iCodes[1] == iCodes[2]){
+    iCodes[1] <- names(x12)[2]
+    iCodes[2] <- names(x12)[3]
+  }
+
   if(is.null(point_label) || (point_label == "uCode") ){
     x12$plbs <- x12$uCode
   } else {
@@ -121,9 +128,9 @@ plot_scatter <- function(coin, dsets, iCodes, ..., by_group = NULL,
 
   # names
   if(axes_label == "iName"){
-    lbs <- codes2names(coin, c(iCodes, by_group))
+    lbs <- codes2names(coin, c(iCodes_orig, by_group))
   } else {
-    lbs <- c(iCodes, by_group)
+    lbs <- c(iCodes_orig, by_group)
   }
   # dset
   if(dset_label){
