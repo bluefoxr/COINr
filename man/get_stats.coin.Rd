@@ -46,6 +46,10 @@ Either a data frame or updated coin - see \code{out2}.
 Get table of statistics for selected indicators
 }
 \examples{
-#
+# build example coin
+coin <-  build_example_coin(up_to = "new_coin", quietly = TRUE)
+
+# get table of indicator statistics for raw data set
+get_stats(coin, dset = "Raw", out2 = "df")
 
 }

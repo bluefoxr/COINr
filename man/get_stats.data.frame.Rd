@@ -66,6 +66,7 @@ a low proportion of unique values. Further, the combination of skew and kurtosis
 is a simple test for possible outliers, which may require treatment using \code{\link[=Treat]{Treat()}}.
 }
 \examples{
-#
+# stats of mtcars
+get_stats(mtcars)
 
 }

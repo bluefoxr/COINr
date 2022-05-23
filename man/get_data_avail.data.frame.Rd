@@ -20,5 +20,7 @@ function ignores any non-numeric columns, and returns a data availability table 
 appended at the beginning.
 }
 \examples{
-#
+# data availability of "airquality" data set
+get_data_avail(airquality)
+
 }

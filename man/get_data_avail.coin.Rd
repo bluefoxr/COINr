@@ -25,5 +25,11 @@ function ignores any non-numeric columns, and returns a data availability table 
 appended at the beginning.
 }
 \examples{
-#
+# build example coin
+coin <-  build_example_coin(up_to = "new_coin", quietly = TRUE)
+
+# get data availability of Raw dset
+l_dat <- get_data_avail(coin, dset = "Raw", out2 = "list")
+head(l_dat$Summary, 5)
+
 }
