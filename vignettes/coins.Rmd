@@ -106,6 +106,7 @@ indicators, 3 is the result of aggregating level 2, and so on. Set to `NA` for e
 Optional columns that are recognised in certain functions are:
  
 * `iName`: Name of the indicator: a longer name which is used in some plotting functions.
+* `Denominator`: specifies which denominator variable should be used to denominate the indicator, if `Denominate()` is called. See the [Denomination](denomination.html) vignette.
 * `Unit`: the unit of the indicator, e.g. USD, thousands, score, etc. Used in some plots if available.
 * `Target`: a target for the indicator. Used if normalisation type is distance-to-target.
 
