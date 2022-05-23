@@ -20,3 +20,4 @@ library(COINr)
 
 * get_opt_weights
 * get_PCA (need a new func get_PCA_weights)
+* get_eff_weights
