@@ -208,10 +208,10 @@ split_by_numeric <- function(x){
 
   stopifnot(is.data.frame(x))
 
-  # not numeric cols
+  # numeric cols
   numeric_cols <- sapply(x, is.numeric)
 
-  if(sum(numeric_cols) == ncol(x)){
+  if(sum(numeric_cols) == 0){
     stop("No numeric cols found in the data frame.")
   }
 
