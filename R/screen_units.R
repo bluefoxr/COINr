@@ -266,7 +266,13 @@ get_data_avail <- function(x, ...){
 #' @export
 #'
 #' @examples
-#' #
+#' # build example coin
+#' coin <-  build_example_coin(up_to = "new_coin", quietly = TRUE)
+#'
+#' # get data availability of Raw dset
+#' l_dat <- get_data_avail(coin, dset = "Raw", out2 = "list")
+#' head(l_dat$Summary, 5)
+#'
 get_data_avail.coin <- function(x, dset, out2 = "coin", ...){
 
   # PREP --------------------------------------------------------------------
@@ -328,7 +334,9 @@ get_data_avail.coin <- function(x, dset, out2 = "coin", ...){
 #' @export
 #'
 #' @examples
-#' #
+#' # data availability of "airquality" data set
+#' get_data_avail(airquality)
+#'
 get_data_avail.data.frame <- function(x, ...){
 
   # PREP --------------------------------------------------------------------
