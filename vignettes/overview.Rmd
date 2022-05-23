@@ -69,6 +69,8 @@ Function              Description
 `Normalise()`         Normalise indicators onto a common scale         
 `Aggregate()`         Aggregate indicators using weighted mean
 
+Building functions are defined as those that modify the data (by creating an additional data set). They also keep a record of their arguments inside the coin, which allows coins to be *regenerated*. See [Adjustments and Comparisons](adjustments.html).
+
 **Analysing** functions include those for comparisons, for economy profiles, and ex-post counterfactuals.
 
 Function                Description                                 
