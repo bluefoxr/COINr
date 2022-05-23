@@ -1,6 +1,11 @@
 # DENOMINATION TOOLS
 
-#' Denominate a data set
+#' Denominate a data set within a purse.
+#'
+#' This works in almost exactly the same way as [Denominate.coin()]. The only point of care is that the
+#' `denoms` argument here cannot take time-indexed data, but only a single value for each unit. It is
+#' therefore recommended to pass the time-dependent denominator data as part of `iData` when calling
+#' [new_coin()]. In this way, denominators can vary with time. See `vignette("denomination")`.
 #'
 #' @param x A purse class object
 #' @param dset The name of the data set to apply the function to, which should be accessible in `.$Data`.

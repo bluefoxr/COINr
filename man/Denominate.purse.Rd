@@ -2,7 +2,7 @@
 % Please edit documentation in R/denominate.R
 \name{Denominate.purse}
 \alias{Denominate.purse}
-\title{Denominate a data set}
+\title{Denominate a data set within a purse.}
 \usage{
 \method{Denominate}{purse}(
   x,
@@ -41,7 +41,10 @@ that takes two numeric vectors as inputs and returns a single numeric vector. Se
 An updated purse
 }
 \description{
-Denominate a data set
+This works in almost exactly the same way as \code{\link[=Denominate.coin]{Denominate.coin()}}. The only point of care is that the
+\code{denoms} argument here cannot take time-indexed data, but only a single value for each unit. It is
+therefore recommended to pass the time-dependent denominator data as part of \code{iData} when calling
+\code{\link[=new_coin]{new_coin()}}. In this way, denominators can vary with time. See \code{vignette("denomination")}.
 }
 \examples{
 #
