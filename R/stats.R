@@ -13,7 +13,11 @@
 #' @param t_unq A threshold between 0 and 1 for flagging indicators with low proportion of unique values. See details.plot
 #'
 #' @examples
-#' #
+#' # build example coin
+#' coin <-  build_example_coin(up_to = "new_coin", quietly = TRUE)
+#'
+#' # get table of indicator statistics for raw data set
+#' get_stats(coin, dset = "Raw", out2 = "df")
 #'
 #' @return Either a data frame or updated coin - see `out2`.
 #'
@@ -87,7 +91,8 @@ get_stats.coin <- function(x, dset, t_skew = 2, t_kurt = 3.5, t_avail = 0.65, t_
 #' @importFrom stats median sd
 #'
 #' @examples
-#' #
+#' # stats of mtcars
+#' get_stats(mtcars)
 #'
 #' @return A data frame of statistics for each indicator column
 #'
