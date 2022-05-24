@@ -7,9 +7,9 @@
 build_example_coin(up_to = NULL, quietly = FALSE)
 }
 \arguments{
-\item{up_to}{The point up to which to build the index. If \code{NULL}, builds full index. Else specify a \verb{build_*} function
+\item{up_to}{The point up to which to build the index. If \code{NULL}, builds full index. Else specify a building function
 (as a string) - the index will be built up to and including this function. This option is mainly for helping with
-function examples. Example: \code{up_to = "build_normalise"}.}
+function examples. Example: \code{up_to = "Normalise"}.}
 
 \item{quietly}{If \code{TRUE}, suppresses all messages.}
 }

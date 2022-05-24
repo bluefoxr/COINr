@@ -4,7 +4,16 @@
 \alias{compare_coins}
 \title{Compare two coins}
 \usage{
-compare_coins(coin1, coin2, dset, iCode, also_get = NULL, compare_by = "ranks")
+compare_coins(
+  coin1,
+  coin2,
+  dset,
+  iCode,
+  also_get = NULL,
+  compare_by = "ranks",
+  sort_by = NULL,
+  decreasing = FALSE
+)
 }
 \arguments{
 \item{coin1}{A coin class object}

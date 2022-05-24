@@ -13,7 +13,7 @@ get_opt_weights(
   optype = "balance",
   toler = NULL,
   maxiter = NULL,
-  w_name = NULL,
+  weights_to = NULL,
   out2 = "list"
 )
 }
@@ -37,7 +37,7 @@ overall correlations.}
 
 \item{maxiter}{Maximum number of iterations. Default 500.}
 
-\item{w_name}{Name to write the optimised weight set to, if \code{out2 = "coin"}}
+\item{weights_to}{Name to write the optimised weight set to, if \code{out2 = "coin"}.}
 
 \item{out2}{Where to output the results. If \code{"coin"} (default for coin input), appends to updated coin,
 creating a new list of weights in \code{.$Parameters$Weights}. Otherwise if \code{"list"} outputs to a list (default).}
@@ -53,9 +53,6 @@ This function provides optimised weights to agree with a pre-specified vector of
 \details{
 This is a linear version of the weight optimisation proposed in this paper: \doi{10.1016/j.ecolind.2017.03.056}.
 Weights are optimised to agree with a pre-specified vector of "importances". The optimised weights are returned back to the coin.
-
-See the \href{https://bluefoxr.github.io/COINrDoc/weighting-1.html#automatic-re-weighting}{chapter in the COINr online documentation}
-for more details.
 }
 \examples{
 #
