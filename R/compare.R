@@ -17,7 +17,8 @@
 #' @return A data frame of comparison information.
 #'
 #' @export
-compare_coins <- function(coin1, coin2, dset, iCode, also_get = NULL, compare_by = "ranks"){
+compare_coins <- function(coin1, coin2, dset, iCode, also_get = NULL, compare_by = "ranks",
+                          sort_by = NULL, decreasing = FALSE){
 
 
   # CHECKS ------------------------------------------------------------------
@@ -75,18 +76,29 @@ compare_coins <- function(coin1, coin2, dset, iCode, also_get = NULL, compare_by
 
   # assemble the table
   if(length(m1_codes) > 0){
-    data.frame(uCode = df12$uCode,
+    dfout <- data.frame(uCode = df12$uCode,
                m1, # meta data excluding uCode
                coin.1 = idat1,
                coin.2 = idat2,
                Diff = idat1 - idat2,
                Abs.diff = abs(idat1 - idat2))
   } else {
-    data.frame(uCode = df12$uCode,
+    dfout <- data.frame(uCode = df12$uCode,
                coin.1 = idat1,
                coin.2 = idat2,
                Diff = idat1 - idat2,
                Abs.diff = abs(idat1 - idat2))
+  }
+
+  # SORT
+  if(is.null(sort_by)){
+    dfout
+  } else {
+    if(sort_by %nin% names(dfout)){
+      stop("sort_by not recognised...")
+    }
+    dfout[order(dfout[[sort_by]], decreasing = decreasing), ]
+
   }
 }
 
