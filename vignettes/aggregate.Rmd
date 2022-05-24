@@ -25,7 +25,7 @@ Aggregating should almost always be done on normalised data, unless the indicato
 
 Of course you don't *have* to aggregate indicators at all, and you might be content with a scoreboard, or perhaps aggregating into several aggregate values rather than a single index. However, consider that aggregation should not substitute the underlying indicator data, but complement it.
 
-Overall, aggregating indicators is a form of information compression - you are trying to combine many indicator values into one, and inevitably information will be lost^[This recent paper may be of interest: https://doi.org/10.1016/j.envsoft.2021.105208]. As long as this is kept in mind, and indicator data is presented and made available along side aggregate values, then aggregate (index) values can complement indicators and be used as a useful tool for summarising the underlying data, and identifying overall trends and patterns.
+Overall, aggregating indicators is a form of information compression - you are trying to combine many indicator values into one, and inevitably information will be lost^[This recent paper may be of interest: \doi{10.1016/j.envsoft.2021.105208}]. As long as this is kept in mind, and indicator data is presented and made available along side aggregate values, then aggregate (index) values can complement indicators and be used as a useful tool for summarising the underlying data, and identifying overall trends and patterns.
 
 ## Weighting
 
