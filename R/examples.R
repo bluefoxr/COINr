@@ -4,9 +4,9 @@
 #'
 #' Shortcut function to build the ASEM example coin, using inbuilt example data
 #'
-#' @param up_to The point up to which to build the index. If `NULL`, builds full index. Else specify a `build_*` function
+#' @param up_to The point up to which to build the index. If `NULL`, builds full index. Else specify a building function
 #' (as a string) - the index will be built up to and including this function. This option is mainly for helping with
-#' function examples. Example: `up_to = "build_normalise"`.
+#' function examples. Example: `up_to = "Normalise"`.
 #' @param quietly If `TRUE`, suppresses all messages.
 #'
 #' @examples
@@ -22,11 +22,14 @@ build_example_coin <- function(up_to = NULL, quietly = FALSE){
     return(coin)
   }
 
-  if(is.null(up_to)){
-    up_to = "theend"
-  } else {
+  if(!is.null(up_to)){
     stopifnot(is.character(up_to),
               length(up_to)==1)
+    if(up_to %nin% c("new_coin", "Denominate", "Impute", "Screen", "Treat", "Normalise", "Aggregate")){
+      stop("up_to must be the name of a building function such as 'Treat', 'new_coin', etc, or NULL to build the full example coin.")
+    }
+  } else {
+    up_to = "theend"
   }
 
   # INITIALISE
@@ -56,7 +59,7 @@ build_example_coin <- function(up_to = NULL, quietly = FALSE){
   # TREAT data
   # Explicitly set winmax so that it is easy to find for SA
   coin <- Treat(coin, dset = "Screened", default_specs = list(f1_para = list(winmax = 5)))
-  if(up_to == "treat"){
+  if(up_to == "Treat"){
     return(coin)
   }
 
@@ -64,13 +67,13 @@ build_example_coin <- function(up_to = NULL, quietly = FALSE){
   # explicitly set normalisation specs to find for SA
   coin <- Normalise(coin, dset = "Treated", default_specs = list(f_n = "n_minmax",
                                                                   f_n_para = list(c(0,100))))
-  if(up_to == "normalise"){
+  if(up_to == "Normalise"){
     return(coin)
   }
 
   # AGGREGATE data
   coin <- Aggregate(coin, dset = "Normalised", f_ag = "a_amean")
-  if(up_to == "aggregate"){
+  if(up_to == "Aggregate"){
     return(coin)
   }
 
