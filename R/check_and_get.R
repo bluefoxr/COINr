@@ -27,7 +27,7 @@ check_purse <- function(x){
 #Stop if object is NOT coin class
 check_coin_input <- function(x){
   if(!is.coin(x)){
-    stop("Input is not recognised as a coin class object.")
+    stop("Input is not recognised as a coin class object.", call. = FALSE)
   }
 }
 
