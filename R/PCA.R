@@ -30,7 +30,7 @@
 #' The logic here is that these loadings should maximise the explained variance - the implication being that if we use
 #' these as weights in an aggregation, we should maximise the explained variance and hence the information passed from
 #' the indicators to the aggregate value. This is a nice property in a composite indicator, where one of the aims is to
-#' represent many indicators by single composite. See [here](http://dx.doi.org/10.1016/j.envsoft.2021.105208) for a
+#' represent many indicators by single composite. See \doi{10.1016/j.envsoft.2021.105208} for a
 #' discussion on this.
 #'
 #' But. The weights that result from PCA have a number of downsides. First, they can often include negative weights
@@ -171,7 +171,8 @@ PCA. You can also try imputing data first to avoid this."))
     if(!is.null(weights_to)){
       #w_name <- paste0("PCA_",dset,"L",Level)
       # write weights
-      coin$Meta$Weights[[w_name]] <- wlist
+      coin$Meta$Weights[[weights_to]] <- wlist
+      message("Weights written to .$Meta$Weights$", weights_to)
     }
 
     # write other info
