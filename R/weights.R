@@ -57,7 +57,7 @@ get_eff_weights <-  function(coin, out2 = "df"){
   # OUTPUT ------------------------------------------------------------------
 
   if(out2 == "df"){
-    iMeta
+    iMeta[c("iCode", "Level", "Weight", "EffWeight")]
   } else if(out2 == "coin"){
     coin$Meta$Ind <- iMeta
     coin
@@ -73,9 +73,6 @@ get_eff_weights <-  function(coin, out2 = "df"){
 #' This is a linear version of the weight optimisation proposed in this paper: \doi{10.1016/j.ecolind.2017.03.056}.
 #' Weights are optimised to agree with a pre-specified vector of "importances". The optimised weights are returned back to the coin.
 #'
-#' See the [chapter in the COINr online documentation](https://bluefoxr.github.io/COINrDoc/weighting-1.html#automatic-re-weighting)
-#' for more details.
-#'
 #' @param coin coin object
 #' @param itarg a vector of (relative) target importances. For example, `c(1,2,1)` would specify that the second
 #' indicator should be twice as "important" as the other two.
@@ -89,7 +86,7 @@ get_eff_weights <-  function(coin, out2 = "df"){
 #' @param out2 Where to output the results. If `"coin"` (default for coin input), appends to updated coin,
 #' creating a new list of weights in `.$Parameters$Weights`. Otherwise if `"list"` outputs to a list (default).
 #' @param dset Name of the aggregated data set found in `coin$Data` which results from calling [Aggregate()].
-#' @param w_name Name to write the optimised weight set to, if `out2 = "coin"`
+#' @param weights_to Name to write the optimised weight set to, if `out2 = "coin"`.
 #'
 #' @importFrom stats optim
 #'
@@ -102,9 +99,11 @@ get_eff_weights <-  function(coin, out2 = "df"){
 #'
 #' @export
 get_opt_weights <- function(coin, itarg = NULL, dset, Level, cortype = "pearson", optype = "balance",
-                      toler = NULL, maxiter = NULL, w_name = NULL, out2 = "list"){
+                      toler = NULL, maxiter = NULL, weights_to = NULL, out2 = "list"){
 
   # PREP --------------------------------------------------------------------
+
+  check_coin_input(coin)
 
   stopifnot(optype %in% c("balance", "infomax"),
             out2 %in% c("list", "coin"))
@@ -219,11 +218,13 @@ get_opt_weights <- function(coin, itarg = NULL, dset, Level, cortype = "pearson"
   )
 
   if (out2 == "coin"){
-    if(is.null(w_name)){
-      w_name <- paste0("OptimsedLev", Level)
+    if(is.null(weights_to)){
+      weights_to <- paste0("OptimsedLev", Level)
     }
-    coin$Meta$Weights[[w_name]] <- wopt_full
-    coin$Analysis$Weights[[w_name]] <- list(OptResults = optOut,
+    coin$Meta$Weights[[weights_to]] <- wopt_full
+    message("Optimised weights written to .$Meta$Weights$", weights_to)
+
+    coin$Analysis$Weights[[weights_to]] <- list(OptResults = optOut,
                                             CorrResultsNorm = df_res)
     coin
   } else {
