@@ -15,10 +15,15 @@ log_GII(x, na.rm = FALSE)
 A log-transformed vector of data.
 }
 \description{
-Performs a log transform on a numeric vector.
+Performs a log transform on a numeric vector. This function is currently not recommended - see comments
+below.
 }
 \details{
 Specifically, this performs a "GII log" transform, which is what was encoded in the GII2020 spreadsheet.
+
+Note that this transformation is currently NOT recommended because it seems quite volatile and can flip
+the direction of the indicator. If the maximum value of the indicator is less than one, this reverses the
+direction.
 }
 \examples{
 x <- runif(20)
