@@ -83,6 +83,9 @@ get_sensitivity <- function(coin, SA_specs, N, SA_type = "UA", dset, iCode, Nboo
   # also get addresses
   addresses <- sapply(SA_specs, `[[`, "Address")
 
+  # check addresses for validity
+  a_check <- lapply(addresses, check_address, coin)
+
   # RUN COINS ---------------------------------------------------------------
 
   # at this point the parameters are stored in a list where each entry of the list is a parameter,
@@ -90,6 +93,11 @@ get_sensitivity <- function(coin, SA_specs, N, SA_type = "UA", dset, iCode, Nboo
 
   # first get nominal results
   SA_scores <- get_data(coin, dset = dset, iCodes = iCode)
+
+  # make a df of NAs in case a coin regen fails
+  v_fail <- SA_scores
+  v_fail[names(v_fail) == iCode] <- NA
+
   names(SA_scores)[names(SA_scores) == iCode] <- "Nominal"
 
   # looping over each replication in the SA
@@ -106,9 +114,14 @@ get_sensitivity <- function(coin, SA_specs, N, SA_type = "UA", dset, iCode, Nboo
     coin_rep <- regen_edit(l_para_rep, addresses, coin)
 
     # extract variable of interest
-    v_out <- get_data(coin_rep, dset = dset, iCodes = iCode)
-    # check
-    stopifnot(setequal(colnames(v_out), c("uCode", iCode)))
+    if(is.coin(coin_rep)){
+      v_out <- get_data(coin_rep, dset = dset, iCodes = iCode)
+      # check
+      stopifnot(setequal(colnames(v_out), c("uCode", iCode)))
+    } else {
+      # df with just NAs
+      v_out <- v_fail
+    }
 
     # merge onto nominal results and rename
     SA_scores <- merge(SA_scores, v_out, by = "uCode", all = TRUE)
@@ -305,7 +318,7 @@ sample_2_para <- function(x, distribution, dist_type = "discrete", checks = TRUE
 #
 # @examples
 # #
-edit_coin <- function(coin, address, new_value, checks = TRUE){
+edit_coin <- function(coin, address, new_value, checks = FALSE){
 
   # checks
   if(checks){
@@ -322,6 +335,37 @@ edit_coin <- function(coin, address, new_value, checks = TRUE){
 
   # output
   coin
+
+}
+
+# Check address in coin
+check_address <- function(address, coin){
+
+  # checks
+  stopifnot(is.character(address),
+            length(address) == 1)
+
+  # check address begins with $
+  if(substr(address,1,1) != "$"){
+    stop("Address must begin with '$'! Your address: ", address, call. = FALSE)
+  }
+
+  # this is the call to evaluate, as a string
+  expr_str <- paste0("address_value <- coin", address)
+  # evaluate the call
+  eval(str2lang(expr_str))
+
+  if(is.null(address_value)){
+    xx <- readline(paste0("Address ", address, " is not currently present in the coin or else is NULL. Continue anyway (y/n)?  "))
+
+    if(xx %nin% c("y", "n")){
+      stop("You didn't input y or n. I'm taking that as a no.", call. = FALSE)
+    }
+
+    if(xx == "n"){
+      stop("Exiting sensitivity analysis. Please check the address: ", address, call. = FALSE)
+    }
+  }
 
 }
 
@@ -674,7 +718,6 @@ plot_sensitivity <- function(SAresults, ptype = "bar"){
 
   } else if (ptype == "box"){
 
-    browser()
     if(any(c("Si_q5", "Si_q95", "STi_q5", "STi_q95") %nin% names(Sdf))){
       stop("Quantiles not found for sensitivity indices (required for box plot). Did you forget to set Nboot when running get_sensitivity()?")
     }
