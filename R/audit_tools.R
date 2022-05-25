@@ -138,7 +138,7 @@ remove_elements <- function(coin, Level, dset, iCode, quietly = FALSE){
   ranktab <- rank_df(Scores)
   # rank changes
   rankchg <- ranktab
-  rankchg[-1] <- apply(rankchg[-1], 2, function(x) rankchg[2] - x)
+  rankchg[-1] <- as.data.frame(apply(rankchg[-1], 2, function(x) rankchg[2] - x))
   colnames(rankchg) <- colnames(ranktab)
   # absolute rank changes
   rankchgabs <- rankchg
