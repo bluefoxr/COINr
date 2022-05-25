@@ -147,7 +147,7 @@ Treat.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL, combin
                                    skew_thresh = 2,
                                    kurt_thresh = 3.5,
                                    force_win = FALSE),
-                    f2 = "log_GII",
+                    f2 = "log_CT",
                     f2_para = list(na.rm = TRUE),
                     f_pass = "check_SkewKurt",
                     f_pass_para = list(na.rm = TRUE,
@@ -603,9 +603,14 @@ winsorise <- function(x, na.rm = FALSE, winmax = 5, skew_thresh = 2, kurt_thresh
 
 #' Log-transform a vector
 #'
-#' Performs a log transform on a numeric vector.
+#' Performs a log transform on a numeric vector. This function is currently not recommended - see comments
+#' below.
 #'
 #' Specifically, this performs a "GII log" transform, which is what was encoded in the GII2020 spreadsheet.
+#'
+#' Note that this transformation is currently NOT recommended because it seems quite volatile and can flip
+#' the direction of the indicator. If the maximum value of the indicator is less than one, this reverses the
+#' direction.
 #'
 #' @param x A numeric vector.
 #' @param na.rm Set `TRUE` to remove `NA` values, otherwise returns `NA`.
@@ -622,8 +627,15 @@ log_GII <- function(x, na.rm = FALSE){
   stopifnot(is.numeric(x),
             is.vector(x))
 
-  x <- log( (max(x, na.rm = na.rm)-1)*(x-min(x, na.rm = na.rm))/
-         (max(x, na.rm = na.rm)-min(x, na.rm = na.rm)) + 1 )
+  mx <- max(x, na.rm = na.rm)
+  mn <- min(x, na.rm = na.rm)
+
+  x1 <- log(
+    (mx - 1)*(x - mn) / (mx-mn) + 1
+    )
+
+  #x2 <- log( (max(x, na.rm = na.rm)-1)*(x-min(x, na.rm = na.rm))/
+         #(max(x, na.rm = na.rm)-min(x, na.rm = na.rm)) + 1 )
 
   list(x = x,
        treated = rep("log_GII", length(x)))
