@@ -14,6 +14,55 @@ knitr::opts_chunk$set(
 )
 ```
 
+If you were using COINr prior to v.1.0 you may have updated the package and found that code calling COINr functions no longer works! What is going on?
+
+COINr has undergone some major changes and most of the syntax has changed. So major that I skipped directly from v0.6 to v1.0 without any intermediate steps. First of all, if you were using COINr previously, I would like to say SORRY for any inconvenience caused by these changes. However, the changes are worth it, and this is a one-off thing - I won't be doing a seismic change like this again.
+
+This vignette helps you to transition from COINr 0.6.x to 1.0 and explains what has happened. In short, most function names have changed, the package is more robust and flexible, panel data is more supported, interactive plots have been moved to a separate package available on GitHub, and if you don't like all this you can install the archive version of the package called "COINr6" and everything will go back to how it was. Let's go through these things one by one.
+
+# Why
+
+If you just want to know what has changed and how to deal with it, skip this section. If you want to know why things have changed, read on.
+
+The short story is that I found quite a few flaws in the package which I was not happy with, given that it is in the public domain. I decided to address these flaws in one giant revision, rather than a long series of updates. I'll explain each of these points here below.
+
+## Robustness
+
+COINr was the first CRAN package that I built (everyone say "aww"). In the process, I learned a lot about package development, as well as general principles about programming in general. However, since I learned this while building the package, especially the first parts of the package that I wrote were (in retrospect) not written very well. For example, although I defined a "COIN" class, I didn't define methods for the COIN. Much of the code was not written in a "functional" way, and there were not enough checks on the inputs and outputs of the code. All this meant that the code was not very robust and had to be patched, a lot. This made it hard to maintain, less robust, and also slower for the user. As a consequence, I decided to re-write most functions, many from scratch, with a higher standard of programming. I also slimmed down the "COIN" class to a more streamlined "coin" class.
+
+## Focus
+
+COINr is a package meant to focus on developing composite indicators. But the focus got lost at some point when I got carried away with html plotly plots and shiny apps. These things, although nice, were in retrospect not really that useful in the package and are also difficult to maintain and bloat out the package. I decided to cut out all interactive plots and apps, but to archive them in a separate package called "COINrX" (see below).
+
+## Dependencies
+
+As a result of the first two points (inexperience plus straying off track), COINr had many dependencies, i.e. packages that had to be installed to install COINr. Although there is no harm in loading 10 or 20 packages when performing data analysis in R, this can become a problem if you are building a package because every user has to have these packages installed. If you have ever had to install several packages at the same time in R, you have probably run into some kind of problem. This meant that in practice, COINr was not always easy to install. I decided to re-write the package almost entirely in base R, to remove as many dependencies as possible.
+
+## Features and flexibility
+
+One thing that was missing from COINr was proper support for panel data (time-dependent data). This has now been mostly rectified with the introduction of the "purse" class. The main "building" functions of COINr have also been re-written as generics, with methods for coins, data frames and purses. Moreover many functions allow you to call other functions, which makes COINr much easier to link up with other packages.
+
+## Syntax
+
+COINr syntax was inconsistent. This has now been more or less cleared up, and won't be messed around with any more!
+
+# What's changed?
+
+Many things have changed. The first thing you will probably notice is the syntax. Because I was anyway making syntax-breaking changes to the package, I decided to go all in, and try to make the syntax as consistent as possible. This means that function names are more predictable: all "building" functions start with a capital letter. Plot functions start with `plot_`. Analysis functions mostly start with `get_`. This all hopefully makes the package a little easier to use. You will notice that calling an old <v1.0 function name will generate an error, which redirects you to the new function name. My hope is that although this is inconvenient, it will not take too long to adapt to the new function names. As mentioned above, I'm not going to change all the names again; this is a one-off thing.
+
+The second obvious change is that many of the key functions have changed syntax: they have been re-written to be more flexible and more robust. This may seem annoying but I promise you it is for the greater good. I can't describe all the changes here, but in general functions have been made more flexible: for example `Normalise()` now can take any normalising function, rather than a fixed set of options.
+
+The next thing is that the documentation has been completely re-written, with loads of new vignettes! And even better, COINr now lives at a web-page built with "pkgdown", where all the documentation is easily accessible. So each function is well-documented. Hurray.
+
+The last very obvious change is that some functions have disappeared! Where have they gone? You may notice that all functions that generated interactive plots (often called `iPlot*` in previous versions of COINr), plus all shiny apps, have vanished. The reason for this, as explained above, is that these tools were distracting from the main point of the package and were too much effort to maintain. Moreover, even though interactive plots are great if you are outputting html documents, for pdf and word they are a hassle because it is quite unpredictable how they will be rendered. The good news is that I have replaced some of the interactive plots with static versions, such as `plot_framework()`.
+
+
+
+# COINr6: a way out
+
+
+
+
 ```{r setup}
 library(COINr)
 ```
