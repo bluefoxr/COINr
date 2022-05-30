@@ -16,20 +16,11 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-This vignette introduces the **COINr package**. COINr is a high-level R package which is the first fully-flexible development and analysis environment for composite indicators and scoreboards.
+This vignette introduces and gives an overview of the **COINr package**. COINr is a high-level R package which is the first fully-flexible development and analysis environment for composite indicators and scoreboards.
 
-This vignette is one of several vignettes which document the package. Here, the aim is to give a quick introduction and overview of the package. The other vignettes are:
+This vignette is one of quite a few vignettes which document the package. Here, the aim is to give a quick introduction and overview of the package. The other vignettes deal with specific operations.
 
-* [Building coins](coins.html)
-* [Normalisation](normalise.html)
-* [Aggregation](aggregate.html)
-* [Sensitivity and Uncertainty analysis](sensitivity.html)
-* [Outlier Treatment](treat.html)
-* [Adjustments and Comparisons](adjustments.html)
-
-As of COINr v1.0.0 some radical changes have been introduced. Most notably for existing users, is the change in syntax. This is an unfortunate one-off necessity and the changes (and how to survive them, or roll back to the old version of COINr) are described in an extra vignette:
-
-* [Changes in v1.0](v1.html)
+As of COINr v1.0.0 some radical changes have been introduced. Most notably for existing users, is the change in syntax. This is an unfortunate one-off necessity and the changes (and how to survive them, or roll back to the old version of COINr) are described in an extra vignette called [Changes in v1.0](v1.html).
 
 # Installation
 
@@ -55,7 +46,7 @@ library(COINr)
 
 # Features
 
-The main features of the COINr package are those for building the composite indicator by performing operations on the data, those for analysing/post-processing, and those for visualisation. Here, the main functions are briefly listed.
+The main features of the COINr package are those for building the composite indicator by performing operations on the data, those for analysing/post-processing, and those for visualisation. Here, the main functions are briefly listed (this list is not exhaustive):
 
 **Building** functions begin with a capital letter, except for `new_coin()` which is used to initialise a coin object
 
@@ -66,12 +57,14 @@ Function              Description
 `Denominate()`        Denominate/scale indicators by other indicators
 `Impute()`            Impute missing data
 `Treat()`             Treat outliers and skewed distributions
-`Normalise()`         Normalise indicators onto a common scale         
+`qTreat()`            Simplified-syntax version of `Treat()`
+`Normalise()`         Normalise indicators onto a common scale
+`qNormalise()`        Simplified-syntax version of `Normalise()`
 `Aggregate()`         Aggregate indicators using weighted mean
 
 Building functions are defined as those that modify the data (by creating an additional data set). They also keep a record of their arguments inside the coin, which allows coins to be *regenerated*. See [Adjustments and Comparisons](adjustments.html).
 
-**Analysing** functions include those for comparisons, for economy profiles, and ex-post counterfactuals.
+**Analysing** functions include those multivariate analysis, weight optimisation and sensitivity analysis, as well as those for reporting results:
 
 Function                Description                                 
 ------------------      ---------------------------------------------------------------
@@ -80,22 +73,30 @@ Function                Description
 `get_cronbach()`        Get Cronbach's alpha for any set of indicators
 `get_data()`            Get subsets of indicator data        
 `get_datAvail()`        Get data availability details of each unit
-`get_SaW()`             Get overall strengths and weaknesses of each economy
-`get_SaW_IG()`          Get strengths and weaknesses of each economy, by income groups
-`xPost()`               Calculate ex-post counterfactuals
+`get_denom_corr()`      Get high correlations between indicators and denominators
+`get_eff_weights()`     Get effective weights at index level
+`get_opt_weights()`     Get optimised weights
+`get_results()`         Get conveniently-arranged results tables
+`get_sensitivity()`     Perform a global uncertainty or sensitivity analysis
+`get_stats()`           Get a table of indicator statistics
+`get_str_weak()`        Highest and lowest-ranking indicators for a given unit
+`get_unit_summary()`    Summary of scores and ranks for a given unit
+`remove_elements()`     Test the effect of removing indicators or aggregates
 
-
-**Other** functions include exports, conversion to COIN and example generation.
+**Plotting** functions generate plots using the ggplot2 package:
 
 Function                Description                                 
 ------------------      ---------------------------------------------------------------
-`build_example_coin()`  Build example coin using ASEM data set
-`build_example_purse()` Build example purse using ASEM data set
-`export_to_Excel()`     Exports all data frames in the coin object to an Excel workbook
-`COIN_to_coin()`        Convert an older "COIN" class object to a newer "coin" class object
+`plot_bar()`            Bar chart of a single indicator or aggregate
+`plot_corr()`           Heat maps of correlations between indicators/aggregates
+`plot_dist()`           Statistical plots of indicator/aggregate distributions
+`plot_dot()`            Dot plot of an indictaor/aggregate with unit highlighting
+`plot_framework()`      Sunburst or linear plot of indicator framework
+`plot_scatter()`        Scatter plot between two indicators/aggregates
+`plot_sensitivity()`    Plots of sensitivity indices
+`plot_uncertainty()`    Plots of confidence intervals on unit ranks
 
-
-**Adjustment and comparison** functions
+**Adjustment and comparison** functions allow copies, adjustments and comparisons to be made between alternative versions of the composite indicator:
 
 Function                  Description                                 
 ------------------        ---------------------------------------------------------------
@@ -104,18 +105,27 @@ Function                  Description
 `compare_coins()`         Exports all data frames in the COINr object to an Excel workbook
 `compare_coins_multi()`   Convert a COINr class object to a COIN class object, for use in the 'COINr' package
 
+**Other functions** are useful tools that don't fit into the other categories
+
+Function                  Description                                 
+------------------        ---------------------------------------------------------------
+`import_coin_tool()`      Import data and metadata from the COIN Tool
+`COIN_to_coin()`          Convert an older "COIN" class object to a newer "coin" class object
+`build_example_coin()`    Build the example coin using built-in example data
+`build_example_purse()`   Build the example purse using built-in example data
+`export_to_excel()`       Export contents of the coin to Excel
 
 All functions are fully documented and individual function help can be accessed in the usual way by `?function_name`.
 
-The COINr package is loosely object oriented, in the sense that the COINr model is encapsulated in an S3 class called "COINr" (see example below), although no formal methods are defined. Most of the main functions listed in the previous tables take this COINr class as the main input and output with other function arguments specifying how to apply the function. E.g. the syntax is typically:
+The COINr package is loosely object oriented, in the sense that the a composite indicator is encapsulated in an S3 class object called a "coin", and a time-indexed collection of coins is called a "purse" (see [Building coins](coins.html)) Most of the main functions listed in the previous tables take this "coin" class as the main input (and often also as the output) with other function arguments specifying how to apply the function. E.g. the syntax is typically:
 
 ```{r, eval=F}
 # GII <- GII_function(GII, function_arguments)
 ```
 
-This makes the construction of the GII quite straightforward, as we see in the other vignettes. It also allows the GII to be copied, adjusted and compared, and quickly exported.
+Many of the main COINr functions are *generics*: they have methods also for data frames, purses, and in some cases numeric vectors.
 
-# Quick example
+# Getting started
 
 The COINr package contains the data set that was used to calculate the GII model in 2020. This can be accessed, after loading the package, as follows:
 
