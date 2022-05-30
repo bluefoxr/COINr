@@ -14,6 +14,4 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
-library(COINr)
-```
+This vignette will walk through analysis of panel data in COINr. I will finish this soonish.
