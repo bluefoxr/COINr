@@ -1,0 +1,24 @@
+pandoc: 2.17.1.1
+pkgdown: 2.0.4
+pkgdown_sha: ~
+articles:
+  adjustments: adjustments.html
+  aggregate: aggregate.html
+  analysis: analysis.html
+  coins: coins.html
+  data_selection: data_selection.html
+  denomination: denomination.html
+  imputation: imputation.html
+  normalise: normalise.html
+  other_functions: other_functions.html
+  overview: overview.html
+  panel_data: panel_data.html
+  results: results.html
+  screening: screening.html
+  sensitivity: sensitivity.html
+  treat: treat.html
+  v1: v1.html
+  visualisation: visualisation.html
+  weights: weights.html
+last_built: 2022-06-14T13:26Z
+
