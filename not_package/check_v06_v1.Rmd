@@ -80,7 +80,7 @@ names(tr6)[1] <- "uCode"
 
 # treat v1
 # note: v6 uses ceiling(nUnit * 0.1) as default for winmax, which is 6 here
-c1 <- Treat(c1, dset = "Imputed", default_specs = list(f1_para = list(winmax = 6)))
+c1 <- Treat(c1, dset = "Imputed", global_specs = list(f1_para = list(winmax = 6)))
 tr1 <- get_dset(c1, "Treated")
 
 # cross-check
@@ -95,7 +95,7 @@ n6 <- c6$Data$Normalised[c("UnitCode", iCodes)]
 names(n6)[1] <- "uCode"
 
 # normalise v1
-c1 <- Normalise(c1, dset = "Treated", default_specs = list(f_n = "n_minmax",
+c1 <- Normalise(c1, dset = "Treated", global_specs = list(f_n = "n_minmax",
                                                                   f_n_para = list(c(0,100))))
 n1 <- get_dset(c1, "Normalised")
 
