@@ -2,7 +2,7 @@
 [![CRAN\_Download\_Badge](http://cranlogs.r-pkg.org/badges/COINr)](https://CRAN.R-project.org/package=COINr)
 
 **Full documentation for COINr is available here:** 
-https://bluefoxr.github.io/COINrDoc/
+https://bluefoxr.github.io/COINr/
 
 
 # COINr <img src="man/figures/COINr_logo.png" width="121px" height="140px" align="right" style="padding-left:10px;background-color:white;" />
