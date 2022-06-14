@@ -20,7 +20,7 @@ specified in \code{denomby} will be ignored. \code{x} must also contain an ID co
 \code{denoms}.}
 
 \item{denoms}{A data frame of denominator data. Columns should be denominator data, with column names corresponding
-to entries in \code{denomby}. This must also include an ID column idenfied by \code{denoms_ID} to match rows.}
+to entries in \code{denomby}. This must also include an ID column identified by \code{denoms_ID} to match rows.}
 
 \item{denomby}{A data frame which specifies which denominators to use for each indicator, and any scaling factors
 to apply. Should have columns \code{iCode}, \code{Denominator}, \code{ScaleFactor}. \code{iCode} specifies a column name from \code{x},

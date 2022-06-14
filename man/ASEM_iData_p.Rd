@@ -19,6 +19,6 @@ is included to build the example "purse" class, i.e. to build composite indicato
 eventually be replaced with a better example, i.e. a real data set.
 }
 \details{
-This data set is in the new v0.8 format.
+This data set is in the new v1.0 format.
 }
 \keyword{datasets}

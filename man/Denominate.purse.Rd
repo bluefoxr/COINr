@@ -20,11 +20,17 @@
 
 \item{dset}{The name of the data set to apply the function to, which should be accessible in \code{.$Data}.}
 
-\item{denoms}{A data frame of denominator data. If not specified, will extract any potential denominator columns
-that were attached to \code{iData} when calling \code{\link[=new_coin]{new_coin()}}.}
+\item{denoms}{An optional data frame of denominator data. Columns should be denominator data, with column names corresponding
+to entries in \code{denomby}. This must also include an ID column identified by \code{denoms_ID} to match rows. If \code{denoms}
+is not specified, will extract any potential denominator columns that were attached to \code{iData} when calling \code{\link[=new_coin]{new_coin()}}.}
 
-\item{denomby}{Optional data frame specifying which indicators should be denominated and by what. If not specified,
-looks for a Denominator column in iMeta.}
+\item{denomby}{Optional data frame which specifies which denominators to use for each indicator, and any scaling factors
+to apply. Should have columns \code{iCode}, \code{Denominator}, \code{ScaleFactor}. \code{iCode} specifies an indicator code found in \code{dset},
+\code{Denominator} specifies a column name from \code{denoms} to use to denominate the corresponding column from \code{x}.
+\code{ScaleFactor} allows the possibility to scale
+denominators if needed, and specifies a factor to multiply the resulting values by. For example, if GDP is a denominator and is measured in
+dollars, dividing will create very small numbers (order 1e-10 and smaller) which could cause problems with numerical precision. If \code{denomby}
+is not specified, specifications will be taken from the "Denominator" column in \code{iMeta}, if it exists.}
 
 \item{denoms_ID}{An ID column for matching \code{denoms} with the data to be denominated. This column should contain
 uMeta codes to match with the data set extracted from the coin.}
@@ -47,5 +53,11 @@ therefore recommended to pass the time-dependent denominator data as part of \co
 \code{\link[=new_coin]{new_coin()}}. In this way, denominators can vary with time. See \code{vignette("denomination")}.
 }
 \examples{
-#
+# build example purse
+purse <- build_example_purse(up_to = "new_coin", quietly = TRUE)
+
+# denominate using data/specs already included in coin
+purse <- Denominate(purse, dset = "Raw")
+
+
 }

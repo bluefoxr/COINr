@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{A numeric vector, possibly with \code{NA} values to be imputed.}
 
-\item{f_i}{A function that imputes missing values in a numeric vector}
+\item{f_i}{A function that imputes missing values in a numeric vector. See descriotion and details.}
 
 \item{f_i_para}{Optional further arguments to be passed to \code{f_i()}}
 
@@ -19,11 +19,15 @@
 An imputed numeric vector of the same length of \code{x}.
 }
 \description{
+Imputes missing values in a numeric vector using a function \code{f_i}. This function should return a vector identical
+to \code{x} except for \code{NA} values, which can be replaced. The function \code{f_i} is not required to replace \emph{all} \code{NA}
+values.
+}
+\details{
 This calls the function \code{f_i()}, with optionally further arguments \code{f_i_para}, to impute any missing
 values found in \code{x}. By default, \code{f_i = "i_mean()"}, which simply imputes \code{NA}s with the mean of the
 non-\code{NA} values in \code{x}.
-}
-\details{
+
 You could also use one of the imputation functions directly (such as \code{\link[=i_mean]{i_mean()}}). However, this
 function offers a few extra advantages, such as checking the input and output formats, and making
 sure the resulting imputed vector agrees with the input. It will also skip imputation entirely if

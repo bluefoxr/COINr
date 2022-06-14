@@ -52,7 +52,7 @@ frame.}
 \item{...}{arguments passed to or from other methods.}
 }
 \value{
-An updated coin
+An updated coin with imputed data set at \code{.$Data[[write_to]]}
 }
 \description{
 This imputes any \code{NA}s in the data set specified by \code{dset}
@@ -61,9 +61,11 @@ by invoking the function \code{f_i} and any optional arguments \code{f_i_para} o
 data frame to \code{f_i} if \code{impute_by = "df"}.
 }
 \details{
-The function \code{f_i} needs to be able to accept with the data class passed to it - if
+Clearly, the function \code{f_i} needs to be able to accept with the data class passed to it - if
 \code{impute_by} is \code{"row"} or \code{"column"} this will be a numeric vector, or if \code{"df"} it will be a data
-frame.
+frame. Moreover, this function should return a vector or data frame identical to the vector/data frame passed to
+it except for \code{NA} values, which can be replaced. The function \code{f_i} is not required to replace \emph{all} \code{NA}
+values.
 
 When imputing row-wise, prior normalisation of the data is recommended. This is because imputation
 will use e.g. the mean of the unit values over all indicators (columns). If the indicators are on
@@ -83,6 +85,8 @@ a degree of tolerance for numerical precision, controlled by the \code{sfigs} ar
 if the data frame is normalised, and/or depending on the imputation function, there may be a very
 small differences. By default \code{sfigs = 9}, meaning that the non-\code{NA} values pre and post-imputation
 are compared to 9 significant figures.
+
+See also documentation for \code{\link[=Impute.data.frame]{Impute.data.frame()}} and \code{\link[=Impute.numeric]{Impute.numeric()}} which are called by this function.
 }
 \examples{
 #' # build coin

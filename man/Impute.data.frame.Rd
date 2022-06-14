@@ -49,7 +49,9 @@ data frame to \code{f_i} if \code{impute_by = "df"}.
 
 Clearly, the function \code{f_i} needs to be able to accept with the data class passed to it - if
 \code{impute_by} is \code{"row"} or \code{"column"} this will be a numeric vector, or if \code{"df"} it will be a data
-frame.
+frame. Moreover, this function should return a vector or data frame identical to the vector/data frame passed to
+it except for \code{NA} values, which can be replaced. The function \code{f_i} is not required to replace \emph{all} \code{NA}
+values.
 
 When imputing row-wise, prior normalisation of the data is recommended. This is because imputation
 will use e.g. the mean of the unit values over all indicators (columns). If the indicators are on

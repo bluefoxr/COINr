@@ -53,6 +53,15 @@ Optionally, a data availability threshold can be assigned below which the aggreg
 done on individual rows. Note that more complex constraints could be built into \code{f_ag} if needed.
 }
 \examples{
-#
+# get some indicator data - take a few columns from built in data set
+X <- ASEM_iData[12:15]
+
+# normalise to avoid zeros - min max between 1 and 100
+X <- Normalise(X,
+               global_specs = list(f_n = "n_minmax",
+                                    f_n_para = list(l_u = c(1,100))))
+
+# aggregate using harmonic mean, with some weights
+y <- Aggregate(X, f_ag = "a_hmean", f_ag_para = list(w = c(1, 1, 2, 1)))
 
 }

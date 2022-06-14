@@ -67,6 +67,10 @@ Optionally, a data availability threshold can be assigned below which the aggreg
 done on individual rows. Note that more complex constraints could be built into \code{f_ag} if needed.
 }
 \examples{
-#
+# build example up to normalised data set
+coin <- build_example_coin(up_to = "Normalise")
+
+# aggregate normalised data set
+coin <- Aggregate(coin, dset = "Normalised")
 
 }

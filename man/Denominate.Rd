@@ -12,12 +12,21 @@ Denominate(x, ...)
 \item{...}{arguments passed to or from other methods}
 }
 \value{
-message
+See individual method documentation
 }
 \description{
 "Denominates" or "scales" variables by other variables. Typically this is done by dividing extensive variables such as
 GDP by a scaling variable such as population, to give an intensive variable (GDP per capita).
 }
 \details{
-See documentation for individual methods: \code{\link[=Denominate.data.frame]{Denominate.data.frame()}}, \code{\link[=Denominate.coin]{Denominate.coin()}} and \code{\link[=Denominate.purse]{Denominate.purse()}}.
+See documentation for individual methods:
+\itemize{
+\item \code{\link[=Denominate.data.frame]{Denominate.data.frame()}}
+\item \code{\link[=Denominate.coin]{Denominate.coin()}}
+\item \code{\link[=Denominate.purse]{Denominate.purse()}}.
+}
+}
+\examples{
+# See individual method documentation
+
 }

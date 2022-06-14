@@ -15,11 +15,10 @@ ASEM_iData
 }
 \description{
 A data set containing raw values of indicators for 51 countries, groups and denominators. See the ASEM Portal
-for further information and detailed description of each indicator, and
-\href{https://bluefoxr.github.io/COINrDoc/coins-the-currency-of-coinr.html#indicator-data}{COINr documentation} for the formatting
-of this data set.
+for further information and detailed description of each indicator. See also \code{vignette("coins")} for the format
+of this data.
 }
 \details{
-This data set is in the new v0.8 format.
+This data set is in the new v1.0 format.
 }
 \keyword{datasets}

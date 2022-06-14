@@ -37,5 +37,6 @@ in a separate step with \code{exclude} specified. Any exclusions/inclusions from
 automatically.
 }
 \examples{
-#
+# see vignette("other_functions")
+
 }

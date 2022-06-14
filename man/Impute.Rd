@@ -2,7 +2,7 @@
 % Please edit documentation in R/impute.R
 \name{Impute}
 \alias{Impute}
-\title{Impute indicator data sets}
+\title{Imputation of missing data}
 \usage{
 Impute(x, ...)
 }
@@ -15,9 +15,19 @@ Impute(x, ...)
 An object of the same class as \code{x}, but imputed.
 }
 \description{
-Impute indicator data sets
+This is a generic function with the following methods:
+}
+\details{
+\itemize{
+\item \code{\link[=Impute.numeric]{Impute.numeric()}}
+\item \code{\link[=Impute.data.frame]{Impute.data.frame()}}
+\item \code{\link[=Impute.coin]{Impute.coin()}}
+\item \code{\link[=Impute.purse]{Impute.purse()}}
+}
+
+See those methods for individual documentation.
 }
 \examples{
-#
+# See individual method documentation
 
 }

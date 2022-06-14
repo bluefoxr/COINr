@@ -39,8 +39,14 @@ fraction of non-\code{NA} values.}
 An updated purse with new treated data sets added at \code{.$Data[[write_to]]} in each coin.
 }
 \description{
-Aggregate indicators
+Aggregates indicators following the structure specified in \code{iMeta}, for each coin inside the purse.
+See \code{\link[=Aggregate.coin]{Aggregate.coin()}} for more information.
 }
 \examples{
-#
+# build example purse up to normalised data set
+purse <- build_example_purse(up_to = "Normalise", quietly = TRUE)
+
+# aggregate using defaults
+purse <- Aggregate(purse, dset = "Normalised")
+
 }

@@ -16,9 +16,16 @@ An object similar to the input
 }
 \description{
 Methods for aggregating numeric vectors, data frames, coins and purses. See individual method documentation
-for more details, e.g. \code{\link[=Aggregate.coin]{Aggregate.coin()}}.
+for more details:
+}
+\details{
+\itemize{
+\item \code{\link[=Aggregate.data.frame]{Aggregate.data.frame()}}
+\item \code{\link[=Aggregate.coin]{Aggregate.coin()}}
+\item \code{\link[=Aggregate.purse]{Aggregate.purse()}}
+}
 }
 \examples{
-#
+# see individual method documentation
 
 }
