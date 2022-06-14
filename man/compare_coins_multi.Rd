@@ -56,3 +56,7 @@ By default, the ranks of the target indicator/aggregate of each coin will be mer
 Optionally, specifying \code{also_get} (passed to \code{\link[=get_data]{get_data()}}) will additionally merge using the metadata columns.
 This means that coins must share the same metadata columns that are returned as a result of \code{also_get}.
 }
+\examples{
+# see vignette("adjustments")
+
+}

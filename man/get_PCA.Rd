@@ -95,7 +95,8 @@ with care and understanding of what is going on.
 coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
 
 # PCA on "Sust" group of indicators
-l_pca <- get_PCA(coin, dset = "Raw", iCodes = "Sust", out2 = "list")
+l_pca <- get_PCA(coin, dset = "Raw", iCodes = "Sust",
+                 out2 = "list", nowarnings = TRUE)
 
 # Summary of results for one of the sub-groups
 summary(l_pca$PCAresults$Social$PCAres)

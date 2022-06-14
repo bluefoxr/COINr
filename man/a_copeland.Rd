@@ -21,6 +21,10 @@ Aggregates a data frame of indicator values into a single column using the Copel
 This function calls \code{outrankMatrix()}.
 }
 \examples{
-#
+# some example data
+ind_data <- COINr::ASEM_iData[12:16]
+
+# aggregate with vector of weights
+outlist <- outrankMatrix(ind_data)
 
 }

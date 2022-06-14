@@ -15,7 +15,7 @@ n_borda(x, ties.method = "min")
 Numeric vector
 }
 \description{
-Calculates Borda scores as rank(x) - 1.
+Calculates Borda scores as \code{rank(x) - 1}.
 }
 \examples{
 x <- runif(20)

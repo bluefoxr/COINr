@@ -12,5 +12,14 @@ get_data_avail(x, ...)
 \item{...}{Arguments passed to other methods}
 }
 \description{
-Returns a data frame of the data availability of each unit (row).
+Generic function for getting the data availability of each unit (row).
+}
+\details{
+See method documentation:
+\itemize{
+\item \code{\link[=get_data_avail.data.frame]{get_data_avail.data.frame()}}
+\item \code{\link[=get_data_avail.coin]{get_data_avail.coin()}}
+}
+
+See also vignettes: \code{vignette("analysis")} and \code{vignette("imputation")}.
 }

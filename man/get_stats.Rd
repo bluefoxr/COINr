@@ -2,7 +2,7 @@
 % Please edit documentation in R/stats.R
 \name{get_stats}
 \alias{get_stats}
-\title{Column-wise statistics}
+\title{Statistics of columns/indicators}
 \usage{
 get_stats(x, ...)
 }
@@ -15,7 +15,15 @@ get_stats(x, ...)
 A data frame of statistics for each column
 }
 \description{
-Reports various statistics from a data frame or coin.
+Generic function for reports various statistics from a data frame or coin. See method documentation:
+}
+\details{
+\itemize{
+\item \code{\link[=get_stats.data.frame]{get_stats.data.frame()}}
+\item \code{\link[=get_stats.coin]{get_stats.coin()}}
+}
+
+See also \code{vignette("analysis")}.
 }
 \examples{
 #

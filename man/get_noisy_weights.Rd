@@ -26,7 +26,7 @@ noise. This is intended for use in uncertainty and sensitivity analysis.
 }
 \details{
 Weights are expected to be in a data frame format with columns \code{Level}, \code{iCode} and \code{Weight}, as
-used in \code{iMeta}.
+used in \code{iMeta}. Note that no \code{NA}s are allowed anywhere in the data frame.
 
 Noise is added using the \code{noise_specs} argument, which is specified by a data frame with columns
 \code{Level} and \code{NoiseFactor}. The aggregation level refers to number of the aggregation level to target
@@ -35,7 +35,22 @@ while the \code{NoiseFactor} refers to the size of the perturbation. If e.g. a r
 nominal values (the values in \code{w}).
 }
 \examples{
-#
+# build example coin
+coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
+
+# get nominal weights
+w_nom <- coin$Meta$Weights$Original
+
+# build data frame specifying the levels to apply the noise at
+# here we vary at levels 2 and 3
+noise_specs = data.frame(Level = c(2,3),
+                         NoiseFactor = c(0.25, 0.25))
+
+# get 100 replications
+noisy_wts <- get_noisy_weights(w = w_nom, noise_specs = noise_specs, Nrep = 100)
+
+# examine one of the noisy weight sets, last few rows
+tail(noisy_wts[[1]])
 
 }
 \seealso{

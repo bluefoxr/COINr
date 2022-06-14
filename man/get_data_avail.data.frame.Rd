@@ -19,6 +19,9 @@ Returns a data frame of the data availability of each unit (row), as well as per
 function ignores any non-numeric columns, and returns a data availability table with non-numeric columns
 appended at the beginning.
 }
+\details{
+See also vignettes: \code{vignette("analysis")} and \code{vignette("imputation")}.
+}
 \examples{
 # data availability of "airquality" data set
 get_data_avail(airquality)

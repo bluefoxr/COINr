@@ -32,6 +32,10 @@ to only return the numeric (indicator) columns with no identifiers. This latter 
 for e.g. examining correlations.
 }
 \examples{
-#
+# build example coin, just up to raw dset for speed
+coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
+
+# retrieve raw data set with added cols
+get_dset(coin, dset = "Raw", also_get = c("uName", "GDP_group"))
 
 }

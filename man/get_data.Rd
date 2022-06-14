@@ -15,9 +15,16 @@ get_data(x, ...)
 Data frame of indicator data, indexed also by time if input is a purse.
 }
 \description{
-A helper function to retrieve a named data set from coin or purse objects.
+A helper function to retrieve a named data set from coin or purse objects. See individual method
+documentation:
+}
+\details{
+\itemize{
+\item \code{\link[=get_data.coin]{get_data.coin()}}
+\item \code{\link[=get_data.purse]{get_data.purse()}}
+}
 }
 \examples{
-#
+# see individual method documentation
 
 }

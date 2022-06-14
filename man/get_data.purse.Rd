@@ -50,3 +50,14 @@ A data frame of indicator data indexed by a "Time" column.
 \description{
 Purse description.
 }
+\examples{
+# build full example purse
+purse <- build_example_purse(up_to = "new_coin", quietly = TRUE)
+
+# get specified indicators for specific years, for specified units
+get_data(purse, dset = "Raw",
+         iCodes = c("Lang", "Forest"),
+         uCodes = c("AUT", "CHN", "DNK"),
+         Time = c(2019, 2020))
+
+}

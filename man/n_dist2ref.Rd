@@ -22,7 +22,7 @@ Numeric vector
 A measure of the distance to a specific value found in \code{x}, specified by \code{iref}. The formula is:
 }
 \details{
-$ 1 - (x_{ref} - x)/(x_{ref} - x_{min}) $
+\deqn{ 1 - (x_{ref} - x)/(x_{ref} - x_{min}) }
 
 Values exceeding \code{x_ref} can be optionally capped at 1 if \code{cap_max = TRUE}.
 }

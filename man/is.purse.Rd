@@ -15,8 +15,3 @@ Logical
 \description{
 Check if object is purse class
 }
-\examples{
-is.purse("not_a_coin")
-# add example with coin
-
-}

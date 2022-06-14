@@ -28,6 +28,10 @@ This returns the scores and ranks for each indicator/aggregate as specified in \
 the highest aggregation levels are first. This means that if the index level is included, it will be first.
 }
 \examples{
-#
+# build full example coin
+coin <- build_example_coin(quietly = TRUE)
+
+# summary of scores for IND at levels 4, 3 and 2
+get_unit_summary(coin, usel = "IND", Levels = c(4,3,2), dset = "Aggregated")
 
 }

@@ -21,7 +21,7 @@ Numeric vector
 A measure of the distance of each value of \code{x} to a specified target. The formula is:
 }
 \details{
-$ 1 - (x_{targ} - x)/(x_{targ} - x_{min}) $
+\deqn{ 1 - (x_{targ} - x)/(x_{targ} - x_{min}) }
 
 Values exceeding \code{x_targ} can be optionally capped at 1 if \code{cap_max = TRUE}.
 }

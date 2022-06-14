@@ -20,9 +20,14 @@ An updated coin with data availability tables written in \code{.$Analysis[[dset]
 list of data availability tables.
 }
 \description{
-Returns a data frame of the data availability of each unit (row) in a given data set, as well as percentage of zeros. This
-function ignores any non-numeric columns, and returns a data availability table of numeric columns with non-numeric columns
+Returns a list of data frames: the data availability of each unit (row) in a given data set, as well as percentage of zeros.
+A second data frame gives data availability by aggregation (indicator) groups.
+}
+\details{
+This function ignores any non-numeric columns, and returns a data availability table of numeric columns with non-numeric columns
 appended at the beginning.
+
+See also vignettes: \code{vignette("analysis")} and \code{vignette("imputation")}.
 }
 \examples{
 # build example coin

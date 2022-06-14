@@ -20,7 +20,6 @@ A vector of length \code{length(x)} with transformed values.
 }
 \description{
 Simple Box Cox, with no optimisation of lambda.
-See \href{https://bluefoxr.github.io/COINrDoc/data-treatment.html#transformation}{COINr online documentation} for more details.
 }
 \examples{
 # example data

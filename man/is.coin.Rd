@@ -15,8 +15,3 @@ Logical
 \description{
 Check if object is coin class
 }
-\examples{
-is.coin("not_a_coin")
-# add example with coin
-
-}

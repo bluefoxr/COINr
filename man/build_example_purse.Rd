@@ -14,12 +14,17 @@ function examples. Example: \code{up_to = "build_normalise"}.}
 \item{quietly}{If \code{TRUE}, suppresses all messages.}
 }
 \value{
-coin class object
+purse class object
 }
 \description{
-Shortcut function to build an artificial purse, to be at some point replaced with a proper example.
+Shortcut function to build an example purse. This is currently an "artificial" example, in that it takes the ASEM data set
+used in \code{\link[=build_example_coin]{build_example_coin()}} and replicates it for five years, adding artificial noise to simulate year-on-year variation.
+This was done simply to demonstrate the functionality of purses, and will at some point be replaced with a real example.
+See also \code{vignette("coins")}.
 }
 \examples{
-#
+# build example purse up to unit screening step
+purse <- build_example_purse(up_to = "Screen")
+purse
 
 }

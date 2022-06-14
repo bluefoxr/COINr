@@ -65,3 +65,14 @@ based on some grouping variable.
 Note that if you want to retrieve a whole data set (with no column/row subsetting), use the
 \code{\link[=get_dset]{get_dset()}} function which should be slightly faster.
 }
+\examples{
+# build full example coin
+coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
+
+# get all indicators in "Political group
+x <- get_data(coin, dset = "Raw", iCodes = "Political", Level = 1)
+head(x, 5)
+
+# see vignette("data_selection") for more examples
+
+}

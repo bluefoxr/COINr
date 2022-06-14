@@ -87,6 +87,10 @@ But a zero value can hardly be called a strength. This is where the \code{min_di
 Problems such as these mainly arise when e.g. generating a large number of country profiles.
 }
 \examples{
-#
+# build example coin
+coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
+
+# get strengths and weaknesses for ESP
+get_str_weak(coin, dset = "Raw", usel = "ESP")
 
 }

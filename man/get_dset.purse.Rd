@@ -30,6 +30,10 @@ from each coin in the purse and joins them together in a single data frame using
 with a \code{Time} column.
 }
 \examples{
-#
+# build example purse
+purse <- build_example_purse(up_to = "new_coin", quietly = TRUE)
+
+# get raw data set
+df1 <- get_dset(purse, dset = "Raw")
 
 }

@@ -17,9 +17,16 @@ get_dset(x, dset, ...)
 Data frame of indicator data, indexed also by time if input is a purse.
 }
 \description{
-A helper function to retrieve a named data set from coin or purse objects.
+A helper function to retrieve a named data set from coin or purse objects. See individual
+documentation on:
+}
+\details{
+\itemize{
+\item \code{\link[=get_dset.coin]{get_dset.coin()}}
+\item \code{\link[=get_dset.purse]{get_dset.purse()}}
+}
 }
 \examples{
-#
+# see examples for methods
 
 }

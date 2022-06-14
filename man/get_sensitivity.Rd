@@ -2,7 +2,7 @@
 % Please edit documentation in R/sensitivity.R
 \name{get_sensitivity}
 \alias{get_sensitivity}
-\title{Sensitivity and uncertainty analysis}
+\title{Sensitivity and uncertainty analysis of a coin}
 \usage{
 get_sensitivity(
   coin,
@@ -35,11 +35,49 @@ indices.}
 \item{quietly}{Set to \code{TRUE} to suppress progress messages.}
 }
 \value{
-A list of sensitivity analysis data frames
+Sensitivity analysis results as a list, containing:
+\itemize{
+\item \code{.$Scores} a data frame with a row for each unit, and columns are the scores for each replication.
+\item \code{.$Ranks} as \code{.$Scores} but for unit ranks
+\item \code{.$RankStats} summary statistics for ranks of each unit
+\item \code{.$Nominal} the nominal scores and ranks of each unit (i.e. from the original COIN)
+\item \code{.$Sensitivity} (only if \code{SA_type = "SA"}) sensitivity indices for each parameter. Also confidence intervals if \code{Nboot}
+was specified.
+\item Some information on the time elapsed, average time, and the parameters perturbed.
+\item Depending on the setting of \code{store_results}, may also contain a list of Methods or a list of COINs for each replication.
+}
 }
 \description{
-Sensitivity and uncertainty analysis
+This function performs global sensitivity and uncertainty analysis of a coin. You must specify which
+parameters of the coin to vary, and the alternatives/distributions for those parameters.
+}
+\details{
+COINr implements a flexible variance-based global sensitivity analysis approach, which allows almost any assumption
+to be varied, as long as the distribution of alternative values can be described. Variance-based "sensitivity indices"
+are estimated using a Monte Carlo design (running the composite indicator many times with a particular combination of
+input values). This follows the methodology described in \doi{10.1111/j.1467-985X.2005.00350.x}.
+
+To understand how this function works, please see \code{vignette("sensitivity")}. Here, we briefly recap the main input
+arguments.
+
+First, you can select whether to run an uncertainty analysis \code{SA_type = "UA"} or sensitivity analysis \code{SA_type = "SA"}.
+The number of replications (regenerations of the coin) is specified by \code{N}. Keep in mind that the \emph{total} number of
+replications is \code{N} for an uncertainty analysis but is \code{N*(d + 2)} for a sensitivity analysis due to the experimental
+design used.
+
+To run either types of analysis, you must specify \emph{which} parts of the coin to vary and \emph{what the distributions/alternatives are}
+This is done using \code{SA_specs}, a structured list. See \code{vignette("sensitivity")} for details and examples.
+
+You also need to specify the target of the sensitivity analysis. This should be an indicator or aggregate that can be
+found in one of the data sets of the coin, and is specified using the \code{dset} and \code{iCode} arguments.
+
+Finally, if \code{SA_type = "SA"}, it is advisable to set \code{Nboot} to e.g. 100 or more, which is the number of bootstrap samples
+to take when estimating confidence intervals on sensitivity indices. This does \emph{not} perform extra regenerations of the
+coin, so setting this to a higher number shouldn't have much impact on computational time.
 }
 \examples{
-#
+# for examples, see `vignette("sensitivity")`
+# (this is because package examples are run automatically and this function can take a few minutes to
+# run at realistic settings)
+
 }

@@ -7,7 +7,7 @@
 \method{Treat}{purse}(
   x,
   dset,
-  default_specs = NULL,
+  global_specs = NULL,
   indiv_specs = NULL,
   combine_treat = FALSE,
   write_to = NULL,
@@ -19,7 +19,7 @@
 
 \item{dset}{The data set to treat in each coin}
 
-\item{default_specs}{Default specifications}
+\item{global_specs}{Default specifications}
 
 \item{indiv_specs}{Individual specifications}
 
@@ -36,8 +36,9 @@ An updated purse with new treated data sets added at \code{.$Data$Treated} in ea
 analysis information at \code{.$Analysis$Treated}
 }
 \description{
-Treat a purse of coins for outliers
+This function calls \code{\link[=Treat.coin]{Treat.coin()}} for each coin in the purse. See the documentation of that function for
+details. See also \code{vignette("treat")}.
 }
 \examples{
-#
+# See `vignette("treat")`.
 }

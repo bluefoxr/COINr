@@ -17,9 +17,13 @@ function examples. Example: \code{up_to = "Normalise"}.}
 coin class object
 }
 \description{
-Shortcut function to build the ASEM example coin, using inbuilt example data
+Shortcut function to build the ASEM example coin, using inbuilt example data. This can be useful for testing and also
+for building reproducible examples. To see the underlying commands run \code{edit(build_example_coin)}. See also
+\code{vignette("coins")}.
 }
 \examples{
-#
+# build example coin up to data treatment step
+coin <- build_example_coin(up_to = "Treat")
+coin
 
 }

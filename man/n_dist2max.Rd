@@ -17,7 +17,7 @@ A measure of the distance to the maximum value, where the maximum value is the h
 formula used is:
 }
 \details{
-$ 1 - (x_{max} - x)/(x_{max} - x_{min}) $
+\deqn{ 1 - (x_{max} - x)/(x_{max} - x_{min}) }
 
 This means that the closer a value is to the maximum, the higher its score will be. Scores will be in the
 range of 0 to 1.

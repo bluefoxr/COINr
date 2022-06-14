@@ -16,5 +16,18 @@ Either an iMeta data frame with effective weights as an added column, or an upda
 weights added to \code{.$Meta$Ind}.
 }
 \description{
-Get effective weights
+Calculates the "effective weight" of each indicator and aggregate at the index level. The effective weight is calculated
+as the final weight of each component in the index, and this is due to not just to its own weight, but also to the weights of
+each aggregation that it is involved in, plus the number of indicators/aggregates in each group. The effective weight
+is one way of understanding the final contribution of each indicator to the index. See also \code{vignette("weights")}.
+}
+\examples{
+# build example coin
+coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
+
+# get effective weights as data frame
+w_eff <- get_eff_weights(coin, out2 = "df")
+
+head(w_eff)
+
 }

@@ -25,7 +25,7 @@ indicator should be twice as "important" as the other two.}
 
 \item{dset}{Name of the aggregated data set found in \code{coin$Data} which results from calling \code{\link[=Aggregate]{Aggregate()}}.}
 
-\item{Level}{The aggregation level to apply the weight adjustment to.}
+\item{Level}{The aggregation level to apply the weight adjustment to. This can only be one level.}
 
 \item{cortype}{The type of correlation to use - can be either \code{"pearson"}, \code{"spearman"} or \code{"kendall"}. See \link[stats:cor]{stats::cor}.}
 
@@ -53,8 +53,24 @@ This function provides optimised weights to agree with a pre-specified vector of
 \details{
 This is a linear version of the weight optimisation proposed in this paper: \doi{10.1016/j.ecolind.2017.03.056}.
 Weights are optimised to agree with a pre-specified vector of "importances". The optimised weights are returned back to the coin.
+
+See \code{vignette("weights")} for more details on the usage of this function and an explanation of the underlying
+method.
 }
 \examples{
-#
+# build example coin
+coin <- build_example_coin(quietly = TRUE)
+
+# check correlations between level 3 and index
+get_corr(coin, dset = "Aggregated", Levels = c(3, 4))
+
+# optimise weights at level 3
+l_opt <- get_opt_weights(coin, itarg = "equal", dset = "Aggregated",
+                        Level = 3, weights_to = "OptLev3", out2 = "list")
+
+# view results
+tail(l_opt$WeightsOpt)
+
+l_opt$CorrResultsNorm
 
 }

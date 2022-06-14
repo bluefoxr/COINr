@@ -26,7 +26,17 @@ and recalculate the index if asked. Adding and removing is done relative to the 
 indicators used in calculating the index results. Any indicators that are added must of course be
 present in the original \code{iData} and \code{iMeta} that were input to \code{new_coin()}.
 }
+\details{
+See also \code{vignette("adjustments")}.
+}
 \examples{
-#
+# build full example coin
+coin <- build_example_coin(quietly = TRUE)
+
+# exclude two indicators and regenerate
+# remove two indicators and regenerate the coin
+coin_remove <- change_ind(coin, drop = c("LPI", "Forest"), regen = TRUE)
+
+coin_remove
 
 }

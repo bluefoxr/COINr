@@ -2,7 +2,7 @@
 % Please edit documentation in R/stats.R
 \name{get_stats.coin}
 \alias{get_stats.coin}
-\title{Get table of statistics for selected indicators}
+\title{Statistics of indicators}
 \usage{
 \method{get_stats}{coin}(
   x,
@@ -43,7 +43,38 @@ updated coin with the data frame attached under \code{.$Analysis}.}
 Either a data frame or updated coin - see \code{out2}.
 }
 \description{
-Get table of statistics for selected indicators
+Given a coin and a specified data set (\code{dset}), returns a table of statistics with entries for each column.
+The statistics (columns in the output table) are as follows (entries correspond to each column):
+}
+\details{
+*\code{Min}: the minimum
+*\code{Max}: the maximumn
+*\code{Mean}: the (arirthmetic) mean
+*\code{Median}: the median
+*\code{Std}: the standard deviation
+*\code{Skew}: the skew
+*\code{Kurt}: the kurtosis
+*\code{N.Avail}: the number of non-\code{NA} values
+*\code{N.NonZero}: the number of non-zero values
+*\code{N.Unique}: the number of unique values
+*\code{Frc.Avail}: the fraction of non-\code{NA} values
+*\code{Frc.NonZero}: the fraction of non-zero values
+*\code{Frc.Unique}: the fraction of unique values
+*\code{Flag.Avail}: a data availability flag - columns with \code{Frc.Avail < t_avail} will be flagged as \code{"LOW"}, else \code{"ok"}.
+*\code{Flag.NonZero}: a flag for columns with a high proportion of zeros. Any columns with \code{Frc.NonZero < t_zero} are
+flagged as \code{"LOW"}, otherwise \code{"ok"}.
+*\code{Flag.Unique}: a unique value flag - any columns with \code{Frc.Unique < t_unq} are flagged as \code{"LOW"}, otherwise \code{"ok"}.
+*\code{Flag.SkewKurt}: a skew and kurtosis flag which is an indication of possible outliers. Any columns with
+\code{abs(Skew) > t_skew} AND \code{Kurt > t_kurt} are flagged as \code{"OUT"}, otherwise \code{"ok"}.
+
+The aim of this table, among other things, is to check the basic statistics of each column/indicator, and identify
+any possible issues for each indicator. For example, low data availability, having a high proportion of zeros and/or
+a low proportion of unique values. Further, the combination of skew and kurtosis (i.e. the \code{Flag.SkewKurt} column)
+is a simple test for possible outliers, which may require treatment using \code{\link[=Treat]{Treat()}}.
+
+The table can be returned either to the coin or as a standalone data frame - see \code{out2}.
+
+See also \code{vignette("analysis")}.
 }
 \examples{
 # build example coin

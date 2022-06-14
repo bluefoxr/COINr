@@ -76,8 +76,24 @@ to be attached to the list, OR, simply \code{x} as the only output.
 \item \code{f_pass} must return a logical value, where \code{TRUE} indicates that the \code{x} passes the criteria (and
 therefore doesn't need any (more) treatment), and \code{FALSE} means that it fails to meet the criteria.
 }
+
+See also \code{vignette("treat")}.
 }
 \examples{
-#
+# numbers between 1 and 10
+x <- 1:10
+
+# two outliers
+x <- c(x, 30, 100)
+
+# check whether passes skew/kurt test
+check_SkewKurt(x)
+
+# treat using winsorisation
+l_treat <- Treat(x, f1 = "winsorise", f1_para = list(winmax = 2),
+                 f_pass = "check_SkewKurt")
+
+# plot original against treated
+plot(x, l_treat$x)
 
 }

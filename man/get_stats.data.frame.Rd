@@ -2,7 +2,7 @@
 % Please edit documentation in R/stats.R
 \name{get_stats.data.frame}
 \alias{get_stats.data.frame}
-\title{Get table of statistics by column.}
+\title{Statistics of columns}
 \usage{
 \method{get_stats}{data.frame}(
   x,
@@ -33,7 +33,7 @@
 \item{...}{arguments passed to or from other methods.}
 }
 \value{
-A data frame of statistics for each indicator column
+A data frame of statistics for each column
 }
 \description{
 Takes a data frame and returns a table of statistics with entries for each column. The statistics (columns in the
@@ -64,6 +64,8 @@ The aim of this table, among other things, is to check the basic statistics of e
 any possible issues for each indicator. For example, low data availability, having a high proportion of zeros and/or
 a low proportion of unique values. Further, the combination of skew and kurtosis (i.e. the \code{Flag.SkewKurt} column)
 is a simple test for possible outliers, which may require treatment using \code{\link[=Treat]{Treat()}}.
+
+See also \code{vignette("analysis")}.
 }
 \examples{
 # stats of mtcars
