@@ -3,7 +3,7 @@ Type: Package
 Title: Composite Indicator Construction and Analysis
 Version: 1.0.0.9000
 Maintainer: William Becker <william.becker@bluefoxdata.eu>
-Description: A comprehensive high-level package for composite indicator construction and analysis. It is a "development environment"
+Description: A comprehensive high-level package, for composite indicator construction and analysis. It is a "development environment"
     for composite indicators and scoreboards, which includes utilities for construction (indicator selection, denomination, imputation,
     data treatment, normalisation, weighting and aggregation) and analysis (multivariate analysis, correlation plotting, short cuts for
     principal component analysis, global sensitivity analysis, and more). A composite indicator is completely encapsulated inside a single
