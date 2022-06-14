@@ -83,7 +83,11 @@ check_dset <- function(x, dset, ...){
 #' @param ... arguments passed to or from other methods.
 #'
 #' @examples
-#' #
+#' # build example purse
+#' purse <- build_example_purse(up_to = "new_coin", quietly = TRUE)
+#'
+#' # get raw data set
+#' df1 <- get_dset(purse, dset = "Raw")
 #'
 #' @return Data frame of indicator data.
 #'
@@ -129,7 +133,11 @@ get_dset.purse <- function(x, dset, Time = NULL, also_get = NULL, ...){
 #' @param ... arguments passed to or from other methods.
 #'
 #' @examples
-#' #
+#' # build example coin, just up to raw dset for speed
+#' coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
+#'
+#' # retrieve raw data set with added cols
+#' get_dset(coin, dset = "Raw", also_get = c("uName", "GDP_group"))
 #'
 #' @return Data frame of indicator data.
 #'
@@ -194,14 +202,18 @@ get_dset.coin <- function(x, dset, also_get = NULL, ...){
 
 #' Gets a named data set and performs checks
 #'
-#' A helper function to retrieve a named data set from coin or purse objects.
+#' A helper function to retrieve a named data set from coin or purse objects. See individual
+#' documentation on:
+#'
+#' * [get_dset.coin()]
+#' * [get_dset.purse()]
 #'
 #' @param x A coin or purse
 #' @param dset A character string corresponding to a named data set within `.$Data`. E.g. `"Raw"`.
 #' @param ... arguments passed to or from other methods.
 #'
 #' @examples
-#' #
+#' # see examples for methods
 #'
 #' @return Data frame of indicator data, indexed also by time if input is a purse.
 #'
@@ -249,6 +261,16 @@ get_dset <- function(x, dset, ...){
 #' in `iMeta`. These columns are stored in `.$Meta$Unit` to avoid repetition. Set `also_get = "all"` to
 #' attach all columns, or set `also_get = "none"` to return only numeric columns, i.e. no `uCode` column.
 #' @param ... arguments passed to or from other methods.
+#'
+#' @examples
+#' # build full example coin
+#' coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
+#'
+#' # get all indicators in "Political group
+#' x <- get_data(coin, dset = "Raw", iCodes = "Political", Level = 1)
+#' head(x, 5)
+#'
+#' # see vignette("data_selection") for more examples
 #'
 #' @return A data frame of indicator data according to specifications.
 #' @export
@@ -481,6 +503,16 @@ get_data.coin <- function(x, dset, iCodes = NULL, Level = NULL, uCodes = NULL,
 #' attach all columns, or set `also_get = "none"` to return only numeric columns, i.e. no `uCode` column.
 #' @param ... arguments passed to or from other methods.
 #'
+#' @examples
+#' # build full example purse
+#' purse <- build_example_purse(up_to = "new_coin", quietly = TRUE)
+#'
+#' # get specified indicators for specific years, for specified units
+#' get_data(purse, dset = "Raw",
+#'          iCodes = c("Lang", "Forest"),
+#'          uCodes = c("AUT", "CHN", "DNK"),
+#'          Time = c(2019, 2020))
+#'
 #' @return A data frame of indicator data indexed by a "Time" column.
 #' @export
 get_data.purse <- function(x, dset, iCodes = NULL, Level = NULL, uCodes = NULL,
@@ -510,13 +542,17 @@ get_data.purse <- function(x, dset, iCodes = NULL, Level = NULL, uCodes = NULL,
 
 #' Get subsets of indicator data
 #'
-#' A helper function to retrieve a named data set from coin or purse objects.
+#' A helper function to retrieve a named data set from coin or purse objects. See individual method
+#' documentation:
+#'
+#' * [get_data.coin()]
+#' * [get_data.purse()]
 #'
 #' @param x A coin or purse
 #' @param ... Arguments passed to methods
 #'
 #' @examples
-#' #
+#' # see individual method documentation
 #'
 #' @return Data frame of indicator data, indexed also by time if input is a purse.
 #'

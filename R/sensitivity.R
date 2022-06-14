@@ -1,5 +1,31 @@
 
-#' Sensitivity and uncertainty analysis
+#' Sensitivity and uncertainty analysis of a coin
+#'
+#' This function performs global sensitivity and uncertainty analysis of a coin. You must specify which
+#' parameters of the coin to vary, and the alternatives/distributions for those parameters.
+#'
+#' COINr implements a flexible variance-based global sensitivity analysis approach, which allows almost any assumption
+#' to be varied, as long as the distribution of alternative values can be described. Variance-based "sensitivity indices"
+#' are estimated using a Monte Carlo design (running the composite indicator many times with a particular combination of
+#' input values). This follows the methodology described in \doi{10.1111/j.1467-985X.2005.00350.x}.
+#'
+#' To understand how this function works, please see `vignette("sensitivity")`. Here, we briefly recap the main input
+#' arguments.
+#'
+#' First, you can select whether to run an uncertainty analysis `SA_type = "UA"` or sensitivity analysis `SA_type = "SA"`.
+#' The number of replications (regenerations of the coin) is specified by `N`. Keep in mind that the *total* number of
+#' replications is `N` for an uncertainty analysis but is `N*(d + 2)` for a sensitivity analysis due to the experimental
+#' design used.
+#'
+#' To run either types of analysis, you must specify *which* parts of the coin to vary and *what the distributions/alternatives are*
+#' This is done using `SA_specs`, a structured list. See `vignette("sensitivity")` for details and examples.
+#'
+#' You also need to specify the target of the sensitivity analysis. This should be an indicator or aggregate that can be
+#' found in one of the data sets of the coin, and is specified using the `dset` and `iCode` arguments.
+#'
+#' Finally, if `SA_type = "SA"`, it is advisable to set `Nboot` to e.g. 100 or more, which is the number of bootstrap samples
+#' to take when estimating confidence intervals on sensitivity indices. This does *not* perform extra regenerations of the
+#' coin, so setting this to a higher number shouldn't have much impact on computational time.
 #'
 #' @param coin A coin
 #' @param SA_specs Specifications of the input uncertainties
@@ -14,11 +40,23 @@
 #'
 #' @importFrom stats runif
 #'
-#' @return A list of sensitivity analysis data frames
+#' @return Sensitivity analysis results as a list, containing:
+#' * `.$Scores` a data frame with a row for each unit, and columns are the scores for each replication.
+#' * `.$Ranks` as `.$Scores` but for unit ranks
+#' * `.$RankStats` summary statistics for ranks of each unit
+#' * `.$Nominal` the nominal scores and ranks of each unit (i.e. from the original COIN)
+#' * `.$Sensitivity` (only if `SA_type = "SA"`) sensitivity indices for each parameter. Also confidence intervals if `Nboot`
+#' was specified.
+#' * Some information on the time elapsed, average time, and the parameters perturbed.
+#' * Depending on the setting of `store_results`, may also contain a list of Methods or a list of COINs for each replication.
+#'
 #' @export
 #'
 #' @examples
-#' #
+#' # for examples, see `vignette("sensitivity")`
+#' # (this is because package examples are run automatically and this function can take a few minutes to
+#' # run at realistic settings)
+#'
 get_sensitivity <- function(coin, SA_specs, N, SA_type = "UA", dset, iCode, Nboot = NULL, quietly = FALSE){
 
   t0 <- proc.time()
@@ -351,9 +389,9 @@ check_address <- function(address, coin){
   }
 
   # this is the call to evaluate, as a string
-  expr_str <- paste0("address_value <- coin", address)
+  expr_str <- paste0("coin", address)
   # evaluate the call
-  eval(str2lang(expr_str))
+  address_value <- eval(str2lang(expr_str))
 
   if(is.null(address_value)){
     xx <- readline(paste0("Address ", address, " is not currently present in the coin or else is NULL. Continue anyway (y/n)?  "))
@@ -377,7 +415,6 @@ check_address <- function(address, coin){
 #' Then it estimates sensitivity indices using this sample.
 #'
 #' This function is built to be used inside [get_sensitivity()].
-#' See [COINr online documentation](https://bluefoxr.github.io/COINrDoc/sensitivity-analysis.html) for more details.
 #'
 #' @param yy A vector of model output values, as a result of a \eqn{N(d+2)} Monte Carlo design.
 #' @param N The number of sample points per dimension.
@@ -496,7 +533,6 @@ SA_estimate <- function(yy, N, d, Nboot = NULL){
 #' the [get_sensitivity()] function. The total sample size will be \eqn{N(d+2)}.
 #'
 #' This function generates a Monte Carlo sample as described e.g. in the [Global Sensitivity Analysis: The Primer book](https://onlinelibrary.wiley.com/doi/book/10.1002/9780470725184).
-#' See also [COINr online documentation](https://bluefoxr.github.io/COINrDoc/sensitivity-analysis.html).
 #'
 #' @param N The number of sample points per dimension.
 #' @param d The dimensionality of the sample
@@ -543,8 +579,9 @@ SA_sample <- function(N, d){
 #' the median, and 5th/95th percentiles of ranks.
 #'
 #' To use this function you first need to run [get_sensitivity()]. Then enter the resulting list as the
-#' `SAresults` argument here. See [COINr online documentation](https://bluefoxr.github.io/COINrDoc/sensitivity-analysis.html)
-#' for more details.
+#' `SAresults` argument here.
+#'
+#' See `vignette("sensitivity")`.
 #'
 #' @param SAresults A list of sensitivity/uncertainty analysis results from [get_sensitivity()].
 #' @param plot_units A character vector of units to plot. Defaults to all units. You can also set
@@ -560,7 +597,9 @@ SA_sample <- function(N, d){
 #' @importFrom ggplot2 coord_flip element_text
 #'
 #' @examples
-#' #
+#' # for examples, see `vignette("sensitivity")`
+#' # (this is because package examples are run automatically and sensitivity analysis can take a few minutes to
+#' # run at realistic settings)
 #'
 #' @seealso
 #' * [get_sensitivity()] Perform global sensitivity or uncertainty analysis on a coin
@@ -647,7 +686,8 @@ plot_uncertainty <- function(SAresults, plot_units = NULL, order_by = "nominal",
 #'
 #' To use this function you first need to run [get_sensitivity()]. Then enter the resulting list as the
 #' `SAresults` argument here.
-#' See [COINr online documentation](https://bluefoxr.github.io/COINrDoc/sensitivity-analysis.html) for more details.
+#'
+#' See `vignette("sensitivity")`.
 #'
 #' @param SAresults A list of sensitivity/uncertainty analysis results from [plot_sensitivity()].
 #' @param ptype Type of plot to generate - either `"bar"`, `"pie"` or `"box"`.
@@ -657,7 +697,9 @@ plot_uncertainty <- function(SAresults, plot_units = NULL, order_by = "nominal",
 #' @importFrom rlang .data
 #'
 #' @examples
-#' #
+#' # for examples, see `vignette("sensitivity")`
+#' # (this is because package examples are run automatically and sensitivity analysis can take a few minutes to
+#' # run at realistic settings)
 #'
 #' @return A plot of sensitivity indices generated by ggplot2.
 #'
@@ -749,7 +791,7 @@ plot_sensitivity <- function(SAresults, ptype = "bar"){
 #' noise. This is intended for use in uncertainty and sensitivity analysis.
 #'
 #' Weights are expected to be in a data frame format with columns `Level`, `iCode` and `Weight`, as
-#' used in `iMeta`.
+#' used in `iMeta`. Note that no `NA`s are allowed anywhere in the data frame.
 #'
 #' Noise is added using the `noise_specs` argument, which is specified by a data frame with columns
 #' `Level` and `NoiseFactor`. The aggregation level refers to number of the aggregation level to target
@@ -764,7 +806,22 @@ plot_sensitivity <- function(SAresults, ptype = "bar"){
 #' @param Nrep The number of weight replications to generate.
 #'
 #' @examples
-#' #
+#' # build example coin
+#' coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
+#'
+#' # get nominal weights
+#' w_nom <- coin$Meta$Weights$Original
+#'
+#' # build data frame specifying the levels to apply the noise at
+#' # here we vary at levels 2 and 3
+#' noise_specs = data.frame(Level = c(2,3),
+#'                          NoiseFactor = c(0.25, 0.25))
+#'
+#' # get 100 replications
+#' noisy_wts <- get_noisy_weights(w = w_nom, noise_specs = noise_specs, Nrep = 100)
+#'
+#' # examine one of the noisy weight sets, last few rows
+#' tail(noisy_wts[[1]])
 #'
 #' @return A list of `Nrep` sets of weights (data frames).
 #'

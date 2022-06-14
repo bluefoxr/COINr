@@ -9,12 +9,12 @@
 #' case, optionally set `f_i_para = list(max_time = .)` where `.` should be substituted with the maximum
 #' number of time points to search backwards for a non-`NA` value. See [impute_panel()] for more details.
 #' No further arguments need to be passed to [impute_panel()]. See `vignette("imputation")` for more
-#' details.
+#' details. See also [Impute.coin()] documentation.
 #'
 #' @param x A purse object
 #' @param dset The name of the data set to apply the function to, which should be accessible in `.$Data`.
 #' @param f_i An imputation function. For the "purse" class, if `f_i = "impute_panel` this is a special
-#' case See details.
+#' case: see details.
 #' @param f_i_para Further arguments to pass to `f_i`, other than `x`. See details.
 #' @param impute_by Specifies how to impute: if `"column"`, passes each column (indicator) separately as a numerical
 #' vector to `f_i`; if `"row"`, passes each *row* separately; and if `"df"` passes the entire data set (data frame) to
@@ -112,9 +112,11 @@ Impute.purse <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "colu
 #' `impute_by = "column"`), or on each row at a time (if `impute_by = "row"`), or by passing the entire
 #' data frame to `f_i` if `impute_by = "df"`.
 #'
-#' The function `f_i` needs to be able to accept with the data class passed to it - if
+#' Clearly, the function `f_i` needs to be able to accept with the data class passed to it - if
 #' `impute_by` is `"row"` or `"column"` this will be a numeric vector, or if `"df"` it will be a data
-#' frame.
+#' frame. Moreover, this function should return a vector or data frame identical to the vector/data frame passed to
+#' it except for `NA` values, which can be replaced. The function `f_i` is not required to replace *all* `NA`
+#' values.
 #'
 #' When imputing row-wise, prior normalisation of the data is recommended. This is because imputation
 #' will use e.g. the mean of the unit values over all indicators (columns). If the indicators are on
@@ -134,6 +136,8 @@ Impute.purse <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "colu
 #' if the data frame is normalised, and/or depending on the imputation function, there may be a very
 #' small differences. By default `sfigs = 9`, meaning that the non-`NA` values pre and post-imputation
 #' are compared to 9 significant figures.
+#'
+#' See also documentation for [Impute.data.frame()] and [Impute.numeric()] which are called by this function.
 #'
 #' @param x A coin class object
 #' @param dset The name of the data set to apply the function to, which should be accessible in `.$Data`.
@@ -157,7 +161,7 @@ Impute.purse <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "colu
 #' `.$Data[[write_to]]`. Default is `write_to == "Imputed"`.
 #' @param ... arguments passed to or from other methods.
 #'
-#' @return An updated coin
+#' @return An updated coin with imputed data set at `.$Data[[write_to]]`
 #' @export
 #'
 #' @examples
@@ -287,7 +291,9 @@ Impute.coin <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "colum
 #'
 #' Clearly, the function `f_i` needs to be able to accept with the data class passed to it - if
 #' `impute_by` is `"row"` or `"column"` this will be a numeric vector, or if `"df"` it will be a data
-#' frame.
+#' frame. Moreover, this function should return a vector or data frame identical to the vector/data frame passed to
+#' it except for `NA` values, which can be replaced. The function `f_i` is not required to replace *all* `NA`
+#' values.
 #'
 #' When imputing row-wise, prior normalisation of the data is recommended. This is because imputation
 #' will use e.g. the mean of the unit values over all indicators (columns). If the indicators are on
@@ -491,6 +497,10 @@ Impute.data.frame <- function(x, f_i = NULL, f_i_para = NULL, impute_by = "colum
 
 #' Impute a numeric vector
 #'
+#' Imputes missing values in a numeric vector using a function `f_i`. This function should return a vector identical
+#' to `x` except for `NA` values, which can be replaced. The function `f_i` is not required to replace *all* `NA`
+#' values.
+#'
 #' This calls the function `f_i()`, with optionally further arguments `f_i_para`, to impute any missing
 #' values found in `x`. By default, `f_i = "i_mean()"`, which simply imputes `NA`s with the mean of the
 #' non-`NA` values in `x`.
@@ -501,7 +511,7 @@ Impute.data.frame <- function(x, f_i = NULL, f_i_para = NULL, impute_by = "colum
 #' there are no `NA`s at all.
 #'
 #' @param x A numeric vector, possibly with `NA` values to be imputed.
-#' @param f_i A function that imputes missing values in a numeric vector
+#' @param f_i A function that imputes missing values in a numeric vector. See descriotion and details.
 #' @param f_i_para Optional further arguments to be passed to `f_i()`
 #' @param ... arguments passed to or from other methods.
 #'
@@ -566,13 +576,22 @@ Impute.numeric <- function(x, f_i = NULL, f_i_para = NULL, ...){
 }
 
 
-#' Impute indicator data sets
+#' Imputation of missing data
+#'
+#' This is a generic function with the following methods:
+#'
+#' * [Impute.numeric()]
+#' * [Impute.data.frame()]
+#' * [Impute.coin()]
+#' * [Impute.purse()]
+#'
+#' See those methods for individual documentation.
 #'
 #' @param x Object to be imputed
 #' @param ... arguments passed to or from other methods.
 #'
 #' @examples
-#' #
+#' # See individual method documentation
 #'
 #' @return An object of the same class as `x`, but imputed.
 #'

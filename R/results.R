@@ -4,7 +4,9 @@
 #'
 #' Although results are available in a coin in `.$Data`, the format makes it difficult to quickly present results. This function
 #' generates results tables that are suitable for immediate presentation, i.e. sorted by index or other indicators, and only including
-#' relevant columns. Scores are also rounded by default, and there is the option to present scores or ranks.
+#' relevant columns. Scores are also rounded by default, and there is the option to present scores or ranks.ù
+#'
+#' See also `vignette("results")` for more info.
 #'
 #' @param coin The coin object, or a data frame of indicator data
 #' @param dset Name of data set in `.$Data`
@@ -20,7 +22,13 @@
 #' @param out2 If `"df"`, outputs a data frame (tibble). Else if `"coin"` attaches to `.$Results` in an updated coin.
 #'
 #' @examples
-#' #
+#' # build full example coin
+#' coin <- build_example_coin(quietly = TRUE)
+#'
+#' # get results table
+#' df_results <- get_results(coin, dset = "Aggregated", tab_type = "Aggs")
+#'
+#' head(df_results)
 #'
 #' @return If `out2 = "df"`, the results table is returned as a data frame. If `out2 = "coin"`, this function returns an updated
 #' coin with the results table attached to `.$Results`.
@@ -157,7 +165,11 @@ get_results <- function(coin, dset, tab_type = "Summ", also_get = NULL, use = "s
 #' @param nround Number of decimals to round scores to, default 2.
 #'
 #' @examples
-#' #
+#' # build full example coin
+#' coin <- build_example_coin(quietly = TRUE)
+#'
+#' # summary of scores for IND at levels 4, 3 and 2
+#' get_unit_summary(coin, usel = "IND", Levels = c(4,3,2), dset = "Aggregated")
 #'
 #' @return A summary table as a data frame, containing scores and ranks for specified indicators/aggregates.
 #'
@@ -259,7 +271,11 @@ get_unit_summary <- function(coin, usel, Levels, dset = "Aggregated", nround = 2
 #' of `IndMeta`. By default, this is `TRUE` *if* `dset = "Raw"`, and `FALSE` otherwise.
 #'
 #' @examples
-#' #
+#' # build example coin
+#' coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
+#'
+#' # get strengths and weaknesses for ESP
+#' get_str_weak(coin, dset = "Raw", usel = "ESP")
 #'
 #' @return A list containing a data frame `.$Strengths`, and a data frame `.$Weaknesses`.
 #' Each data frame has columns with indicator code, name, rank and value (for the selected unit).

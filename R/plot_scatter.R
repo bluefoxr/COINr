@@ -9,7 +9,7 @@
 #' and axes can be labelled using other arguments.
 #'
 #' This function is powered by ggplot2 and outputs a ggplot2 object. To further customise the plot, assign the output
-#' of this function to a variable and use ggplot2 commands to further edit.
+#' of this function to a variable and use ggplot2 commands to further edit. See `vignette("visualisation`) for more details on plotting.
 #'
 #' @param coin A coin object
 #' @param dsets A 2-length character vector specifying the data sets to extract v1 and v2 from,

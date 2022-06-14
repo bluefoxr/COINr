@@ -1,5 +1,8 @@
 #' Aggregate indicators
 #'
+#' Aggregates indicators following the structure specified in `iMeta`, for each coin inside the purse.
+#' See [Aggregate.coin()] for more information.
+#'
 #' @param x A purse-class object
 #' @param dset The name of the data set to apply the function to, which should be accessible in `.$Data`.
 #' @param f_ag The name of an aggregation function, specified as a string
@@ -16,7 +19,12 @@
 #' @export
 #'
 #' @examples
-#' #
+#' # build example purse up to normalised data set
+#' purse <- build_example_purse(up_to = "Normalise", quietly = TRUE)
+#'
+#' # aggregate using defaults
+#' purse <- Aggregate(purse, dset = "Normalised")
+#'
 Aggregate.purse <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, dat_thresh = NULL,
                              write_to = NULL, ...){
 
@@ -70,7 +78,11 @@ Aggregate.purse <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, da
 #' @param ... arguments passed to or from other methods.
 #'
 #' @examples
-#' #
+#' # build example up to normalised data set
+#' coin <- build_example_coin(up_to = "Normalise")
+#'
+#' # aggregate normalised data set
+#' coin <- Aggregate(coin, dset = "Normalised")
 #'
 #' @return An updated coin with aggregated data set added at `.$Data[[write_to]]` if `out2 = "coin"`,
 #' else if `out2 = "df"` outputs the aggregated data set as a data frame.
@@ -292,7 +304,16 @@ Aggregate.coin <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, dat
 #' @param ... arguments passed to or from other methods.
 #'
 #' @examples
-#' #
+#' # get some indicator data - take a few columns from built in data set
+#' X <- ASEM_iData[12:15]
+#'
+#' # normalise to avoid zeros - min max between 1 and 100
+#' X <- Normalise(X,
+#'                global_specs = list(f_n = "n_minmax",
+#'                                     f_n_para = list(l_u = c(1,100))))
+#'
+#' # aggregate using harmonic mean, with some weights
+#' y <- Aggregate(X, f_ag = "a_hmean", f_ag_para = list(w = c(1, 1, 2, 1)))
 #'
 #' @return A numeric vector
 #'
@@ -377,13 +398,17 @@ Aggregate.data.frame <- function(x, f_ag = NULL, f_ag_para = NULL, dat_thresh = 
 #' Aggregate data
 #'
 #' Methods for aggregating numeric vectors, data frames, coins and purses. See individual method documentation
-#' for more details, e.g. [Aggregate.coin()].
+#' for more details:
+#'
+#' * [Aggregate.data.frame()]
+#' * [Aggregate.coin()]
+#' * [Aggregate.purse()]
 #'
 #' @param x Object to be aggregated
 #' @param ... Further arguments to be passed to methods.
 #'
 #' @examples
-#' #
+#' # see individual method documentation
 #'
 #' @return An object similar to the input
 #'
@@ -633,7 +658,11 @@ outrankMatrix <- function(X, w = NULL){
 #' and will be re-scaled to sum to 1. If `w` is not specified, defaults to equal weights.
 #'
 #' @examples
-#' #
+#' # some example data
+#' ind_data <- COINr::ASEM_iData[12:16]
+#'
+#' # aggregate with vector of weights
+#' outlist <- outrankMatrix(ind_data)
 #'
 #' @return Numeric vector of Copeland scores.
 #'

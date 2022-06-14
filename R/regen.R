@@ -17,6 +17,8 @@
 #' does not allow for global normalisation which has to be done at the purse level. This may be fixed in future
 #' releases.
 #'
+#' See also documentation for [Regen.coin()] and `vignette("adjustments")`.
+#'
 #' @param x A purse class object
 #' @param from Optional: a construction function name. If specified, regeneration begins from this function, rather
 #' than re-running all functions.
@@ -24,7 +26,7 @@
 #' @param ... arguments passed to or from other methods.
 #'
 #' @examples
-#' #
+#' # see examples from Regen.coin() and vignette("adjustments")
 #'
 #' @return Updated purse object with regenerated results.
 #'
@@ -45,7 +47,7 @@ Regen.purse <- function(x, from = NULL, quietly = TRUE, ...){
 
 #' Regenerate a coin
 #'
-#' Regenerates the `.$Data` entries by rerunning the construction functions according to the specifications in `.$Log`.
+#' Regenerates the `.$Data` entries in a coin by rerunning the construction functions according to the specifications in `.$Log`.
 #' This effectively regenerates the results. Different variations of coins can be quickly achieved by editing the
 #' saved arguments in `.$Log` and regenerating.
 #'
@@ -57,6 +59,8 @@ Regen.purse <- function(x, from = NULL, quietly = TRUE, ...){
 #' Note that while sets of weights will be passed to the regenerated COIN, anything in `.$Analysis` will be removed
 #' and will have to be recalculated.
 #'
+#' See also `vignette("adjustments")` for more info on regeneration.
+#'
 #' @param x A coin class object
 #' @param from Optional: a construction function name. If specified, regeneration begins from this function, rather
 #' than re-running all functions.
@@ -64,9 +68,24 @@ Regen.purse <- function(x, from = NULL, quietly = TRUE, ...){
 #' @param ... arguments passed to or from other methods.
 #'
 #' @examples
-#' #
+#' # build full example coin
+#' coin <- build_example_coin(quietly = TRUE)
 #'
-#' @return Updated coin object with regenerated results.
+#' # copy coin
+#' coin2 <- coin
+#'
+#' # change to prank function (percentile ranks)
+#' # we don't need to specify any additional parameters (f_n_para) here
+#' coin2$Log$Normalise$global_specs <- list(f_n = "n_prank")
+#'
+#' # regenerate
+#' coin2 <- Regen(coin2)
+#'
+#' # compare index, sort by absolute rank difference
+#' compare_coins(coin, coin2, dset = "Aggregated", iCode = "Index",
+#'               sort_by = "Abs.diff", decreasing = TRUE)
+#'
+#' @return Updated coin object with regenerated results (data sets).
 #'
 #' @export
 Regen.coin <- function(x, from = NULL, quietly = TRUE, ...){
@@ -166,7 +185,15 @@ Regen.coin <- function(x, from = NULL, quietly = TRUE, ...){
 
 #' Regenerate a coin or purse
 #'
-#' Methods for regenerating coins and purses.
+#' Methods for regenerating coins and purses. Regeneration is re-running all the functions used to build
+#' the coin/purse, using the order and parameters found in the `.$Log` list of the coin.
+#'
+#' Please see individual method documentation:
+#'
+#' * [Regen.coin()]
+#' * [Regen.purse()]
+#'
+#' See also `vignette("adjustments")`.
 #'
 #' @param x A coin or purse object to be regenerated
 #' @param from Optional: a construction function name. If specified, regeneration begins from this function, rather
@@ -174,7 +201,7 @@ Regen.coin <- function(x, from = NULL, quietly = TRUE, ...){
 #' @param quietly If `TRUE` (default), messages are suppressed during building.
 #'
 #' @examples
-#' #
+#' # see individual method examples
 #'
 #' @return A regenerated object
 #'
@@ -191,6 +218,8 @@ Regen <- function(x, from = NULL, quietly = TRUE){
 #' indicators used in calculating the index results. Any indicators that are added must of course be
 #' present in the original `iData` and `iMeta` that were input to `new_coin()`.
 #'
+#' See also `vignette("adjustments")`.
+#'
 #' @param coin coin object
 #' @param add A character vector of indicator codes to add (must be present in the original input data)
 #' @param drop A character vector of indicator codes to remove (must be present in the original input data)
@@ -199,7 +228,14 @@ Regen <- function(x, from = NULL, quietly = TRUE){
 #' Make other changes before re-running using the [Regen()] function.
 #'
 #' @examples
-#' #
+#' # build full example coin
+#' coin <- build_example_coin(quietly = TRUE)
+#'
+#' # exclude two indicators and regenerate
+#' # remove two indicators and regenerate the coin
+#' coin_remove <- change_ind(coin, drop = c("LPI", "Forest"), regen = TRUE)
+#'
+#' coin_remove
 #'
 #' @return An updated coin, with regenerated results if `regen = TRUE`.
 #'

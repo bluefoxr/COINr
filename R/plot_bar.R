@@ -4,6 +4,9 @@
 #' Plot bar charts of single indicators. Bar charts can be coloured by an optional grouping variable `by_group`, or if
 #' `iCode` points to an aggregate, setting `stack_children = TRUE` will plot `iCode` coloured by its underlying scores.
 #'
+#' This function uses ggplot2 to generate plots, so the plot can be further manipulated using ggplot2 commands.
+#' See `vignette("visualisation`) for more details on plotting.
+#'
 #' @param coin A coin object.
 #' @param dset Data set from which to extract the variable to plot. Passed to [get_data()].
 #' @param iCode Code of variable or indicator to plot. Passed to [get_data()].

@@ -1,4 +1,36 @@
-#' Get table of statistics for selected indicators
+#' Statistics of indicators
+#'
+#' Given a coin and a specified data set (`dset`), returns a table of statistics with entries for each column.
+#' The statistics (columns in the output table) are as follows (entries correspond to each column):
+#'
+#' *`Min`: the minimum
+#' *`Max`: the maximumn
+#' *`Mean`: the (arirthmetic) mean
+#' *`Median`: the median
+#' *`Std`: the standard deviation
+#' *`Skew`: the skew
+#' *`Kurt`: the kurtosis
+#' *`N.Avail`: the number of non-`NA` values
+#' *`N.NonZero`: the number of non-zero values
+#' *`N.Unique`: the number of unique values
+#' *`Frc.Avail`: the fraction of non-`NA` values
+#' *`Frc.NonZero`: the fraction of non-zero values
+#' *`Frc.Unique`: the fraction of unique values
+#' *`Flag.Avail`: a data availability flag - columns with `Frc.Avail < t_avail` will be flagged as `"LOW"`, else `"ok"`.
+#' *`Flag.NonZero`: a flag for columns with a high proportion of zeros. Any columns with `Frc.NonZero < t_zero` are
+#' flagged as `"LOW"`, otherwise `"ok"`.
+#' *`Flag.Unique`: a unique value flag - any columns with `Frc.Unique < t_unq` are flagged as `"LOW"`, otherwise `"ok"`.
+#' *`Flag.SkewKurt`: a skew and kurtosis flag which is an indication of possible outliers. Any columns with
+#' `abs(Skew) > t_skew` AND `Kurt > t_kurt` are flagged as `"OUT"`, otherwise `"ok"`.
+#'
+#' The aim of this table, among other things, is to check the basic statistics of each column/indicator, and identify
+#' any possible issues for each indicator. For example, low data availability, having a high proportion of zeros and/or
+#' a low proportion of unique values. Further, the combination of skew and kurtosis (i.e. the `Flag.SkewKurt` column)
+#' is a simple test for possible outliers, which may require treatment using [Treat()].
+#'
+#' The table can be returned either to the coin or as a standalone data frame - see `out2`.
+#'
+#' See also `vignette("analysis")`.
 #'
 #' @param t_skew Absolute skewness threshold. See details.
 #' @param t_kurt Kurtosis threshold. See details.
@@ -49,7 +81,7 @@ get_stats.coin <- function(x, dset, t_skew = 2, t_kurt = 3.5, t_avail = 0.65, t_
 
 
 
-#' Get table of statistics by column.
+#' Statistics of columns
 #'
 #' Takes a data frame and returns a table of statistics with entries for each column. The statistics (columns in the
 #' output table) are as follows (entries correspond to each column):
@@ -79,6 +111,8 @@ get_stats.coin <- function(x, dset, t_skew = 2, t_kurt = 3.5, t_avail = 0.65, t_
 #' a low proportion of unique values. Further, the combination of skew and kurtosis (i.e. the `Flag.SkewKurt` column)
 #' is a simple test for possible outliers, which may require treatment using [Treat()].
 #'
+#' See also `vignette("analysis")`.
+#'
 #' @param t_skew Absolute skewness threshold. See details.
 #' @param t_kurt Kurtosis threshold. See details.
 #' @param t_avail Data availability threshold. See details.
@@ -94,7 +128,7 @@ get_stats.coin <- function(x, dset, t_skew = 2, t_kurt = 3.5, t_avail = 0.65, t_
 #' # stats of mtcars
 #' get_stats(mtcars)
 #'
-#' @return A data frame of statistics for each indicator column
+#' @return A data frame of statistics for each column
 #'
 #' @export
 get_stats.data.frame <- function(x, t_skew = 2, t_kurt = 3.5, t_avail = 0.65, t_zero = 0.5,
@@ -161,9 +195,14 @@ get_stats.data.frame <- function(x, t_skew = 2, t_kurt = 3.5, t_avail = 0.65, t_
 }
 
 
-#' Column-wise statistics
+#' Statistics of columns/indicators
 #'
-#' Reports various statistics from a data frame or coin.
+#' Generic function for reports various statistics from a data frame or coin. See method documentation:
+#'
+#' * [get_stats.data.frame()]
+#' * [get_stats.coin()]
+#'
+#' See also `vignette("analysis")`.
 #'
 #' @param x Object (data frame or coin)
 #' @param ... Further arguments to be passed to methods.

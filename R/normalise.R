@@ -1,9 +1,12 @@
-#' Create normalised data set in a purse of coins
+#' Create normalised data sets in a purse of coins
 #'
-#' Normalisation is a special case in terms of operating on a purse of coins. This is because, when
-#' dealing with time series data, it is often desirable to normalise over the whole panel data set
+#' This creates normalised data sets for each coin in the purse. In most respects, this works in a similar way
+#' to normalising on a coin, for which reason please see [Normalise.coin()] for most documentation. There is however
+#' a special case in terms of operating on a purse of coins. This is because, when
+#' dealing with time series data, it is often desirable to normalise over the whole panel data set at once
 #' rather than independently for each time point. This makes the resulting index and aggregates comparable
-#' over time.
+#' over time. Here, the `global` argument controls whether to normalise each coin independently or to normalise
+#' across all data at once. In other repects, this function behaves the same as [Normalise.coin()].
 #'
 #' The same specifications are passed to each coin in the purse. This means that each coin is normalised
 #' using the same set of specifications and directions. If you need control over individual coins, you
@@ -11,7 +14,7 @@
 #'
 #' @param x A purse object
 #' @param dset The data set to normalise in each coin
-#' @param default_specs Default specifications
+#' @param global_specs Default specifications
 #' @param indiv_specs Individual specifications
 #' @param directions If `NULL`, extracts directions from indicator metadata, i.e. the `iMeta` data frame
 #' that was passed to [new_coin()]. Else `directions` should be a vector with entries either -1 or 1, in
@@ -27,8 +30,13 @@
 #' @export
 #'
 #' @examples
-#' #
-Normalise.purse <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
+#' # build example purse
+#' purse <- build_example_purse(up_to = "new_coin", quietly = TRUE)
+#'
+#' # normalise raw data set
+#' purse <- Normalise(purse, dset = "Raw", global = TRUE)
+#'
+Normalise.purse <- function(x, dset, global_specs = NULL, indiv_specs = NULL,
                              directions = NULL, global = TRUE, write_to = NULL, ...){
 
   # input check
@@ -45,7 +53,7 @@ Normalise.purse <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
   if(global){
 
     # run global dset through normalise, excluding Time col
-    iDatas_n <- Normalise(iDatas_, default_specs = default_specs,
+    iDatas_n <- Normalise(iDatas_, global_specs = global_specs,
                            indiv_specs = indiv_specs, directions = directions)
     # split by Time
     iDatas_n_l <- split(iDatas_n, iDatas$Time)
@@ -77,7 +85,7 @@ Normalise.purse <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
 
     # apply independent normalisation to each coin
     x$coin <- lapply(x$coin, function(coin){
-      Normalise.coin(coin, dset = dset, default_specs = default_specs,
+      Normalise.coin(coin, dset = dset, global_specs = global_specs,
                       indiv_specs = indiv_specs, directions = directions,
                       out2 = "coin", write_to = write_to)
     })
@@ -91,10 +99,50 @@ Normalise.purse <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
 
 #' Create a normalised data set
 #'
+#' Creates a normalised data set using specifications specified in `global_specs`. Columns of `dset` can also optionally be
+#' normalised with individual specifications using the `indiv_specs` argument. If indicators should have their
+#' directions reversed, this can be specified using the `directions` argument. Non-numeric columns are ignored
+#' automatically by this function.
+#'
+#' ## Global specification
+#'
+#' The `global_specs` argument is a list which specifies the normalisation function and any function parameters
+#' that should be used to normalise the indicators found in the data set. Unless `indiv_specs` is specified, this will be applied
+#' to all indicators. The list should have two entries:
+#'
+#' * `.$f_n`: the name of the function to use to normalise each indicator
+#' * `.$f_n_para`: any further parameters to pass to `f_n`, apart from the numeric vector (each column of the data set)
+#'
+#' In this list, `f_n` should be a character string which is the name of a normalisation
+#' function. For example, `f_n = "n_minmax"` calls the [n_minmax()] function. `f_n_para` is a list of any
+#' further arguments to `f_n`. This means that any function can be passed to [Normalise()], as long as its
+#' first argument is `x`, a numeric vector, and it returns a numeric vector of the same length. See [n_minmax()]
+#' for an example.
+#'
+#' `f_n_para` is *required* to be a named list. So e.g. if we define a function `f1(x, arg1, arg2)` then we should
+#' specify `f_n = "f1"`, and `f_n_para = list(arg1 = val1, arg2 = val2)`, where `val1` and `val2` are the
+#' values assigned to the arguments `arg1` and `arg2` respectively.
+#'
+#' The default list for `global_specs` is: `list(f_n = "n_minmax", f_n_para = list(l_u = c(0,100)))`, i.e.
+#' min-max normalisation between 0 and 100.
+#'
+#' ## Individual column specification
+#'
+#' Optionally, indicators can be normalised with different normalisation functions and parameters using the
+#' `indiv_specs` argument. This must be specified as a named list e.g. `list(i1 = specs1, i2 = specs2)` where
+#' `i1` and `i2` are `iCode`s to apply individual normalisation to, and `specs1` and `specs2` are
+#' respectively lists of the same format as `global_specs` (see above). In other words, `indiv_specs` is a big
+#' list wrapping together `global_specs`-style lists. Any `iCode`s not named in `indiv_specs` (
+#' i.e. those not in `names(indiv_specs)`) are normalised using the specifications from `global_specs`. So
+#' `indiv_specs` lists the exceptions to `global_specs`.
+#'
+#' See also `vignette("normalise")` for more details.
+#'
 #' @param x A coin
 #' @param dset A named data set found in `.$Data`
-#' @param default_specs Specifications to apply to all columns, apart from those specified by `indiv_specs`.
-#' @param indiv_specs Specifications applied to specific columns, overriding those specified in `default_specs`
+#' @param global_specs Specifications to apply to all columns, apart from those specified by `indiv_specs`. See details.
+#' @param indiv_specs Specifications applied to specific columns, overriding those specified in `global_specs`.
+#' See details.
 #' @param directions An optional data frame containing the following columns:
 #' * `iCode` The indicator code, corresponding to the column names of the data set
 #' * `Direction` numeric vector with entries either `-1` or `1`
@@ -107,9 +155,16 @@ Normalise.purse <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
 #' function will not be invoked when regenerating. Recommend to keep `TRUE` unless you have a good reason to do otherwise.
 #' @param ... arguments passed to or from other methods.
 #'
+#' @examples
+#' # build example coin
+#' coin <- build_example_coin(up_to = "new_coin")
+#'
+#' # normalise the raw data set
+#' coin <- Normalise(coin, dset = "Raw")
+#'
 #' @return An updated coin
 #' @export
-Normalise.coin <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
+Normalise.coin <- function(x, dset, global_specs = NULL, indiv_specs = NULL,
                            directions = NULL, out2 = "coin", write_to = NULL,
                            write2log = TRUE, ...){
 
@@ -138,7 +193,7 @@ Normalise.coin <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
 
   # NORMALISE DATA ----------------------------------------------------------
 
-  iData_n <- Normalise(iData_, default_specs = default_specs, indiv_specs = indiv_specs,
+  iData_n <- Normalise(iData_, global_specs = global_specs, indiv_specs = indiv_specs,
                         directions = dirs_c)
   # reunite with uCode col
   iData_n <- cbind(uCode = iData$uCode, iData_n)
@@ -157,9 +212,47 @@ Normalise.coin <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
 
 #' Normalise a data frame
 #'
+#' Normalises a data frame using specifications specified in `global_specs`. Columns can also optionally be
+#' normalised with individual specifications using the `indiv_specs` argument. If variables should have their
+#' directions reversed, this can be specified using the `directions` argument. Non-numeric columns are ignored
+#' automatically by this function.
+#'
+#' ## Global specification
+#'
+#' The `global_specs` argument is a list which specifies the normalisation function and any function parameters
+#' that should be used to normalise the columns of `x`. Unless `indiv_specs` is specified, this will be applied
+#' to all numeric columns of `x`. The list should have two entries:
+#'
+#' * `.$f_n`: the name of the function to use to normalise each column
+#' * `.$f_n_para`: any further parameters to pass to `f_n`, apart from the numeric vector (each column of `x`)
+#'
+#' In this list, `f_n` should be a character string which is the name of a normalisation
+#' function. For example, `f_n = "n_minmax"` calls the [n_minmax()] function. `f_n_para` is a list of any
+#' further arguments to `f_n`. This means that any function can be passed to [Normalise()], as long as its
+#' first argument is `x`, a numeric vector, and it returns a numeric vector of the same length. See [n_minmax()]
+#' for an example.
+#'
+#' `f_n_para` is *required* to be a named list. So e.g. if we define a function `f1(x, arg1, arg2)` then we should
+#' specify `f_n = "f1"`, and `f_n_para = list(arg1 = val1, arg2 = val2)`, where `val1` and `val2` are the
+#' values assigned to the arguments `arg1` and `arg2` respectively.
+#'
+#' The default list for `global_specs` is: `list(f_n = "n_minmax", f_n_para = list(l_u = c(0,100)))`.
+#'
+#' ## Individual column specification
+#'
+#' Optionally, columns of `x` can be normalised with different normalisation functions and parameters using the
+#' `indiv_specs` argument. This must be specified as a named list e.g. `list(i1 = specs1, i2 = specs2)` where
+#' `i1` and `i2` are column names of `x` to apply individual normalisation to, and `specs1` and `specs2` are
+#' respectively lists of the same format as `global_specs` (see above). In other words, `indiv_specs` is a big
+#' list wrapping together `global_specs`-style lists. Any numeric columns of `x` not named in `indiv_specs` (
+#' i.e. those not in `names(indiv_specs)`) are normalised using the specifications from `global_specs`. So
+#' `indiv_specs` lists the exceptions to `global_specs`.
+#'
+#' See also `vignette("normalise")` for more details.
+#'
 #' @param x A data frame
-#' @param default_specs Specifications to apply to all columns, apart from those specified by `indiv_specs`.
-#' @param indiv_specs Specifications applied to specific columns, overriding those specified in `default_specs`
+#' @param global_specs Specifications to apply to all columns, apart from those specified by `indiv_specs`. See details.
+#' @param indiv_specs Specifications applied to specific columns, overriding those specified in `global_specs`. See details.
 #' @param directions An optional data frame containing the following columns:
 #' * `iCode` The indicator code, corresponding to the column names of the data frame
 #' * `Direction` numeric vector with entries either `-1` or `1`
@@ -173,7 +266,7 @@ Normalise.coin <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
 #'
 #' @return A normalised data frame
 #' @export
-Normalise.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL,
+Normalise.data.frame <- function(x, global_specs = NULL, indiv_specs = NULL,
                                directions = NULL, ...){
 
   # CHECKS ------------------------------------------------------------------
@@ -198,10 +291,10 @@ Normalise.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL,
                     f_n_para = list(l_u = c(0,100)))
 
   # modify using input
-  if(!is.null(default_specs)){
-    stopifnot(is.list(default_specs))
-    #specs_def <- utils::modifyList(specs_def, default_specs)
-    specs_def <- default_specs
+  if(!is.null(global_specs)){
+    stopifnot(is.list(global_specs))
+    #specs_def <- utils::modifyList(specs_def, global_specs)
+    specs_def <- global_specs
   }
 
   # individual: check and flag for later function
@@ -258,7 +351,10 @@ Normalise.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL,
 }
 
 
-#' Normalise indicator data sets
+#' Normalise a numeric vector
+#'
+#' Normalise a numeric vector using a specified function `f_n`, with possible reversal of direction
+#' using `direction`.
 #'
 #' Normalisation is specified using the `f_n` and `f_n_para` arguments. In these, `f_n` should be a character
 #' string which is the name of a normalisation
@@ -269,7 +365,9 @@ Normalise.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL,
 #'
 #' `f_n_para` is *required* to be a named list. So e.g. if we define a function `f1(x, arg1, arg2)` then we should
 #' specify `f_n = "f1"`, and `f_n_para = list(arg1 = val1, arg2 = val2)`, where `val1` and `val2` are the
-#' values assigned to the arguments.
+#' values assigned to the arguments `arg1` and `arg2` respectively.
+#'
+#' See also `vignette("normalise")` for more details.
 #'
 #' @param x Object to be normalised
 #' @param f_n The normalisation method, specified as string which refers to a function of the form `f_n(x, npara)`.
@@ -280,7 +378,14 @@ Normalise.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL,
 #' @param ... arguments passed to or from other methods.
 #'
 #' @examples
-#' #
+#' # example vector
+#' x <- runif(10)
+#'
+#' # normalise using distance to reference (5th data point)
+#' x_norm <- Normalise(x, f_n = "n_dist2ref", f_n_para = list(iref = 5))
+#'
+#' # view side by side
+#' data.frame(x, x_norm)
 #'
 #' @return A normalised numeric vector
 #'
@@ -339,11 +444,21 @@ Normalise.numeric <- function(x, f_n = NULL, f_n_para = NULL,
 
 #' Normalise data
 #'
+#' This is a generic function for normalising variables and indicators, i.e. bringing them onto
+#' a common scale. Please see individual method documentation depending on your data class:
+#'
+#' * [Normalise.numeric()]
+#' * [Normalise.data.frame()]
+#' * [Normalise.coin()]
+#' * [Normalise.purse()]
+#'
+#' See also `vignette("normalise")` for more details.
+#'
 #' @param x Object to be normalised
 #' @param ... Further arguments to be passed to methods.
 #'
 #' @examples
-#' #
+#' # See individual method documentation.
 #'
 #' @export
 Normalise <- function(x, ...){
@@ -352,7 +467,7 @@ Normalise <- function(x, ...){
 
 #' Minmax a vector
 #'
-#' Scales a vector using min-max
+#' Scales a vector using min-max method.
 #'
 #' @param x A numeric vector
 #' @param l_u A vector `c(l, u)`, where `l` is the lower bound and `u` is the upper bound. `x` will
@@ -438,7 +553,7 @@ n_zscore <- function(x, m_sd = c(0,1)){
 #' A measure of the distance to the maximum value, where the maximum value is the highest-scoring value. The
 #' formula used is:
 #'
-#' $ 1 - (x_{max} - x)/(x_{max} - x_{min}) $
+#' \deqn{ 1 - (x_{max} - x)/(x_{max} - x_{min}) }
 #'
 #' This means that the closer a value is to the maximum, the higher its score will be. Scores will be in the
 #' range of 0 to 1.
@@ -470,7 +585,7 @@ n_dist2max <- function(x){
 #'
 #' A measure of the distance to a specific value found in `x`, specified by `iref`. The formula is:
 #'
-#' $ 1 - (x_{ref} - x)/(x_{ref} - x_{min}) $
+#' \deqn{ 1 - (x_{ref} - x)/(x_{ref} - x_{min}) }
 #'
 #' Values exceeding `x_ref` can be optionally capped at 1 if `cap_max = TRUE`.
 #'
@@ -519,7 +634,7 @@ n_dist2ref <- function(x, iref, cap_max = FALSE){
 #'
 #' A measure of the distance of each value of `x` to a specified target. The formula is:
 #'
-#' $ 1 - (x_{targ} - x)/(x_{targ} - x_{min}) $
+#' \deqn{ 1 - (x_{targ} - x)/(x_{targ} - x_{min}) }
 #'
 #' Values exceeding `x_targ` can be optionally capped at 1 if `cap_max = TRUE`.
 #'
@@ -564,7 +679,7 @@ n_dist2targ <- function(x, targ, cap_max = FALSE){
 #'
 #' The ratio of each value of `x` to `max(x)`.
 #'
-#' $ x / x_{max} $
+#' \deqn{ x / x_{max} }
 #'
 #' @param x A numeric vector
 #'
@@ -638,7 +753,7 @@ n_rank <- function(x, ties.method = "min"){
 
 #' Normalise using Borda scores
 #'
-#' Calculates Borda scores as rank(x) - 1.
+#' Calculates Borda scores as `rank(x) - 1`.
 #'
 #' @param x A numeric vector
 #' @param ties.method This argument is passed to [base::rank()] - see there for details.

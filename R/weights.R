@@ -1,7 +1,21 @@
 #' Get effective weights
 #'
+#' Calculates the "effective weight" of each indicator and aggregate at the index level. The effective weight is calculated
+#' as the final weight of each component in the index, and this is due to not just to its own weight, but also to the weights of
+#' each aggregation that it is involved in, plus the number of indicators/aggregates in each group. The effective weight
+#' is one way of understanding the final contribution of each indicator to the index. See also `vignette("weights")`.
+#'
 #' @param coin A coin class object
 #' @param out2 Either `"coin"` or `"df"`
+#'
+#' @examples
+#' # build example coin
+#' coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
+#'
+#' # get effective weights as data frame
+#' w_eff <- get_eff_weights(coin, out2 = "df")
+#'
+#' head(w_eff)
 #'
 #' @return Either an iMeta data frame with effective weights as an added column, or an updated coin with effective
 #' weights added to `.$Meta$Ind`.
@@ -73,10 +87,13 @@ get_eff_weights <-  function(coin, out2 = "df"){
 #' This is a linear version of the weight optimisation proposed in this paper: \doi{10.1016/j.ecolind.2017.03.056}.
 #' Weights are optimised to agree with a pre-specified vector of "importances". The optimised weights are returned back to the coin.
 #'
+#' See `vignette("weights")` for more details on the usage of this function and an explanation of the underlying
+#' method.
+#'
 #' @param coin coin object
 #' @param itarg a vector of (relative) target importances. For example, `c(1,2,1)` would specify that the second
 #' indicator should be twice as "important" as the other two.
-#' @param Level The aggregation level to apply the weight adjustment to.
+#' @param Level The aggregation level to apply the weight adjustment to. This can only be one level.
 #' @param cortype The type of correlation to use - can be either `"pearson"`, `"spearman"` or `"kendall"`. See [stats::cor].
 #' @param optype The optimisation type. Either `"balance"`, which aims to balance correlations
 #' according to a vector of "importances" specified by `itarg` (default), or `"infomax"` which aims to maximise
@@ -91,7 +108,20 @@ get_eff_weights <-  function(coin, out2 = "df"){
 #' @importFrom stats optim
 #'
 #' @examples
-#' #
+#' # build example coin
+#' coin <- build_example_coin(quietly = TRUE)
+#'
+#' # check correlations between level 3 and index
+#' get_corr(coin, dset = "Aggregated", Levels = c(3, 4))
+#'
+#' # optimise weights at level 3
+#' l_opt <- get_opt_weights(coin, itarg = "equal", dset = "Aggregated",
+#'                         Level = 3, weights_to = "OptLev3", out2 = "list")
+#'
+#' # view results
+#' tail(l_opt$WeightsOpt)
+#'
+#' l_opt$CorrResultsNorm
 #'
 #' @return If `out2 = "coin"` returns an updated coin object with a new set of weights in `.$Meta$Weights`, plus
 #' details of the optimisation in `.$Analysis`.

@@ -1,8 +1,11 @@
 #' Treat a purse of coins for outliers
 #'
+#' This function calls [Treat.coin()] for each coin in the purse. See the documentation of that function for
+#' details. See also `vignette("treat")`.
+#'
 #' @param x A purse object
 #' @param dset The data set to treat in each coin
-#' @param default_specs Default specifications
+#' @param global_specs Default specifications
 #' @param indiv_specs Individual specifications
 #' @param combine_treat By default, if `f1` fails to pass `f_pass`, then `f2` is applied to the original `x`,
 #' rather than the treated output of `f1`. If `combine_treat = TRUE`, `f2` will instead be applied to the output
@@ -15,8 +18,8 @@
 #' @export
 #'
 #' @examples
-#' #
-Treat.purse <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
+#' # See `vignette("treat")`.
+Treat.purse <- function(x, dset, global_specs = NULL, indiv_specs = NULL,
                          combine_treat = FALSE, write_to = NULL, ...){
 
   # input check
@@ -24,7 +27,7 @@ Treat.purse <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
 
   # apply treatment to each coin
   x$coin <- lapply(x$coin, function(coin){
-    Treat.coin(coin, dset = dset, default_specs = default_specs,
+    Treat.coin(coin, dset = dset, global_specs = global_specs,
                 indiv_specs = indiv_specs, combine_treat = combine_treat, write_to = write_to)
   })
   # make sure still purse class
@@ -35,9 +38,43 @@ Treat.purse <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
 
 #' Treat a data set in a coin for outliers
 #'
+#' Operates a two-stage data treatment process, based on two data treatment functions, and a pass/fail
+#' function which detects outliers. This function is set up to allow any functions to be passed as the
+#' data treatment functions (`f1` and `f2`), as well as any function to be passed as the outlier detection
+#' function `f_pass`. The data set in the coin to be treated is specified by `dset`.
+#'
+#' The arrangement of this function is inspired by a fairly standard data treatment process applied to
+#' indicators, which consists of checking skew and kurtosis, then if the criteria are not met, applying
+#' Winsorisation up to a specified limit. Then if Winsorisation still does not bring skew and kurtosis
+#' within limits, applying a nonlinear transformation such as log or Box-Cox.
+#'
+#' This function generalises this process by using the following general steps:
+#'
+#' 1. Check if variable passes or fails using `f_pass`
+#' 2. If `f_pass` returns `FALSE`, apply `f1`, else return `x` unmodified
+#' 3. Check again using *`f_pass`
+#' 4. If `f_pass` still returns `FALSE`, apply `f2`
+#' 5. Return the modified `x` as well as other information.
+#'
+#' For the "typical" case described above `f1` is a Winsorisation function, `f2` is a nonlinear transformation
+#' and `f_pass` is a skew and kurtosis check. Parameters can be passed to each of these three functions in
+#' a named list, for example to specify a maximum number of points to Winsorise, or Box-Cox parameters, or anything
+#' else. The constraints are that:
+#'
+#' * All of `f1`, `f2` and `f_pass` must follow the format `function(x, f_para)`, where `x` is a
+#' numerical vector, and `f_para` is a list of other function parameters to be passed to the function, which
+#' is specified by `f1_para` for `f1` and similarly for the other functions. If the function has no parameters
+#' other than `x`, then `f_para` can be omitted.
+#' * `f1` and `f2` should return either a list with `.$x` as the modified numerical vector, and any other information
+#' to be attached to the list, OR, simply `x` as the only output.
+#' * `f_pass` must return a logical value, where `TRUE` indicates that the `x` passes the criteria (and
+#' therefore doesn't need any (more) treatment), and `FALSE` means that it fails to meet the criteria.
+#'
+#' See also `vignette("treat")`.
+#'
 #' @param x A coin
 #' @param dset A named data set available in `.$Data`
-#' @param default_specs Default specifications
+#' @param global_specs Default specifications
 #' @param indiv_specs Individual specifications
 #' @param combine_treat By default, if `f1` fails to pass `f_pass`, then `f2` is applied to the original `x`,
 #' rather than the treated output of `f1`. If `combine_treat = TRUE`, `f2` will instead be applied to the output
@@ -54,8 +91,16 @@ Treat.purse <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
 #' @export
 #'
 #' @examples
-#' #
-Treat.coin <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
+#' # build example coin
+#' coin <- build_example_coin(up_to = "new_coin")
+#'
+#' # treat raw data set
+#' coin <- Treat(coin, dset = "Raw")
+#'
+#' # summary of treatment for each indicator
+#' head(coin$Analysis$Treated$Dets_Table)
+#'
+Treat.coin <- function(x, dset, global_specs = NULL, indiv_specs = NULL,
                        combine_treat = FALSE, out2 = "coin", write_to = NULL, write2log = TRUE, ...){
 
   # WRITE LOG ---------------------------------------------------------------
@@ -68,7 +113,7 @@ Treat.coin <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
 
   # TREAT DATA --------------------------------------------------------------
 
-  l_treat <- Treat(iData, default_specs = default_specs,
+  l_treat <- Treat(iData, global_specs = global_specs,
                     indiv_specs = indiv_specs, combine_treat = combine_treat)
 
   # output list
@@ -119,8 +164,10 @@ Treat.coin <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
 #' * `f_pass` must return a logical value, where `TRUE` indicates that the `x` passes the criteria (and
 #' therefore doesn't need any (more) treatment), and `FALSE` means that it fails to meet the criteria.
 #'
+#' See also `vignette("treat")`.
+#'
 #' @param x A data frame. Can have both numeric and non-numeric columns.
-#' @param default_specs First stage data treatment function
+#' @param global_specs First stage data treatment function
 #' @param indiv_specs First stage data treatment function parameters
 #' @param combine_treat By default, if `f1` fails to pass `f_pass`, then `f2` is applied to the original `x`,
 #' rather than the treated output of `f1`. If `combine_treat = TRUE`, `f2` will instead be applied to the output
@@ -130,12 +177,19 @@ Treat.coin <- function(x, dset, default_specs = NULL, indiv_specs = NULL,
 #' @importFrom utils modifyList
 #'
 #' @examples
-#' #
+#' # select three indicators
+#' df1 <- ASEM_iData[c("Flights", "Goods", "Services")]
+#'
+#' # treat the data frame using defaults
+#' l_treat <- Treat(df1)
+#'
+#' # details of data treatment for each column
+#' l_treat$Dets_Table
 #'
 #' @return A treated data frame of data
 #'
 #' @export
-Treat.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL, combine_treat = FALSE, ...){
+Treat.data.frame <- function(x, global_specs = NULL, indiv_specs = NULL, combine_treat = FALSE, ...){
 
 
   # SET DEFAULTS ------------------------------------------------------------
@@ -154,15 +208,15 @@ Treat.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL, combin
                                        skew_thresh = 2,
                                        kurt_thresh = 3.5))
   # modify using input
-  if(!is.null(default_specs)){
-    if(is.character(default_specs)){
-      stopifnot(length(default_specs) == 1)
-      if(default_specs != "none"){
-        stop("default_specs must either be a list or else 'none'.")
+  if(!is.null(global_specs)){
+    if(is.character(global_specs)){
+      stopifnot(length(global_specs) == 1)
+      if(global_specs != "none"){
+        stop("global_specs must either be a list or else 'none'.")
       }
     } else {
-      stopifnot(is.list(default_specs))
-      specs_def <- utils::modifyList(specs_def, default_specs)
+      stopifnot(is.list(global_specs))
+      specs_def <- utils::modifyList(specs_def, global_specs)
     }
   }
 
@@ -286,6 +340,8 @@ Treat.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL, combin
 #' * `f_pass` must return a logical value, where `TRUE` indicates that the `x` passes the criteria (and
 #' therefore doesn't need any (more) treatment), and `FALSE` means that it fails to meet the criteria.
 #'
+#' See also `vignette("treat")`.
+#'
 #' @param x A numeric vector.
 #' @param f1 First stage data treatment function
 #' @param f1_para First stage data treatment function parameters
@@ -299,7 +355,21 @@ Treat.data.frame <- function(x, default_specs = NULL, indiv_specs = NULL, combin
 #' @param ... arguments passed to or from other methods.
 #'
 #' @examples
-#' #
+#' # numbers between 1 and 10
+#' x <- 1:10
+#'
+#' # two outliers
+#' x <- c(x, 30, 100)
+#'
+#' # check whether passes skew/kurt test
+#' check_SkewKurt(x)
+#'
+#' # treat using winsorisation
+#' l_treat <- Treat(x, f1 = "winsorise", f1_para = list(winmax = 2),
+#'                  f_pass = "check_SkewKurt")
+#'
+#' # plot original against treated
+#' plot(x, l_treat$x)
 #'
 #' @return A treated vector of data.
 #'
@@ -326,6 +396,9 @@ Treat.numeric <- function(x, f1, f1_para = NULL, f2 = NULL, f2_para = NULL,
   # f2 is optional
   if(!is.null(f2)){
     check_fx(f2, f2_para)
+    n_f <- 2
+  } else {
+    n_f <- 1
   }
 
   # set up lists for recording any info from functions
@@ -333,7 +406,7 @@ Treat.numeric <- function(x, f1, f1_para = NULL, f2 = NULL, f2_para = NULL,
   l_list <- vector(mode = "list") # for outputs to go into a list
 
   # df for recording treatment of individual points
-  df_treat <- matrix("", nrow = length(x) ,ncol = 2)
+  df_treat <- as.data.frame(matrix("", nrow = length(x) ,ncol = n_f))
   colnames(df_treat) <- c(f1, f2)
 
   # PASS CHECK -------------------------------------------------------------------
@@ -479,7 +552,8 @@ Treat.numeric <- function(x, f1, f1_para = NULL, f2 = NULL, f2_para = NULL,
 
   # First, glue cols of treated points record
   # remove NULL cols of df_treat
-  df_treat <- df_treat[ ,!is.null(colnames(df_treat))]
+  df_treat <- df_treat[!is.null(colnames(df_treat))]
+
   # combine cols into one
   if(ncol(df_treat) > 1){
     Treat_Points <- apply(df_treat, MARGIN = 1, function(z){
@@ -490,6 +564,8 @@ Treat.numeric <- function(x, f1, f1_para = NULL, f2 = NULL, f2_para = NULL,
       }
     })
     Treat_Points[Treat_Points == "+"] <- ""
+  } else {
+    Treat_Points <- df_treat
   }
 
   list(x = x2,
@@ -500,12 +576,21 @@ Treat.numeric <- function(x, f1, f1_para = NULL, f2 = NULL, f2_para = NULL,
 }
 
 
-#' Treat data
+#' Treat outliers
 #'
-#' @param x Thing
+#' Generic function for treating outliers using a two-step process. See individual method documentation:
+#'
+#' * [Treat.numeric()]
+#' * [Treat.data.frame()]
+#' * [Treat.coin()]
+#' * [Treat.purse()]
+#'
+#' See also `vignette("treat")`.
+#'
+#' @param x Object to be treated
 #' @param ... arguments passed to or from other methods.
 #'
-#' @return message
+#' @return Treated object plus details.
 #'
 #' @export
 Treat <- function (x, ...){
@@ -519,6 +604,10 @@ Treat <- function (x, ...){
 #' skew and kurtosis thresholds within specified limits. Specifically, aims to bring absolute skew to
 #' below a threshold (default 2.25) and kurtosis below another threshold (default 3.5).
 #'
+#' Winsorisation here is defined as reassigning the point with the highest/lowest value with the value of the
+#' next highest/lowest point. Whether to Winsorise at the high or low end of the scale is decided by the direction
+#' of the skewness of `x`.
+#'
 #' @param x A numeric vector.
 #' @param na.rm Set `TRUE` to remove `NA` values, otherwise returns `NA`.
 #' @param winmax Maximum number of points to Winsorise. Default 5. Set `NULL` to have no limit.
@@ -528,9 +617,20 @@ Treat <- function (x, ...){
 #' Default `FALSE`.
 #'
 #' @examples
-#' #
+#' # numbers between 1 and 10
+#' x <- 1:10
 #'
-#' @return A Winsorised vector of data.
+#' # two outliers
+#' x <- c(x, 30, 100)
+#'
+#' # winsorise
+#' l_win <- winsorise(x, skew_thresh = 2, kurt_thresh = 3.5)
+#'
+#' # see treated vector, number of winsorised points and details
+#' l_win
+#'
+#' @return A list containing winsorised data, number of winsorised points, and the individual points that
+#' were treated.
 #'
 #' @export
 winsorise <- function(x, na.rm = FALSE, winmax = 5, skew_thresh = 2, kurt_thresh = 3.5,
@@ -699,7 +799,6 @@ log_CT_orig <- function(x, na.rm = FALSE){
 #' Box Cox transformation
 #'
 #' Simple Box Cox, with no optimisation of lambda.
-#' See [COINr online documentation](https://bluefoxr.github.io/COINrDoc/data-treatment.html#transformation) for more details.
 #'
 #' @param x A vector or column of data to transform
 #' @param lambda The lambda parameter of the Box Cox transform

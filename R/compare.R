@@ -10,9 +10,27 @@
 #' @param compare_by Either `"ranks"` which produces a comparison using ranks, or else `"scores"`, which instead
 #' uses scores. Note that scores may be very different if the methodology is different from one coin to another,
 #' e.g. for different normalisation methods.
+#' @param sort_by Optionally, a column name of the output data frame to sort rows by. Can be either
+#' `"coin.1"`, `"coin.2"`, `"Diff"`, `"Abs.diff"` or possibly a column name imported using `also_get`.
+#' @param decreasing Argument to pass to [order()]: how to sort.
 #'
 #' @examples
-#' #
+#' # build full example coin
+#' coin <- build_example_coin(quietly = TRUE)
+#'
+#' # copy coin
+#' coin2 <- coin
+#'
+#' # change to prank function (percentile ranks)
+#' # we don't need to specify any additional parameters (f_n_para) here
+#' coin2$Log$Normalise$global_specs <- list(f_n = "n_prank")
+#'
+#' # regenerate
+#' coin2 <- Regen(coin2)
+#'
+#' # compare index, sort by absolute rank difference
+#' compare_coins(coin, coin2, dset = "Aggregated", iCode = "Index",
+#'               sort_by = "Abs.diff", decreasing = TRUE)
 #'
 #' @return A data frame of comparison information.
 #'
@@ -130,6 +148,9 @@ compare_coins <- function(coin1, coin2, dset, iCode, also_get = NULL, compare_by
 #' @param compare_by Either `"ranks"` which produces a comparison using ranks, or else `"scores"`, which instead
 #' uses scores. Note that scores may be very different if the methodology is different from one coin to another,
 #' e.g. for different normalisation methods.
+#'
+#' @examples
+#' # see vignette("adjustments")
 #'
 #' @return Data frame unless `tabtype = "All"`, in which case a list of three data frames is returned.
 #'

@@ -2,7 +2,9 @@
 
 #' Build ASEM example coin
 #'
-#' Shortcut function to build the ASEM example coin, using inbuilt example data
+#' Shortcut function to build the ASEM example coin, using inbuilt example data. This can be useful for testing and also
+#' for building reproducible examples. To see the underlying commands run `edit(build_example_coin)`. See also
+#' `vignette("coins")`.
 #'
 #' @param up_to The point up to which to build the index. If `NULL`, builds full index. Else specify a building function
 #' (as a string) - the index will be built up to and including this function. This option is mainly for helping with
@@ -10,7 +12,9 @@
 #' @param quietly If `TRUE`, suppresses all messages.
 #'
 #' @examples
-#' #
+#' # build example coin up to data treatment step
+#' coin <- build_example_coin(up_to = "Treat")
+#' coin
 #'
 #' @return coin class object
 #'
@@ -58,14 +62,14 @@ build_example_coin <- function(up_to = NULL, quietly = FALSE){
 
   # TREAT data
   # Explicitly set winmax so that it is easy to find for SA
-  coin <- Treat(coin, dset = "Screened", default_specs = list(f1_para = list(winmax = 5)))
+  coin <- Treat(coin, dset = "Screened", global_specs = list(f1_para = list(winmax = 5)))
   if(up_to == "Treat"){
     return(coin)
   }
 
   # NORMALISE data
   # explicitly set normalisation specs to find for SA
-  coin <- Normalise(coin, dset = "Treated", default_specs = list(f_n = "n_minmax",
+  coin <- Normalise(coin, dset = "Treated", global_specs = list(f_n = "n_minmax",
                                                                   f_n_para = list(c(0,100))))
   if(up_to == "Normalise"){
     return(coin)
@@ -83,7 +87,10 @@ build_example_coin <- function(up_to = NULL, quietly = FALSE){
 
 #' Build example purse
 #'
-#' Shortcut function to build an artificial purse, to be at some point replaced with a proper example.
+#' Shortcut function to build an example purse. This is currently an "artificial" example, in that it takes the ASEM data set
+#' used in [build_example_coin()] and replicates it for five years, adding artificial noise to simulate year-on-year variation.
+#' This was done simply to demonstrate the functionality of purses, and will at some point be replaced with a real example.
+#' See also `vignette("coins")`.
 #'
 #' @param up_to The point up to which to build the index. If `NULL`, builds full index. Else specify a `build_*` function
 #' (as a string) - the index will be built up to and including this function. This option is mainly for helping with
@@ -91,9 +98,11 @@ build_example_coin <- function(up_to = NULL, quietly = FALSE){
 #' @param quietly If `TRUE`, suppresses all messages.
 #'
 #' @examples
-#' #
+#' # build example purse up to unit screening step
+#' purse <- build_example_purse(up_to = "Screen")
+#' purse
 #'
-#' @return coin class object
+#' @return purse class object
 #'
 #' @export
 build_example_purse <- function(up_to = NULL, quietly = FALSE){
@@ -103,11 +112,14 @@ build_example_purse <- function(up_to = NULL, quietly = FALSE){
     return(purse)
   }
 
-  if(is.null(up_to)){
-    up_to = "theend"
-  } else {
+  if(!is.null(up_to)){
     stopifnot(is.character(up_to),
               length(up_to)==1)
+    if(up_to %nin% c("new_coin", "Screen", "Treat", "Normalise", "Aggregate")){
+      stop("up_to must be one of 'new_coin', 'Screen', 'Treat', 'Normalise', 'Aggregate' or NULL")
+    }
+  } else {
+    up_to = "theend"
   }
 
   # INITIALISE
@@ -125,19 +137,19 @@ build_example_purse <- function(up_to = NULL, quietly = FALSE){
 
   # TREAT data
   purse <- Treat(purse, dset = "Screened")
-  if(up_to == "treat"){
+  if(up_to == "Treat"){
     return(purse)
   }
 
   # NORMALISE data
   purse <- Normalise(purse, dset = "Treated", global = TRUE)
-  if(up_to == "normalise"){
+  if(up_to == "Normalise"){
     return(purse)
   }
 
   # AGGREGATE data
   purse <- Aggregate(purse, dset = "Normalised")
-  if(up_to == "aggregate"){
+  if(up_to == "Aggregate"){
     return(purse)
   }
 

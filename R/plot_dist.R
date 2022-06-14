@@ -3,14 +3,17 @@
 #' Plots indicator distributions using box plots, dot plots, violin plots, violin-dot plots, and histograms.
 #' Supports plotting multiple indicators by calling aggregation groups.
 #'
+#' This function uses ggplot2 to generate plots, so the plot can be further manipulated using ggplot2 commands.
+#' See `vignette("visualisation`) for more details on plotting.
+#'
 #' @param coin The coin object, or a data frame of indicator data
 #' @param dset The name of the data set to apply the function to, which should be accessible in `.$Data`.
 #' @param iCodes Indicator code(s) to plot. See details.
 #' @param ... Further arguments passed to [get_data()] (other than `coin`, `dset` and `iCodes`).
-#' @param normalise Logical: if `TRUE`, normalises the data first, using `default_specs`. If `FALSE` (default),
+#' @param normalise Logical: if `TRUE`, normalises the data first, using `global_specs`. If `FALSE` (default),
 #' data is not normalised.
-#' @param default_specs Specifications for normalising data if `normalise = TRUE`. This is passed to the
-#' `default_specs` argument of [Normalise()].
+#' @param global_specs Specifications for normalising data if `normalise = TRUE`. This is passed to the
+#' `global_specs` argument of [Normalise()].
 #' @param type The type of plot. Currently supported `"Box"`, `"Dot"`, `"Violin"`, `"Violindot"`, `"Histogram"`.
 #'
 #' @importFrom utils stack
@@ -28,7 +31,7 @@
 #'
 #' @export
 plot_dist <- function(coin, dset, iCodes, ..., type = "Box", normalise = FALSE,
-                      default_specs = NULL){
+                      global_specs = NULL){
 
   # GET DATA ----------------------------------------------------------------
 
@@ -43,7 +46,7 @@ plot_dist <- function(coin, dset, iCodes, ..., type = "Box", normalise = FALSE,
 
   # Normalise if required
   if (normalise){
-    iData_ <- Normalise(iData_, default_specs = default_specs)
+    iData_ <- Normalise(iData_, global_specs = global_specs)
   }
 
   # have to put dataframe in long format for ggplot
@@ -117,7 +120,12 @@ plot_dist <- function(coin, dset, iCodes, ..., type = "Box", normalise = FALSE,
 
 #' Dot plots of single indicator with highlighting
 #'
-#' Plots a single indicator as a line of dots, and optionally highlights a selected unit.
+#' Plots a single indicator as a line of dots, and optionally highlights selected units and statistics.
+#' This is intended for showing the relative position of units to other units, rather than as a statistical
+#' plot. For the latter, use [plot_dist()].
+#'
+#' This function uses ggplot2 to generate plots, so the plot can be further manipulated using ggplot2 commands.
+#' See `vignette("visualisation`) for more details on plotting.
 #'
 #' @param coin The coin
 #' @param dset The name of the data set to apply the function to, which should be accessible in `.$Data`.

@@ -20,11 +20,7 @@
 #'
 #' @return A data frame equal to the data frame that was input, but with any numerical columns replaced with ranks.
 #'
-#' @seealso
-#' * [round_df()] Round a data frame to a specified number of decimals.
-#'
 #' @export
-
 rank_df <- function(df, use_group = NULL){
 
   if(is.null(use_group)){
@@ -245,11 +241,6 @@ compare_df <- function(df1, df2, matchcol, sigfigs = 5){
 #'
 #' @return A data frame with replaced values
 #'
-#' @seealso
-#' * [rank_df()] Replace numeric columns of a data frame with ranks.
-#' * [round_df()] Replace numeric columns of a data frame with rounded values.
-#' * [compare_df()] Detailed comparison of two similar data frames.
-#'
 #' @export
 
 replace_df <- function(df, lookup){
@@ -300,13 +291,9 @@ replace_df <- function(df, lookup){
 #' @examples
 #' round_df( as.data.frame(matrix(runif(20),10,2)), decimals = 3)
 #'
-#' @seealso
-#' * [rank_df()] Replace data frame numbers with ranks.
-#'
 #' @return A data frame, with any numeric columns rounded to the specified amount.
 #'
 #' @export
-
 round_df <- function(df, decimals = 2){
   df <- data.frame(
     lapply(df, function(y) if(is.numeric(y)) round(y, decimals) else y)
@@ -326,13 +313,10 @@ round_df <- function(df, decimals = 2){
 #' @examples
 #' signif_df( as.data.frame(matrix(runif(20),10,2)), digits = 3)
 #'
-#' @seealso
-#' * [rank_df()] Replace data frame numbers with ranks.
 #'
 #' @return A data frame, with any numeric columns rounded to the specified amount.
 #'
 #' @export
-
 signif_df <- function(df, digits = 3){
   df <- data.frame(
     lapply(df, function(y) if(is.numeric(y)) signif(y, digits) else y)

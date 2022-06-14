@@ -150,7 +150,11 @@ import_coin_tool <- function(fname, makecodes = FALSE, oldtool = FALSE, out2 = "
 #' @param maxlet The number of letters to take from each word (default 4)
 #'
 #' @examples
-#' #
+#' # get names from example data
+#' iNames <- ASEM_iMeta$iName
+#'
+#' # convert to codes
+#' names_to_codes(iNames)
 #'
 #' @seealso
 #' * [import_coin_tool()] Import data from the COIN Tool (Excel).

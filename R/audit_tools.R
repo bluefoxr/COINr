@@ -30,7 +30,14 @@
 #' @param dset The name of the data set to take `iCode` from. Most likely this should be name of the aggregated data set, typically `"Aggregated"`.
 #'
 #' @examples
-#' #
+#' # build example coin
+#' coin <- build_example_coin(quietly = TRUE)
+#'
+#' # run function removing elements in level 2
+#' l_res <- remove_elements(coin, Level = 2, dset = "Aggregated", iCode = "Index")
+#'
+#' # get summary of rank changes
+#' l_res$MeanAbsDiff
 #'
 #' @return A list with elements as follows:
 #' * `.$Scores`: a data frame where each column is the scores for each unit, with indicator/aggregate corresponding to the column name removed.

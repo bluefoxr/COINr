@@ -7,9 +7,6 @@
 #' @param x A coin
 #' @param ... Arguments to be passed to or from other methods.
 #'
-#' @examples
-#' #
-#'
 #' @importFrom utils head
 #'
 #' @return Text output
@@ -118,9 +115,6 @@ print.coin <- function(x, ...){
 #'
 #' @param x A purse
 #' @param ... Arguments to be passed to or from other methods.
-#'
-#' @examples
-#' #
 #'
 #' @importFrom utils head
 #'
@@ -245,10 +239,6 @@ print.purse <- function(x, ...){
 #'
 #' @param x An object to be checked.
 #'
-#' @examples
-#' is.coin("not_a_coin")
-#' # add example with coin
-#'
 #' @return Logical
 #'
 #' @export
@@ -259,10 +249,6 @@ is.coin <- function(x){
 #' Check if object is purse class
 #'
 #' @param x An object to be checked.
-#'
-#' @examples
-#' is.purse("not_a_coin")
-#' # add example with coin
 #'
 #' @return Logical
 #'

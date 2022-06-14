@@ -27,7 +27,8 @@
 #' @export
 #'
 #' @examples
-#' #
+#' # see vignette("other_functions")
+#'
 COIN_to_coin <- function(COIN, recover_dsets = FALSE, out2 = "coin"){
 
 

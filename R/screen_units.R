@@ -1,9 +1,16 @@
-#' Generic function
+#' Screen units based on data availability
 #'
-#' @param x Thing
-#' @param ... thing
+#' This is a generic function for screening units/rows based on data availability. See method documentation
+#' for more details:
 #'
-#' @return message
+#' * [Screen.data.frame()]
+#' * [Screen.coin()]
+#' * [Screen.purse()]
+#'
+#' @param x Object to be screened
+#' @param ... arguments passed to or from other methods.
+#'
+#' @return An object of the same class as `x`
 #'
 #' @export
 Screen <- function (x, ...){
@@ -20,6 +27,8 @@ Screen <- function (x, ...){
 #' `NA` values for each unit, across indicators, and percentage zero values (*as a percentage of non-`NA` values*).
 #' Each unit is flagged as having low data or too many zeros based on thresholds.
 #'
+#' See also `vignette("screening")`.
+#'
 #' @param x A data frame
 #' @param id_col Name of column of the data frame to be used as the identifier, e.g. normally this would be `uCode`
 #' for indicator data sets used in coins. This must be specified if `Force` is specified.
@@ -35,7 +44,14 @@ Screen <- function (x, ...){
 #' @param ... arguments passed to or from other methods.
 #'
 #' @examples
-#' #
+#' # example data
+#' iData <- ASEM_iData[40:51, c("uCode", "Research", "Pat", "CultServ", "CultGood")]
+#'
+#' # screen to 75% data availability (by row)
+#' l_scr <- Screen(iData, unit_screen = "byNA", dat_thresh = 0.75)
+#'
+#' # summary of screening
+#' head(l_scr$DataSummary)
 #'
 #' @return Missing data stats and screened data as a list.
 #'
@@ -133,7 +149,7 @@ Screen.data.frame <- function(x, id_col = NULL, unit_screen, dat_thresh = NULL, 
 #' `NA` values for each unit, across indicators, and percentage zero values (*as a percentage of non-`NA` values*).
 #' Each unit is flagged as having low data or too many zeros based on thresholds.
 #'
-#' This function currently only supports coins as inputs, not data frames.
+#' See also `vignette("screening")`.
 #'
 #' @param x A coin
 #' @param dset The data set to be checked/screened
@@ -152,7 +168,14 @@ Screen.data.frame <- function(x, id_col = NULL, unit_screen, dat_thresh = NULL, 
 #' @param ... arguments passed to or from other methods.
 #'
 #' @examples
-#' #
+#' # build example coin
+#' coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
+#'
+#' # screen units from raw dset
+#' coin <- Screen(coin, dset = "Raw", unit_screen = "byNA", dat_thresh = 0.85, write_to = "Filtered_85pc")
+#'
+#' # some details about the coin by calling its print method
+#' coin
 #'
 #' @return An updated coin with data frames showing missing data in `.$Analysis`, and a new data set `.$Data$Screened`.
 #' If `out2 = "list"` wraps missing data stats and screened data set into a list.
@@ -197,7 +220,7 @@ Screen.coin <- function(x, dset, unit_screen, dat_thresh = NULL, nonzero_thresh 
 #' `NA` values for each unit, across indicators, and percentage zero values (*as a percentage of non-`NA` values*).
 #' Each unit is flagged as having low data or too many zeros based on thresholds.
 #'
-#' This function currently only supports coins as inputs, not data frames.
+#' See also `vignette("screening")`.
 #'
 #' @param x A purse object
 #' @param dset The data set to be checked/screened
@@ -214,7 +237,7 @@ Screen.coin <- function(x, dset, unit_screen, dat_thresh = NULL, nonzero_thresh 
 #' @param ... arguments passed to or from other methods.
 #'
 #' @examples
-#' #
+#' # see vignette("screening") for an example.
 #'
 #' @return An updated purse with coins screened and updated.
 #'
@@ -239,7 +262,14 @@ Screen.purse <- function(x, dset, unit_screen, dat_thresh = NULL, nonzero_thresh
 
 #' Get data availability of units
 #'
-#' Returns a data frame of the data availability of each unit (row).
+#' Generic function for getting the data availability of each unit (row).
+#'
+#' See method documentation:
+#'
+#' * [get_data_avail.data.frame()]
+#' * [get_data_avail.coin()]
+#'
+#' See also vignettes: `vignette("analysis")` and `vignette("imputation")`.
 #'
 #' @param x Either a coin or a data frame
 #' @param ... Arguments passed to other methods
@@ -252,9 +282,13 @@ get_data_avail <- function(x, ...){
 
 #' Get data availability of units
 #'
-#' Returns a data frame of the data availability of each unit (row) in a given data set, as well as percentage of zeros. This
-#' function ignores any non-numeric columns, and returns a data availability table of numeric columns with non-numeric columns
+#' Returns a list of data frames: the data availability of each unit (row) in a given data set, as well as percentage of zeros.
+#' A second data frame gives data availability by aggregation (indicator) groups.
+#'
+#' This function ignores any non-numeric columns, and returns a data availability table of numeric columns with non-numeric columns
 #' appended at the beginning.
+#'
+#' See also vignettes: `vignette("analysis")` and `vignette("imputation")`.
 #'
 #' @param x A coin
 #' @param dset String indicating name of data set in `.$Data`.
@@ -326,6 +360,8 @@ get_data_avail.coin <- function(x, dset, out2 = "coin", ...){
 #' Returns a data frame of the data availability of each unit (row), as well as percentage of zeros. This
 #' function ignores any non-numeric columns, and returns a data availability table with non-numeric columns
 #' appended at the beginning.
+#'
+#' See also vignettes: `vignette("analysis")` and `vignette("imputation")`.
 #'
 #' @param x A data frame
 #' @param ... arguments passed to or from other methods.

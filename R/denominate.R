@@ -9,10 +9,16 @@
 #'
 #' @param x A purse class object
 #' @param dset The name of the data set to apply the function to, which should be accessible in `.$Data`.
-#' @param denoms A data frame of denominator data. If not specified, will extract any potential denominator columns
-#' that were attached to `iData` when calling [new_coin()].
-#' @param denomby Optional data frame specifying which indicators should be denominated and by what. If not specified,
-#' looks for a Denominator column in iMeta.
+#' @param denoms An optional data frame of denominator data. Columns should be denominator data, with column names corresponding
+#' to entries in `denomby`. This must also include an ID column identified by `denoms_ID` to match rows. If `denoms`
+#' is not specified, will extract any potential denominator columns that were attached to `iData` when calling [new_coin()].
+#' @param denomby Optional data frame which specifies which denominators to use for each indicator, and any scaling factors
+#' to apply. Should have columns `iCode`, `Denominator`, `ScaleFactor`. `iCode` specifies an indicator code found in `dset`,
+#' `Denominator` specifies a column name from `denoms` to use to denominate the corresponding column from `x`.
+#' `ScaleFactor` allows the possibility to scale
+#' denominators if needed, and specifies a factor to multiply the resulting values by. For example, if GDP is a denominator and is measured in
+#' dollars, dividing will create very small numbers (order 1e-10 and smaller) which could cause problems with numerical precision. If `denomby`
+#' is not specified, specifications will be taken from the "Denominator" column in `iMeta`, if it exists.
 #' @param denoms_ID An ID column for matching `denoms` with the data to be denominated. This column should contain
 #' uMeta codes to match with the data set extracted from the coin.
 #' @param f_denom A function which takes two numeric vector arguments and is used to perform the denomination for each
@@ -25,7 +31,13 @@
 #' @export
 #'
 #' @examples
-#' #
+#' # build example purse
+#' purse <- build_example_purse(up_to = "new_coin", quietly = TRUE)
+#'
+#' # denominate using data/specs already included in coin
+#' purse <- Denominate(purse, dset = "Raw")
+#'
+#'
 Denominate.purse <- function(x, dset, denoms = NULL, denomby = NULL, denoms_ID = NULL,
                               f_denom = NULL, write_to = NULL, ...){
 
@@ -45,12 +57,30 @@ Denominate.purse <- function(x, dset, denoms = NULL, denomby = NULL, denoms_ID =
 
 #' Denominate data set in a coin
 #'
+#' "Denominates" or "scales" indicators by other variables. Typically this is done by dividing extensive variables such as
+#' GDP by a scaling variable such as population, to give an intensive variable (GDP per capita).
+#'
+#' This function denominates a data set `dset` inside the coin. By default, denominating variables are taken from
+#' the coin, specifically as variables in `iData` with `Type = "Denominator"` in `iMeta` (input to [new_coin()]).
+#' Specifications to map denominators to indicators are also taken by default from `iMeta$Denominator`, if it exists.
+#'
+#' These specifications can be overridden using the `denoms` and `denomby` arguments. The operator for denomination
+#' can also be changed using the `f_denom` argument.
+#'
+#' See also documentation for [Denominate.data.frame()] which is called by this method.
+#'
 #' @param x A coin class object
 #' @param dset The name of the data set to apply the function to, which should be accessible in `.$Data`.
-#' @param denoms A data frame of denominator data. If not specified, will extract any potential denominator columns
-#' that were attached to `iData` when calling [new_coin()].
-#' @param denomby Optional data frame specifying which indicators should be denominated and by what. If not specified,
-#' looks for a "Denominator" column in `iMeta`.
+#' @param denoms An optional data frame of denominator data. Columns should be denominator data, with column names corresponding
+#' to entries in `denomby`. This must also include an ID column identified by `denoms_ID` to match rows. If `denoms`
+#' is not specified, will extract any potential denominator columns that were attached to `iData` when calling [new_coin()].
+#' @param denomby Optional data frame which specifies which denominators to use for each indicator, and any scaling factors
+#' to apply. Should have columns `iCode`, `Denominator`, `ScaleFactor`. `iCode` specifies an indicator code found in `dset`,
+#' `Denominator` specifies a column name from `denoms` to use to denominate the corresponding column from `x`.
+#' `ScaleFactor` allows the possibility to scale
+#' denominators if needed, and specifies a factor to multiply the resulting values by. For example, if GDP is a denominator and is measured in
+#' dollars, dividing will create very small numbers (order 1e-10 and smaller) which could cause problems with numerical precision. If `denomby`
+#' is not specified, specifications will be taken from the "Denominator" column in `iMeta`, if it exists.
 #' @param denoms_ID An ID column for matching `denoms` with the data to be denominated. This column should contain
 #' `uMeta` codes to match with the data set extracted from the coin.
 #' @param f_denom A function which takes two numeric vector arguments and is used to perform the denomination for each
@@ -64,9 +94,15 @@ Denominate.purse <- function(x, dset, denoms = NULL, denomby = NULL, denoms_ID =
 #' @export
 #'
 #' @examples
-#' #
+#' #' # build example coin
+#' coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
+#'
+#' # denominate (here, we only need to say which dset to use, takes
+#' # specs and denominators from within the coin)
+#' coin <- Denominate(coin, dset = "Raw")
+#'
 Denominate.coin <- function(x, dset, denoms = NULL, denomby = NULL, denoms_ID = NULL,
-                            f_denom = NULL, write_to = NULL, out2 = "coin", ...){
+                           f_denom = NULL, write_to = NULL, out2 = "coin", ...){
 
   # WRITE LOG ---------------------------------------------------------------
 
@@ -132,7 +168,7 @@ Denominate.coin <- function(x, dset, denoms = NULL, denomby = NULL, denoms_ID = 
 #' specified in `denomby` will be ignored. `x` must also contain an ID column specified by `x_ID` to match rows with
 #' `denoms`.
 #' @param denoms A data frame of denominator data. Columns should be denominator data, with column names corresponding
-#' to entries in `denomby`. This must also include an ID column idenfied by `denoms_ID` to match rows.
+#' to entries in `denomby`. This must also include an ID column identified by `denoms_ID` to match rows.
 #' @param denomby A data frame which specifies which denominators to use for each indicator, and any scaling factors
 #' to apply. Should have columns `iCode`, `Denominator`, `ScaleFactor`. `iCode` specifies a column name from `x`,
 #' `Denominator` specifies a column name from `denoms` to use to denominate the corresponding column from `x`.
@@ -257,12 +293,19 @@ Denominate.data.frame <- function(x, denoms, denomby, x_ID = NULL, denoms_ID = N
 #' "Denominates" or "scales" variables by other variables. Typically this is done by dividing extensive variables such as
 #' GDP by a scaling variable such as population, to give an intensive variable (GDP per capita).
 #'
-#' See documentation for individual methods: [Denominate.data.frame()], [Denominate.coin()] and [Denominate.purse()].
+#' See documentation for individual methods:
+#'
+#' * [Denominate.data.frame()]
+#' * [Denominate.coin()]
+#' * [Denominate.purse()].
 #'
 #' @param x Object to be denominated
 #' @param ... arguments passed to or from other methods
 #'
-#' @return message
+#' @return See individual method documentation
+#'
+#' @examples
+#' # See individual method documentation
 #'
 #' @export
 Denominate <- function (x, ...){
