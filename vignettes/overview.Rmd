@@ -120,7 +120,7 @@ All functions are fully documented and individual function help can be accessed 
 The COINr package is loosely object oriented, in the sense that the a composite indicator is encapsulated in an S3 class object called a "coin", and a time-indexed collection of coins is called a "purse" (see [Building coins](coins.html)) Most of the main functions listed in the previous tables take this "coin" class as the main input (and often also as the output) with other function arguments specifying how to apply the function. E.g. the syntax is typically:
 
 ```{r, eval=F}
-# GII <- GII_function(GII, function_arguments)
+coin <- COINr_function(coin, function_arguments)
 ```
 
 Many of the main COINr functions are *generics*: they have methods also for data frames, purses, and in some cases numeric vectors. This means that COINr functions can also be used for ad-hoc operations without needing to build coins.
@@ -149,7 +149,7 @@ ASEM
 
 Let's view the structure of the index that we have specified, using the `plot_framework()` function:
 
-```{r}
+```{r, fig.width=5, fig.height=5}
 plot_framework(ASEM)
 ```
 
@@ -222,7 +222,7 @@ This shows at a glance the top-ranking countries and their scores. See the [Pres
 
 We can also generate a bar chart:
 
-```{r}
+```{r, fig.width=7}
 plot_bar(ASEM, dset = "Aggregated", iCode = "Index", stack_children = TRUE)
 ```
 

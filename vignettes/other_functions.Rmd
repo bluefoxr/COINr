@@ -18,14 +18,18 @@ This vignette covers other functions that don't fit in other vignettes, but stil
 
 # Import and export
 
-One of the most useful functions is `export_to_excel()`. This can be used to export the contents of a coin to Excel at at any point in its construction, and is very simple to run:
+One of the most useful functions is `export_to_excel()`. This can be used to export the contents of a coin to Excel at at any point in its construction, and is very simple to run. We first build the example coin:
 
-```{r, eval=FALSE}
+```{r}
 library(COINr)
 
 # build example coin
 coin <- build_example_coin(quietly = TRUE)
+```
 
+Then export to Excel:
+
+```{r, eval=FALSE}
 # export coin to Excel
 export_to_excel(coin, fname = "example_coin_results.xlsx")
 ```
@@ -99,8 +103,8 @@ X1 <- X
 
 # change three values
 X1$GDP[3] <- 101
-X1$Population[6] <- 10000
-X1$Population[10] <- 70000
+X1$Population[1] <- 10000
+X1$Population[2] <- 70000
 
 # reorder
 X1 <- X1[order(X1$uCode), ]

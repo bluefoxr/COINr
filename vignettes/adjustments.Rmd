@@ -99,7 +99,7 @@ At the moment, the normalisation is min-max onto the interval of 0 to 100. We wi
 ```{r}
 # change to prank function (percentile ranks)
 # we don't need to specify any additional parameters (f_n_para) here
-coin2$Log$Normalise$default_specs <- list(f_n = "n_prank")
+coin2$Log$Normalise$global_specs <- list(f_n = "n_prank")
 
 # regenerate
 coin2 <- Regen(coin2)
@@ -108,6 +108,34 @@ coin2 <- Regen(coin2)
 And that's it. In summary, we copied the coin, edited its log to a different normalisation methodology, and then regenerated the results. Now what remains is to compare the results, and this is dealt with in the next section.
 
 Before that, let's consider what kind of things we can change in a coin. Anything in the Log can be changed, but of course it is up to you to change it to something valid. As long as you carefully follow the function help pages, this shouldn't be any more difficult than using the functions directly. You can also change anything else about the coin, including the input data, by targeting the log of `new_coin()`. Changing anything outside of the Log will not generally have an effect because the coin will be recreated by `new_coin()` during regeneration and this will be overwritten. The exception is if you use the `from` argument of `Regen()`: in this case the regeneration will only begin from the function name that you pass to it. This partial regeneration can also be useful to speed up computation time.
+
+# Adding/removing indicators
+
+One adjustment that may be of interest is to add and remove indicators. This needs to be done with care because removing an indicator requires that it is removed from both `iData` and `iMeta` when building the coin with `new_coin()`. It is not possible to remove indicators after the coin is assembled, without completely regenerating the coin.
+
+One way to add or remove indicators is to edit the `iData` and `iMeta` data frames by hand and then rebuild the coin. Another way is to regenerate the coin, but use the `exclude` argument of `new_coin()`.
+
+A short cut function, `change_ind()` can be also used to quickly add or remove indicators from the framework, and regenerate the coin, all in one command.
+
+```{r}
+# copy base coin
+coin_remove <- coin
+
+# remove two indicators and regenerate the coin
+coin_remove <- change_ind(coin, drop = c("LPI", "Forest"), regen = TRUE)
+
+coin_remove
+```
+
+The `drop` argument is used to specify which indicators to remove. The `add` argument adds indicators, although any indicators specified by `add` must be available in the original `iData` and `iMeta` that were passed to `new_coin()`. This means that `add` can only be used if you have previously excluded some of the indicators.
+
+In general, if you want to test the effect of different indicators, you should include all candidate indicators in `iData` and `iMeta` and use `exclude` from `new_coin()` and/or `change_ind()` to select subsets. The advantage of doing it this way is that different subsets can be tested as part of a sensitivity analysis, for example.
+
+In fact `change_ind()` simply edits the `exclude` argument of `new_coin()`, but is a quick way of doing this. Moreover it is safer, because it performs a few checks on the indicator codes to add or remove.
+
+It is also possible to effectively remove indicators by setting weights to zero. This is similar to the above approach but not necessarily identical: weights only come into play at the aggregation step, which is usually the last operation. If you perform unit screening, or imputation, the presence of zero-weighted indicators could still influence the results, depending on the settings. 
+
+The effects of removing indicators and aggregates can also be tested using the `remove_elements()` function, which removes all indicators or aggregates in a specified level and calculates the impact.
 
 # Comparison
 
@@ -156,8 +184,8 @@ Finally, to demonstrate comparing multiple coins, we can call the `compare_coins
 
 
 ```{r}
-compare_coins_multi(list(Nominal = coin, Prank = coin2, Screen90 = coin90),
-                    dset = "Aggregated", iCode = "Index")
+compare_coins_multi(list(Nominal = coin, Prank = coin2, NoLPIFor = coin_remove,
+                         Screen90 = coin90), dset = "Aggregated", iCode = "Index")
 ```
 
 This simply shows the ranks of each of the three coins side by side. We can also choose to compare scores, and to display rank changes or absolute rank changes. Obviously a requirement is that the coins must all have some common units, and must all have `iCode` and `dset` available within.

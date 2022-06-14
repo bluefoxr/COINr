@@ -202,7 +202,7 @@ ASEMp <- Impute(ASEMp, dset = "Raw", f_i = "impute_panel")
 Now we check whether our imputed point is what we expect: we would expect that our `NA` is now replaced with the 2021 value as found previously. To get at the data we can use the `get_data()` function.
 
 ```{r}
-get_data(ASEMp, dset = "Imputed", iCodes = "LPI", uCodes = "GB", Time = 2021)
+get_data(ASEMp, dset = "Imputed", iCodes = "LPI", uCodes = "GBR", Time = 2021)
 ```
 
 And indeed this corresponds to what we expect.

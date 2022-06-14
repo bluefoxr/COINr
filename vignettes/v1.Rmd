@@ -70,14 +70,14 @@ The advantage of this is that you can have COINr (new syntax) and COINr6 (old sy
 
 To install COINr6 you have to install it from GitHub. First, make sure you have the "remotes" package:
 
-```{r}
+```{r, eval=FALSE}
 # install remotes package if you don't have it
 install.packages("remotes")
 ```
 
 Now install COINr6 from the GitHub repo:
 
-```{r}
+```{r, eval = FALSE}
 remotes::install_github("bluefoxr/COINr6")
 ```
 

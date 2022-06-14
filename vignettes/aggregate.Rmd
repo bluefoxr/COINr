@@ -10,8 +10,7 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>",
-  eval = F
+  comment = "#>"
 )
 ```
 
@@ -89,7 +88,7 @@ We now turn to how data sets in a coin can be aggregated using the methods descr
 library(COINr)
 
 # build example up to normalised data set
-coin <- build_example_coin(up_to = "normalise")
+coin <- build_example_coin(up_to = "Normalise")
 ```
 
 Consider what is needed to aggregate the normalised data into its higher levels. We need:
@@ -141,7 +140,7 @@ By default, the arithmetic mean is called but we can easily change this to the g
 
 ```{r}
 coin <- Normalise(coin, dset = "Treated",
-                   default_specs = list(f_n = "n_minmax",
+                   global_specs = list(f_n = "n_minmax",
                                         f_n_para = list(l_u = c(1,100))))
 ```
 
@@ -261,7 +260,7 @@ X <- ASEM_iData[12:15]
 
 # normalise to avoid zeros - min max between 1 and 100
 X <- Normalise(X,
-                default_specs = list(f_n = "n_minmax",
+                global_specs = list(f_n = "n_minmax",
                                      f_n_para = list(l_u = c(1,100))))
 
 # aggregate using harmonic mean, with some weights
@@ -278,7 +277,7 @@ The purse method for `aggregate()` is straightforward and simply applies the sam
 
 ```{r}
 # build example purse up to normalised data set
-purse <- build_example_purse(up_to = "normalise", quietly = TRUE)
+purse <- build_example_purse(up_to = "Normalise", quietly = TRUE)
 
 # aggregate using defaults
 purse <- Aggregate(purse, dset = "Normalised")

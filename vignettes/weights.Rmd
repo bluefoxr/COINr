@@ -92,7 +92,7 @@ tapply(w_eff$EffWeight, w_eff$Level, sum)
 
 The effective weights can also be viewed using the `plot_framework()` function, where the angle of each indicator/aggregate is proportional to its effective weight:
 
-```{r}
+```{r, fig.width=5, fig.height=5}
 plot_framework(coin)
 ```
 

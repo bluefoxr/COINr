@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 This vignette describes how to retrieve data from a coin. The main functions to do this are `get_dset()` and the more flexible `get_data()`.
 
-These functions are important to understand, because many COINr functions use them to retrieve data for plotting, analysis and other functions.
+These functions are important to understand, because many COINr functions use them to retrieve data for plotting, analysis and other functions. Both functions are *generics*, which means that they have methods for coins and purses.
 
 # Data sets
 

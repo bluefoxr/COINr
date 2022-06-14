@@ -10,8 +10,7 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>",
-  eval = F
+  comment = "#>"
 )
 ```
 
@@ -53,7 +52,7 @@ The function to run a sensitivity in COINr is called `get_sensitivity()`. It tak
 
 ```{r}
 # component of SA_specs for winmax distribution
-l_winmax <- list(Address = "$Log$Treat$default_specs$f1_para$winmax",
+l_winmax <- list(Address = "$Log$Treat$global_specs$f1_para$winmax",
                Distribution = 1:5,
                Type = "discrete")
 ```
@@ -76,12 +75,12 @@ norm_alts <- list(
 )
 
 # now put this in a list
-l_norm <- list(Address = "$Log$Normalise$default_specs",
+l_norm <- list(Address = "$Log$Normalise$global_specs",
                Distribution = norm_alts,
                Type = "discrete")
 ```
 
-This is a bit more complicated because when we switch between the min-max and z-score methods, we also want to use the corresponding set of parameters (`f_n_para`). That means that the parameter to target is the entire "default_specs" argument of `Normalise()`. We define two alternatives: one with min-max between 1 and 100, and the other being z-score with mean 10 and standard deviation 2. Notice that you need to be careful to wrap things appropriately in lists as required by each function.
+This is a bit more complicated because when we switch between the min-max and z-score methods, we also want to use the corresponding set of parameters (`f_n_para`). That means that the parameter to target is the entire "global_specs" argument of `Normalise()`. We define two alternatives: one with min-max between 1 and 100, and the other being z-score with mean 10 and standard deviation 2. Notice that you need to be careful to wrap things appropriately in lists as required by each function.
 
 Otherwise the rest is straight forward: we define the address and attach the `norm_alts` alternatives to the main list chunk. The distribution is discrete. Notice that each specification includes the "default" value of the assumption, not just the alternative(s).
 
@@ -165,7 +164,7 @@ Looking at the syntax of `get_sensitivity()`: apart from passing the coin and `S
 
 If the type of sensitivity analysis (`SA_type`) is set to `"UA"`, assumptions will be sampled randomly and the results will simply consist of the distribution over the ranks. This takes less replications, and may be sufficient if you are just interested in the output uncertainty, without attributing it to each input assumption. We can directly look at the output uncertainty analysis by calling the `plot_uncertainty()` function:
 
-```{r}
+```{r, fig.width= 7}
 plot_uncertainty(SA_res)
 ```
 
@@ -197,7 +196,7 @@ Notice also that we have set `Nboot = 100`, which is the number of bootstrap rep
 
 Let's now plot the results using the `plot_sensitivity()` function:
 
-```{r}
+```{r, fig.width=5}
 plot_sensitivity(SA_res)
 ```
 
@@ -205,7 +204,7 @@ By default this returns a bar chart. Each bar gives the sensitivity of the resul
 
 The same results can be plotted as a pie chart, or as a box plot, depending on how we set `ptype`:
 
-```{r}
+```{r, fig.width=7}
 plot_sensitivity(SA_res, ptype = "box")
 ```
 

@@ -23,7 +23,7 @@ Note that prior to COINr v1.0.0, COINr additionally included interactive visuali
 
 Upon building a coin (see the [Building coins](coins.html) vignette), a good way to begin is to check the structure of the index. This can be done visually with the `plot_framework()` function, which generates a sunburst plot of the index structure.
 
-```{r, message=F}
+```{r, message=F, fig.width=5, fig.height=5}
 library(COINr)
 
 # assemble example COIN
@@ -41,7 +41,7 @@ Finally, it can be a good way to communicate your index structure to other peopl
 
 The `plot_framework()` function has a few options for colouring. Other than that, if you don't like sunburst plots, another possibility is to set `type = "stack"`:
 
-```{r}
+```{r, fig.width=6, fig.height= 5}
 plot_framework(coin, type = "stack", colour_level = 2)
 ```
 
@@ -61,7 +61,7 @@ plot_dist(coin, dset = "Raw", iCodes = "CO2")
 
 To do this, as usual, we have to specify the data set (`dset`) and the indicator (`iCodes`) to plot. The data selection for `plot_dist()` is powered by `get_data()`, which means we can plot subsets of indicator and units. Commonly, with distribution plots, it might be interesting to plot the distributions of all indicators belonging to a particular group - let's plot all indicator distributions in the "P2P" pillar:
 
-```{r, message=F}
+```{r, message=F, fig.width=7}
 plot_dist(coin, dset = "Raw", iCodes = "P2P", Level = 1, type = "Violindot")
 ```
 
@@ -81,7 +81,7 @@ coin <- build_example_coin(quietly = TRUE)
 
 Now let's do a basic plot of correlations within a group:
 
-```{r}
+```{r, fig.width=5}
 plot_corr(coin, dset = "Normalised", iCodes = list("Physical"), Levels = 1)
 ```
 
@@ -89,7 +89,7 @@ Notice the syntax: we have to specify `iCodes` as a list here, and specify the l
 
 The reason that `iCodes` is specified as a list is that we can pass two character vectors to it, possibly from different levels:
 
-```{r}
+```{r, fig.width=4}
 plot_corr(coin, dset = "Aggregated",
           iCodes = list(c("Flights", "LPI"), c("Physical", "P2P")), Levels = c(1,2))
 ```
@@ -98,20 +98,20 @@ The point being that we can select any set of indicators or aggregates, and corr
 
 Other useful features include the possibility to correlate a set of indicators with only its parent groups - this is done by setting `withparent = "family"`. Here we also set to a discrete colour scheme using `flagcolours = TRUE`.
 
-```{r}
+```{r, fig.width=4, fig.height=4}
 plot_corr(coin, dset = "Aggregated", iCodes = list("Sust"), withparent = "family", flagcolours = T)
 ```
 
 Notice that boxes are drawn around aggregation groups in this case. As a final example, we show how boxes and groups can be used to show subsets of correlation matrices. Typically the most interesting correlations are within aggregation groups because weak correlations cause less information to be transferred to the aggregate. We can only show in-group correlations using the `grouplev` argument, which takes an aggregation level to group indicators at:
 
-```{r}
+```{r, fig.width=7, fig.height=5}
 plot_corr(coin, dset = "Normalised", iCodes = list("Sust"),
           grouplev = 2, flagcolours = T)
 ```
 
 This can also be done with the `box_level` argument, which can be used additionally to highlight groupings at different levels:
 
-```{r}
+```{r, fig.width=7, fig.height=6}
 plot_corr(coin, dset = "Normalised", grouplev = 3, box_level = 2, showvals = F)
 ```
 
@@ -125,19 +125,19 @@ In this section we examine some options for visualising individual indicators, i
 
 A simple way to look at a set of scores for an indicator is with a bar chart:
 
-```{r}
+```{r, fig.width=7}
 plot_bar(coin, dset = "Raw", iCode = "CO2")
 ```
 
 The `plot_bar()` function returns a bar chart of single indicator, sorted from high to low values. We can also colour this by any of the grouping variables found in the coin
 
-```{r}
+```{r, fig.width=7}
 plot_bar(coin, dset = "Raw", iCode = "CO2", by_group = "GDPpc_group", axes_label = "iName")
 ```
 
 Here we have also set `axes_label = "iName"` to output indicator names rather than codes. Several other options are available, including a log scale, and colouring options. Here we just show one more thing, which is the possibility to break bars down into underlying component scores. This only works if we are plotting an aggregate score (i.e. level 2 or hight), rather than an indicator, because it looks for the underlying scores used to calculate each aggregate score. For example, we can see how the Sustainability scores break down into their three underlying components, for each country:
 
-```{r}
+```{r, fig.width=7}
 plot_bar(coin, dset = "Aggregated", iCode = "Sust", stack_children = TRUE)
 ```
 
@@ -146,13 +146,13 @@ plot_bar(coin, dset = "Aggregated", iCode = "Sust", stack_children = TRUE)
 
 COINr's dot plot is pretty similar to a distribution plot but is intended for showing the position of a particular unit or units relative to its peers. This means that to make it useful, you should also select one or more units to highlight.
 
-```{r}
+```{r, fig.height=2, fig.width=4}
 plot_dot(coin, dset = "Raw", iCode = "LPI", usel = c("JPN", "ESP"))
 ```
 
 Here we have plotted the "LPI" indicator and highlighted Spain and Japan. We can also add a statistic of this indicator, such as the median:
 
-```{r}
+```{r, fig.height=2, fig.width=4}
 plot_dot(coin, dset = "Raw", iCode = "LPI", usel = c("JPN", "ESP"), add_stat = "median",
          stat_label = "Median", plabel = "iName+unit")
 ```
@@ -163,13 +163,13 @@ Here we have also labelled the statistic using `stat_label`, and labelled the x-
 
 The `plot_scatter()` function gives a quick way to plot scatter plots between any indicators or any variables in a coin.
 
-```{r}
+```{r, fig.width=4}
 plot_scatter(coin, dsets = "Raw", iCodes = c("Goods", "Services"), point_label = "uCode")
 ```
 
 Variables can come from different data sets (including unit metadata), and we can also colour by groups:
 
-```{r}
+```{r, fig.width=5}
 plot_scatter(coin, dsets = c("uMeta", "Raw"), iCodes = c("Population", "Flights"),
              by_group = "GDPpc_group", log_scale = c(TRUE, FALSE))
 ```
