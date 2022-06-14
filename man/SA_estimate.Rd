@@ -27,7 +27,6 @@ Then it estimates sensitivity indices using this sample.
 }
 \details{
 This function is built to be used inside \code{\link[=get_sensitivity]{get_sensitivity()}}.
-See \href{https://bluefoxr.github.io/COINrDoc/sensitivity-analysis.html}{COINr online documentation} for more details.
 }
 \examples{
 # This is a generic example rather than applied to a COIN (for reasons of speed)

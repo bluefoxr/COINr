@@ -48,8 +48,17 @@ Screens units (rows) based on a data availability threshold and presence of zero
 The two main criteria of interest are \code{NA} values, and zeros. The summary table gives percentages of
 \code{NA} values for each unit, across indicators, and percentage zero values (\emph{as a percentage of non-\code{NA} values}).
 Each unit is flagged as having low data or too many zeros based on thresholds.
+
+See also \code{vignette("screening")}.
 }
 \examples{
-#
+# example data
+iData <- ASEM_iData[40:51, c("uCode", "Research", "Pat", "CultServ", "CultGood")]
+
+# screen to 75\% data availability (by row)
+l_scr <- Screen(iData, unit_screen = "byNA", dat_thresh = 0.75)
+
+# summary of screening
+head(l_scr$DataSummary)
 
 }

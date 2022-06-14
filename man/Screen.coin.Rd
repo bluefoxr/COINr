@@ -56,9 +56,16 @@ The two main criteria of interest are \code{NA} values, and zeros. The summary t
 \code{NA} values for each unit, across indicators, and percentage zero values (\emph{as a percentage of non-\code{NA} values}).
 Each unit is flagged as having low data or too many zeros based on thresholds.
 
-This function currently only supports coins as inputs, not data frames.
+See also \code{vignette("screening")}.
 }
 \examples{
-#
+# build example coin
+coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
+
+# screen units from raw dset
+coin <- Screen(coin, dset = "Raw", unit_screen = "byNA", dat_thresh = 0.85, write_to = "Filtered_85pc")
+
+# some details about the coin by calling its print method
+coin
 
 }

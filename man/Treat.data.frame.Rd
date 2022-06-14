@@ -4,12 +4,12 @@
 \alias{Treat.data.frame}
 \title{Treat a data frame for outliers}
 \usage{
-\method{Treat}{data.frame}(x, default_specs = NULL, indiv_specs = NULL, combine_treat = FALSE, ...)
+\method{Treat}{data.frame}(x, global_specs = NULL, indiv_specs = NULL, combine_treat = FALSE, ...)
 }
 \arguments{
 \item{x}{A data frame. Can have both numeric and non-numeric columns.}
 
-\item{default_specs}{First stage data treatment function}
+\item{global_specs}{First stage data treatment function}
 
 \item{indiv_specs}{First stage data treatment function parameters}
 
@@ -57,8 +57,17 @@ to be attached to the list, OR, simply \code{x} as the only output.
 \item \code{f_pass} must return a logical value, where \code{TRUE} indicates that the \code{x} passes the criteria (and
 therefore doesn't need any (more) treatment), and \code{FALSE} means that it fails to meet the criteria.
 }
+
+See also \code{vignette("treat")}.
 }
 \examples{
-#
+# select three indicators
+df1 <- ASEM_iData[c("Flights", "Goods", "Services")]
+
+# treat the data frame using defaults
+l_treat <- Treat(df1)
+
+# details of data treatment for each column
+l_treat$Dets_Table
 
 }

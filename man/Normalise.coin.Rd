@@ -7,7 +7,7 @@
 \method{Normalise}{coin}(
   x,
   dset,
-  default_specs = NULL,
+  global_specs = NULL,
   indiv_specs = NULL,
   directions = NULL,
   out2 = "coin",
@@ -21,9 +21,10 @@
 
 \item{dset}{A named data set found in \code{.$Data}}
 
-\item{default_specs}{Specifications to apply to all columns, apart from those specified by \code{indiv_specs}.}
+\item{global_specs}{Specifications to apply to all columns, apart from those specified by \code{indiv_specs}. See details.}
 
-\item{indiv_specs}{Specifications applied to specific columns, overriding those specified in \code{default_specs}}
+\item{indiv_specs}{Specifications applied to specific columns, overriding those specified in \code{global_specs}.
+See details.}
 
 \item{directions}{An optional data frame containing the following columns:
 \itemize{
@@ -47,5 +48,54 @@ function will not be invoked when regenerating. Recommend to keep \code{TRUE} un
 An updated coin
 }
 \description{
-Create a normalised data set
+Creates a normalised data set using specifications specified in \code{global_specs}. Columns of \code{dset} can also optionally be
+normalised with individual specifications using the \code{indiv_specs} argument. If indicators should have their
+directions reversed, this can be specified using the \code{directions} argument. Non-numeric columns are ignored
+automatically by this function.
+}
+\details{
+\subsection{Global specification}{
+
+The \code{global_specs} argument is a list which specifies the normalisation function and any function parameters
+that should be used to normalise the indicators found in the data set. Unless \code{indiv_specs} is specified, this will be applied
+to all indicators. The list should have two entries:
+\itemize{
+\item \code{.$f_n}: the name of the function to use to normalise each indicator
+\item \code{.$f_n_para}: any further parameters to pass to \code{f_n}, apart from the numeric vector (each column of the data set)
+}
+
+In this list, \code{f_n} should be a character string which is the name of a normalisation
+function. For example, \code{f_n = "n_minmax"} calls the \code{\link[=n_minmax]{n_minmax()}} function. \code{f_n_para} is a list of any
+further arguments to \code{f_n}. This means that any function can be passed to \code{\link[=Normalise]{Normalise()}}, as long as its
+first argument is \code{x}, a numeric vector, and it returns a numeric vector of the same length. See \code{\link[=n_minmax]{n_minmax()}}
+for an example.
+
+\code{f_n_para} is \emph{required} to be a named list. So e.g. if we define a function \code{f1(x, arg1, arg2)} then we should
+specify \code{f_n = "f1"}, and \code{f_n_para = list(arg1 = val1, arg2 = val2)}, where \code{val1} and \code{val2} are the
+values assigned to the arguments \code{arg1} and \code{arg2} respectively.
+
+The default list for \code{global_specs} is: \code{list(f_n = "n_minmax", f_n_para = list(l_u = c(0,100)))}, i.e.
+min-max normalisation between 0 and 100.
+}
+
+\subsection{Individual column specification}{
+
+Optionally, indicators can be normalised with different normalisation functions and parameters using the
+\code{indiv_specs} argument. This must be specified as a named list e.g. \code{list(i1 = specs1, i2 = specs2)} where
+\code{i1} and \code{i2} are \code{iCode}s to apply individual normalisation to, and \code{specs1} and \code{specs2} are
+respectively lists of the same format as \code{global_specs} (see above). In other words, \code{indiv_specs} is a big
+list wrapping together \code{global_specs}-style lists. Any \code{iCode}s not named in \code{indiv_specs} (
+i.e. those not in \code{names(indiv_specs)}) are normalised using the specifications from \code{global_specs}. So
+\code{indiv_specs} lists the exceptions to \code{global_specs}.
+
+See also \code{vignette("normalise")} for more details.
+}
+}
+\examples{
+# build example coin
+coin <- build_example_coin(up_to = "new_coin")
+
+# normalise the raw data set
+coin <- Normalise(coin, dset = "Raw")
+
 }

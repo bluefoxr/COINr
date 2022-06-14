@@ -51,9 +51,9 @@ The two main criteria of interest are \code{NA} values, and zeros. The summary t
 \code{NA} values for each unit, across indicators, and percentage zero values (\emph{as a percentage of non-\code{NA} values}).
 Each unit is flagged as having low data or too many zeros based on thresholds.
 
-This function currently only supports coins as inputs, not data frames.
+See also \code{vignette("screening")}.
 }
 \examples{
-#
+# see vignette("screening") for an example.
 
 }

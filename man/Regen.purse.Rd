@@ -34,8 +34,10 @@ normalisation step, it is necessary to normalise across the full panel data set 
 \code{\link[=Normalise]{Normalise()}}). At the moment, purse regeneration is performed by regenerating each coin individually, but this
 does not allow for global normalisation which has to be done at the purse level. This may be fixed in future
 releases.
+
+See also documentation for \code{\link[=Regen.coin]{Regen.coin()}} and \code{vignette("adjustments")}.
 }
 \examples{
-#
+# see examples from Regen.coin() and vignette("adjustments")
 
 }

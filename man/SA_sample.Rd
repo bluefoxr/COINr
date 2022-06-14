@@ -20,7 +20,6 @@ the \code{\link[=get_sensitivity]{get_sensitivity()}} function. The total sample
 }
 \details{
 This function generates a Monte Carlo sample as described e.g. in the \href{https://onlinelibrary.wiley.com/doi/book/10.1002/9780470725184}{Global Sensitivity Analysis: The Primer book}.
-See also \href{https://bluefoxr.github.io/COINrDoc/sensitivity-analysis.html}{COINr online documentation}.
 }
 \examples{
 # sensitivity analysis sample for 3 dimensions with 100 points per dimension

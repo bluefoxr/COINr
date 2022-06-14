@@ -2,12 +2,12 @@
 % Please edit documentation in R/normalise.R
 \name{Normalise.purse}
 \alias{Normalise.purse}
-\title{Create normalised data set in a purse of coins}
+\title{Create normalised data sets in a purse of coins}
 \usage{
 \method{Normalise}{purse}(
   x,
   dset,
-  default_specs = NULL,
+  global_specs = NULL,
   indiv_specs = NULL,
   directions = NULL,
   global = TRUE,
@@ -20,7 +20,7 @@
 
 \item{dset}{The data set to normalise in each coin}
 
-\item{default_specs}{Default specifications}
+\item{global_specs}{Default specifications}
 
 \item{indiv_specs}{Individual specifications}
 
@@ -41,10 +41,13 @@ because they are all scaled using the same parameters. Otherwise if \code{FALSE}
 An updated purse with new normalised data sets added at \code{.$Data$Normalised} in each coin
 }
 \description{
-Normalisation is a special case in terms of operating on a purse of coins. This is because, when
-dealing with time series data, it is often desirable to normalise over the whole panel data set
+This creates normalised data sets for each coin in the purse. In most respects, this works in a similar way
+to normalising on a coin, for which reason please see \code{\link[=Normalise.coin]{Normalise.coin()}} for most documentation. There is however
+a special case in terms of operating on a purse of coins. This is because, when
+dealing with time series data, it is often desirable to normalise over the whole panel data set at once
 rather than independently for each time point. This makes the resulting index and aggregates comparable
-over time.
+over time. Here, the \code{global} argument controls whether to normalise each coin independently or to normalise
+across all data at once. In other repects, this function behaves the same as \code{\link[=Normalise.coin]{Normalise.coin()}}.
 }
 \details{
 The same specifications are passed to each coin in the purse. This means that each coin is normalised
@@ -52,5 +55,10 @@ using the same set of specifications and directions. If you need control over in
 will have to normalise coins individually.
 }
 \examples{
-#
+# build example purse
+purse <- build_example_purse(up_to = "new_coin", quietly = TRUE)
+
+# normalise raw data set
+purse <- Normalise(purse, dset = "Raw", global = TRUE)
+
 }

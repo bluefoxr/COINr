@@ -2,18 +2,28 @@
 % Please edit documentation in R/treat.R
 \name{Treat}
 \alias{Treat}
-\title{Treat data}
+\title{Treat outliers}
 \usage{
 Treat(x, ...)
 }
 \arguments{
-\item{x}{Thing}
+\item{x}{Object to be treated}
 
 \item{...}{arguments passed to or from other methods.}
 }
 \value{
-message
+Treated object plus details.
 }
 \description{
-Treat data
+Generic function for treating outliers using a two-step process. See individual method documentation:
+}
+\details{
+\itemize{
+\item \code{\link[=Treat.numeric]{Treat.numeric()}}
+\item \code{\link[=Treat.data.frame]{Treat.data.frame()}}
+\item \code{\link[=Treat.coin]{Treat.coin()}}
+\item \code{\link[=Treat.purse]{Treat.purse()}}
+}
+
+See also \code{vignette("treat")}.
 }

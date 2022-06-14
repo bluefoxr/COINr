@@ -23,7 +23,7 @@
 \item{dset}{The name of the data set to apply the function to, which should be accessible in \code{.$Data}.}
 
 \item{f_i}{An imputation function. For the "purse" class, if \verb{f_i = "impute_panel} this is a special
-case See details.}
+case: see details.}
 
 \item{f_i_para}{Further arguments to pass to \code{f_i}, other than \code{x}. See details.}
 
@@ -59,7 +59,7 @@ function. In this case, coins are not imputed individually, but treated as a sin
 case, optionally set \code{f_i_para = list(max_time = .)} where \code{.} should be substituted with the maximum
 number of time points to search backwards for a non-\code{NA} value. See \code{\link[=impute_panel]{impute_panel()}} for more details.
 No further arguments need to be passed to \code{\link[=impute_panel]{impute_panel()}}. See \code{vignette("imputation")} for more
-details.
+details. See also \code{\link[=Impute.coin]{Impute.coin()}} documentation.
 }
 \examples{
 # see vignette("imputation")

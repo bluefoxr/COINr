@@ -18,9 +18,19 @@ than re-running all functions.}
 A regenerated object
 }
 \description{
-Methods for regenerating coins and purses.
+Methods for regenerating coins and purses. Regeneration is re-running all the functions used to build
+the coin/purse, using the order and parameters found in the \code{.$Log} list of the coin.
+}
+\details{
+Please see individual method documentation:
+\itemize{
+\item \code{\link[=Regen.coin]{Regen.coin()}}
+\item \code{\link[=Regen.purse]{Regen.purse()}}
+}
+
+See also \code{vignette("adjustments")}.
 }
 \examples{
-#
+# see individual method examples
 
 }

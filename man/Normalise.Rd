@@ -12,9 +12,20 @@ Normalise(x, ...)
 \item{...}{Further arguments to be passed to methods.}
 }
 \description{
-Normalise data
+This is a generic function for normalising variables and indicators, i.e. bringing them onto
+a common scale. Please see individual method documentation depending on your data class:
+}
+\details{
+\itemize{
+\item \code{\link[=Normalise.numeric]{Normalise.numeric()}}
+\item \code{\link[=Normalise.data.frame]{Normalise.data.frame()}}
+\item \code{\link[=Normalise.coin]{Normalise.coin()}}
+\item \code{\link[=Normalise.purse]{Normalise.purse()}}
+}
+
+See also \code{vignette("normalise")} for more details.
 }
 \examples{
-#
+# See individual method documentation.
 
 }

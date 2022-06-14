@@ -17,10 +17,10 @@ than re-running all functions.}
 \item{...}{arguments passed to or from other methods.}
 }
 \value{
-Updated coin object with regenerated results.
+Updated coin object with regenerated results (data sets).
 }
 \description{
-Regenerates the \code{.$Data} entries by rerunning the construction functions according to the specifications in \code{.$Log}.
+Regenerates the \code{.$Data} entries in a coin by rerunning the construction functions according to the specifications in \code{.$Log}.
 This effectively regenerates the results. Different variations of coins can be quickly achieved by editing the
 saved arguments in \code{.$Log} and regenerating.
 }
@@ -32,8 +32,25 @@ from, it will not affect the results.
 
 Note that while sets of weights will be passed to the regenerated COIN, anything in \code{.$Analysis} will be removed
 and will have to be recalculated.
+
+See also \code{vignette("adjustments")} for more info on regeneration.
 }
 \examples{
-#
+# build full example coin
+coin <- build_example_coin(quietly = TRUE)
+
+# copy coin
+coin2 <- coin
+
+# change to prank function (percentile ranks)
+# we don't need to specify any additional parameters (f_n_para) here
+coin2$Log$Normalise$global_specs <- list(f_n = "n_prank")
+
+# regenerate
+coin2 <- Regen(coin2)
+
+# compare index, sort by absolute rank difference
+compare_coins(coin, coin2, dset = "Aggregated", iCode = "Index",
+              sort_by = "Abs.diff", decreasing = TRUE)
 
 }

@@ -2,18 +2,26 @@
 % Please edit documentation in R/screen_units.R
 \name{Screen}
 \alias{Screen}
-\title{Generic function}
+\title{Screen units based on data availability}
 \usage{
 Screen(x, ...)
 }
 \arguments{
-\item{x}{Thing}
+\item{x}{Object to be screened}
 
-\item{...}{thing}
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
-message
+An object of the same class as \code{x}
 }
 \description{
-Generic function
+This is a generic function for screening units/rows based on data availability. See method documentation
+for more details:
+}
+\details{
+\itemize{
+\item \code{\link[=Screen.data.frame]{Screen.data.frame()}}
+\item \code{\link[=Screen.coin]{Screen.coin()}}
+\item \code{\link[=Screen.purse]{Screen.purse()}}
+}
 }
