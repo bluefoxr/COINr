@@ -73,7 +73,8 @@ colour map if \code{flagcolours = TRUE} (from high to low correlation categories
 A plot object generated with ggplot2, which can be edited further with ggplot2 commands.
 }
 \description{
-Generates heatmaps of correlation matrices using ggplot2. This enables correlating any set of indicators against any other,
+Generates heatmaps of correlation matrices using ggplot2, which can be tailored according to the grouping and structure
+of the index. This enables correlating any set of indicators against any other,
 and supports calling named aggregation groups of indicators. The \code{withparent} argument generates tables of correlations only with
 parents of each indicator. Also supports discrete colour maps using \code{flagcolours}, different types of correlation, and groups
 plots by higher aggregation levels.
@@ -82,6 +83,9 @@ plots by higher aggregation levels.
 This function calls \code{\link[=get_corr]{get_corr()}}.
 
 Note that this function can only call correlations within the same data set (i.e. only one data set in \code{.$Data}).
+
+This function uses ggplot2 to generate plots, so the plot can be further manipulated using ggplot2 commands.
+See \verb{vignette("visualisation}) for more details on plotting.
 }
 \examples{
 # build example coin

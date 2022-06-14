@@ -7,13 +7,21 @@
 qNormalise(x, ...)
 }
 \arguments{
-\item{x}{Thing}
+\item{x}{Object to be normalised}
 
-\item{...}{thing}
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
-message
+A normalised object
 }
 \description{
-Quick normalisation
+This is a generic wrapper function for \code{\link[=Normalise]{Normalise()}}, which offers a simpler syntax but less flexibility.
+}
+\details{
+See individual method documentation:
+\itemize{
+\item \code{\link[=qNormalise.data.frame]{qNormalise.data.frame()}}
+\item \code{\link[=qNormalise.coin]{qNormalise.coin()}}
+\item \code{\link[=qNormalise.purse]{qNormalise.purse()}}
+}
 }

@@ -21,8 +21,3 @@ Tiny function just to round down a data frame for display in a table, ignoring n
 round_df( as.data.frame(matrix(runif(20),10,2)), decimals = 3)
 
 }
-\seealso{
-\itemize{
-\item \code{\link[=rank_df]{rank_df()}} Replace data frame numbers with ranks.
-}
-}

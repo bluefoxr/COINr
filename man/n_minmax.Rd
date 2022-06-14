@@ -16,7 +16,7 @@ be scaled exactly onto this interval.}
 Normalised vector
 }
 \description{
-Scales a vector using min-max
+Scales a vector using min-max method.
 }
 \examples{
 x <- runif(20)

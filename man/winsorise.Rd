@@ -28,14 +28,30 @@ winsorise(
 Default \code{FALSE}.}
 }
 \value{
-A Winsorised vector of data.
+A list containing winsorised data, number of winsorised points, and the individual points that
+were treated.
 }
 \description{
 Follows a "standard" Winsorisation approach: points are successively Winsorised in order to bring
 skew and kurtosis thresholds within specified limits. Specifically, aims to bring absolute skew to
 below a threshold (default 2.25) and kurtosis below another threshold (default 3.5).
 }
+\details{
+Winsorisation here is defined as reassigning the point with the highest/lowest value with the value of the
+next highest/lowest point. Whether to Winsorise at the high or low end of the scale is decided by the direction
+of the skewness of \code{x}.
+}
 \examples{
-#
+# numbers between 1 and 10
+x <- 1:10
+
+# two outliers
+x <- c(x, 30, 100)
+
+# winsorise
+l_win <- winsorise(x, skew_thresh = 2, kurt_thresh = 3.5)
+
+# see treated vector, number of winsorised points and details
+l_win
 
 }

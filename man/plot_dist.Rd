@@ -11,7 +11,7 @@ plot_dist(
   ...,
   type = "Box",
   normalise = FALSE,
-  default_specs = NULL
+  global_specs = NULL
 )
 }
 \arguments{
@@ -25,11 +25,11 @@ plot_dist(
 
 \item{type}{The type of plot. Currently supported \code{"Box"}, \code{"Dot"}, \code{"Violin"}, \code{"Violindot"}, \code{"Histogram"}.}
 
-\item{normalise}{Logical: if \code{TRUE}, normalises the data first, using \code{default_specs}. If \code{FALSE} (default),
+\item{normalise}{Logical: if \code{TRUE}, normalises the data first, using \code{global_specs}. If \code{FALSE} (default),
 data is not normalised.}
 
-\item{default_specs}{Specifications for normalising data if \code{normalise = TRUE}. This is passed to the
-\code{default_specs} argument of \code{\link[=Normalise]{Normalise()}}.}
+\item{global_specs}{Specifications for normalising data if \code{normalise = TRUE}. This is passed to the
+\code{global_specs} argument of \code{\link[=Normalise]{Normalise()}}.}
 }
 \value{
 A ggplot2 plot object.
@@ -37,6 +37,10 @@ A ggplot2 plot object.
 \description{
 Plots indicator distributions using box plots, dot plots, violin plots, violin-dot plots, and histograms.
 Supports plotting multiple indicators by calling aggregation groups.
+}
+\details{
+This function uses ggplot2 to generate plots, so the plot can be further manipulated using ggplot2 commands.
+See \verb{vignette("visualisation}) for more details on plotting.
 }
 \examples{
 # build example coin

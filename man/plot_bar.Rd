@@ -50,6 +50,10 @@ A ggplot2 plot object.
 Plot bar charts of single indicators. Bar charts can be coloured by an optional grouping variable \code{by_group}, or if
 \code{iCode} points to an aggregate, setting \code{stack_children = TRUE} will plot \code{iCode} coloured by its underlying scores.
 }
+\details{
+This function uses ggplot2 to generate plots, so the plot can be further manipulated using ggplot2 commands.
+See \verb{vignette("visualisation}) for more details on plotting.
+}
 \examples{
 # build example coin
 coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)

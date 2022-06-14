@@ -37,11 +37,26 @@ because they are all scaled using the same parameters. Otherwise if \code{FALSE}
 \item{...}{arguments passed to or from other methods.}
 }
 \value{
-An updated purse
+An updated purse with normalised data sets
 }
 \description{
-Quick normalisation of a purse
+This is a wrapper function for \code{\link[=Normalise]{Normalise()}}, which offers a simpler syntax but less flexibility. It
+normalises data sets within a purse using a specified function \code{f_n} which is used to normalise each indicator, with
+additional function arguments passed by \code{f_n_para}. By default, \code{f_n = "n_minmax"} and \code{f_n_para} is
+set so that the indicators are normalised using the min-max method, between 0 and 100.
+}
+\details{
+Essentially, this function is similar to \code{\link[=Normalise]{Normalise()}} but brings parameters into the function arguments
+rather than being wrapped in a list. It also does not allow individual normalisation.
+
+Normalisation can either be performed independently on each coin, or over the entire panel data set
+simultaneously. See the discussion in \code{\link[=Normalise.purse]{Normalise.purse()}} and \code{vignette("normalise")}.
 }
 \examples{
-#
+# build example purse
+purse <- build_example_purse(up_to = "new_coin", quietly = TRUE)
+
+# normalise using min-max, globally
+purse <- qNormalise(purse, dset = "Raw", global = TRUE)
+
 }

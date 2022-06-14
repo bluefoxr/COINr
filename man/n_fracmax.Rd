@@ -16,7 +16,7 @@ Numeric vector
 The ratio of each value of \code{x} to \code{max(x)}.
 }
 \details{
-$ x / x_{max} $
+\deqn{ x / x_{max} }
 }
 \examples{
 x <- runif(20)

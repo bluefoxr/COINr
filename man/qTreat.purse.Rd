@@ -10,7 +10,7 @@
   winmax = 5,
   skew_thresh = 2,
   kurt_thresh = 3.5,
-  f2 = "log_GII",
+  f2 = "log_CT",
   ...
 )
 }
@@ -25,7 +25,7 @@
 
 \item{kurt_thresh}{Kurtosis threshold - default 3.5.}
 
-\item{f2}{Function to call if Winsorisation does not bring skew and kurtosis within limits. Default \code{"log_GII"}.}
+\item{f2}{Function to call if Winsorisation does not bring skew and kurtosis within limits. Default \code{"log_CT"}.}
 
 \item{...}{arguments passed to or from other methods.}
 }
@@ -33,7 +33,13 @@
 An updated purse
 }
 \description{
-Quick outlier treatment of a purse
+A simplified version of \code{\link[=Treat]{Treat()}} which allows direct access to the default parameters. This has less flexibility,
+but is an easier interface and probably more convenient if the objective is to use the default treatment process
+but with some minor adjustments.
+}
+\details{
+This function simply applies the same data treatment to each coin. See documentation for \code{\link[=Treat.coin]{Treat.coin()}},
+\code{\link[=qTreat.coin]{qTreat.coin()}} and \code{vignette("treat")}.
 }
 \examples{
 #

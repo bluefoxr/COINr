@@ -46,4 +46,13 @@ to lower levels.
 This function returns a ggplot2 class object. If you want more control over the appearance of the plot, pass
 return the output of this function to a variable, and manipulate this further with ggplot2 commands to e.g.
 change colour palette, individual colours, add titles, etc.
+See \verb{vignette("visualisation}) for more details on plotting.
+}
+\examples{
+# build example coin
+coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
+
+# plot framework as sunburst, colouring at level 2 upwards
+plot_framework(coin, colour_level = 2, transparency = TRUE)
+
 }

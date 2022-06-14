@@ -56,7 +56,13 @@ Takes a value between 0 to 2 (higher will probably remove the label from the axi
 A ggplot2 plot object.
 }
 \description{
-Plots a single indicator as a line of dots, and optionally highlights a selected unit.
+Plots a single indicator as a line of dots, and optionally highlights selected units and statistics.
+This is intended for showing the relative position of units to other units, rather than as a statistical
+plot. For the latter, use \code{\link[=plot_dist]{plot_dist()}}.
+}
+\details{
+This function uses ggplot2 to generate plots, so the plot can be further manipulated using ggplot2 commands.
+See \verb{vignette("visualisation}) for more details on plotting.
 }
 \examples{
 # build example coin

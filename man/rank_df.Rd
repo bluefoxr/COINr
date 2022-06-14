@@ -31,8 +31,3 @@ df1 <- ASEM_iData[c("uCode", "GDP_group", "Goods", "LPI")]
 rank_df(df1, use_group = "GDP_group")
 
 }
-\seealso{
-\itemize{
-\item \code{\link[=round_df]{round_df()}} Round a data frame to a specified number of decimals.
-}
-}

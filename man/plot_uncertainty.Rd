@@ -35,11 +35,14 @@ the median, and 5th/95th percentiles of ranks.
 }
 \details{
 To use this function you first need to run \code{\link[=get_sensitivity]{get_sensitivity()}}. Then enter the resulting list as the
-\code{SAresults} argument here. See \href{https://bluefoxr.github.io/COINrDoc/sensitivity-analysis.html}{COINr online documentation}
-for more details.
+\code{SAresults} argument here.
+
+See \code{vignette("sensitivity")}.
 }
 \examples{
-#
+# for examples, see `vignette("sensitivity")`
+# (this is because package examples are run automatically and sensitivity analysis can take a few minutes to
+# run at realistic settings)
 
 }
 \seealso{

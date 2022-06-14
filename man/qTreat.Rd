@@ -7,13 +7,25 @@
 qTreat(x, ...)
 }
 \arguments{
-\item{x}{Thing}
+\item{x}{Object to be normalised.}
 
-\item{...}{thing}
+\item{...}{arguments passed to or from other methods.}
 }
 \value{
-message
+A treated object
 }
 \description{
-Quick outlier treatment
+This is a generic wrapper function for \code{\link[=Treat]{Treat()}}. It offers a simpler syntax but less flexibility.
+}
+\details{
+See individual method documentation:
+\itemize{
+\item \code{\link[=qTreat.data.frame]{qTreat.data.frame()}}
+\item \code{\link[=qTreat.coin]{qTreat.coin()}}
+\item \code{\link[=qTreat.purse]{qTreat.purse()}}
+}
+}
+\examples{
+# See individual method examples
+
 }

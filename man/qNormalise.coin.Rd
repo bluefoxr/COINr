@@ -32,11 +32,26 @@ If \code{directions} is not specified, the directions will be taken from the \co
 \item{...}{arguments passed to or from other methods.}
 }
 \value{
-An updated coin
+An updated coin with normalised data set.
 }
 \description{
-Quick normalisation of a coin
+This is a wrapper function for \code{\link[=Normalise]{Normalise()}}, which offers a simpler syntax but less flexibility. It
+normalises a data set within a coin using a specified function \code{f_n} which is used to normalise each indicator, with
+additional function arguments passed by \code{f_n_para}. By default, \code{f_n = "n_minmax"} and \code{f_n_para} is
+set so that the indicators are normalised using the min-max method, between 0 and 100.
+}
+\details{
+Essentially, this function is similar to \code{\link[=Normalise]{Normalise()}} but brings parameters into the function arguments
+rather than being wrapped in a list. It also does not allow individual normalisation.
+
+See \code{\link[=Normalise]{Normalise()}} documentation for more details, and \code{vignette("normalise")}.
 }
 \examples{
-#
+# build example coin
+coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
+
+# normalise raw data set using min max, but change to scale 1-10
+coin <- qNormalise(coin, dset = "Raw", f_n = "n_minmax",
+                   f_n_para = list(l_u = c(1,10)))
+
 }

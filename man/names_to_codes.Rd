@@ -21,7 +21,11 @@ Given a character vector of long names (probably with spaces), generates short c
 Intended for use when importing from the COIN Tool.
 }
 \examples{
-#
+# get names from example data
+iNames <- ASEM_iMeta$iName
+
+# convert to codes
+names_to_codes(iNames)
 
 }
 \seealso{

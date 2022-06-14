@@ -31,10 +31,3 @@ codeswap <- data.frame(old = c("Conn", "Sust"), new = c("SI1", "SI2"))
 replace_df(ASEM_iMeta, codeswap)
 
 }
-\seealso{
-\itemize{
-\item \code{\link[=rank_df]{rank_df()}} Replace numeric columns of a data frame with ranks.
-\item \code{\link[=round_df]{round_df()}} Replace numeric columns of a data frame with rounded values.
-\item \code{\link[=compare_df]{compare_df()}} Detailed comparison of two similar data frames.
-}
-}

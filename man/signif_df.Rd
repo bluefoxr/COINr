@@ -20,9 +20,5 @@ Tiny function just to round down a data frame by significant figures for display
 \examples{
 signif_df( as.data.frame(matrix(runif(20),10,2)), digits = 3)
 
-}
-\seealso{
-\itemize{
-\item \code{\link[=rank_df]{rank_df()}} Replace data frame numbers with ranks.
-}
+
 }

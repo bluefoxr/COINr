@@ -17,7 +17,3 @@ Text output
 \description{
 Some details about the coin
 }
-\examples{
-#
-
-}
