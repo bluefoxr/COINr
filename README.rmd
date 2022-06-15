@@ -12,7 +12,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# COINr <img src="man/figures/COINr_logo.png" width="121px" height="140px" align="right" style="padding-left:10px;background-color:white;" />
+# COINr <img src="man/figures/COINr_logo.png" width="133px" height="154px" align="right" style="padding-left:10px;background-color:white;" />
 
 <!-- badges: start -->
 [![CRAN-update](https://www.r-pkg.org/badges/version-ago/COINr)](https://cran.r-project.org/package=COINr)
