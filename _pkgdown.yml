@@ -1,0 +1,70 @@
+url: https://bluefoxr.github.io/COINr
+
+template:
+  bootstrap: 5
+  bootswatch: flatly
+
+bslib:
+    pkgdown-nav-height: 74px
+
+navbar:
+  title: "COINr"
+  left:
+    - icon: fa-home fa-lg
+      href: index.html
+    - text: "Overview"
+      href: articles/overview.html
+    - text: "v1.0 updates"
+      href: articles/v1.html
+    - text: "Guides"
+      menu:
+        - text: "Construction"
+        - text: "Building coins"
+          href: articles/coins.html
+        - text: "Imputation of missing data"
+          href: articles/imputation.html
+        - text: "Denomination"
+          href: articles/denomination.html
+        - text: "Unit screening"
+          href: articles/screening.html
+        - text: "Outlier treatment"
+          href: articles/treat.html
+        - text: "Normalisation"
+          href: articles/normalise.html
+        - text: "Weighting"
+          href: articles/weights.html
+        - text: "Aggregation"
+          href: articles/aggregate.html
+        - text: "-------"
+        - text: "Post-processing"
+        - text: "Visualisation"
+          href: articles/visualisation.html
+        - text: "Statistical analysis"
+          href: articles/analysis.html
+        - text: "Presenting results"
+          href: articles/results.html
+        - text: "Adjustments and comparisons"
+          href: articles/adjustments.html
+        - text: "Sensitivity analysis"
+          href: articles/sensitivity.html
+        - text: "-------"
+        - text: "Other"
+        - text: "Data selection"
+          href: articles/data_selection.html
+        - text: "Other functions"
+          href: articles/other_functions.html
+    - text: "Examples"
+      menu:
+        - text: "Building a composite indicator"
+          href: articles/build_example.html
+        - text: "Panel data"
+          href: articles/panel_data.html
+    - text: "Functions"
+      href: reference/index.html
+    - text: "News"
+      href: news/index.html
+  right:
+   - icon: fa-github
+     href: https://github.com/bluefoxr/COINr/
+
+
