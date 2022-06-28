@@ -72,7 +72,7 @@ Function                Description
 `get_corr_flags()`      Find high or low-correlated indicators within groups
 `get_cronbach()`        Get Cronbach's alpha for any set of indicators
 `get_data()`            Get subsets of indicator data        
-`get_datAvail()`        Get data availability details of each unit
+`get_data_avail()`        Get data availability details of each unit
 `get_denom_corr()`      Get high correlations between indicators and denominators
 `get_eff_weights()`     Get effective weights at index level
 `get_opt_weights()`     Get optimised weights
