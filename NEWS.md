@@ -15,10 +15,13 @@ The full changes are too extensive to write here. See `vignette("v1")` also avai
 
 Note that these changes are disruptive but greatly improve the package and make it more maintainable for the future. This is a one-off major overhaul, after which backwards compatibility will be ensured.
 
-# COINr 0.6.1.9000
+# COINr 0.6.2
 
+* Fixed bug in `aggregate()` which was wrongly assigning weights in some circumstances (note this is a fairly
+significant bug - worth re-running your results as it may have affected them)
 * Added colour option to `plotframework()`
 * Fixed bug in `compareDF()` (resulting from tibbles vs data frames)
+* Fixed bug in `sensitivity()` causing trouble with running SA with no weights uncertainty specified
 
 # COINr 0.6.1
 
