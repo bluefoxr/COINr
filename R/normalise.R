@@ -371,7 +371,7 @@ Normalise.data.frame <- function(x, global_specs = NULL, indiv_specs = NULL,
 #'
 #' @param x Object to be normalised
 #' @param f_n The normalisation method, specified as string which refers to a function of the form `f_n(x, npara)`.
-#' See details.
+#' See details. Defaults to `"n_minmax"` which is the min-max function.
 #' @param f_n_para Supporting list of arguments for `f_n`. This is required to be a list.
 #' @param direction If `direction = -1` the highest values of `x` will correspond to the lowest
 #' values of the normalised `x`. Else if `direction = 1` the direction of `x` in unaltered.
@@ -408,7 +408,7 @@ Normalise.numeric <- function(x, f_n = NULL, f_n_para = NULL,
 
   # minmax is default
   if(is.null(f_n)){
-    f_n <- "minmax"
+    f_n <- "n_minmax"
   }
   # function args
   f_args <- list(x = x)

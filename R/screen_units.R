@@ -120,8 +120,8 @@ Screen.data.frame <- function(x, id_col = NULL, unit_screen, dat_thresh = NULL, 
       stop("One or more entries in Force$uCode not found in data frame.")
     }
 
-    l$Included[l$uCode %in% Force$uCode[Force$Include == TRUE]] <- TRUE
-    l$Included[l$uCode %in% Force$uCode[Force$Include == FALSE]] <- FALSE
+    l$Included[l[[id_col]] %in% Force$uCode[Force$Include == TRUE]] <- TRUE
+    l$Included[l[[id_col]] %in% Force$uCode[Force$Include == FALSE]] <- FALSE
   }
 
 
@@ -130,7 +130,14 @@ Screen.data.frame <- function(x, id_col = NULL, unit_screen, dat_thresh = NULL, 
   # create new data set which filters out the countries that didn't make the cut
   ScreenedData <- x[l$Included, ]
   # units that are removed
-  RemovedUnits <- l$uCode[!(l$Included)]
+  if(!is.null(id_col)){
+    RemovedUnits <- l[[id_col]][!(l$Included)]
+  } else if (!is.null(l$uCode)) {
+    RemovedUnits <- l$uCode[!(l$Included)]
+  } else {
+    RemovedUnits <- rownames(l)[!(l$Included)]
+  }
+
 
   # output list
   list(ScreenedData = ScreenedData,
@@ -172,7 +179,8 @@ Screen.data.frame <- function(x, id_col = NULL, unit_screen, dat_thresh = NULL, 
 #' coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
 #'
 #' # screen units from raw dset
-#' coin <- Screen(coin, dset = "Raw", unit_screen = "byNA", dat_thresh = 0.85, write_to = "Filtered_85pc")
+#' coin <- Screen(coin, dset = "Raw", unit_screen = "byNA",
+#'                dat_thresh = 0.85, write_to = "Filtered_85pc")
 #'
 #' # some details about the coin by calling its print method
 #' coin

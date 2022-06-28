@@ -94,7 +94,7 @@ Denominate.purse <- function(x, dset, denoms = NULL, denomby = NULL, denoms_ID =
 #' @export
 #'
 #' @examples
-#' #' # build example coin
+#' # build example coin
 #' coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
 #'
 #' # denominate (here, we only need to say which dset to use, takes

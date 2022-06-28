@@ -528,7 +528,7 @@ Treat.numeric <- function(x, f1, f1_para = NULL, f2 = NULL, f2_para = NULL,
 
   # TREATMENT 2 -------------------------------------------------------------
 
-  if(!pass){
+  if(!pass & n_f == 2){
     # optionally reset treatment 1 to original
     if(!combine_treat){
       x1 <- x
@@ -614,7 +614,9 @@ Treat <- function (x, ...){
 #' @param skew_thresh A threshold for absolute skewness (positive). Default 2.25.
 #' @param kurt_thresh A threshold for kurtosis. Default 3.5.
 #' @param force_win Logical: if `TRUE`, forces winsorisation up to winmax (regardless of skew/kurt).
-#' Default `FALSE`.
+#' Default `FALSE`. Note - this option should be used with care because the direction of Winsorisation
+#' is based on the direction of skew. Successively Winsorising can switch the direction of skew and hence
+#' the direction of Winsorisation, which may not produce the expected behaviour.
 #'
 #' @examples
 #' # numbers between 1 and 10
