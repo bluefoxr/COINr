@@ -1,6 +1,19 @@
-# COINr 0.8.0.9000
+# COINr 1.0.0
 
-This branch is for the development version of COINr 0.8, which will be heavily revamped. This is not meant to be a functional installation at the moment. Stay tuned.
+Major update to COINr. The main changes are as follows:
+
+* Syntax changed to be more consistent
+* New streamlined "coin" class replaces older "COIN" class
+* New "purse" class to deal with panel data (time dependent data)
+* Removed interactive functions based on plotly and shiny
+* Much fewer package dependencies
+* Underlying code rewritten to be more robust
+* Improved functionality and flexibility in many functions
+* COINr 0.6.1.9000 has been archived as a separate package called "COINr6" - this can be installed to ensure older code will still run.
+
+The full changes are too extensive to write here. See `vignette("v1")` also available online [here](https://bluefoxr.github.io/COINr/articles/v1.html) for a more complete description of changes.
+
+Note that these changes are disruptive but greatly improve the package and make it more maintainable for the future. This is a one-off major overhaul, after which backwards compatibility will be ensured.
 
 # COINr 0.6.1.9000
 

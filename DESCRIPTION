@@ -1,7 +1,7 @@
 Package: COINr
 Type: Package
 Title: Composite Indicator Construction and Analysis
-Version: 1.0.0.9000
+Version: 1.0.0
 Maintainer: William Becker <william.becker@bluefoxdata.eu>
 Description: A comprehensive high-level package, for composite indicator construction and analysis. It is a "development environment"
     for composite indicators and scoreboards, which includes utilities for construction (indicator selection, denomination, imputation,
@@ -11,7 +11,7 @@ Description: A comprehensive high-level package, for composite indicator constru
     It also includes many plotting options, both statistical (scatter plots, distribution plots) as well as for presenting results.
 License: MIT + file LICENSE
 Encoding: UTF-8
-URL: https://bluefoxr.github.io/COINrDoc/
+URL: https://bluefoxr.github.io/COINr/
 BugReports: https://github.com/bluefoxr/COINr/issues
 LazyData: true
 RoxygenNote: 7.1.1
