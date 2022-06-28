@@ -1,0 +1,64 @@
+---
+title: "Presenting Results"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Presenting Results}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This is a short vignette which explains some functions in COINr for extracting results from the coin. Once the coin is fully built, up to the point of aggregation, an immediate task is to see what the main results are. In composite indicators, the main starting point is often the ranking of units based on the highest level of aggregation, i.e. the index.
+
+While the aggregated data set (the data set created by `Aggregate()`) has all the aggregate scores in it, it requires a little manipulation to see it in an easy to read format. To help with this, the `get_results()` function
+
+```{r}
+library(COINr)
+
+# build full example coin
+coin <- build_example_coin(quietly = TRUE)
+
+# get results table
+df_results <- get_results(coin, dset = "Aggregated", tab_type = "Aggs")
+
+head(df_results)
+```
+
+The output of `get_results()` is a table sorted by the highest level of aggregation (here, the index), and with the the columns arranged so that the highest level of aggregation is first, working down to lower levels. The function has several arguments, including `also_get` (names of further columns to attach to the table, such as groups, denominators), `tab_type` (controlling which columns to output), `use` (whether to show scores or ranks), and `order_by` (which column to use to sort the table).
+
+A useful feature is to return ranks of units inside groups. For example, rather than returning scores we can return ranks within GDP per capita groups:
+
+```{r}
+# get results table
+df_results <- get_results(coin, dset = "Aggregated", tab_type = "Aggs", use_group = "GDPpc_group", use = "groupranks")
+
+# see first few entries in "XL" group
+head(df_results[df_results$GDPpc_group == "XL", ])
+```
+
+```{r}
+# see first few entries in "L" group
+head(df_results[df_results$GDPpc_group == "L", ])
+```
+
+Another function of interest zooms in on a single unit. The `get_unit_summary()` function returns a summary of a units scores and ranks at specified levels. Typically we can use this to look at a unit's index scores and scores for the aggregates:
+
+```{r}
+get_unit_summary(coin, usel = "IND", Levels = c(4,3,2), dset = "Aggregated")
+```
+
+This is a summary for "IND" (India) at levels 4 (index), 3 (sub-index) and 2 (pillar). It shows the score and rank.
+
+A final function here is `get_str_weak()`. This gives the "strengths and weaknesses" of a unit, in terms of its indicators with the highest and lowest ranks. This can be particularly useful in "country profiles", for example.
+
+```{r}
+get_str_weak(coin, dset = "Raw", usel = "ESP")
+```
+
+The default output is five strengths and five weaknesses. The direction of the indicators is adjusted - see the `adjust_direction` parameter. A number of other parameters can also be adjusted which help to guide the tables to give sensible values, for example excluding indicators with binary values. See the function documentation for more details.

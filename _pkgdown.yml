@@ -1,0 +1,278 @@
+url: https://bluefoxr.github.io/COINr
+
+template:
+  bootstrap: 5
+  bootswatch: flatly
+
+bslib:
+    pkgdown-nav-height: 74px
+
+navbar:
+  title: "COINr"
+  left:
+    - icon: fa-home fa-lg
+      href: index.html
+    - text: "Overview"
+      href: articles/overview.html
+    - text: "v1.0 updates"
+      href: articles/v1.html
+    - text: "Guides"
+      menu:
+        - text: "Construction"
+        - text: "Building coins"
+          href: articles/coins.html
+        - text: "Imputation of missing data"
+          href: articles/imputation.html
+        - text: "Denomination"
+          href: articles/denomination.html
+        - text: "Unit screening"
+          href: articles/screening.html
+        - text: "Outlier treatment"
+          href: articles/treat.html
+        - text: "Normalisation"
+          href: articles/normalise.html
+        - text: "Weighting"
+          href: articles/weights.html
+        - text: "Aggregation"
+          href: articles/aggregate.html
+        - text: "-------"
+        - text: "Post-processing"
+        - text: "Visualisation"
+          href: articles/visualisation.html
+        - text: "Statistical analysis"
+          href: articles/analysis.html
+        - text: "Presenting results"
+          href: articles/results.html
+        - text: "Adjustments and comparisons"
+          href: articles/adjustments.html
+        - text: "Sensitivity analysis"
+          href: articles/sensitivity.html
+        - text: "-------"
+        - text: "Other"
+        - text: "Data selection"
+          href: articles/data_selection.html
+        - text: "Other functions"
+          href: articles/other_functions.html
+    - text: "Examples"
+      menu:
+        - text: "Building a composite indicator"
+          href: articles/build_example.html
+        - text: "Panel data"
+          href: articles/panel_data.html
+    - text: "Functions"
+      href: reference/index.html
+    - text: "News"
+      href: news/index.html
+  right:
+   - icon: fa-github
+     href: https://github.com/bluefoxr/COINr/
+
+reference:
+- title: Build
+  desc:  Modify and create new data sets
+  contents:
+  - new_coin
+  - Screen
+  - Denominate
+  - Impute
+  - Treat
+  - qTreat
+  - Normalise
+  - qNormalise
+  - Aggregate
+
+- title: Analyse
+  desc:  Analyse data sets, summarise results and check sensitivity
+  contents:
+  - get_corr
+  - get_corr_flags
+  - get_cronbach
+  - get_data
+  - get_data_avail
+  - get_denom_corr
+  - get_eff_weights
+  - get_opt_weights
+  - get_results
+  - get_sensitivity
+  - get_stats
+  - get_str_weak
+  - get_unit_summary
+  - remove_elements
+
+- title: Plot
+  desc:  Plot indicators, distributions and others
+  contents:
+  - plot_bar
+  - plot_corr
+  - plot_dist
+  - plot_dot
+  - plot_framework
+  - plot_scatter
+  - plot_sensitivity
+  - plot_uncertainty
+
+- title: Adjust and compare
+  desc:  Adjust coins, regenerate them and compare alternative versions
+  contents:
+  - Regen
+  - change_ind
+  - compare_coins
+  - compare_coins_multi
+
+- title: Helpers
+  desc: Helper functions to take care of common tasks
+  contents:
+  - import_coin_tool
+  - COIN_to_coin
+  - build_example_coin
+  - build_example_purse
+  - export_to_excel
+
+- title: Other functions
+  desc: Other functions including methods and small functions called by other functions
+  contents:
+  - Aggregate.coin
+  - Aggregate.data.frame
+  - Aggregate.purse
+  - a_amean
+  - a_copeland
+  - a_gmean
+  - a_hmean
+  - boxcox
+  - check_iData
+  - check_iMeta
+  - check_SkewKurt
+  - compare_df
+  - copeland
+  - Denominate.coin
+  - Denominate.data.frame
+  - Denominate.purse
+  - get_data.coin
+  - get_data.purse
+  - get_data_avail.coin
+  - get_data_avail.data.frame
+  - get_dset.coin
+  - get_dset.purse
+  - get_dset
+  - get_noisy_weights
+  - get_PCA
+  - get_pvals
+  - get_stats.coin
+  - get_stats.data.frame
+  - Impute.coin
+  - Impute.data.frame
+  - Impute.numeric
+  - Impute.purse
+  - impute_panel
+  - is.coin
+  - is.purse
+  - i_mean
+  - i_mean_grp
+  - i_median
+  - i_median_grp
+  - kurt
+  - log_CT
+  - log_CT_orig
+  - log_GII
+  - names_to_codes
+  - Normalise.coin
+  - Normalise.data.frame
+  - Normalise.numeric
+  - Normalise.purse
+  - n_borda
+  - n_dist2max
+  - n_dist2ref
+  - n_dist2targ
+  - n_fracmax
+  - n_goalposts
+  - n_minmax
+  - n_prank
+  - n_rank
+  - n_scaled
+  - n_zscore
+  - outrankMatrix
+  - print.coin
+  - print.purse
+  - qNormalise.coin
+  - qNormalise.data.frame
+  - qNormalise.purse
+  - qTreat.coin
+  - qTreat.data.frame
+  - qTreat.purse
+  - rank_df
+  - Regen.coin
+  - Regen.purse
+  - replace_df
+  - round_df
+  - SA_estimate
+  - SA_sample
+  - Screen.coin
+  - Screen.data.frame
+  - Screen.purse
+  - signif_df
+  - skew
+  - Treat.coin
+  - Treat.data.frame
+  - Treat.numeric
+  - Treat.purse
+  - winsorise
+
+- title: Deprecated functions
+  desc: These are functions in COINr versions before 1.0.0. They now simply redirect to the newer function names. They will be deleted in future updates.
+  contents:
+  - ASEM_iData
+  - ASEM_iData_p
+  - ASEM_iMeta
+  - assemble
+  - build_ASEM
+  - checkData
+  - coin2Excel
+  - COINToolIn
+  - coin_win
+  - colourTable
+  - compareDF
+  - compTable
+  - compTableMulti
+  - corrweightscat
+  - effectiveWeight
+  - extractYear
+  - geoMean
+  - geoMean_rescaled
+  - getCorr
+  - getCronbach
+  - getIn
+  - getPCA
+  - getResults
+  - getStats
+  - getStrengthNWeak
+  - getUnitReport
+  - getUnitSummary
+  - harMean
+  - hicorrSP
+  - indChange
+  - indDash
+  - iplotBar
+  - iplotCorr
+  - iplotIndDist
+  - iplotIndDist2
+  - iplotMap
+  - iplotRadar
+  - iplotTable
+  - loggish
+  - names2Codes
+  - noisyWeights
+  - plotCorr
+  - plotframework
+  - plotIndDist
+  - plotIndDot
+  - plotSA
+  - plotSARanks
+  - rankDF
+  - removeElements
+  - replaceDF
+  - resultsDash
+  - rew8r
+  - roundDF
+  - sensitivity
+  - weightOpt
+  - WorldDenoms

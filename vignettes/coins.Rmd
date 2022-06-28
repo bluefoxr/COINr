@@ -1,0 +1,271 @@
+---
+title: "Building coins"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Building coins}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(COINr)
+```
+
+This vignette gives a guide to building "coins", which are the object class representing a composite indicator used throughout COINr, and "purses", which are time-indexed collections of coins.
+
+# What is a coin?
+
+COINr functions are designed to work in particular on an S3 object class called a "coin". To introduce this, consider what constitutes a composite indicator:
+
+* The indicator data
+* Indicator metadata, including weights and directions
+* A structure which maps indicators into groups for aggregation, typically over multiple levels
+* Methodological specifications, including
+    - Data treatment
+    - Normalisation method and parameters
+    - Aggregation method and parameters
+* Processed data sets at each stage of the construction
+* Resulting aggregated scores and ranks
+
+Meanwhile, in the process of building a composite indicator, a series of analysis data is generated, including information on data availability, statistics on individual indicators, correlations and information about data treatment.
+
+If a composite indicator is built from scratch, it is easy to generate an environment with dozens of variables and parameters. In case an alternative version of the composite indicator is built, multiple sets of variables may need to be generated. With this in mind, it makes sense to structure all the ingredients of composite indicator, from input data, to methodology and results, into a single object, which is called a "coin" in COINr.
+
+How to construct a coin, and some details of its contents, will be explained in more detail in the following sections. Although coins are the main object class used in COINr, a number of COINr functions also have methods for data frames and vectors. This is explained in other vignettes.
+
+# Building coins
+
+To build a coin you need to use the `new_coin()` function. The main two input arguments of this function are two data frames: `iData` (the indicator data), and `iMeta` (the indicator metadata). This builds a coin class object containing the raw data, which can then be developed and expanded by COINr functions by e.g. normalising, treating data, imputing, aggregating and so on.
+
+Before proceeding, we have to define a couple of things. The "things" that are being benchmarked/compared by the indicators and composite indicator are more generally referred to as *units* (quite often, units correspond to countries). Units are compared using *indicators*, which are measured variables that are relevant to the overall concept of the composite indicator.
+
+## Indicator data
+
+The first data frame, `iData` specifies the value of each indicator, for each unit. It can also contain further attributes and metadata of units, for example groups, names, and denominating variables (variables which are used to adjust for size effects of indicators).
+
+To see an example of what `iData` looks like, we can look at the built in [ASEM](https://composite-indicators.jrc.ec.europa.eu/asem-sustainable-connectivity/) data set. This data set is from a composite indicator covering 51 countries with 49 indicators, and is used for examples throughout COINr:
+
+```{r}
+head(ASEM_iData[1:20], 5)
+```
+
+Here only a few rows and columns are shown to illustrate. The ASEM data covers covering 51 Asian and European countries, at the national level, and uses 49 indicators. Notice that each row is an observation (here, a country), and each column is a variable (mostly indicators, but also other things).
+
+Columns can be named whatever you want, although a few names are reserved:
+
+* `uName` [optional] gives the name of each unit. Here, units are countries, so these are the names of each country.
+* `uCode` [**required**] is a unique code assigned to each unit (country). This is the main "reference" inside COINr for units. If the units are countries, ISO Alpha-3 codes should ideally be used, because these are recognised by COINr for generating maps.
+* `Time` [optional] gives the reference time of the data. This is used if panel data is passed to `new_coin()`. See [Purses and panel data].
+
+This means that at a minimum, you need to supply a data frame with a `uCode` column, and some indicator columns.
+
+Aside from the reserved names above, columns can be assigned to different uses using the corresponding `iMeta` data frame - this is clarified in the next section.
+
+Some important rules and tips to keep in mind are:
+
+* Columns don't have to be in any particular order; they are identified by names rather than positions.
+* Indicator columns are required to be numeric, i.e. they cannot be character vectors.
+* There is no restriction on the number of indicators and units.
+* Indicator codes and unit codes must have unique names.
+* As with everything in R, all codes are case-sensitive.
+* Don't start any column names with a number!
+
+The `iData` data frame will be checked when it is passed to `new_coin()`. You can also perform this check yourself in advance by calling `check_iData()`:
+
+```{r}
+check_iData(ASEM_iData)
+```
+
+If there are issues with your `iData` data frame this should produce informative error messages which can help to correct the problem.
+
+## Indicator metadata
+
+The `iMeta` data frame specifies everything about each column in `iData`, including whether it is an indicator, a group, or something else; its name, its units, and where it appears in the *structure* of the index. `iMeta` also requires entries for any aggregates which will be created by aggregating indicators. Let's look at the built-in example.
+
+```{r}
+head(ASEM_iMeta, 5)
+```
+
+Required columns for `iMeta` are:
+
+* `Level`: The level in aggregation, where 1 is indicator level, 2 is the level resulting from aggregating
+indicators, 3 is the result of aggregating level 2, and so on. Set to `NA` for entries that are not included in the index (groups, denominators, etc).
+* `iCode`: Indicator code, alphanumeric. Must not start with a number. These entries generally correspond to the column names of `iData`.
+* `Parent`: Group (`iCode`) to which indicator/aggregate belongs in level immediately above. Each entry here should also be found in `iCode`. Set to `NA` only for the highest (Index) level (no parent), or for entries that are not included in the index (groups, denominators, etc).
+* `Direction`: Numeric, either -1 or 1
+* `Weight`: Numeric weight, will be re-scaled to sum to 1 within aggregation group. Set to `NA` for entries that are not included in the index (groups, denominators, etc).
+* `Type`: The type, corresponding to `iCode`. Can be either `Indicator`, `Aggregate`, `Group`, `Denominator`, or `Other`.
+
+Optional columns that are recognised in certain functions are:
+ 
+* `iName`: Name of the indicator: a longer name which is used in some plotting functions.
+* `Denominator`: specifies which denominator variable should be used to denominate the indicator, if `Denominate()` is called. See the [Denomination](denomination.html) vignette.
+* `Unit`: the unit of the indicator, e.g. USD, thousands, score, etc. Used in some plots if available.
+* `Target`: a target for the indicator. Used if normalisation type is distance-to-target.
+
+`iMeta` can also include other columns if needed for specific uses, as long as they don't use the names listed above.
+
+The `iMeta` data frame essentially gives details about each of the columns found in `iData`, as well as details about additional data columns eventually created by aggregating indicators. This means that the entries in `iMeta` must include *all* columns in `iData`, *except* the three "special" column names: `uCode`, `uName`, and `Time`. In other words, all column names of `iData` should appear in `iMeta$iCode`, except the three special cases mentioned.
+
+The `Type` column specifies the type of the entry: `Indicator` should be used for indicators at level 1.
+`Aggregate` for aggregates created by aggregating indicators or other aggregates. Otherwise set to `Group`
+if the variable is not used for building the index but instead is for defining groups of units. Set to
+`Denominator` if the variable is to be used for scaling (denominating) other indicators. Finally, set to
+`Other` if the variable should be ignored but passed through. Any other entries here will cause an error.
+
+Apart from the indicator entries shown above, we can see aggregate entries:
+
+```{r}
+ASEM_iMeta[ASEM_iMeta$Type == "Aggregate", ]
+```
+
+These are the aggregates that will be created by aggregating indicators. These values will only be created when we call the `Aggregate()` function (see relevant vignette). We also have groups:
+
+```{r}
+ASEM_iMeta[ASEM_iMeta$Type == "Group", ]
+```
+
+Notice that the `iCode` entries here correspond to column names of `iData`. There are also denominators:
+
+```{r}
+ASEM_iMeta[ASEM_iMeta$Type == "Denominator", ]
+```
+
+Denominators are used to divide or "scale" other indicators. They are ideally included in `iData` because this ensures that they match the units and possibly the time points.
+
+The `Parent` column requires a few extra words. This is used to define the structure of the index. Simply put, it specifies the aggregation group to which the indicator or aggregate belongs to, in the level immediately above. For indicators in level 1, this should refer to `iCode`s in level 2, and for aggregates in level 2, it should refer to `iCode`s in level 3. Every entry in `Parent` must refer to an entry that can be found in the `iCode` column, or else be `NA` for the highest aggregation level or for groups, denominators and other `iData` columns that are not included in the index.
+
+The `iMeta` data frame is more complex that `iData` and it may be easy to make errors. Use the `check_iMeta()` function (which is anyway called by `new_coin()`) to check the validity of your `iMeta`. Informative error messages are included where possible to help correct any errors.
+
+```{r}
+check_iMeta(ASEM_iMeta)
+```
+
+When `new_coin()` is run, additional cross-checks are run between `iData` and `iMeta`.
+
+## Building with `new_coin()`
+
+With the `iData` and `iMeta` data frames prepared, you can build a coin using the `new_coin()` function. This has some other arguments and options that we will see in a minute, but by default it looks like this:
+
+```{r}
+# build a new coin using example data
+coin <- new_coin(iData = ASEM_iData,
+                 iMeta = ASEM_iMeta,
+                 level_names = c("Indicator", "Pillar", "Sub-index", "Index"))
+```
+
+The `new_coin()` function checks and cross-checks both input data frames, and outputs a coin-class object. It also tells us that it has written a data set to `.$Data$Raw` - this is the sub-list that contains the various data sets that will be created each time we run a coin-building function.
+
+We can see a summary of the coin by calling the coin print method - this is done simply by calling the name of the coin at the command line, or equivalently `print(coin)`:
+
+```{r}
+coin
+```
+
+This tells us some details about the coin - the number of units, indicators, denominators and groups; the structure of the index (notice that the `level_names` argument is used to describe each level), and the data sets present in the coin. Currently this only consists of the "Raw" data set, which is the data set that is created by default when we run `new_coin()`, and simply consists of the indicator data plus the `uCode` column. Indeed, we can retrieve any data set from within a coin at any time using the `get_dset()` function:
+
+```{r}
+# first few cols and rows of Raw data set
+data_raw <- get_dset(coin, "Raw")
+head(data_raw[1:5], 5)
+```
+
+By default, calling `get_dset()` returns only the unit code plus the indicator/aggregate columns. We can also attach other columns such as groups and names by using the `also_get` argument. This can be used to attach any of the `iData` "metadata" columns that were originally passed when calling `new_coin()`, such as groups, etc.
+
+```{r}
+get_dset(coin, "Raw", also_get = c("uName", "Pop_group"))[1:5] |>
+  head(5)
+```
+
+Apart from the `level_names` argument, `new_coin()` also gives the possibility to only pass forward a subset of the indicators in `iMeta`. This is done using the `exclude` argument, which is useful when testing alternative sets of indicators - see vignette on adjustments and comparisons.
+
+```{r}
+# exclude two indicators
+coin <- new_coin(iData = ASEM_iData,
+                 iMeta = ASEM_iMeta,
+                 level_names = c("Indicator", "Pillar", "Sub-index", "Index"),
+                 exclude = c("LPI", "Flights"))
+
+coin
+```
+
+Here, `new_coin()` has removed the indicator columns from `iData` and the corresponding entries in `iMeta`. However, the full original `iData` and `iMeta` tables are still stored in the coin.
+
+The `new_coin()` function includes a thorough series of checks on its input arguments which may cause some initial errors while the format is corrected. The objective is that if you can successfully assemble a coin, this should work smoothly for all COINr functions.
+
+# Example coin
+
+COINr includes a built in example coin which is constructed using a function `build_example_coin()`. This can be useful for learning how the package works, testing and is used in COINr documentation extensively because many functions require a coin as an input. Here we build the example coin (which is again from the ASEM data set built into COINr) and inspect its contents:
+
+```{r}
+ASEM <- build_example_coin(quietly = TRUE)
+
+ASEM
+```
+
+This shows that the example is a fully populated coin with various data sets, each resulting from running COINr functions, up to the aggregation step.
+
+# Purses and panel data
+
+A coin offers a very wide methodological flexibility, but some things are kept fixed throughout. One is that the set of indicators does not change once the coin has been created. The other thing is that each coin represents a single point in time.
+
+If you have panel data, i.e. multiple observations for each unit-indicator pair, indexed by time, then `new_coin()` allows you to create multiple coins in one go. Coins are collected into a single object called a "*purse*", and many COINr functions work on purses directly. Some more information on working with panel data in this way can be found in [Working with Panel Data](panel_data.html).
+
+Here we simply explore how to create a purse. The procedure is almost the same as creating a coin: you need the `iData` and `iMeta` data frames, and you call `new_coin()`. The difference is that `iData` must now have a `Time` column, which must be a numeric column which records which time point each observation is from. To see an example, we can look at the built-in (artificial) panel data set `ASEM_iData_p`. 
+
+```{r}
+# sample of 2018 observations
+ASEM_iData_p[ASEM_iData_p$Time == 2018, 1:15] |>
+  head(5)
+
+# sample of 2019 observations
+ASEM_iData_p[ASEM_iData_p$Time == 2019, 1:15] |>
+  head(5)
+```
+
+This data set has five years of data, spanning 2018-2022 (the data are artificially generated - at some point I will replace this with a real example). This means that each row now corresponds to a set of indicator values for a unit, for a given time point.
+
+To build a purse from this data, we input it into `new_coin()`
+
+```{r}
+# build purse from panel data
+purse <- new_coin(iData = ASEM_iData_p,
+                  iMeta = ASEM_iMeta,
+                  split_to = "all",
+                  quietly = TRUE)
+```
+
+Notice here that the `iMeta` argument is the same as when we assembled a single coin - this is because a purse is supposed to consist of coins with the same indicators and structure, i.e. the aim is to calculate a composite indicator over several points in time, and generally to apply the same methodology to all coins in the purse. It is however possible to have different units between coins in the same purse - this might occur because of data availability differences at different time points.
+
+The `split_to` argument should be set to `"all"` to create a coin from each time point found in the data. Alternatively, you can only include a subset of time points by specifying them as a vector.
+
+A quick way to check the contents of the purse is to call its print method:
+
+```{r}
+purse
+```
+
+This tells us how many coins there are, the number of indicators and units, and gives some structural information from one of the coins.
+
+A purse is an S3 class object like a coin. In fact, it is simply a data frame with a `Time` column and a `coin` column, where entries in the `coin` column are coin objects (in a so-called "list column"). This is convenient to work with, but if you try to view it in R Studio, for example, it can be a little messy.
+
+As with coins, the purse class also has a function in COINr which produces an example purse:
+
+```{r}
+ASEM_purse <- build_example_purse(quietly = TRUE)
+
+ASEM_purse
+```
+
+The purse class can be used directly with COINr functions - this allows to impute/normalise/treat/aggregate all coins with a single command, for example.
+
+# Summary
+
+COINr is mostly designed to work with coins and purses. However, many key functions also have methods for data frames or vectors. This means that COINr can either be used as an "ecosystem" of functions built around coins and purses, or else can just be used as a toolbox for doing your own work with data frames and other objects.

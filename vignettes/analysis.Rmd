@@ -1,0 +1,183 @@
+---
+title: "Analysis"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This vignette describes the "analysis" features of COINr. By this, we mean functions that retrieve statistical measures from the coin in various ways. This excludes things like sensitivity analysis, which involves tinkering with the construction methodology.
+
+In short, here we discuss obtaining indicator statistics, correlations, data availability, and some slightly more complex ideas such as Cronbach's alpha and principal component analysis.
+
+# Indicator statistics
+
+Indicator statistics can be obtained using the `get_stats()` function.
+
+```{r}
+# load COINr
+library(COINr)
+
+# build example coin
+coin <-  build_example_coin(up_to = "new_coin", quietly = TRUE)
+
+# get table of indicator statistics for raw data set
+stat_table <- get_stats(coin, dset = "Raw", out2 = "df")
+```
+
+The resulting data frame has 18 columns, which is hard to display concisely here. Therefore we will look at the columns in groups of five.
+
+```{r}
+head(stat_table[1:5], 5)
+```
+
+Each row is one of the indicators from the targeted data set. Then columns are statistics, here obvious things like the minimum, maximum, mean and median.
+
+```{r}
+head(stat_table[6:10], 5)
+```
+
+In the first three columns here we find the standard deviation, skewness and kurtosis. The remaining two columns are "N.Avail", which is the number of non-`NA` data points, and "N.NonZero", the number of non-zero points. This latter can be of interest because some indicators may have a high proportion of zeroes, which can be problematic.
+
+```{r}
+head(stat_table[11:15], 5)
+```
+
+Here we have "N.Unique", which is the number of unique data points (i.e. excluding duplicate values). The following three columns are similar to previous columns, e.g. "Frc.Avail" is the fraction of data availability, as opposed to the number of available points (N.Avail). The final column, "Flag.Avail", is a logical flag: if the data availability ("Frc.Avail") is below the limit specified by the `t_avail` argument of `get_stats()`, it will be flagged as "LOW".
+
+```{r}
+head(stat_table[16:ncol(stat_table)], 5)
+```
+
+The first two final columns are analogous to "Flag.Avail" and have thresholds which are controlled by arguments to `get_stats()`. The final column is a basic test of outliers which is commonly used in composite indicators, for example in the [COIN Tool](https://knowledge4policy.ec.europa.eu/composite-indicators/coin-tool_en). This is the same process as used in `check_SkewKurt()` which will flag "OUT" if the absolute skewness is greater than a set threshold (default 2) AND kurtosis is greater than a threshold (default 3.5). In short, indicators that are flagged here could be considered for outlier treatment.
+
+# Unit data availability
+
+The same kind of analysis can be performed for units, rather than indicators. Here, the main thing of interest is data availability, which can be obtained throug the `get_data_avail()` function.
+
+```{r}
+l_dat <- get_data_avail(coin, dset = "Raw", out2 = "list")
+
+str(l_dat, max.level = 1)
+```
+
+Here we see the output is a list with two data frames. The first is a summary for each unit:
+
+```{r}
+head(l_dat$Summary, 5)
+```
+
+Each unit has its number of missing points, zero points, missing-or-zero points, as well as the percentage data availability and percentage non-zero. The "ByGroup" data frame gives data availability within aggregation groups:
+
+```{r}
+head(l_dat$ByGroup[1:5], 5)
+```
+
+Here we just view the first few columns to save space. The values are the fraction of indicator availability within each aggregation group.
+
+# Correlations
+
+Correlations can be obtained and viewed directly using the `plot_corr()` function which is explained in the [Visualisation](visualisation.html) vignette. Here, we explore the functions for obtaining correlation matrices, flags and p-values.
+
+The most general-purpose function for obtaining correlations between indicators is `get_corr()` function (which is called by `plot_corr()`). This allows almost any set of indicators/aggregates to be correlated against almost any other set. We won't go over the full functionality here because this is covered in [Visualisation](visualisation.html) vignette. However to demonstrate a couple of examples we begin by building the full example coin up to the aggregated data set.
+
+```{r}
+coin <- build_example_coin(quietly = TRUE)
+```
+
+Now we can take some examples. First, to get the correlations between indicators within the Environmental group:
+
+```{r}
+# get correlations
+cmat <- get_corr(coin, dset = "Raw", iCodes = list("Environ"), Levels = 1)
+# examine first few rows
+head(cmat)
+```
+
+Here we see that the default output of `get_corr()` is a long-format correlation table. If you want the wide format, set `make_long = FALSE`.
+
+```{r}
+# get correlations
+cmat <- get_corr(coin, dset = "Raw", iCodes = list("Environ"), Levels = 1, make_long = FALSE)
+# examine first few rows
+round_df(head(cmat), 2)
+```
+
+This gives the more classical-looking correlation matrix, although the long format can sometimes be easier to work with for futher processing. One further option that is worth mentioning is `pval`: by default, `get_corr()` will return any correlations with a p-value lower than 0.05 as `NA`, indicating that these correlations are insignificant at this significance level. You can adjust this threshold by changing `pval`, or disable it completely by setting `pval = 0`.
+
+On the subject of p-values, COINr includes a `get_pvals()` function which can be used to get p-values of correlations between a supplied matrix or data frame. This cannot be used directly on a coin and is more of a helper function but may still be useful.
+
+Two further functions are of interest regarding correlations. The first is `get_corr_flags()`. This is a useful function for finding correlations between indicators that exceed or fall below a given threshold, within aggregation groups:
+
+```{r}
+get_corr_flags(coin, dset = "Normalised", cor_thresh = 0.75,
+               thresh_type = "high", grouplev = 2)
+```
+
+Here we have identified any correlations above 0.75, from the "Normalised" data set, that are between indicators in the same group in level 2. Actually 0.75 is quite low for searching for "high correlations", but it is used as an example here because the example data set doesn't have any very high correlations.
+
+By switching `thresh_type = "low"` we can similarly look for low/negative correlations:
+
+```{r}
+get_corr_flags(coin, dset = "Normalised", cor_thresh = -0.5,
+               thresh_type = "low", grouplev = 2)
+```
+
+Our example has some fairly significant negative correlations! All within the "Institutional" group, and with the Technical Barriers to Trade indicator.
+
+A final function to mention is `get_denom_corr()`. This is related to the operation of denominating indicators (see [Denomination](denomination.html) vignette), and identifies any indicators that are correlated (using the absolute value of correlation) above a given threshold with any of the supplied denominators. This can help to identify in some cases *whether* to denominate an indicator and *with what* - i.e. if an indicator is strongly related with a denominator that means it is dependent on it, which may be a reason to denominate.
+
+```{r}
+get_denom_corr(coin, dset = "Raw", cor_thresh = 0.7)
+```
+
+Using a threshold of 0.7, and examining the raw data set, we see that several indicators are strongly related to the denominators, a classical example being export value of goods (Goods) being well correlated with GDP. Many of these pairs flagged here are indeed used as denominators in the ASEM example, but also for conceptual reasons.
+
+# Multivariate tools
+
+A first simple tool is to calculate Cronbach's alpha. This can be done with any group of indicators, either the full set, or else targeting specific groups.
+
+```{r}
+get_cronbach(coin, dset = "Raw", iCodes = "P2P", Level = 1)
+```
+
+This simply calculates Cronbach's alpha (a measure of statistical consistency) for the "P2P" group (People to People connectivity, this case).
+
+Another multivariate analysis tool is principal component analysis (PCA). Although, like correlation, this is built into base R, the `get_PCA()` function makes it easier to obtain PCA for groups of indicators, following the structure of the index.
+
+```{r}
+l_pca <- get_PCA(coin, dset = "Raw", iCodes = "Sust", out2 = "list")
+```
+
+The function can return its results either as a list, or appended to the coin if `out2 = "coin"`. Here the output is a list and we will explore its output. First note the warnings above due to missing data, which can be suppressed using `nowarnings = TRUE`. The output list looks like this:
+
+```{r}
+str(l_pca, max.level = 1)
+```
+
+I.e. we have a data frame of "PCA weights" and some PCA results. We ignore the weights for the moment and look closer at the PCA results:
+
+```{r}
+str(l_pca$PCAresults, max.level = 2)
+```
+
+By default, `get_PCA()` will run a separate PCA for each aggregation group within the specified level. In this case, it has run three: one for each of the "Environ", "Social" and "SusEcFin" groups. Each of these contains `wts`, a set of PCA weights for that group, `PCAres`, which is the direct output of `stats::prcomp()`, and `iCodes`, which is the corresponding vector of indicator codes for the group.
+
+We can do some basic PCA analysis using base R's tools using the "PCAres" objects, e.g.:
+
+```{r}
+# summarise PCA results for "Social" group
+summary(l_pca$PCAresults$Social$PCAres)
+```
+
+See `stats::prcomp()` and elsewhere for more resources on PCA in R.
+
+Now turning to the weighting, `get_PCA()` also outputs a set of "PCA weights". These are output attached to the list as shown above, or if `out2 = "coin"`, will be written to the weights list inside the coin if `weights_to` is also specified. See the [Weights](weights.html) vignette for some more details on this. Note that PCA weights come with a number of caveats: please read the documentation for `get_PCA()` for a discussion on this.

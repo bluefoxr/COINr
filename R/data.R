@@ -1,38 +1,42 @@
+#' ASEM raw panel data
+#'
+#' This is an artificially-generated set of panel data (multiple observations of indicators over time) that
+#' is included to build the example "purse" class, i.e. to build composite indicators over time. This will
+#' eventually be replaced with a better example, i.e. a real data set.
+#'
+#' This data set is in the new v1.0 format.
+#'
+#' @format A data frame with 255 rows and 60 variables.
+#'
+#' @source \url{https://composite-indicators.jrc.ec.europa.eu/asem-sustainable-connectivity/repository}
+"ASEM_iData_p"
+
 #' ASEM raw indicator data
 #'
 #' A data set containing raw values of indicators for 51 countries, groups and denominators. See the ASEM Portal
-#' for further information and detailed description of each indicator, and
-#' [COINr documentation](https://bluefoxr.github.io/COINrDoc/coins-the-currency-of-coinr.html#indicator-data) for the formatting
-#' of this data set.
+#' for further information and detailed description of each indicator. See also `vignette("coins")` for the format
+#' of this data.
+#'
+#' This data set is in the new v1.0 format.
 #'
 #' @format A data frame with 51 rows and 60 variables.
 #'
 #' @source \url{https://composite-indicators.jrc.ec.europa.eu/asem-sustainable-connectivity/repository}
-"ASEMIndData"
+"ASEM_iData"
 
 #' ASEM indicator metadata
 #'
 #' This contains all metadata for ASEM indicators, including names, weights, directions, etc. See the ASEM Portal
-#' for further information and detailed description of each indicator, and
-#' [COINr documentation](https://bluefoxr.github.io/COINrDoc/coins-the-currency-of-coinr.html#indicator-metadata) for the formatting
-#' of this data set.
+#' for further information and detailed description of each indicator.
+#' See also `vignette("coins")` for the format
+#' of this data.
 #'
-#' @format A data frame with 49 rows and 9 variables
+#' This data set is in the new v1.0 format.
+#'
+#' @format A data frame with 68 rows and 9 variables
 #'
 #' @source \url{https://bluefoxr.github.io/COINrDoc/coins-the-currency-of-coinr.html#aggregation-metadata}
-"ASEMIndMeta"
-
-#' ASEM aggregate metadata
-#'
-#' This contains all the metadata for the aggregate groups, including the names, weights and codes. See the ASEM Portal
-#' for further information and detailed description of each indicator, and
-#' [COINr documentation](https://bluefoxr.github.io/COINrDoc/coins-the-currency-of-coinr.html#indicator-data) for the formatting
-#' of this data set.
-#'
-#' @format A data frame with 8 rows and 9 variables:
-#'
-#' @source \url{https://composite-indicators.jrc.ec.europa.eu/asem-sustainable-connectivity/repository}
-"ASEMAggMeta"
+"ASEM_iMeta"
 
 #' World denomination data
 #'

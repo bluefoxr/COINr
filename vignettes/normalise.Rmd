@@ -1,0 +1,273 @@
+---
+title: "Normalisation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Normalisation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Normalisation is the operation of bringing indicators onto comparable scales so that they can be aggregated more fairly. To see why this is necessary, consider aggregating GDP values (billions or trillions of dollars) with percentage tertiary graduates (tens of percent). Average values here would make no sense because one is on a completely different scale to the other.
+
+The normalisation function in COINr is imaginatively named `Normalise()`. It has the following main features:
+
+* A wide range of normalisation methods, including the possibility to pass custom functions
+* Customisable parameters for normalisation
+* Possibility to specify detailed individual treatment for each indicator
+
+As of COINr v1.0, `Normalise()` is a generic function with methods for different classes. This means that `Normalise()` can be called on coins, but also on data frames, numeric vectors and purses (time-indexed collections of coins).
+
+Since `Normalise()` might be a bit over-complicated for some applications, the `qNormalise()` function gives a simpler interface which might be easier to use. See the [Simplified normalisation] section.
+
+# Coins
+
+The `Normalise()` method for coins follows the familiar format: you have to specify:
+
+* `x` the coin
+* `global_specs` default specifications to apply to all indicators
+* `indiv_specs` individual specifications to override `global_specs` for specific indicators, if required
+* `directions` a data frame specifying directions - this overrides the directions in `iMeta` if specified
+* `out2` whether to output an updated coin or simply a data frame
+
+Let's begin with a simple example. We build the example coin and normalise the raw data.
+
+```{r}
+library(COINr)
+
+# build example coin
+coin <- build_example_coin(up_to = "new_coin")
+
+# normalise the raw data set
+coin <- Normalise(coin, dset = "Raw")
+```
+
+We can compare one of the raw and un-normalised indicators side by side.
+
+```{r}
+plot_scatter(coin, dsets = c("Raw", "Normalised"), iCodes = "Goods")
+```
+
+This plot also illustrates the linear nature of the min-max transformation.
+
+The default normalisation uses the min-max approach, scaling indicators onto the $[0, 100]$ interval. But we can change the normalisation type and its parameters using the `global_specs` argument.
+
+```{r}
+coin <- Normalise(coin, dset = "Raw",
+                   global_specs = list(f_n = "n_zscore",
+                                        f_n_para = list(c(10,2))))
+```
+
+Again, let's plot an example of the result:
+
+```{r}
+plot_scatter(coin, dsets = c("Raw", "Normalised"), iCodes = "Goods")
+```
+
+Again, the z-score transformation is linear. It simply puts the resulting indicator on a different scale.
+
+Notice the syntax of `global_specs`. If specified, it takes entries `f_n` (the name of the function to apply to each column) and `f_n_para` (any further arguments to `f_n`, not including `x`). Importantly, `f_n_para` *must* be specified as a list, even if it only contains one parameter.
+
+Since `f_n` points to a function name, any function can be passed to `Normalise()` as long as it is available in the namespace. To illustrate, consider an example where we want to categorise into discrete bins. We can use base R's `cut()` function for this purpose. We simply need to specify the number of bins. We could directly call `cut()`, but for clarity we will create a simple wrapper function around it, then pass that function to `Normalise()`.
+
+```{r}
+# wrapper function
+f_bin <- function(x, nbins){
+  cut(x, breaks = nbins, labels = FALSE)
+}
+
+# pass wrapper to normalise, specify 5 bins
+coin <- Normalise(coin, dset = "Raw",
+                   global_specs = list(f_n = "f_bin",
+                                        f_n_para = list(nbins = 5)))
+```
+
+To illustrate the difference with the linear transformations above, we again plot the raw against normalised indicator:
+
+```{r}
+plot_scatter(coin, dsets = c("Raw", "Normalised"), iCodes = "Goods")
+```
+
+Obviously this is *not* linear.
+
+Generally, the requirements of a function to be passed to `Normalise()` are that its first argument should be `x`, a numeric vector, and it should return a numeric vector of the same length as `x`. It should also be able to handle `NA`s. Any further arguments can be passed via the `f_n_para` entry.
+
+By default, the directions are taken from the coin. These will have been specified as the `Direction` column of `iMeta` when constructing a coin with `new_coin()`. However, you can specify different directions using the `directions` argument of `normalise()`: in this case you need to specify a data frame with two columns: `iCode` (with an entry for each indicator code found in the target data set) and `Direction` giving the direction as -1 or 1.
+
+To show an example, we take the existing directions from the coin, modify them slightly, and then run the normalisation function again:
+
+```{r}
+# get directions from coin
+directions <- coin$Meta$Ind[c("iCode", "Direction")]
+
+head(directions, 10)
+```
+
+We'll change the direction of the "Goods" indicator and re-normalise:
+
+```{r}
+# change Goods to -1
+directions$Direction[directions$iCode == "Goods"] <- -1
+
+# re-run (using min max default)
+coin <- Normalise(coin, dset = "Raw", directions = directions)
+```
+
+Finally let's explore how to specify different normalisation methods for different indicators. The `indiv_specs` argument takes a named list for each indicator, and will override the specifications in `global_specs`. If `indiv_specs` is specified, we only need to include sub-lists for indicators that differ from `global_specs`.
+
+To illustrate, we can use a contrived example where we might want to apply min-max to all indicators except two. For those, we apply a rank transformation and distance to maximum approach. Note, that since the default of `global_specs` is min-max, we don't need to specify that at all here.
+
+```{r}
+# individual specifications:
+# LPI - borda scores
+# Flights - z-scores with mean 10 and sd 2
+indiv_specs <- list(
+  LPI = list(f_n = "n_borda"),
+  Flights = list(f_n = "n_zscore",
+                 f_n_para = list(m_sd = c(10, 2)))
+)
+
+# normalise
+coin <- Normalise(coin, dset = "Raw", indiv_specs = indiv_specs)
+
+# a quick look at the first three indicators
+get_dset(coin, "Normalised")[1:4] |>
+  head(10)
+```
+
+This example is meant to be illustrative of the functionality of `Normalise()`, rather than being a sensible normalisation strategy, because the indicators are now on very different ranges.
+
+In practice, if different normalisation strategies are selected, it is a good idea to keep the indicators on similar ranges, otherwise the effects will be very unequal in the aggregation step.
+
+# Data frames and vectors
+
+Normalising a data frame is very similar to normalising a coin, except the input is a data frame and output is also a data frame.
+
+```{r}
+mtcars_n <- Normalise(mtcars, global_specs = list(f_n = "n_dist2max"))
+
+head(mtcars_n)
+```
+
+As with coins, columns can be normalised with individual specifications using the `indiv_spec` argument in exactly the same way as with a coin. Note that non-numeric columns are always ignored:
+
+```{r}
+Normalise(iris) |>
+  head()
+```
+
+There is also a method for numeric vectors, although usually it is just as easy to call the underlying normalisation function directly.
+
+```{r}
+# example vector
+x <- runif(10)
+
+# normalise using distance to reference (5th data point)
+x_norm <- Normalise(x, f_n = "n_dist2ref", f_n_para = list(iref = 5))
+
+# view side by side
+data.frame(x, x_norm)
+```
+
+# Purses
+
+The purse method for `normalise()` is especially useful if you are working with multiple coins and panel data. This is because to make scores comparable from one time point to the next, it is usually a good idea to normalise indicators together rather than separately. For example, with the min-max method, indicators are typically normalised using the minimum and maximum over all time points of data, as opposed to having a separate max and min for each.
+
+If indicators were normalised separately for each time point, then the highest scoring unit would get a score of 100 in time $t$ (assuming min-max between 0 and 100), but the highest scoring unit in time $t+1$ would *also* be assigned a score of 100. The underlying values of these two scores could be very different, but they would get
+
+This means that the purse method for `normalise()` is a bit different from most other purse methods, because it doesn't independently apply the function to each coin, but takes the coins all together. This has the following implications:
+
+1. Any normalisation function can be applied globally to all coins in a purse, ensuring comparability. BUT:
+2. If normalisation is done globally, it is no longer possible to automatically regenerate coins in the purse (i.e. using `regenerate()`), because the coin is no longer self-contained: it needs to know the values of the other coins in the purse. Perhaps at some point I will add a dedicated method for regenerating entire purses, but we are not there yet.
+
+Let's anyway illustrate with an example. We build the example purse first.
+
+```{r}
+purse <- build_example_purse(quietly = TRUE)
+```
+
+Normalising a purse works in exactly the same way as normalising a coin, except for the `global` argument. By default, `global = TRUE`, which means that the normalisation will be applied over all time points simultaneously, with the aim of making the index comparable. Here, we will apply the default min-max approach to all coins:
+
+```{r}
+purse <- Normalise(purse, dset = "Raw", global = TRUE)
+```
+
+Now let's examine the data set of the first coin. We'll see what the max and min of a few indicators is:
+
+```{r}
+# get normalised data of first coin in purse
+x1 <- get_dset(purse$coin[[1]], dset = "Normalised")
+
+# get min and max of first four indicators (exclude uCode col)
+sapply(x1[2:5], min, na.rm = TRUE)
+sapply(x1[2:5], max, na.rm = TRUE)
+```
+
+Here we see that the minimum values are zero, but the maximum values are *not* 100, because in other coins these indicators have higher values. To show that the global maximum is indeed 100, we can extract the whole normalised data set for all years and run the same check.
+
+```{r}
+# get entire normalised data set for all coins in one df
+x1_global <- get_dset(purse, dset = "Normalised")
+
+# get min and max of first four indicators (exclude Time and uCode cols)
+sapply(x1_global[3:6], min, na.rm = TRUE)
+sapply(x1_global[3:6], max, na.rm = TRUE)
+```
+
+And this confirms our expectations: that the global maximum and minimum are 0 and 100 respectively.
+
+Any type of normalisation can be performed on a purse in this "global" mode. However, keep in mind what is going on. Simply put, when `global = TRUE` this is what happens:
+
+1. The data sets from each coin are joined together into one using the `get_dset()` function.
+2. Normalisation is applied to this global data set.
+3. The global data set is then split back into the coins.
+
+So if you specify to normalise by e.g. rank, ranks will be calculated for all time points. Therefore, consider carefully if this fits the intended meaning.
+
+Normalisation can also be performed independently on each coin, by setting `global = FALSE`.
+
+```{r}
+purse <- Normalise(purse, dset = "Raw", global = FALSE)
+
+# get normalised data of first coin in purse
+x1 <- get_dset(purse$coin[[1]], dset = "Normalised")
+
+# get min and max of first four indicators (exclude uCode col)
+sapply(x1[2:5], min, na.rm = TRUE)
+sapply(x1[2:5], max, na.rm = TRUE)
+```
+
+Now the normalised data set in each coin will have a min and max of 0 and 100 respectively, for each indicator.
+
+# Simplified normalisation
+
+If the syntax of `Normalise()` looks a bit over-complicated, you can use the simpler `qNormalise()` function, which has less flexibility but makes the key function arguments more visible (they are not wrapped in lists). This function applies the same normalisation method to all indicators. It is also a generic so can be used on data frames, coins and purses. Let's demonstrate on a data frame:
+
+```{r}
+# some made up data
+X <- data.frame(uCode = letters[1:10],
+                a = runif(10),
+                b = runif(10)*100)
+
+X
+```
+
+By default, normalisation results in min-max on the $[0, 100]$ interval:
+
+```{r}
+qNormalise(X)
+```
+
+We can pass another normalisation function if we like, and the syntax is a bit easier than `Normalise()`:
+
+```{r}
+qNormalise(X, f_n = "n_dist2ref", f_n_para = list(iref = 1, cap_max = TRUE))
+```
+
+The `qNormalise()` function works in a similar way for coins and purses.

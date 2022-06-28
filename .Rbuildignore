@@ -8,3 +8,8 @@
 ^cran-comments\.md$
 ^CRAN-RELEASE$
 ^to-do\.md$
+^not_package$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^README\.rmd$

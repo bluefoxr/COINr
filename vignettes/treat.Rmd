@@ -1,0 +1,323 @@
+---
+title: "Outlier Treatment"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Outlier Treatment}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Introduction
+
+Data treatment is the process of altering indicators to improve their statistical properties, mainly for the purposes of aggregation. Data treatment is a delicate subject, because it essentially involves changing the values of certain observations, or transforming an entire distribution. Like any other step or assumption though, any data treatment should be carefully recorded and its implications understood. Of course, data treatment does not *have* to be applied, it is simply another tool in your toolbox.
+
+# The `Treat()` function
+
+The COINr function for treating data is called `Treat()`. This is a generic function with methods for coins, purses, data frames and numeric vectors. It is very flexible but this can add a layer of complexity. If you want to run mostly at default options, see the `qTreat()` function mentioned below in [Simplified function].
+
+The `Treat()` function operates a two-stage data treatment process, based on two data treatment functions (`f1` and `f2`), and a pass/fail function `f_pass` which detects outliers. The arrangement of this function is inspired by a fairly standard data treatment process applied to indicators, which consists of checking skew and kurtosis, then if the criteria are not met, applying Winsorisation up to a specified limit. Then if Winsorisation still does not bring skew and kurtosis within limits, applying a nonlinear transformation such as log or Box-Cox.
+
+This function generalises this process by using the following general steps:
+
+1. Check if variable passes or fails using `f_pass`
+2. If `f_pass` returns `FALSE`, apply `f1`, else return `x` unmodified
+3. Check again using `f_pass`
+4. If `f_pass` still returns `FALSE`, apply `f2`
+5. Return the modified `x` as well as other information.
+
+For the "typical" case described above `f1` is a Winsorisation function, `f2` is a nonlinear transformation
+and `f_pass` is a skew and kurtosis check. However, any functions can be passed as `f1`, `f2` and `f_pass`, which makes it a flexible tool that is also compatible with other packages.
+
+Further details on how this works are given in the following sections.
+
+# Numeric vectors
+
+The clearest way to demonstrate the `Treat()` function is on a numeric vector. Let's make a vector with a couple of outliers:
+
+```{r}
+# numbers between 1 and 10
+x <- 1:10
+
+# two outliers
+x <- c(x, 30, 100)
+```
+
+We can check the skew and kurtosis of this vector:
+
+```{r}
+library(COINr)
+
+skew(x)
+
+kurt(x)
+```
+
+The skew and kurtosis are both high. If we follow the default limits in COINr (absolute skew capped at 2, and kurtosis capped at 3.5), this would be classed as a vector with outliers. Indeed we can confirm this using the `check_SkewKurt()` function, which is the default pass/fail function used in `Treat()`. This also anyway outputs the skew and kurtosis:
+
+```{r}
+check_SkewKurt(x)
+```
+
+Now we know that `x` has outliers, we can treat it (if we want). We use the `Treat()` function to specify that our function for checking for outliers `f_pass = "check_SkewKurt"`, and our first function for treating outliers is `f1 = "winsorise"`. We also pass an additional parameter to `winsorise()`, which is `winmax = 2`. You can check the `winsorise()` function documentation to better understand how it works.
+
+```{r, fig.width=5, fig.height=3.5}
+l_treat <- Treat(x, f1 = "winsorise", f1_para = list(winmax = 2),
+                 f_pass = "check_SkewKurt")
+
+plot(x, l_treat$x)
+```
+
+The result of this data treatment is shown in the scatter plot: one point from `x` has been Winsorised (reassigned the next highest value). We can check the skew and kurtosis of the treated vector:
+
+```{r}
+check_SkewKurt(l_treat$x)
+```
+
+Clearly, Winsorising one point was enough in this case to bring the skew and kurtosis within the specified thresholds.
+
+# Data frames
+
+Treatment of a data frame with `Treat()` is effectively the same as treating a numeric vector, because the data frame method passes each column of the data frame to the numeric method. Here, we use some data from the COINr package to demonstrate.
+
+```{r}
+# select three indicators
+df1 <- ASEM_iData[c("Flights", "Goods", "Services")]
+
+# treat the data frame using defaults
+l_treat <- Treat(df1)
+
+str(l_treat, max.level = 1)
+```
+
+We can see the output is a list with `x_treat`, the treated data frame; `Dets_Table`, a table describing what happened to each indicator; and `Treated_Points`, which marks which individual points were adjusted. This is effectively the same output as for treating a numeric vector.
+
+```{r}
+l_treat$Dets_Table
+```
+
+We also check the individual points:
+
+```{r}
+l_treat$Treated_Points
+```
+
+# Coins
+
+Treating coins is a simple extension of treating a data frame. The coin method simply extracts the relevant data set as a data frame, and passes it to the data frame method. So more or less, the same arguments are present.
+
+We begin by building the example coin, which will be used for the examples here.
+
+```{r}
+coin <- build_example_coin(up_to = "new_coin")
+```
+
+## Default treatment
+
+The `Treat()` function can be applied directly to a coin with completely default options:
+
+```{r}
+coin <- Treat(coin, dset = "Raw")
+```
+
+For each indicator, the `Treat()` function:
+
+1. Checks skew and kurtosis using the `check_SkewKurt()` function
+2. If the indicator fails the test (returns `FALSE`), applies Winsorisation
+3. Checks again skew and kurtosis
+4. If the indicator still fails, applies a log transformation.
+
+If at any stage the indicator passes the skew and kurtosis test, it is returned without further treatment.
+
+When we run `Treat()` on a coin, it also stores information returned from `f1`, `f2` and `f_pass` in the coin:
+
+```{r}
+# summary of treatment for each indicator
+head(coin$Analysis$Treated$Dets_Table)
+```
+
+Notice that only one treatment function was used here, since after Winsorisation (`f1`), all indicators passed the skew and kurtosis test (`f_pass`).
+
+In general, `Treat()` tries to collect all information returned from the functions that it calls. Details of the treatment of individual points are also stored in `.$Analysis$Treated$Treated_Points`.
+
+The `Treat()` function gives you a high degree of control over which functions are used to treat and test indicators, and it is also possible to specify different functions for different indicators. Let's begin though by seeing how we can change the specifications for all indicators, before proceeding to individual treatment.
+
+Unless `indiv_specs` is specified (see later), the same procedure is applied to all indicators. This process is specified by the `global_specs` argument. To see how to use this, it is easiest to show the default of this argument which is built into the `treat()` function:
+
+```{r}
+# default treatment for all cols
+specs_def <- list(f1 = "winsorise",
+                  f1_para = list(na.rm = TRUE,
+                                 winmax = 5,
+                                 skew_thresh = 2,
+                                 kurt_thresh = 3.5,
+                                 force_win = FALSE),
+                  f2 = "log_CT",
+                  f2_para = list(na.rm = TRUE),
+                  f_pass = "check_SkewKurt",
+                  f_pass_para = list(na.rm = TRUE,
+                                     skew_thresh = 2,
+                                     kurt_thresh = 3.5))
+```
+
+Notice that there are six entries in the list:
+
+* `f1` which is a string referring to the first treatment function
+* `f1_para` which is a list of any other named arguments to `f1`, excluding `x` (the data to be treated)
+* `f2` and `f2_para` which are analogous to `f1` and `f1_para` but for the second treatment function
+* `f_pass` is a string referring to the function to check for outliers
+* `f_pass_para` a list of any other named arguments to `f_pass`, other than `x` (the data to be checked)
+
+To understand what the individual parameters do, for example in `f1_para`, we need to look at the function called by `f1`, which is the `winsorise()` function:
+
+* `x` A numeric vector.
+* `na.rm` Set `TRUE` to remove `NA` values, otherwise returns `NA`.
+* `winmax` Maximum number of points to Winsorise. Default 5. Set `NULL` to have no limit.
+* `skew_thresh` A threshold for absolute skewness (positive). Default 2.25.
+* `kurt_thresh` A threshold for kurtosis. Default 3.5.
+* `force_win` Logical: if `TRUE`, forces winsorisation up to winmax (regardless of skew/kurt).
+
+Here we see the same parameters as named in the list `f1_para`, and we can change the maximum number of points to be Winsorised, the skew and kurtosis thresholds, and other things.
+
+To make adjustments, unless we want to redefine everything, we don't need to specify the entire list. So for example, if we want to change the maximum Winsorisation limit `winmax`, we can just pass this part of the list (notice we still have to wrap the parameter inside a list):
+
+```{r}
+# treat with max winsorisation of 3 points
+coin <- Treat(coin, dset = "Raw", global_specs = list(f1_para = list(winmax = 1)))
+
+# see what happened
+coin$Analysis$Treated$Dets_Table |>
+  head(10)
+```
+
+Having imposed a much stricter Winsorisation limit (only one point), we can see that now one indicator has been passed to the second treatment function `f2`, which has performed a log transformation. After doing this, the indicator passes the skew and kurtosis test.
+
+By default, if an indicator does not satisfy `f_pass` after applying `f1`, it is passed to `f2` *in its original form* - in other words it is not the output of `f1` that is passed to `f2`, and `f2` is applied *instead* of `f1`, rather than in addition to it. If you want to apply `f2` on top of `f1` set `combine_treat = TRUE`. In this case, if `f_pass` is not satisfied after `f1` then the output of `f1` is used as the input of `f2`. For the defaults of `f1` and `f2` this approach is probably not advisable because Winsorisation and the log transform are quite different approaches. However depending on what you want to do, it might be useful.
+
+## Individual treatment
+
+The `global_specs` specifies the treatment methodology to apply to all indicators. However, the `indiv_specs` argument (if specified), can be used to override the treatment specified in `global_specs` for specific indicators. It is specified in exactly the same way as `global_specs` but requires a parameter list for each indicator that is to have individual specifications applied, wrapped inside one list.
+
+This is probably clearer using an example. To begin with something simple, let's say that we keep the defaults for all indicators except one, where we change the Winsorisation limit. We will set the Winsorisation limit of the indicator "Flights" to zero, to force it to be log-transformed.
+
+```{r}
+# change individual specs for Flights
+indiv_specs <- list(
+  Flights = list(
+    f1_para = list(winmax = 0)
+  )
+)
+
+# re-run data treatment
+coin <- Treat(coin, dset = "Raw", indiv_specs = indiv_specs)
+```
+
+The only thing to remember here is to make sure the list is created correctly. Each indicator to assign individual treatment must have its own list - here containing `f1_para`. Then `f1_para` itself is a list of named parameter values for `f1`. Finally, all lists for each indicator have to be wrapped into a single list to pass to `indiv_specs`. This looks a bit convoluted for changing a single parameter, but gives a high degree of control over how data treatment is performed.
+
+We can now see what happened to "Flights":
+
+```{r}
+coin$Analysis$Treated$Dets_Table[
+  coin$Analysis$Treated$Dets_Table$iCode == "Flights", 
+]
+```
+
+Now we see that "Flights" didn't pass the first Winsorisation step (because nothing happened to it), and was passed to the log transform. After that, the indicator passed the skew and kurtosis check.
+
+As another example, we may wish to exclude some indicators from data treatment completely. To do this, we can set the corresponding entries in `indiv_specs` to `"none"`. This is the only case where we don't have to pass a list for each indicator.
+
+```{r}
+# change individual specs for two indicators
+indiv_specs <- list(
+  Flights = "none",
+  LPI = "none"
+)
+
+# re-run data treatment
+coin <- Treat(coin, dset = "Raw", indiv_specs = indiv_specs)
+```
+
+Now if we examine the treatment table, we will find that these indicators have been excluded from the table, as they were not subjected to treatment.
+
+## External functions
+
+Any functions can be passed to `Treat()`, for both treating and checking for outliers. As an example, we can pass an outlier detection function ` from the [performance](https://easystats.github.io/performance/reference/check_outliers.html) package
+
+```{r, include = FALSE}
+# check if performance package installed
+perf_installed <- requireNamespace("performance", quietly = TRUE)
+```
+
+The following code chunk will only run if you have the 'performance' package installed.
+
+```{r, eval = perf_installed}
+library(performance)
+
+# the check_outliers function outputs a logical vector which flags specific points as outliers.
+# We need to wrap this to give a single TRUE/FALSE output, where FALSE means it doesn't pass,
+# i.e. there are outliers
+outlier_pass <- function(x){
+  # return FALSE if any outliers
+  !any(check_outliers(x))
+}
+
+# now call treat(), passing this function
+# we set f_pass_para to NULL to avoid passing default parameters to the new function
+coin <- Treat(coin, dset = "Raw",
+               global_specs = list(f_pass = "outlier_pass",
+                                    f_pass_para = NULL)
+)
+
+# see what happened
+coin$Analysis$Treated$Dets_Table |>
+  head(10)
+```
+
+Here we see that the test for outliers is much stricter and very few of the indicators pass the test, even after applying a log transformation. Clearly, how an outlier is defined can vary and depend on your application.
+
+# Purses
+
+The purse method for `treat()` is fairly straightforward. It takes almost the same arguments as the coin method, and applies the same specifications to each coin. Here we simply demonstrate it on the example purse.
+
+```{r}
+# build example purse
+purse <- build_example_purse(up_to = "new_coin", quietly = TRUE)
+
+# apply treatment to all coins in purse (default specs)
+purse <- Treat(purse, dset = "Raw")
+```
+
+# Simplified function
+
+The `Treat()` function is very flexible but comes at the expense of a possibly fiddly syntax. If you don't need that level of flexibility, consider using `qTreat()`, which is a simplified wrapper for `Treat()`. 
+
+The main features of `qTreat()` are that:
+
+* The first treatment function `f1` cannot be changed and is set to `winsorise()`.
+* The `winmax` parameter, as well as the skew and kurtosis limits, are available directly as function arguments to `qTreat()`.
+* The `f_pass` function cannot be changed and is always set to `check_SkewKurt()`.
+* You can still choose `f2`
+
+The `qTreat()` function is a generic with methods for data frames, coins and purses. Here, we'll just demonstrate it on a data frame.
+
+```{r}
+# select three indicators
+df1 <- ASEM_iData[c("Flights", "Goods", "Services")]
+
+# treat data frame, changing winmax and skew/kurtosis limits
+l_treat <- qTreat(df1, winmax = 1, skew_thresh = 1.5, kurt_thresh = 3)
+```
+
+Now we check what the results are:
+
+```{r}
+l_treat$Dets_Table
+```
+
+We can see that in this case, Winsorsing by one point was not enough to bring "Flights" and "Goods" within the specified skew/kurtosis limits. Consequently, `f2` was invoked, which uses a log transform and brought both indicators within the specified limits.

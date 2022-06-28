@@ -1,0 +1,112 @@
+---
+title: "Changes from COINr v1.0.0"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Changes from COINr v1.0.0}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+If you were using COINr prior to v.1.0 you may have updated the package and found that code calling COINr functions no longer works! What is going on?
+
+COINr has undergone some major changes and most of the syntax has changed. So major that I skipped directly from v0.6 to v1.0 without any intermediate steps. First of all, if you were using COINr previously, I would like to say SORRY for any inconvenience caused by these changes. However, the changes are worth it, and this is a one-off thing - I won't be doing a seismic change like this again.
+
+This vignette helps you to transition from COINr 0.6.x to 1.0 and explains what has happened. In short, most function names have changed, the package is more robust and flexible, panel data is more supported, interactive plots have been moved to a separate package available on GitHub, and if you don't like all this you can install the archive version of the package called "COINr6" and everything will go back to how it was. Let's go through these things one by one.
+
+# Why
+
+If you just want to know what has changed and how to deal with it, skip this section. If you want to know why things have changed, read on.
+
+The short story is that I found quite a few flaws in the package which I was not happy with, given that it is in the public domain. I decided to address these flaws in one giant revision, rather than a long series of updates. I'll explain each of these points here below.
+
+## Robustness and efficiency
+
+COINr was the first CRAN package that I built (everyone say "aww"). In the process, I learned a lot about package development, as well as principles about programming in general. However, since I learned this while building the package, especially the first parts of the package that I wrote were (in retrospect) not written very well. For example, although I defined a "COIN" class, I didn't define methods for the COIN. Much of the code was not written in a "functional" way, and there were not enough checks on the inputs and outputs of the code. All this meant that the code was not very robust and had to be patched, a lot. This made it hard to maintain, less robust, and also slower for the user. As a consequence, I decided to re-write most functions, many from scratch, with a higher standard of programming. I also slimmed down the "COIN" class to a more streamlined "coin" class.
+
+## Focus
+
+COINr is a package meant to focus on developing composite indicators. But the focus got lost at some point when I got carried away with html plotly plots and shiny apps. These things, although nice, were in retrospect not really that useful in the package and are also difficult to maintain and bloat out the package. I decided to cut out all interactive plots and apps, but to archive them in a separate package called "COINrX" (see below).
+
+## Dependencies
+
+As a result of the first two points (inexperience plus straying off track), COINr had many dependencies, i.e. packages that had to be installed to install COINr. Although there is no harm in loading 10 or 20 packages when performing data analysis in R, this can become a problem if you are building a package because every user has to have these packages installed. If you have ever had to install several packages at the same time in R, you have probably run into some kind of problem. Moreover, COINr is dependent on any changes in those packages, and that makes maintaining it more difficult. This meant that in practice, COINr was not always easy to install. I decided to re-write the package almost entirely in base R, to remove as many dependencies as possible.
+
+## Features and flexibility
+
+One thing that was missing from COINr was proper support for panel data (time-dependent data). This has now been mostly rectified with the introduction of the "purse" class. The main "building" functions of COINr have also been re-written as generics, with methods for coins, data frames and purses. Moreover many functions allow you to call other functions, which makes COINr much easier to link up with other packages.
+
+## Syntax
+
+COINr syntax was inconsistent. While this was not a critical problem, since I was making big changes to the package I decided to take the opportunity to make the syntax as consistent as possible. This is a one-off change and won't be messed around with any more!
+
+# What's changed?
+
+## Function names
+
+Many things have changed. The first thing you will probably notice is the syntax. Because I was anyway making syntax-breaking changes to the package, I decided to go all in, and try to make the syntax as consistent as possible. This means that function names are more predictable: all "building" functions start with a capital letter. Plot functions start with `plot_`. Analysis functions mostly start with `get_`. Functions are generally in lower case. This all hopefully makes the package a little easier to use. You will notice that calling an old < v1.0 function name will generate an error, which redirects you to the new function name. My hope is that although this is inconvenient, it will not take too long to adapt to the new function names. In most functions, the main logic behind the arguments is pretty similar. As mentioned above, I'm not going to change all the names again; this is a one-off thing.
+
+## Function features
+
+The second obvious change is that some of the key functions themselves have changed syntax: they have been re-written to be more flexible and more robust. This may seem annoying but I promise you it is for the greater good. I can't describe all the changes here, but in general functions have been made more flexible: for example `Normalise()` now can take any normalising function, rather than a fixed set of options. Outlier treatment also allows to pass outlier detection and treatment functions. The sensitivity analysis function (now `get_sensitivity()`) now allows to target any part of the coin at all, not just function arguments. In general, the core "building" functions now call other lower-level functions and this makes it easier to hook COINr up to other packages, for example using more sophisticated imputation and aggregation methods.
+
+## New "coin" class and methods
+
+The third related change that is perhaps not so obvious is that the structure of the central object in COINr, the "COIN", has changed. The object has been streamlined and tidied, and has a new S3 class called a "coin" (the difference being that the new coin is lower case). If you have previously built a COIN using an older version of COINr, it will not work in the new version of COINr! But the good news is that there is a handy function called `COIN_to_coin()` which converts the older "COIN" class to the newer "coin" class.
+
+The new "coin" class also comes with a number of methods. All the main construction functions now have methods for at least coins, data frames and purses (see next sub-section), and some have methods for numerical vectors. This is in contrast to the older COINr versions which did not define formal methods. See the [Building coins](coins.html) vignette for more details.
+
+## Purses and panel data
+
+The new "purse" class gives a formal way to deal with panel data (time indexed data). A "purse" is a time-indexed collection of coins. All construction functions have purse methods, so working with time data becomes very straightforward.
+
+Purses and purse methods are still being expanded in COINr so keep an eye out for new features if you are interested. See the [Building coins](coins.html) vignette for more details.
+
+## Documentation
+
+The next thing is that the documentation has been completely re-written, with loads of new vignettes! And even better, COINr now lives at a web-page built with "pkgdown" which you can find [here](https://bluefoxr.github.io/COINr/), where all the documentation is easily accessible. So each function is well-documented. Hurray.
+
+## Removed functions
+
+The last very obvious change is that some functions have disappeared! Where have they gone? You may notice that all functions that generated interactive plots (often called `iPlot*` in previous versions of COINr), plus all shiny apps, have vanished. The reason for this, as explained above, is that these tools were distracting from the main point of the package and were too much effort to maintain. Moreover, even though interactive plots are great if you are outputting html documents, for pdf and word they are a hassle because it is quite unpredictable how they will be rendered. The good news is that I have replaced some of the interactive plots with static versions, such as `plot_framework()`, and `plot_scatter()`, so you can still do most of the plotting as in the previous versions, but with more predictable (and more usable) outputs.
+
+# COINrX: Apps and widgets
+
+It may be that actually, you rather liked the Shiny apps and interactive plots. A shame, you say, to chuck those things away. Well, along those lines I have/will archive the removed apps and plots in a separate extension package called "COINrX". At the time of writing, I haven't yet got round to doing this, but it shouldn't take too long.
+
+The idea of COINrX is that if you don't want all the interactive stuff, just install COINr. If you *do* also want that, install COINr and then also install COINrX. When you want to generate interactive plots, load up COINrX and it will add the missing functions.
+
+# COINr6: I want out!
+
+If this level of upheaval is all a bit too much, and you'd like to go back to how things were before, you have two options. The easiest "roll-back" option is to install the "COINr6" package. COINr6 is the latest version of COINr *before* the major syntax changes. This means that if you wrote some scripts or markdown files in the old syntax, instead of loading COINr, install and load COINr6, and this will run as before.
+
+The advantage of this is that you can have COINr (new syntax) and COINr6 (old syntax) both installed at the same time.
+
+To install COINr6 you have to install it from GitHub. First, make sure you have the "remotes" package:
+
+```{r, eval=FALSE}
+# install remotes package if you don't have it
+install.packages("remotes")
+```
+
+Now install COINr6 from the GitHub repo:
+
+```{r, eval = FALSE}
+remotes::install_github("bluefoxr/COINr6")
+```
+
+And that's it. I will continue to lightly maintain this package for a while (e.g. fixing any critical bugs if any arise) but in general the main focus will be on the new COINr version.
+
+Another way to roll back COINr to an older version is to use `devtools::install_version()`, in which you can specify a version number of any package to install. This might be a bit more fiddly, and personally I would recommend to rather install COINr6. But if you want, check out [this article](https://support.rstudio.com/hc/en-us/articles/219949047-Installing-older-versions-of-packages) for some info on installing older package versions.
+
+# Summary
+
+In summary, COINr has changed quite a lot, but that is a Good Thing. If you do want to roll back, or have both old and new syntax side by side, install COINr6. If you are missing interactive stuff in the new package, install COINrX (when it's available).
+
+As usual, if you have any feedback, spot any bugs or have any suggestions, email me or [open an issue](https://github.com/bluefoxr/COINr/issues) in the GitHub repo.

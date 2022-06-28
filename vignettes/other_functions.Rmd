@@ -1,0 +1,119 @@
+---
+title: "Other Functions"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Other Functions}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This vignette covers other functions that don't fit in other vignettes, but still seem useful. Mainly this involves import and export, and some helper functions. 
+
+# Import and export
+
+One of the most useful functions is `export_to_excel()`. This can be used to export the contents of a coin to Excel at at any point in its construction, and is very simple to run. We first build the example coin:
+
+```{r}
+library(COINr)
+
+# build example coin
+coin <- build_example_coin(quietly = TRUE)
+```
+
+Then export to Excel:
+
+```{r, eval=FALSE}
+# export coin to Excel
+export_to_excel(coin, fname = "example_coin_results.xlsx")
+```
+
+This exports every data frame in the coin to a separate tab in the workbook, named according to its position in the coin. By default it excludes the Log of the coin, but this can be optionally included. The function is very useful for passing the results to people who don't use R (let's face it, that's most people).
+
+Data can also be imported directly into COINr from the [COIN Tool](https://knowledge4policy.ec.europa.eu/composite-indicators/coin-tool_en) which is an Excel-based tool for building and analysing composite indicators, similar in fact to COINr^[Full disclosure, I was also involved in the development of the COIN Tool]. With the `import_coin_tool()` function you can import data directly from the COIN Tool to cross check or extend your analysis in COINr.
+
+To demonstrate, we can take the example version of the COIN Tool, which you can download [here](https://composite-indicators.jrc.ec.europa.eu/sites/default/files/COIN_Tool_v1_LITE_exampledata.xlsm). Then it's as simple as running:
+
+```{r, eval=FALSE}
+# make sure file is in working directory!
+coin_import <- import_coin_tool("COIN_Tool_v1_LITE_exampledata.xlsm",
+                                makecodes = TRUE, out2 = "coin")
+```
+
+This will directly generate a coin from the COIN Tool.
+
+# Converting from older COINr versions
+
+COINr changed drastically from v0.6 to v1.0. So drastically that I skipped several version numbers. From v1.0, the main object of COINr is called a "coin" and this is different from the "COIN" used up to v0.6.x. If you have worked in COINr before v1.0, you can use the `COIN_to_coin()` function to convert old COINs into new coins:
+
+```{r, eval=FALSE}
+coin <- COIN_to_coin(COIN)
+```
+
+This comes with some limitations: any data sets present in the coin will not be passed on unless `recover_dsets = TRUE`. However, if this is specified, the coin cannot be regenerated because it is not possible to translate the log from the older COIN class (called the "Method") to the log in the new coin class. Still, the conversion avoids having to reformat `iData` and `iMeta`.
+
+# Other useful functions
+
+Here we list some accessory functions that could be useful in some circumstances.
+
+The `rank_df()` function converts a data frame to ranks, ignoring non-numeric columns. Taking some sample data:
+
+```{r}
+X <- ASEM_iData[1:5,c(2,10:12)]
+X
+```
+
+This looks like
+
+```{r}
+rank_df(X)
+```
+
+The `replace_df()` function replaces values found anywhere in a data frame with corresponding new values:
+
+```{r}
+replace_df(X, data.frame(old = c("AUT", "BEL"), new = c("test1", "test2")))
+```
+
+The `round_df()` rounds to a specified number of decimal places, ignoring non-numeric columns:
+
+```{r}
+round_df(X, 1)
+```
+
+The `signif_df()` is equivalent but for a number of significant figures:
+
+```{r}
+signif_df(X, 3)
+```
+
+Finally, the `compare_df()` function gives a detailed comparison between two similar data frames that are indexed by a specified column. This function is tailored to compare results in composite indicators. Say you have a set of results from COINr and want to cross check against a separate calculation. Often, you end up with a data frame with the same columns, but possibly in a different order. Rows could be in a different order but are indexed by an identifier, here "uCode". The `compare_df()` function gives a detailed comparison between the two data frames and points out any differences.
+
+We'll demonstrate this by copying the example data frame, altering some values and seeing what happens:
+
+```{r}
+# copy
+X1 <- X
+
+# change three values
+X1$GDP[3] <- 101
+X1$Population[1] <- 10000
+X1$Population[2] <- 70000
+
+# reorder
+X1 <- X1[order(X1$uCode), ]
+
+# now compare
+compare_df(X, X1, matchcol = "uCode")
+```
+
+The output is a list with several entries. First, it tells us that the two data frames are not the same. The "Details" data frame lists each column and says whether it is identical or not, and how many different points there are. Finally, the "Differences" list has one entry for each column that differs, and details the value of the point from the first data frame compared to the value from the second.
+
+From experience, this kind of output can be very helpful in quickly zooming in on differences between possibly large data frames of results. It is mainly intended for the use case described above, where the data frames are known to be similar, are of the same size, but we want to check for precise differences.
+
