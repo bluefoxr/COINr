@@ -12,7 +12,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">COINr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -177,7 +177,8 @@ Each unit is flagged as having low data or too many zeros based on thresholds.</
 <span class="r-in"><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="build_example_coin.html">build_example_coin</a></span><span class="op">(</span>up_to <span class="op">=</span> <span class="st">"new_coin"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># screen units from raw dset</span></span>
-<span class="r-in"><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="Screen.html">Screen</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Raw"</span>, unit_screen <span class="op">=</span> <span class="st">"byNA"</span>, dat_thresh <span class="op">=</span> <span class="fl">0.85</span>, write_to <span class="op">=</span> <span class="st">"Filtered_85pc"</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="Screen.html">Screen</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Raw"</span>, unit_screen <span class="op">=</span> <span class="st">"byNA"</span>,</span>
+<span class="r-in">               dat_thresh <span class="op">=</span> <span class="fl">0.85</span>, write_to <span class="op">=</span> <span class="st">"Filtered_85pc"</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Written data set to .$Data$Filtered_85pc</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># some details about the coin by calling its print method</span></span>

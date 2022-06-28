@@ -64,7 +64,7 @@ can also be changed using the \code{f_denom} argument.
 See also documentation for \code{\link[=Denominate.data.frame]{Denominate.data.frame()}} which is called by this method.
 }
 \examples{
-#' # build example coin
+# build example coin
 coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
 
 # denominate (here, we only need to say which dset to use, takes

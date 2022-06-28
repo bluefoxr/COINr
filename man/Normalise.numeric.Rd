@@ -10,7 +10,7 @@
 \item{x}{Object to be normalised}
 
 \item{f_n}{The normalisation method, specified as string which refers to a function of the form \code{f_n(x, npara)}.
-See details.}
+See details. Defaults to \code{"n_minmax"} which is the min-max function.}
 
 \item{f_n_para}{Supporting list of arguments for \code{f_n}. This is required to be a list.}
 

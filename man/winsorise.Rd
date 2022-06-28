@@ -25,7 +25,9 @@ winsorise(
 \item{kurt_thresh}{A threshold for kurtosis. Default 3.5.}
 
 \item{force_win}{Logical: if \code{TRUE}, forces winsorisation up to winmax (regardless of skew/kurt).
-Default \code{FALSE}.}
+Default \code{FALSE}. Note - this option should be used with care because the direction of Winsorisation
+is based on the direction of skew. Successively Winsorising can switch the direction of skew and hence
+the direction of Winsorisation, which may not produce the expected behaviour.}
 }
 \value{
 A list containing winsorised data, number of winsorised points, and the individual points that

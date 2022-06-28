@@ -77,7 +77,7 @@ coin, so setting this to a higher number shouldn't have much impact on computati
 }
 \examples{
 # for examples, see `vignette("sensitivity")`
-# (this is because package examples are run automatically and this function can take a few minutes to
-# run at realistic settings)
+# (this is because package examples are run automatically and this function can
+# take a few minutes to run at realistic settings)
 
 }

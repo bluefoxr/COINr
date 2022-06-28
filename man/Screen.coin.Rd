@@ -63,7 +63,8 @@ See also \code{vignette("screening")}.
 coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
 
 # screen units from raw dset
-coin <- Screen(coin, dset = "Raw", unit_screen = "byNA", dat_thresh = 0.85, write_to = "Filtered_85pc")
+coin <- Screen(coin, dset = "Raw", unit_screen = "byNA",
+               dat_thresh = 0.85, write_to = "Filtered_85pc")
 
 # some details about the coin by calling its print method
 coin

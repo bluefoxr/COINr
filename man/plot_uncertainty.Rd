@@ -41,8 +41,8 @@ See \code{vignette("sensitivity")}.
 }
 \examples{
 # for examples, see `vignette("sensitivity")`
-# (this is because package examples are run automatically and sensitivity analysis can take a few minutes to
-# run at realistic settings)
+# (this is because package examples are run automatically and sensitivity analysis
+# can take a few minutes to run at realistic settings)
 
 }
 \seealso{
