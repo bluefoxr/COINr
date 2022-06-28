@@ -1,33 +1,13 @@
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# COINr <img src="man/figures/COINr_logo.png" width="121px" height="140px" align="right" style="padding-left:10px;background-color:white;" />
+# COINr <img src="man/figures/COINr_logo.png" width="133px" height="154px" align="right" style="padding-left:10px;background-color:white;" />
 
 <!-- badges: start -->
 
 [![CRAN-update](https://www.r-pkg.org/badges/version-ago/COINr)](https://cran.r-project.org/package=COINr)
 [![CRAN_Download_Badge](http://cranlogs.r-pkg.org/badges/COINr)](https://CRAN.R-project.org/package=COINr)
 <!-- badges: end -->
-=======
-# COINr <img src="man/images/COINr_logo.png" width="121px" height="140px" align="right" style="padding-left:10px;background-color:white;" />
-
-## ANNOUNCEMENT
-
-COINr is undergoing some major updates which will introduce very **significant changes to the syntax** of the package. This is is a one-off change, after which the package will become stable and backwards-compatible.
-
-The new features of COINr will include:
-
-* Full support for panel data (composite indicators over time)
-* Much more robust plus many fewer package dependencies, so easier to install
-* New static plots
-* Improved consistent and aligned syntax
-* More flexible core functions
-* Interactive apps will be moved to a separate (non-CRAN) package which can be installed as an add-on
-
-The updated package will be released around May 2022. Apologies for the disruption this will cause but the new features should be worth it. You can always roll back to the older version of COINr if you prefer.
-
-Peace.
-
-## About
 
 COINr is a high-level R package which is the first fully-flexible
 development and analysis environment for composite indicators and
@@ -104,6 +84,10 @@ steps. You may be asked to update packages. This might not be strictly
 necessary, so you can also try skipping this step.
 
 ## Getting started
+
+COINr needs a little reading and learning to understand properly. But
+once you have done that, it can be very powerful for developing
+composite indicators.
 
 A good place to get started is COINr’s “Overview” vignette. Try
 `vignette("overview")`.
