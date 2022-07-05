@@ -16,7 +16,7 @@ A skewness value (scalar).
 }
 \description{
 Calculates skewness of the values of a numeric vector. This uses the same definition of skewness as
-\code{\link[e1071:skewness]{e1071::skewness()}} where \code{type == 2}, which is equivalent to the definition of skewness used in Excel.
+the "skewness()" function in the "e1071" package where \code{type == 2}, which is equivalent to the definition of skewness used in Excel.
 }
 \examples{
 x <- runif(20)
