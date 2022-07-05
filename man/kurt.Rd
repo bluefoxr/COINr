@@ -16,7 +16,7 @@ A kurtosis value (scalar).
 }
 \description{
 Calculates kurtosis of the values of a numeric vector. This uses the same definition of kurtosis as
-\code{\link[e1071:kurtosis]{e1071::kurtosis()}} where \code{type == 2}, which is equivalent to the definition of kurtosis used in Excel.
+as the "kurtosis()" function in the e1071 package, where \code{type == 2}, which is equivalent to the definition of kurtosis used in Excel.
 }
 \examples{
 x <- runif(20)
