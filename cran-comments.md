@@ -1,9 +1,8 @@
 ## Resubmission
 
-This is a resubmission v.0.6.1 to very recent v.0.6.0. I can see that CRAN tests have thrown two errors because I have used the native pipe |> in a few places in updates. I have now removed the native pipe to keep the R version dependency at 4.0. Sorry about that.
+This is a resubmission, which comprises a major update, hence the jump in numbering from 0.6.1 to 1.0.0.
 
-Updates are described in NEWS.md.
-There were no errors or warnings (see below).
+Updates are described in NEWS.md, and there is a vignette describing the upgrades in more detail at `vignette("v1")`.
 
 There was 1 note:
 
