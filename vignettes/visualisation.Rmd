@@ -135,7 +135,7 @@ The `plot_bar()` function returns a bar chart of single indicator, sorted from h
 plot_bar(coin, dset = "Raw", iCode = "CO2", by_group = "GDPpc_group", axes_label = "iName")
 ```
 
-Here we have also set `axes_label = "iName"` to output indicator names rather than codes. Several other options are available, including a log scale, and colouring options. Here we just show one more thing, which is the possibility to break bars down into underlying component scores. This only works if we are plotting an aggregate score (i.e. level 2 or hight), rather than an indicator, because it looks for the underlying scores used to calculate each aggregate score. For example, we can see how the Sustainability scores break down into their three underlying components, for each country:
+Here we have also set `axes_label = "iName"` to output indicator names rather than codes. Several other options are available, including a log scale, and colouring options. Here we just show one more thing, which is the possibility to break bars down into underlying component scores. This only works if we are plotting an aggregate score (i.e. level 2 or higher), rather than an indicator, because it looks for the underlying scores used to calculate each aggregate score. For example, we can see how the Sustainability scores break down into their three underlying components, for each country:
 
 ```{r, fig.width=7}
 plot_bar(coin, dset = "Aggregated", iCode = "Sust", stack_children = TRUE)

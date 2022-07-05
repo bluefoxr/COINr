@@ -89,7 +89,7 @@ Units (rows) of the data set can also be selected (also in combination with sele
 get_data(coin, dset = "Raw", iCodes = "Goods", uCodes = c("AUT", "VNM"))
 ```
 
-Rows can also be sub-setted using groups, i.e. unit groupings that are defined using variables input with `iMeta$Type = "Group"` when building the coin. Recall that for our example coin we have several groups (a reminder that you can see some details about the coin using its pring method):
+Rows can also be sub-setted using groups, i.e. unit groupings that are defined using variables input with `iMeta$Type = "Group"` when building the coin. Recall that for our example coin we have several groups (a reminder that you can see some details about the coin using its print method):
 
 ```{r}
 coin

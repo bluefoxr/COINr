@@ -59,7 +59,7 @@ min(df_avail$Frc.Avail)
 With missing data, several options are available:
 
 1. Leave it as it is and aggregate anyway (there is also the option for data availability thresholds during aggregation - see [Aggregation](aggregate.html))
-2. Consider removing indicators that have low data availability (this has to be done manually becaus it affects the structure of the index)
+2. Consider removing indicators that have low data availability (this has to be done manually because it affects the structure of the index)
 3. Consider removing units that have low data availability (see [Unit Screening](screening.html))
 4. Impute missing data
 
@@ -127,7 +127,7 @@ This additionally required to specify the `directions` argument because we need 
 
 The values imputed in this way are more realistic. Essentially we are replacing each missing value with the average (normalised) score of the other indicators, for a given unit. However this also only makes sense if the indicators/columns are similar to one another: high values of one would likely imply high values in the other.
 
-Behind the scenes, setting `normalise_first = TRUE` first normalises each column using a min-max method, then performs the imputation, then returns the indicators to the orginal scales using the inverse transformation. Another approach which gives more control is to simply run `Normalise()` first, and work with the normalised data from that point onwards. In that case it is better to set `normalise_first = FALSE`, since by default if `impute_by = "row"` it will be set to `TRUE`.
+Behind the scenes, setting `normalise_first = TRUE` first normalises each column using a min-max method, then performs the imputation, then returns the indicators to the original scales using the inverse transformation. Another approach which gives more control is to simply run `Normalise()` first, and work with the normalised data from that point onwards. In that case it is better to set `normalise_first = FALSE`, since by default if `impute_by = "row"` it will be set to `TRUE`.
 
 As a final point on data frames, we can set `impute_by = "df"` to pass the entire data frame to `f_i`, which may be useful for more sophisticated multivariate imputation methods. But what's the point of using `Impute()` then, you may ask? First, because when imputing coins, we can impute by indicator groups (see next section); and second, `Impute()` performs some checks to ensure that non-`NA` values are not altered.
 

@@ -6,7 +6,7 @@
 #' dealing with time series data, it is often desirable to normalise over the whole panel data set at once
 #' rather than independently for each time point. This makes the resulting index and aggregates comparable
 #' over time. Here, the `global` argument controls whether to normalise each coin independently or to normalise
-#' across all data at once. In other repects, this function behaves the same as [Normalise.coin()].
+#' across all data at once. In other respects, this function behaves the same as [Normalise.coin()].
 #'
 #' The same specifications are passed to each coin in the purse. This means that each coin is normalised
 #' using the same set of specifications and directions. If you need control over individual coins, you

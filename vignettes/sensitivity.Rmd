@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-Sensitivity analysis is often confused with *uncertainty analysis*. Uncertainty analysis involves estimating the uncertainty in the ouputs of a system (here, the scores and ranks of the composite indicator), given the uncertainties in the inputs (here, methodological decisions, weights, etc.). The results of an uncertainty include for example confidence intervals over the ranks, median ranks, and so on.
+Sensitivity analysis is often confused with *uncertainty analysis*. Uncertainty analysis involves estimating the uncertainty in the outputs of a system (here, the scores and ranks of the composite indicator), given the uncertainties in the inputs (here, methodological decisions, weights, etc.). The results of an uncertainty include for example confidence intervals over the ranks, median ranks, and so on.
 
 Sensitivity analysis is an extra step after uncertainty analysis, and estimates which of the input uncertainties are driving the output uncertainty, and by how much. A rule of thumb, known as the [Pareto Principle](https://en.wikipedia.org/wiki/Pareto_principle) (or the 80/20 Rule) suggests that often, only a small proportion of the input uncertainties are causing the majority of the output uncertainty. Sensitivity analysis allows us to find which input uncertainties are significant (and therefore perhaps worthy of extra attention), and which are not important.
 
@@ -232,7 +232,7 @@ If you want to perform a more complex sensitivity analysis, perhaps generating s
 
 Last of all we turn to a separate function which is not variance-based sensitivity analysis but is related to sensitivity analysis in general. The `remove_elements()` function tests the effect of removing components of the composite indicator one at a time. This can be useful to find the impact of each component, in terms of "if it I were to remove this, what would happen?".
 
-To run this, we input our coin into the function and specify which level we want to remove components. For example, specifing `Level = 2` removes each component of level 2 one at a time, with replacement, and regenerates the results each time. We also have to specify which indicator/aggregate to target as the output:
+To run this, we input our coin into the function and specify which level we want to remove components. For example, specifying `Level = 2` removes each component of level 2 one at a time, with replacement, and regenerates the results each time. We also have to specify which indicator/aggregate to target as the output:
 
 ```{r}
 # run function removing elements in level 2

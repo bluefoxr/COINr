@@ -4,7 +4,7 @@
 #' The statistics (columns in the output table) are as follows (entries correspond to each column):
 #'
 #' *`Min`: the minimum
-#' *`Max`: the maximumn
+#' *`Max`: the maximum
 #' *`Mean`: the (arirthmetic) mean
 #' *`Median`: the median
 #' *`Std`: the standard deviation
@@ -87,8 +87,8 @@ get_stats.coin <- function(x, dset, t_skew = 2, t_kurt = 3.5, t_avail = 0.65, t_
 #' output table) are as follows (entries correspond to each column):
 #'
 #' *`Min`: the minimum
-#' *`Max`: the maximumn
-#' *`Mean`: the (arirthmetic) mean
+#' *`Max`: the maximum
+#' *`Mean`: the (arithmetic) mean
 #' *`Median`: the median
 #' *`Std`: the standard deviation
 #' *`Skew`: the skew
