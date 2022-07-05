@@ -28,7 +28,10 @@ Suggests:
     rmarkdown,
     spelling,
     knitr,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    Compind,
+    matrixStats,
+    performance
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
 Language: en-GB
