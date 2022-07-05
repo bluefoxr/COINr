@@ -841,7 +841,7 @@ boxcox <- function(x, lambda, makepos = TRUE, na.rm = FALSE){
 #' Calculate skewness
 #'
 #' Calculates skewness of the values of a numeric vector. This uses the same definition of skewness as
-#' [e1071::skewness()] where `type == 2`, which is equivalent to the definition of skewness used in Excel.
+#' the "skewness()" function in the "e1071" package where `type == 2`, which is equivalent to the definition of skewness used in Excel.
 #'
 #' @param x A numeric vector.
 #' @param na.rm Set `TRUE` to remove `NA` values, otherwise returns `NA`.
@@ -884,7 +884,7 @@ skew <- function(x, na.rm = FALSE){
 #' Calculate kurtosis
 #'
 #' Calculates kurtosis of the values of a numeric vector. This uses the same definition of kurtosis as
-#' [e1071::kurtosis()] where `type == 2`, which is equivalent to the definition of kurtosis used in Excel.
+#' as the "kurtosis()" function in the e1071 package, where `type == 2`, which is equivalent to the definition of kurtosis used in Excel.
 #'
 #' @param x A numeric vector.
 #' @param na.rm Set `TRUE` to remove `NA` values, otherwise returns `NA`.
