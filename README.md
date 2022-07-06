@@ -20,15 +20,13 @@ presentation*.
 -   Flexible and fast development of composite indicators with no limits
     on aggregation levels, numbers of indicators, highly flexible set of
     methodological choices.
--   Denomination by other indicators (including built in world
-    denominators data set)
+-   Denomination by other indicators
 -   Screening units by data requirements
 -   Imputation of missing data, by a variety of methods
 -   Data treatment using Winsorisation and nonlinear transformations
--   Normalisation by more than ten methods, either for all indicators or
-    for each individually
--   Weighting using either manual weighting, PCA weights or correlation
-    optimised weights.
+-   Normalisation (scaling) using a variety of methods
+-   Weighting using either manual weighting, PCA weights or
+    correlation-optimised weights.
 -   Aggregation of indicators using a variety of methods which can be
     different for each aggregation level.
 
@@ -57,10 +55,6 @@ presentation*.
 COINr also allows fast import from the [COIN
 Tool](https://knowledge4policy.ec.europa.eu/composite-indicators/coin-tool_en)
 and fast export to Excel.
-
-In short, COINr aims to allow composite indicators to be developed and
-prototyped very quickly and in a structured fashion. As of v1.0 it has
-support for panel data.
 
 ## Installation
 
