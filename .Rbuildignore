@@ -13,3 +13,7 @@
 ^docs$
 ^pkgdown$
 ^README\.rmd$
+^CRAN-SUBMISSION$
+^paper\.md$
+^paper\.bib$
+^.github$
