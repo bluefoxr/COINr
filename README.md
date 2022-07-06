@@ -7,6 +7,7 @@
 
 [![CRAN-update](https://www.r-pkg.org/badges/version-ago/COINr)](https://cran.r-project.org/package=COINr)
 [![CRAN_Download_Badge](http://cranlogs.r-pkg.org/badges/COINr)](https://CRAN.R-project.org/package=COINr)
+[![status](https://joss.theoj.org/papers/187b1759658c96177f8d17f3b55b90a0/status.svg)](https://joss.theoj.org/papers/187b1759658c96177f8d17f3b55b90a0)
 <!-- badges: end -->
 
 COINr is a high-level R package which is the first fully-flexible
