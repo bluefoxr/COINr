@@ -123,7 +123,7 @@
 </h2>
 <p>Sensitivity analysis is often confused with <em>uncertainty
 analysis</em>. Uncertainty analysis involves estimating the uncertainty
-in the ouputs of a system (here, the scores and ranks of the composite
+in the outputs of a system (here, the scores and ranks of the composite
 indicator), given the uncertainties in the inputs (here, methodological
 decisions, weights, etc.). The results of an uncertainty include for
 example confidence intervals over the ranks, median ranks, and so
@@ -288,11 +288,11 @@ the function:</p>
 <span class="co"># examine one of the noisy weight sets</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">noisy_wts</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
 <span class="co">#&gt;       iCode Level    Weight</span>
-<span class="co">#&gt; 55  Environ     2 0.8975299</span>
-<span class="co">#&gt; 56   Social     2 0.9997432</span>
-<span class="co">#&gt; 57 SusEcFin     2 1.0049995</span>
-<span class="co">#&gt; 58     Conn     3 1.1708571</span>
-<span class="co">#&gt; 59     Sust     3 1.1695032</span>
+<span class="co">#&gt; 55  Environ     2 1.2270166</span>
+<span class="co">#&gt; 56   Social     2 1.1208265</span>
+<span class="co">#&gt; 57 SusEcFin     2 1.0112361</span>
+<span class="co">#&gt; 58     Conn     3 0.9094981</span>
+<span class="co">#&gt; 59     Sust     3 0.9070227</span>
 <span class="co">#&gt; 60    Index     4 1.0000000</span></code></pre></div>
 <p>The <code>noisy_wts</code> object is a list containing 100 data
 frames, each of which is a set of weights with slightly different
@@ -475,7 +475,7 @@ the effect of removing components of the composite indicator one at a
 time. This can be useful to find the impact of each component, in terms
 of “if it I were to remove this, what would happen?”.</p>
 <p>To run this, we input our coin into the function and specify which
-level we want to remove components. For example, specifing
+level we want to remove components. For example, specifying
 <code>Level = 2</code> removes each component of level 2 one at a time,
 with replacement, and regenerates the results each time. We also have to
 specify which indicator/aggregate to target as the output:</p>

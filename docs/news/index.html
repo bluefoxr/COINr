@@ -89,7 +89,7 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.0.0" id="coinr-100">COINr 1.0.0<a class="anchor" aria-label="anchor" href="#coinr-100"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.0.0" id="coinr-100">COINr 1.0.0<a class="anchor" aria-label="anchor" href="#coinr-100"></a></h2><p class="text-muted">CRAN release: 2022-07-05</p>
 <p>Major update to COINr. The main changes are as follows:</p>
 <ul><li>Syntax changed to be more consistent</li>
 <li>New streamlined “coin” class replaces older “COIN” class</li>
@@ -103,10 +103,12 @@
 <p>Note that these changes are disruptive but greatly improve the package and make it more maintainable for the future. This is a one-off major overhaul, after which backwards compatibility will be ensured.</p>
 </div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.6.1.9000" id="coinr-0619000">COINr 0.6.1.9000<a class="anchor" aria-label="anchor" href="#coinr-0619000"></a></h2>
-<ul><li>Added colour option to <code><a href="../reference/plotframework.html">plotframework()</a></code>
+<h2 class="pkg-version" data-toc-text="0.6.2" id="coinr-062">COINr 0.6.2<a class="anchor" aria-label="anchor" href="#coinr-062"></a></h2>
+<ul><li>Fixed bug in <code><a href="https://rdrr.io/r/stats/aggregate.html" class="external-link">aggregate()</a></code> which was wrongly assigning weights in some circumstances (note this is a fairly significant bug - worth re-running your results as it may have affected them)</li>
+<li>Added colour option to <code><a href="../reference/plotframework.html">plotframework()</a></code>
 </li>
 <li>Fixed bug in <code><a href="../reference/compareDF.html">compareDF()</a></code> (resulting from tibbles vs data frames)</li>
+<li>Fixed bug in <code><a href="../reference/sensitivity.html">sensitivity()</a></code> causing trouble with running SA with no weights uncertainty specified</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.6.1" id="coinr-061">COINr 0.6.1<a class="anchor" aria-label="anchor" href="#coinr-061"></a></h2><p class="text-muted">CRAN release: 2021-11-30</p>
