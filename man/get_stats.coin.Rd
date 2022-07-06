@@ -48,7 +48,7 @@ The statistics (columns in the output table) are as follows (entries correspond 
 }
 \details{
 *\code{Min}: the minimum
-*\code{Max}: the maximumn
+*\code{Max}: the maximum
 *\code{Mean}: the (arirthmetic) mean
 *\code{Median}: the median
 *\code{Std}: the standard deviation

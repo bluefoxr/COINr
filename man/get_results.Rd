@@ -48,7 +48,7 @@ Generates fast results tables, either attached to the coin or as a data frame.
 \details{
 Although results are available in a coin in \code{.$Data}, the format makes it difficult to quickly present results. This function
 generates results tables that are suitable for immediate presentation, i.e. sorted by index or other indicators, and only including
-relevant columns. Scores are also rounded by default, and there is the option to present scores or ranks.ù
+relevant columns. Scores are also rounded by default, and there is the option to present scores or ranks.
 
 See also \code{vignette("results")} for more info.
 }

@@ -41,8 +41,8 @@ output table) are as follows (entries correspond to each column):
 }
 \details{
 *\code{Min}: the minimum
-*\code{Max}: the maximumn
-*\code{Mean}: the (arirthmetic) mean
+*\code{Max}: the maximum
+*\code{Mean}: the (arithmetic) mean
 *\code{Median}: the median
 *\code{Std}: the standard deviation
 *\code{Skew}: the skew

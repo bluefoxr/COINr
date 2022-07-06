@@ -47,7 +47,7 @@ a special case in terms of operating on a purse of coins. This is because, when
 dealing with time series data, it is often desirable to normalise over the whole panel data set at once
 rather than independently for each time point. This makes the resulting index and aggregates comparable
 over time. Here, the \code{global} argument controls whether to normalise each coin independently or to normalise
-across all data at once. In other repects, this function behaves the same as \code{\link[=Normalise.coin]{Normalise.coin()}}.
+across all data at once. In other respects, this function behaves the same as \code{\link[=Normalise.coin]{Normalise.coin()}}.
 }
 \details{
 The same specifications are passed to each coin in the purse. This means that each coin is normalised
