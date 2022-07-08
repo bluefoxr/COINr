@@ -31,6 +31,13 @@ check_coin_input <- function(x){
   }
 }
 
+#Stop if object is NOT coin class
+check_purse_input <- function(x){
+  if(!is.purse(x)){
+    stop("Input is not recognised as a purse class object.", call. = FALSE)
+  }
+}
+
 # Check for named data set
 check_dset.purse <- function(x, dset, ...){
 
@@ -482,7 +489,10 @@ get_data.coin <- function(x, dset, iCodes = NULL, Level = NULL, uCodes = NULL,
 
 #' Get subsets of indicator data
 #'
-#' Purse description.
+#' This retrieves data from a purse. It functions in a similar way to [get_data.coin()] but has the
+#' additional `Time` argument to allow selection based on the point(s) in time.
+#'
+#' Note that
 #'
 #' @param x A purse class object
 #' @param dset The name of the data set to apply the function to, which should be accessible in `.$Data`.
@@ -518,6 +528,10 @@ get_data.coin <- function(x, dset, iCodes = NULL, Level = NULL, uCodes = NULL,
 get_data.purse <- function(x, dset, iCodes = NULL, Level = NULL, uCodes = NULL,
                      use_group = NULL, Time = NULL, also_get = NULL, ...){
 
+  # NOTE I'll probably need to deal with the problem of groups at some point: since different coins
+  # can have different units, there may be groups available in some coins and not in others. I fixed
+  # the equivalent problem with units but will leave the groups issue for the moment.
+
   # check specified dset exists
   check_dset(x, dset)
 
@@ -532,11 +546,31 @@ get_data.purse <- function(x, dset, iCodes = NULL, Level = NULL, uCodes = NULL,
 
   # extract data sets in one df
   iDatas <- lapply(coins, function(coin){
-    iData <- get_data(coin, dset = dset, iCodes = iCodes, Level = Level,
-                      uCodes = uCodes, use_group = use_group, also_get = also_get)
-    iData <- cbind(Time = coin$Meta$Unit$Time[[1]], iData)
+
+    # we first have to check which units are available (different coins can have different units)
+    uCodes_avail <- coin$Data[[dset]][["uCode"]]
+
+    # we retrieve only the uCodes that are requested AND available
+    uCodes_get <- intersect(uCodes, uCodes_avail)
+
+    if(length(uCodes_get) > 0){
+      # get data
+      iData <- get_data(coin, dset = dset, iCodes = iCodes, Level = Level,
+                        uCodes = uCodes_get, use_group = use_group, also_get = also_get)
+      # bind on time (note, this is only one year anyway, hence no merge needed)
+      iData <- cbind(Time = coin$Meta$Unit$Time[[1]], iData)
+    }
+
   })
-  Reduce(rbind, iDatas)
+
+  df_out <- Reduce(rbind, iDatas)
+
+  # this is a check in case uCodes not found anywhere at all
+  if(is.null(df_out)){
+    stop("Selected uCode(s) not found in any coins in the purse.", call. = FALSE)
+  }
+
+  df_out
 }
 
 
