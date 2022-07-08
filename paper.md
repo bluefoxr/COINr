@@ -21,6 +21,7 @@ authors:
 - name: Giulio Caperna
   affiliation: 2
 - name: Maria Del Sorbo
+  orcid: 0000-0001-8717-0202
   affiliation: 3
 - name: Hedvig Norlén
   affiliation: 1
