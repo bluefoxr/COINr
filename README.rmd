@@ -19,6 +19,8 @@ knitr::opts_chunk$set(
 [![CRAN\_Download\_Badge](http://cranlogs.r-pkg.org/badges/COINr)](https://CRAN.R-project.org/package=COINr)
 <!-- badges: end -->
 
+**Full documentation is available at [COINr’s website](https://bluefoxr.github.io/COINr/)**
+
 COINr is a high-level R package which is the first fully-flexible development and analysis environment for composite indicators and scoreboards. The main features can be summarised as features for *building*, features for *analysis* and features for *visualisation and presentation*.
 
 **Building features**:
