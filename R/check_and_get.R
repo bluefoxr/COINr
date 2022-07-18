@@ -551,7 +551,12 @@ get_data.purse <- function(x, dset, iCodes = NULL, Level = NULL, uCodes = NULL,
     uCodes_avail <- coin$Data[[dset]][["uCode"]]
 
     # we retrieve only the uCodes that are requested AND available
-    uCodes_get <- intersect(uCodes, uCodes_avail)
+    if(!is.null(uCodes)){
+      uCodes_get <- intersect(uCodes, uCodes_avail)
+    } else {
+      uCodes_get <- uCodes_avail
+    }
+
 
     if(length(uCodes_get) > 0){
       # get data
