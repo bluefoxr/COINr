@@ -48,7 +48,11 @@ attach all columns, or set \code{also_get = "none"} to return only numeric colum
 A data frame of indicator data indexed by a "Time" column.
 }
 \description{
-Purse description.
+This retrieves data from a purse. It functions in a similar way to \code{\link[=get_data.coin]{get_data.coin()}} but has the
+additional \code{Time} argument to allow selection based on the point(s) in time.
+}
+\details{
+Note that
 }
 \examples{
 # build full example purse
