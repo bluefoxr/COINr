@@ -115,3 +115,27 @@ a separate package called “COINr6”. This is available on GitHub:
 ``` r
 remotes::install_github("bluefoxr/COINr6")
 ```
+
+# Help and issues
+
+For general help with COINr, the best place to look is the package’s
+documentation which is available either via the command line
+(`vignette(package = "COINr")`) or by checking individual function
+documentation (`?function_name`). All documentation is also conveniently
+available online at [COINr’s
+website](https://bluefoxr.github.io/COINr/).
+
+If you find any problems with the package, including bugs or
+suggestions, either open a GitHub issue here, or else contact me by
+email.
+
+Finally, contributions to the package are most welcome. This should be
+done by cloning the repo, making your modifications, and then opening a
+pull request. You could also contact me in advance to discuss changes
+and extensions. Any changes (especially new functions) should be
+accompanied by unit tests, and all existing tests should run without
+errors or warnings. To do this, run:
+
+``` r
+devtools::test()
+```
