@@ -100,6 +100,17 @@ get_trends <- function(purse, dset, uCodes = NULL, iCodes = NULL,
   )
   names(dat_avail)[1:2] <- c("uCode", "iCode")
 
+  # df for time series (currently only for use_latest)
+  if(!is.null(use_latest)){
+    # df for y values
+    df_y <- dat_avail[c("uCode", "iCode")]
+    df_y <- cbind(df_y, as.data.frame(matrix(nrow = nrow(df_y), ncol = use_latest)))
+    names(df_y)[3:ncol(df_y)] <- paste0("y", 1:use_latest)
+    # df for x values
+    df_x <- df_y
+    names(df_x)[3:ncol(df_x)] <- paste0("x", 1:use_latest)
+  }
+
   # Get trends --------------------------------------------------------------
 
   # first split data by uCode
@@ -205,9 +216,14 @@ get_trends <- function(purse, dset, uCodes = NULL, iCodes = NULL,
           # take the latest points
           y <- y[i_first : i_latest]
           tt_ii <- tt_use[i_first : i_latest]
+          yraw_ii <- yraw[i_first : i_latest]
+
+          # record these in data frames TEST
+          df_x[i_dat_avail, 3:ncol(df_x)] <<- tt_ii
+          df_y[i_dat_avail, 3:ncol(df_y)] <<- yraw_ii
 
           # overall data availability of y (we use yraw, not interpolated)
-          dat_avail$Avail_use_latest[i_dat_avail] <<- mean(!is.na(yraw[i_first : i_latest]))
+          dat_avail$Avail_use_latest[i_dat_avail] <<- mean(!is.na(yraw_ii))
 
           if(sum(!is.na(y)) > 1){
             dat_avail$t_first_use_latest[i_dat_avail] <<- tt_ii[min(which(!is.na(y)))]
@@ -280,7 +296,13 @@ get_trends <- function(purse, dset, uCodes = NULL, iCodes = NULL,
   # merge with dat_avail
   df_long <- merge(df_long, dat_avail, by = c("uCode", "iCode"), all = TRUE)
 
-  df_long
+  # order rows of df_long
+  df_long <- df_long[order(df_long$iCode, df_long$uCode), ]
+
+  # output
+  list(Trends = df_long,
+       x = df_x[order(df_x$iCode, df_x$uCode), ],
+       y = df_y[order(df_y$iCode, df_y$uCode), ])
 
 }
 
