@@ -22,7 +22,7 @@ Sensitivity analysis is an extra step after uncertainty analysis, and estimates 
 
 In reality, sensitivity analysis and uncertainty analysis can be performed simultaneously. However in both cases, the main technique is to use Monte Carlo methods. This essentially involves re-calculating the composite indicator many times, each time randomly varying the uncertain variables (assumptions, parameters), in order to estimate the output distributions.
 
-COINr implements a flexible variance-based global sensitivity analysis approach, which allows almost any assumption to be varied, as long as the distribution of alternative values can be described. Variance-based "sensitivity indices" are estimated using a Monte Carlo design (running the composite indicator many times with a particular combination of input values). This follows the methodology described in \doi(10.1111/j.1467-985X.2005.00350.x).
+COINr implements a flexible variance-based global sensitivity analysis approach, which allows almost any assumption to be varied, as long as the distribution of alternative values can be described. Variance-based "sensitivity indices" are estimated using a Monte Carlo design (running the composite indicator many times with a particular combination of input values). This follows the methodology described in \doi{10.1111/j.1467-985X.2005.00350.x}.
 
 # Defining the problem
 
