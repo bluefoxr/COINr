@@ -31,7 +31,7 @@
 #' @return .xlsx file at specified path
 #'
 #' @export
-export_to_excel.coin <- function(x, fname = "coin_export.xlsx", include_log = FALSE){
+export_to_excel.coin <- function(x, fname = "coin_export.xlsx", include_log = FALSE, ...){
 
   check_coin_input(coin)
 
@@ -88,7 +88,7 @@ export_to_excel.coin <- function(x, fname = "coin_export.xlsx", include_log = FA
 #' @return .xlsx file at specified path
 #'
 #' @export
-export_to_excel.purse <- function(x, fname = "coin_export.xlsx", include_log = FALSE){
+export_to_excel.purse <- function(x, fname = "coin_export.xlsx", include_log = FALSE, ...){
 
 
   # Prep --------------------------------------------------------------------
