@@ -1,3 +1,11 @@
+# COINr 1.0.0.9000
+
+Development version with improved support for time series analysis:
+
+* New `get_trends()` function for analsing time trends
+* Option to export purse class to Excel
+* Small bug fixes
+
 # COINr 1.0.0
 
 Major update to COINr. The main changes are as follows:
