@@ -386,7 +386,12 @@ Aggregate.data.frame <- function(x, f_ag = NULL, f_ag_para = NULL, dat_thresh = 
 
 
   if(!is.numeric(y)){
-    stop("The output of f_ag has not successfully created a numeric vector.")
+    if(all(is.na(y))){
+      # if we get all NAs, this comes back as a logical vector, so convert
+      y <- as.numeric(y)
+    } else {
+      stop("The output of f_ag has not successfully created a numeric vector.")
+    }
   }
   if(length(y) != nrow(x)){
     stop("The ouput of f_ag is not the same length as nrow(x).")
