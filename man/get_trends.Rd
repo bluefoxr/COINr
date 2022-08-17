@@ -12,7 +12,8 @@ get_trends(
   Time = NULL,
   use_latest = NULL,
   f_trend = "CAGR",
-  interp_at = NULL
+  interp_at = NULL,
+  adjust_directions = FALSE
 )
 }
 \arguments{
@@ -36,6 +37,9 @@ non-\code{NA} point.}
 of time values where to apply interpolation. If \code{interp_at = "all"}, will attempt to interpolate at every
 time point. Uses linear interpolation - note that any \code{NA}s outside of the range of observed values will not
 be estimated, i.e. this does not extrapolate beyond the range of data. See \code{\link[=approx_df]{approx_df()}}.}
+
+\item{adjust_directions}{Logical: if \code{TRUE}, trend metrics are adjusted according to indicator/aggregate
+directions input in \code{iMeta} (i.e. if the corresponding direction is -1, the metric will be multiplied by -1).}
 }
 \value{
 A data frame in long format, with trend metrics for each indicator/unit pair, plus

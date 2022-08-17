@@ -28,6 +28,8 @@
 #' of time values where to apply interpolation. If `interp_at = "all"`, will attempt to interpolate at every
 #' time point. Uses linear interpolation - note that any `NA`s outside of the range of observed values will not
 #' be estimated, i.e. this does not extrapolate beyond the range of data. See [approx_df()].
+#' @param adjust_directions Logical: if `TRUE`, trend metrics are adjusted according to indicator/aggregate
+#' directions input in `iMeta` (i.e. if the corresponding direction is -1, the metric will be multiplied by -1).
 #'
 #' @importFrom stats lm
 #'
@@ -39,7 +41,8 @@
 #' #
 #'
 get_trends <- function(purse, dset, uCodes = NULL, iCodes = NULL,
-                       Time = NULL, use_latest = NULL, f_trend = "CAGR", interp_at = NULL){
+                       Time = NULL, use_latest = NULL, f_trend = "CAGR", interp_at = NULL,
+                       adjust_directions = FALSE){
 
 
   # Input checks ------------------------------------------------------------
@@ -180,7 +183,11 @@ get_trends <- function(purse, dset, uCodes = NULL, iCodes = NULL,
       # indicator code of this col
       icode <- names(Y_use)[ii]
       # direction of this indicator
-      direction <- iMeta$Direction[iMeta$iCode == icode]
+      if(adjust_directions){
+        direction <- iMeta$Direction[iMeta$iCode == icode]
+      } else {
+        direction <- 1
+      }
 
       # yraw is the col of indicator data (with no adjustments, but possibly filtered by Time)
       yraw <- dfi_t[[ii]]
