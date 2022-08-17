@@ -115,10 +115,13 @@ get_dset.purse <- function(x, dset, Time = NULL, also_get = NULL, ...){
 
   # extract data sets in one df
   iDatas <- lapply(coins, function(coin){
-    iData <- get_dset(coin, dset = dset, also_get = also_get)
+    iData <- get_dset(coin, dset = dset,
+                      also_get = setdiff(also_get, "Time"))
     iData <- cbind(Time = coin$Meta$Unit$Time[[1]], iData)
   })
-  Reduce(rbind, iDatas)
+  iData <- Reduce(rbind, iDatas)
+  # sometimes we get two "Time" cols - here make sure only 1 (remove duplicate cols)
+  iData[unique(names(iData))]
 }
 
 #' Gets a named data set and performs checks
