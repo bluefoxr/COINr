@@ -248,7 +248,15 @@ Here we see that the second row is aggregated to give `NA` because it only has 1
 
 ## By level
 
-*TO ADD: changing by level*
+We can also use a different aggregation function for each aggregation level by specifying `f_ag` as a vector of function names rather than a single function.
+
+```{r}
+ASEM <- Aggregate(ASEM, dset = "Normalised", f_ag = c("a_amean", "a_gmean", "a_amean"))
+```
+
+In this example, there are four levels in the index, which means there are three aggregation operations to be performed: from Level 1 to Level 2, from Level 2 to Level 3, and from Level 3 to Level 4. This means that `f_ag` vector must have `n-1` entries, where `n` is the number of aggregation levels. The functions are run in the order of aggregation.
+
+In the same way, if parameters need to be passed to the functions specified by `f_ag`, `f_ag_para` can be specified as a list of length `n-1`, where each element is a list of parameters.
 
 # Data frames
 
