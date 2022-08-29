@@ -5,9 +5,14 @@
 #'
 #' @param x A purse-class object
 #' @param dset The name of the data set to apply the function to, which should be accessible in `.$Data`.
-#' @param f_ag The name of an aggregation function, specified as a string
+#' @param f_ag The name of an aggregation function, a string. This can either be a single string naming
+#' a function to use for all aggregation levels, or else a character vector of function names of length `n-1`, where `n` is
+#' the number of levels in the index structure. In this latter case, a different aggregation function may be used for each level
+#' in the index: the first in the vector will be used to aggregate from Level 1 to Level 2, the second from Level 2 to Level 3, and
+#' so on.
 #' @param w An optional data frame of weights. If `f_ag` does not require or accept weights, set to `"none"`.
-#' @param f_ag_para Optional parameters to pass to `f_ag`, other than `x` and `w`
+#' @param f_ag_para Optional parameters to pass to `f_ag`, other than `x` and `w`. As with `f_ag`, this can specified to have different
+#' parameters for each aggregation level by specifying as a nested list of length `n-1`.
 #' @param dat_thresh An optional data availability threshold, specified as a number between 0 and 1. If a row
 #' within an aggregation group has data availability lower than this threshold, the aggregated value for that row will be
 #' `NA`. Data availability, for a row `x_row` is defined as `sum(!is.na(x_row))/length(x_row)`, i.e. the
@@ -64,9 +69,14 @@ Aggregate.purse <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, da
 #'
 #' @param x A coin class object.
 #' @param dset The name of the data set to apply the function to, which should be accessible in `.$Data`.
-#' @param f_ag The name of an aggregation function, a string
+#' @param f_ag The name of an aggregation function, a string. This can either be a single string naming
+#' a function to use for all aggregation levels, or else a character vector of function names of length `n-1`, where `n` is
+#' the number of levels in the index structure. In this latter case, a different aggregation function may be used for each level
+#' in the index: the first in the vector will be used to aggregate from Level 1 to Level 2, the second from Level 2 to Level 3, and
+#' so on.
 #' @param w An optional data frame of weights. If `f_ag` does not require accept weights, set to `"none"`.
-#' @param f_ag_para Optional parameters to pass to `f_ag`, other than `x` and `w`
+#' @param f_ag_para Optional parameters to pass to `f_ag`, other than `x` and `w`. As with `f_ag`, this can specified to have different
+#' parameters for each aggregation level by specifying as a nested list of length `n-1`.
 #' @param dat_thresh An optional data availability threshold, specified as a number between 0 and 1. If a row
 #' within an aggregation group has data availability lower than this threshold, the aggregated value for that row will be
 #' `NA`. Data availability, for a row `x_row` is defined as `sum(!is.na(x_row))/length(x_row)`, i.e. the
