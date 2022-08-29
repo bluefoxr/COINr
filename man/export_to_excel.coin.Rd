@@ -4,7 +4,7 @@
 \alias{export_to_excel.coin}
 \title{Export a coin to Excel}
 \usage{
-\method{export_to_excel}{coin}(x, fname = "coin_export.xlsx", include_log = FALSE)
+\method{export_to_excel}{coin}(x, fname = "coin_export.xlsx", include_log = FALSE, ...)
 }
 \arguments{
 \item{x}{A coin class object}

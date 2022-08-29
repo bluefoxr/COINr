@@ -4,7 +4,7 @@
 \alias{export_to_excel.purse}
 \title{Export a purse to Excel}
 \usage{
-\method{export_to_excel}{purse}(x, fname = "coin_export.xlsx", include_log = FALSE)
+\method{export_to_excel}{purse}(x, fname = "coin_export.xlsx", include_log = FALSE, ...)
 }
 \arguments{
 \item{x}{A purse class object}
