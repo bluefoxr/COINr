@@ -14,7 +14,7 @@ Encoding: UTF-8
 URL: https://bluefoxr.github.io/COINr/
 BugReports: https://github.com/bluefoxr/COINr/issues
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.1
 Imports: 
     openxlsx (>= 4.2.3),
     stats,
