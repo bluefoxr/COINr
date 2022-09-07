@@ -1,5 +1,5 @@
-pandoc: 2.17.1.1
-pkgdown: 2.0.4
+pandoc: '2.18'
+pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
   adjustments: adjustments.html
@@ -20,7 +20,7 @@ articles:
   v1: v1.html
   visualisation: visualisation.html
   weights: weights.html
-last_built: 2022-07-06T10:09Z
+last_built: 2022-09-07T13:16Z
 urls:
   reference: https://bluefoxr.github.io/COINr/reference
   article: https://bluefoxr.github.io/COINr/articles

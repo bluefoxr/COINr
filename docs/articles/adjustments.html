@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="COINr">
 <title>Adjustments and Comparisons • COINr</title>
-<script src="../deps/jquery-3.5.1/jquery-3.5.1.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.1.0/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.1.0/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Adjustments and Comparisons">
 <meta property="og:description" content="COINr">
@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">COINr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -186,25 +186,25 @@ metadata</td>
 build the example coin manually, then look inside the coin’s Log
 list:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bluefoxr.github.io/COINr/">COINr</a></span><span class="op">)</span>
-
-<span class="co"># create new coin by calling new_coin()</span>
-<span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_coin.html">new_coin</a></span><span class="op">(</span><span class="va">ASEM_iData</span>, <span class="va">ASEM_iMeta</span>,
-                 level_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Indicator"</span>, <span class="st">"Pillar"</span>, <span class="st">"Sub-index"</span>, <span class="st">"Index"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; iData checked and OK.</span>
-<span class="co">#&gt; iMeta checked and OK.</span>
-<span class="co">#&gt; Written data set to .$Data$Raw</span>
-
-<span class="co"># look in log</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">coin</span><span class="op">$</span><span class="va">Log</span>, max.level <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
-<span class="co">#&gt; List of 2</span>
-<span class="co">#&gt;  $ new_coin :List of 5</span>
-<span class="co">#&gt;   ..$ iData      :'data.frame':  51 obs. of  60 variables:</span>
-<span class="co">#&gt;   ..$ iMeta      :'data.frame':  68 obs. of  10 variables:</span>
-<span class="co">#&gt;   ..$ exclude    : NULL</span>
-<span class="co">#&gt;   ..$ level_names: chr [1:4] "Indicator" "Pillar" "Sub-index" "Index"</span>
-<span class="co">#&gt;   ..$ quietly    : logi FALSE</span>
-<span class="co">#&gt;  $ can_regen: logi TRUE</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bluefoxr.github.io/COINr/">COINr</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># create new coin by calling new_coin()</span></span>
+<span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_coin.html">new_coin</a></span><span class="op">(</span><span class="va">ASEM_iData</span>, <span class="va">ASEM_iMeta</span>,</span>
+<span>                 level_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Indicator"</span>, <span class="st">"Pillar"</span>, <span class="st">"Sub-index"</span>, <span class="st">"Index"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; iData checked and OK.</span></span>
+<span><span class="co">#&gt; iMeta checked and OK.</span></span>
+<span><span class="co">#&gt; Written data set to .$Data$Raw</span></span>
+<span></span>
+<span><span class="co"># look in log</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">coin</span><span class="op">$</span><span class="va">Log</span>, max.level <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="co">#&gt; List of 2</span></span>
+<span><span class="co">#&gt;  $ new_coin :List of 5</span></span>
+<span><span class="co">#&gt;   ..$ iData      :'data.frame':  51 obs. of  60 variables:</span></span>
+<span><span class="co">#&gt;   ..$ iMeta      :'data.frame':  68 obs. of  10 variables:</span></span>
+<span><span class="co">#&gt;   ..$ exclude    : NULL</span></span>
+<span><span class="co">#&gt;   ..$ level_names: chr [1:4] "Indicator" "Pillar" "Sub-index" "Index"</span></span>
+<span><span class="co">#&gt;   ..$ quietly    : logi FALSE</span></span>
+<span><span class="co">#&gt;  $ can_regen: logi TRUE</span></span></code></pre></div>
 <p>Looking in the log, we can see that it is a list with an entry
 “new_coin”, which contains exactly the arguments that we passed to
 <code><a href="../reference/new_coin.html">new_coin()</a></code>: <code>iData</code>, <code>iMeta</code>, the
@@ -215,28 +215,28 @@ function. There is also another logical variable called
 arguments are stored in the coin. To show another example, if we apply
 the <code><a href="../reference/Normalise.html">Normalise()</a></code> function:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># normalise</span>
-<span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Normalise.html">Normalise</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Raw"</span><span class="op">)</span>
-<span class="co">#&gt; Written data set to .$Data$Normalised</span>
-
-<span class="co"># view log</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">coin</span><span class="op">$</span><span class="va">Log</span>, max.level <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
-<span class="co">#&gt; List of 3</span>
-<span class="co">#&gt;  $ new_coin :List of 5</span>
-<span class="co">#&gt;   ..$ iData      :'data.frame':  51 obs. of  60 variables:</span>
-<span class="co">#&gt;   ..$ iMeta      :'data.frame':  68 obs. of  10 variables:</span>
-<span class="co">#&gt;   ..$ exclude    : NULL</span>
-<span class="co">#&gt;   ..$ level_names: chr [1:4] "Indicator" "Pillar" "Sub-index" "Index"</span>
-<span class="co">#&gt;   ..$ quietly    : logi FALSE</span>
-<span class="co">#&gt;  $ can_regen: logi TRUE</span>
-<span class="co">#&gt;  $ Normalise:List of 7</span>
-<span class="co">#&gt;   ..$ dset        : chr "Raw"</span>
-<span class="co">#&gt;   ..$ global_specs: NULL</span>
-<span class="co">#&gt;   ..$ indiv_specs : NULL</span>
-<span class="co">#&gt;   ..$ directions  : NULL</span>
-<span class="co">#&gt;   ..$ out2        : chr "coin"</span>
-<span class="co">#&gt;   ..$ write_to    : NULL</span>
-<span class="co">#&gt;   ..$ write2log   : logi TRUE</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># normalise</span></span>
+<span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Normalise.html">Normalise</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Raw"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Written data set to .$Data$Normalised</span></span>
+<span></span>
+<span><span class="co"># view log</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">coin</span><span class="op">$</span><span class="va">Log</span>, max.level <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="co">#&gt; List of 3</span></span>
+<span><span class="co">#&gt;  $ new_coin :List of 5</span></span>
+<span><span class="co">#&gt;   ..$ iData      :'data.frame':  51 obs. of  60 variables:</span></span>
+<span><span class="co">#&gt;   ..$ iMeta      :'data.frame':  68 obs. of  10 variables:</span></span>
+<span><span class="co">#&gt;   ..$ exclude    : NULL</span></span>
+<span><span class="co">#&gt;   ..$ level_names: chr [1:4] "Indicator" "Pillar" "Sub-index" "Index"</span></span>
+<span><span class="co">#&gt;   ..$ quietly    : logi FALSE</span></span>
+<span><span class="co">#&gt;  $ can_regen: logi TRUE</span></span>
+<span><span class="co">#&gt;  $ Normalise:List of 7</span></span>
+<span><span class="co">#&gt;   ..$ dset        : chr "Raw"</span></span>
+<span><span class="co">#&gt;   ..$ global_specs: NULL</span></span>
+<span><span class="co">#&gt;   ..$ indiv_specs : NULL</span></span>
+<span><span class="co">#&gt;   ..$ directions  : NULL</span></span>
+<span><span class="co">#&gt;   ..$ out2        : chr "coin"</span></span>
+<span><span class="co">#&gt;   ..$ write_to    : NULL</span></span>
+<span><span class="co">#&gt;   ..$ write2log   : logi TRUE</span></span></code></pre></div>
 <p>Now we additionally have a “Normalise” entry, with all the function
 arguments that we specified, plus defaults.</p>
 <p>Now, the reason that building functions write to the log, is that it
@@ -245,12 +245,12 @@ re-running the building functions that were used to create the coin and
 its data sets. This is done with a function called
 <code><a href="../reference/Regen.html">Regen()</a></code>:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># regenerate the coin</span>
-<span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Regen.html">Regen</a></span><span class="op">(</span><span class="va">coin</span>, quietly <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-<span class="co">#&gt; iData checked and OK.</span>
-<span class="co">#&gt; iMeta checked and OK.</span>
-<span class="co">#&gt; Written data set to .$Data$Raw</span>
-<span class="co">#&gt; Written data set to .$Data$Normalised</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># regenerate the coin</span></span>
+<span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Regen.html">Regen</a></span><span class="op">(</span><span class="va">coin</span>, quietly <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; iData checked and OK.</span></span>
+<span><span class="co">#&gt; iMeta checked and OK.</span></span>
+<span><span class="co">#&gt; Written data set to .$Data$Raw</span></span>
+<span><span class="co">#&gt; Written data set to .$Data$Normalised</span></span></code></pre></div>
 <p>When <code><a href="../reference/Regen.html">Regen()</a></code> is called, it runs the buildings <em>in the
 order that they are found in the log</em>. This is an important point
 because if you iteratively re-run building functions, you might end up
@@ -263,11 +263,11 @@ unless you modify something first. And this brings us to the copying and
 modifying points. Let us take an example: first, we’ll build the full
 example coin, then we’ll make a copy of our existing coin:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># build full example coin</span>
-<span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_example_coin.html">build_example_coin</a></span><span class="op">(</span>quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-
-<span class="co"># copy coin</span>
-<span class="va">coin2</span> <span class="op">&lt;-</span> <span class="va">coin</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># build full example coin</span></span>
+<span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_example_coin.html">build_example_coin</a></span><span class="op">(</span>quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># copy coin</span></span>
+<span><span class="va">coin2</span> <span class="op">&lt;-</span> <span class="va">coin</span></span></code></pre></div>
 <p>At this point, the coins are identical. What if we want to test an
 alternative methodology, for example a different normalisation method?
 This can be done by editing the Log of the coin, then regenerating.
@@ -276,27 +276,27 @@ regenerate. To make this change it is necessary to target the right
 argument. Let’s first see what is already in the Log for
 <code><a href="../reference/Normalise.html">Normalise()</a></code>:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">coin2</span><span class="op">$</span><span class="va">Log</span><span class="op">$</span><span class="va">Normalise</span><span class="op">)</span>
-<span class="co">#&gt; List of 7</span>
-<span class="co">#&gt;  $ dset        : chr "Treated"</span>
-<span class="co">#&gt;  $ global_specs:List of 2</span>
-<span class="co">#&gt;   ..$ f_n     : chr "n_minmax"</span>
-<span class="co">#&gt;   ..$ f_n_para:List of 1</span>
-<span class="co">#&gt;   .. ..$ : num [1:2] 0 100</span>
-<span class="co">#&gt;  $ indiv_specs : NULL</span>
-<span class="co">#&gt;  $ directions  : NULL</span>
-<span class="co">#&gt;  $ out2        : chr "coin"</span>
-<span class="co">#&gt;  $ write_to    : NULL</span>
-<span class="co">#&gt;  $ write2log   : logi TRUE</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">coin2</span><span class="op">$</span><span class="va">Log</span><span class="op">$</span><span class="va">Normalise</span><span class="op">)</span></span>
+<span><span class="co">#&gt; List of 7</span></span>
+<span><span class="co">#&gt;  $ dset        : chr "Treated"</span></span>
+<span><span class="co">#&gt;  $ global_specs:List of 2</span></span>
+<span><span class="co">#&gt;   ..$ f_n     : chr "n_minmax"</span></span>
+<span><span class="co">#&gt;   ..$ f_n_para:List of 1</span></span>
+<span><span class="co">#&gt;   .. ..$ : num [1:2] 0 100</span></span>
+<span><span class="co">#&gt;  $ indiv_specs : NULL</span></span>
+<span><span class="co">#&gt;  $ directions  : NULL</span></span>
+<span><span class="co">#&gt;  $ out2        : chr "coin"</span></span>
+<span><span class="co">#&gt;  $ write_to    : NULL</span></span>
+<span><span class="co">#&gt;  $ write2log   : logi TRUE</span></span></code></pre></div>
 <p>At the moment, the normalisation is min-max onto the interval of 0 to
 100. We will change this to the new function <code><a href="../reference/n_prank.html">n_prank()</a></code>:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># change to prank function (percentile ranks)</span>
-<span class="co"># we don't need to specify any additional parameters (f_n_para) here</span>
-<span class="va">coin2</span><span class="op">$</span><span class="va">Log</span><span class="op">$</span><span class="va">Normalise</span><span class="op">$</span><span class="va">global_specs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>f_n <span class="op">=</span> <span class="st">"n_prank"</span><span class="op">)</span>
-
-<span class="co"># regenerate</span>
-<span class="va">coin2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Regen.html">Regen</a></span><span class="op">(</span><span class="va">coin2</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># change to prank function (percentile ranks)</span></span>
+<span><span class="co"># we don't need to specify any additional parameters (f_n_para) here</span></span>
+<span><span class="va">coin2</span><span class="op">$</span><span class="va">Log</span><span class="op">$</span><span class="va">Normalise</span><span class="op">$</span><span class="va">global_specs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>f_n <span class="op">=</span> <span class="st">"n_prank"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># regenerate</span></span>
+<span><span class="va">coin2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Regen.html">Regen</a></span><span class="op">(</span><span class="va">coin2</span><span class="op">)</span></span></code></pre></div>
 <p>And that’s it. In summary, we copied the coin, edited its log to a
 different normalisation methodology, and then regenerated the results.
 Now what remains is to compare the results, and this is dealt with in
@@ -332,37 +332,37 @@ argument of <code><a href="../reference/new_coin.html">new_coin()</a></code>.</p
 quickly add or remove indicators from the framework, and regenerate the
 coin, all in one command.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># copy base coin</span>
-<span class="va">coin_remove</span> <span class="op">&lt;-</span> <span class="va">coin</span>
-
-<span class="co"># remove two indicators and regenerate the coin</span>
-<span class="va">coin_remove</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/change_ind.html">change_ind</a></span><span class="op">(</span><span class="va">coin</span>, drop <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LPI"</span>, <span class="st">"Forest"</span><span class="op">)</span>, regen <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; coin has been regenerated using new specs.</span>
-
-<span class="va">coin_remove</span>
-<span class="co">#&gt; --------------</span>
-<span class="co">#&gt; A coin with...</span>
-<span class="co">#&gt; --------------</span>
-<span class="co">#&gt; Input:</span>
-<span class="co">#&gt;   Units: 51 (AUS, AUT, BEL, ...)</span>
-<span class="co">#&gt;   Indicators: 47 (Goods, Services, FDI, ...)</span>
-<span class="co">#&gt;   Denominators: 4 (Area, Energy, GDP, ...)</span>
-<span class="co">#&gt;   Groups: 4 (GDP_group, GDPpc_group, Pop_group, ...)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Structure:</span>
-<span class="co">#&gt;   Level 1 Indicator: 47 indicators (FDI, ForPort, Goods, ...) </span>
-<span class="co">#&gt;   Level 2 Pillar: 8 groups (ConEcFin, Instit, P2P, ...) </span>
-<span class="co">#&gt;   Level 3 Sub-index: 2 groups (Conn, Sust) </span>
-<span class="co">#&gt;   Level 4 Index: 1 groups (Index) </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Data sets:</span>
-<span class="co">#&gt;   Raw (51 units)</span>
-<span class="co">#&gt;   Denominated (51 units)</span>
-<span class="co">#&gt;   Imputed (51 units)</span>
-<span class="co">#&gt;   Screened (51 units)</span>
-<span class="co">#&gt;   Treated (51 units)</span>
-<span class="co">#&gt;   Normalised (51 units)</span>
-<span class="co">#&gt;   Aggregated (51 units)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># copy base coin</span></span>
+<span><span class="va">coin_remove</span> <span class="op">&lt;-</span> <span class="va">coin</span></span>
+<span></span>
+<span><span class="co"># remove two indicators and regenerate the coin</span></span>
+<span><span class="va">coin_remove</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/change_ind.html">change_ind</a></span><span class="op">(</span><span class="va">coin</span>, drop <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LPI"</span>, <span class="st">"Forest"</span><span class="op">)</span>, regen <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; coin has been regenerated using new specs.</span></span>
+<span></span>
+<span><span class="va">coin_remove</span></span>
+<span><span class="co">#&gt; --------------</span></span>
+<span><span class="co">#&gt; A coin with...</span></span>
+<span><span class="co">#&gt; --------------</span></span>
+<span><span class="co">#&gt; Input:</span></span>
+<span><span class="co">#&gt;   Units: 51 (AUS, AUT, BEL, ...)</span></span>
+<span><span class="co">#&gt;   Indicators: 47 (Goods, Services, FDI, ...)</span></span>
+<span><span class="co">#&gt;   Denominators: 4 (Area, Energy, GDP, ...)</span></span>
+<span><span class="co">#&gt;   Groups: 4 (GDP_group, GDPpc_group, Pop_group, ...)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Structure:</span></span>
+<span><span class="co">#&gt;   Level 1 Indicator: 47 indicators (FDI, ForPort, Goods, ...) </span></span>
+<span><span class="co">#&gt;   Level 2 Pillar: 8 groups (ConEcFin, Instit, P2P, ...) </span></span>
+<span><span class="co">#&gt;   Level 3 Sub-index: 2 groups (Conn, Sust) </span></span>
+<span><span class="co">#&gt;   Level 4 Index: 1 groups (Index) </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Data sets:</span></span>
+<span><span class="co">#&gt;   Raw (51 units)</span></span>
+<span><span class="co">#&gt;   Denominated (51 units)</span></span>
+<span><span class="co">#&gt;   Imputed (51 units)</span></span>
+<span><span class="co">#&gt;   Screened (51 units)</span></span>
+<span><span class="co">#&gt;   Treated (51 units)</span></span>
+<span><span class="co">#&gt;   Normalised (51 units)</span></span>
+<span><span class="co">#&gt;   Aggregated (51 units)</span></span></code></pre></div>
 <p>The <code>drop</code> argument is used to specify which indicators to
 remove. The <code>add</code> argument adds indicators, although any
 indicators specified by <code>add</code> must be available in the
@@ -400,61 +400,61 @@ compare more than two coins. Let’s start by comparing the two coins we
 have: the default example coin, and the same coin but with a percentile
 rank normalisation method:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># compare index, sort by absolute rank difference</span>
-<span class="fu"><a href="../reference/compare_coins.html">compare_coins</a></span><span class="op">(</span><span class="va">coin</span>, <span class="va">coin2</span>, dset <span class="op">=</span> <span class="st">"Aggregated"</span>, iCode <span class="op">=</span> <span class="st">"Index"</span>,
-              sort_by <span class="op">=</span> <span class="st">"Abs.diff"</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt;    uCode coin.1 coin.2 Diff Abs.diff</span>
-<span class="co">#&gt; 43   PRT     27     17   10       10</span>
-<span class="co">#&gt; 29   LAO     48     39    9        9</span>
-<span class="co">#&gt; 33   MLT     10     19   -9        9</span>
-<span class="co">#&gt; 14   EST     22     16    6        6</span>
-<span class="co">#&gt; 21   IDN     43     49   -6        6</span>
-<span class="co">#&gt; 13   ESP     19     24   -5        5</span>
-<span class="co">#&gt; 19   HRV     18     23   -5        5</span>
-<span class="co">#&gt; 30   LTU     16     11    5        5</span>
-<span class="co">#&gt; 35   MNG     44     48   -4        4</span>
-<span class="co">#&gt; 17   GBR     15     12    3        3</span>
-<span class="co">#&gt; 25   JPN     34     31    3        3</span>
-<span class="co">#&gt; 32   LVA     23     20    3        3</span>
-<span class="co">#&gt; 40   PAK     50     47    3        3</span>
-<span class="co">#&gt; 3    BEL      5      7   -2        2</span>
-<span class="co">#&gt; 4    BGD     46     44    2        2</span>
-<span class="co">#&gt; 8    CHN     49     51   -2        2</span>
-<span class="co">#&gt; 20   HUN     20     22   -2        2</span>
-<span class="co">#&gt; 23   IRL     12     14   -2        2</span>
-<span class="co">#&gt; 26   KAZ     47     45    2        2</span>
-<span class="co">#&gt; 28   KOR     31     33   -2        2</span>
-<span class="co">#&gt; 31   LUX      8     10   -2        2</span>
-<span class="co">#&gt; 37   NLD      2      4   -2        2</span>
-<span class="co">#&gt; 41   PHL     38     40   -2        2</span>
-<span class="co">#&gt; 42   POL     26     28   -2        2</span>
-<span class="co">#&gt; 47   SVK     24     26   -2        2</span>
-<span class="co">#&gt; 48   SVN     11      9    2        2</span>
-<span class="co">#&gt; 2    AUT      7      6    1        1</span>
-<span class="co">#&gt; 5    BGR     30     29    1        1</span>
-<span class="co">#&gt; 6    BRN     40     41   -1        1</span>
-<span class="co">#&gt; 9    CYP     29     30   -1        1</span>
-<span class="co">#&gt; 10   CZE     17     18   -1        1</span>
-<span class="co">#&gt; 11   DEU      9      8    1        1</span>
-<span class="co">#&gt; 12   DNK      3      2    1        1</span>
-<span class="co">#&gt; 22   IND     45     46   -1        1</span>
-<span class="co">#&gt; 24   ITA     28     27    1        1</span>
-<span class="co">#&gt; 27   KHM     37     36    1        1</span>
-<span class="co">#&gt; 34   MMR     41     42   -1        1</span>
-<span class="co">#&gt; 36   MYS     39     38    1        1</span>
-<span class="co">#&gt; 38   NOR      4      3    1        1</span>
-<span class="co">#&gt; 39   NZL     33     34   -1        1</span>
-<span class="co">#&gt; 45   RUS     51     50    1        1</span>
-<span class="co">#&gt; 46   SGP     14     15   -1        1</span>
-<span class="co">#&gt; 49   SWE      6      5    1        1</span>
-<span class="co">#&gt; 50   THA     42     43   -1        1</span>
-<span class="co">#&gt; 51   VNM     36     37   -1        1</span>
-<span class="co">#&gt; 1    AUS     35     35    0        0</span>
-<span class="co">#&gt; 7    CHE      1      1    0        0</span>
-<span class="co">#&gt; 15   FIN     13     13    0        0</span>
-<span class="co">#&gt; 16   FRA     21     21    0        0</span>
-<span class="co">#&gt; 18   GRC     32     32    0        0</span>
-<span class="co">#&gt; 44   ROU     25     25    0        0</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># compare index, sort by absolute rank difference</span></span>
+<span><span class="fu"><a href="../reference/compare_coins.html">compare_coins</a></span><span class="op">(</span><span class="va">coin</span>, <span class="va">coin2</span>, dset <span class="op">=</span> <span class="st">"Aggregated"</span>, iCode <span class="op">=</span> <span class="st">"Index"</span>,</span>
+<span>              sort_by <span class="op">=</span> <span class="st">"Abs.diff"</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    uCode coin.1 coin.2 Diff Abs.diff</span></span>
+<span><span class="co">#&gt; 43   PRT     27     17   10       10</span></span>
+<span><span class="co">#&gt; 29   LAO     48     39    9        9</span></span>
+<span><span class="co">#&gt; 33   MLT     10     19   -9        9</span></span>
+<span><span class="co">#&gt; 14   EST     22     16    6        6</span></span>
+<span><span class="co">#&gt; 21   IDN     43     49   -6        6</span></span>
+<span><span class="co">#&gt; 13   ESP     19     24   -5        5</span></span>
+<span><span class="co">#&gt; 19   HRV     18     23   -5        5</span></span>
+<span><span class="co">#&gt; 30   LTU     16     11    5        5</span></span>
+<span><span class="co">#&gt; 35   MNG     44     48   -4        4</span></span>
+<span><span class="co">#&gt; 17   GBR     15     12    3        3</span></span>
+<span><span class="co">#&gt; 25   JPN     34     31    3        3</span></span>
+<span><span class="co">#&gt; 32   LVA     23     20    3        3</span></span>
+<span><span class="co">#&gt; 40   PAK     50     47    3        3</span></span>
+<span><span class="co">#&gt; 3    BEL      5      7   -2        2</span></span>
+<span><span class="co">#&gt; 4    BGD     46     44    2        2</span></span>
+<span><span class="co">#&gt; 8    CHN     49     51   -2        2</span></span>
+<span><span class="co">#&gt; 20   HUN     20     22   -2        2</span></span>
+<span><span class="co">#&gt; 23   IRL     12     14   -2        2</span></span>
+<span><span class="co">#&gt; 26   KAZ     47     45    2        2</span></span>
+<span><span class="co">#&gt; 28   KOR     31     33   -2        2</span></span>
+<span><span class="co">#&gt; 31   LUX      8     10   -2        2</span></span>
+<span><span class="co">#&gt; 37   NLD      2      4   -2        2</span></span>
+<span><span class="co">#&gt; 41   PHL     38     40   -2        2</span></span>
+<span><span class="co">#&gt; 42   POL     26     28   -2        2</span></span>
+<span><span class="co">#&gt; 47   SVK     24     26   -2        2</span></span>
+<span><span class="co">#&gt; 48   SVN     11      9    2        2</span></span>
+<span><span class="co">#&gt; 2    AUT      7      6    1        1</span></span>
+<span><span class="co">#&gt; 5    BGR     30     29    1        1</span></span>
+<span><span class="co">#&gt; 6    BRN     40     41   -1        1</span></span>
+<span><span class="co">#&gt; 9    CYP     29     30   -1        1</span></span>
+<span><span class="co">#&gt; 10   CZE     17     18   -1        1</span></span>
+<span><span class="co">#&gt; 11   DEU      9      8    1        1</span></span>
+<span><span class="co">#&gt; 12   DNK      3      2    1        1</span></span>
+<span><span class="co">#&gt; 22   IND     45     46   -1        1</span></span>
+<span><span class="co">#&gt; 24   ITA     28     27    1        1</span></span>
+<span><span class="co">#&gt; 27   KHM     37     36    1        1</span></span>
+<span><span class="co">#&gt; 34   MMR     41     42   -1        1</span></span>
+<span><span class="co">#&gt; 36   MYS     39     38    1        1</span></span>
+<span><span class="co">#&gt; 38   NOR      4      3    1        1</span></span>
+<span><span class="co">#&gt; 39   NZL     33     34   -1        1</span></span>
+<span><span class="co">#&gt; 45   RUS     51     50    1        1</span></span>
+<span><span class="co">#&gt; 46   SGP     14     15   -1        1</span></span>
+<span><span class="co">#&gt; 49   SWE      6      5    1        1</span></span>
+<span><span class="co">#&gt; 50   THA     42     43   -1        1</span></span>
+<span><span class="co">#&gt; 51   VNM     36     37   -1        1</span></span>
+<span><span class="co">#&gt; 1    AUS     35     35    0        0</span></span>
+<span><span class="co">#&gt; 7    CHE      1      1    0        0</span></span>
+<span><span class="co">#&gt; 15   FIN     13     13    0        0</span></span>
+<span><span class="co">#&gt; 16   FRA     21     21    0        0</span></span>
+<span><span class="co">#&gt; 18   GRC     32     32    0        0</span></span>
+<span><span class="co">#&gt; 44   ROU     25     25    0        0</span></span></code></pre></div>
 <p>This shows that for the overall index, the maximum rank change is 10
 places for Portugal. We can compare ranks or scores, for any indicator
 or aggregate in the index. This also works if the number of units
@@ -462,162 +462,162 @@ changes. At the moment, the coin has an imputation step which fills in
 all <code>NA</code>s. We could alternatively filter out any units with
 less than 90% data availability and remove the imputation step.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># copy original coin</span>
-<span class="va">coin90</span> <span class="op">&lt;-</span> <span class="va">coin</span>
-
-<span class="co"># remove imputation entry completely (function will not be run)</span>
-<span class="va">coin90</span><span class="op">$</span><span class="va">Log</span><span class="op">$</span><span class="va">Impute</span> <span class="op">&lt;-</span> <span class="cn">NULL</span>
-
-<span class="co"># set data availability threshold to 90%</span>
-<span class="va">coin90</span><span class="op">$</span><span class="va">Log</span><span class="op">$</span><span class="va">Screen</span><span class="op">$</span><span class="va">dat_thresh</span> <span class="op">&lt;-</span> <span class="fl">0.9</span>
-
-<span class="co"># we also need to tell Screen() to use the denominated dset now</span>
-<span class="va">coin90</span><span class="op">$</span><span class="va">Log</span><span class="op">$</span><span class="va">Screen</span><span class="op">$</span><span class="va">dset</span> <span class="op">&lt;-</span> <span class="st">"Denominated"</span>
-
-<span class="co"># regenerate</span>
-<span class="va">coin90</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Regen.html">Regen</a></span><span class="op">(</span><span class="va">coin90</span><span class="op">)</span>
-
-<span class="co"># summarise coin</span>
-<span class="va">coin90</span>
-<span class="co">#&gt; --------------</span>
-<span class="co">#&gt; A coin with...</span>
-<span class="co">#&gt; --------------</span>
-<span class="co">#&gt; Input:</span>
-<span class="co">#&gt;   Units: 51 (AUS, AUT, BEL, ...)</span>
-<span class="co">#&gt;   Indicators: 49 (Goods, Services, FDI, ...)</span>
-<span class="co">#&gt;   Denominators: 4 (Area, Energy, GDP, ...)</span>
-<span class="co">#&gt;   Groups: 4 (GDP_group, GDPpc_group, Pop_group, ...)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Structure:</span>
-<span class="co">#&gt;   Level 1 Indicator: 49 indicators (FDI, ForPort, Goods, ...) </span>
-<span class="co">#&gt;   Level 2 Pillar: 8 groups (ConEcFin, Instit, P2P, ...) </span>
-<span class="co">#&gt;   Level 3 Sub-index: 2 groups (Conn, Sust) </span>
-<span class="co">#&gt;   Level 4 Index: 1 groups (Index) </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Data sets:</span>
-<span class="co">#&gt;   Raw (51 units)</span>
-<span class="co">#&gt;   Denominated (51 units)</span>
-<span class="co">#&gt;   Screened (46 units)</span>
-<span class="co">#&gt;   Treated (46 units)</span>
-<span class="co">#&gt;   Normalised (46 units)</span>
-<span class="co">#&gt;   Aggregated (46 units)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># copy original coin</span></span>
+<span><span class="va">coin90</span> <span class="op">&lt;-</span> <span class="va">coin</span></span>
+<span></span>
+<span><span class="co"># remove imputation entry completely (function will not be run)</span></span>
+<span><span class="va">coin90</span><span class="op">$</span><span class="va">Log</span><span class="op">$</span><span class="va">Impute</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
+<span></span>
+<span><span class="co"># set data availability threshold to 90%</span></span>
+<span><span class="va">coin90</span><span class="op">$</span><span class="va">Log</span><span class="op">$</span><span class="va">Screen</span><span class="op">$</span><span class="va">dat_thresh</span> <span class="op">&lt;-</span> <span class="fl">0.9</span></span>
+<span></span>
+<span><span class="co"># we also need to tell Screen() to use the denominated dset now</span></span>
+<span><span class="va">coin90</span><span class="op">$</span><span class="va">Log</span><span class="op">$</span><span class="va">Screen</span><span class="op">$</span><span class="va">dset</span> <span class="op">&lt;-</span> <span class="st">"Denominated"</span></span>
+<span></span>
+<span><span class="co"># regenerate</span></span>
+<span><span class="va">coin90</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Regen.html">Regen</a></span><span class="op">(</span><span class="va">coin90</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># summarise coin</span></span>
+<span><span class="va">coin90</span></span>
+<span><span class="co">#&gt; --------------</span></span>
+<span><span class="co">#&gt; A coin with...</span></span>
+<span><span class="co">#&gt; --------------</span></span>
+<span><span class="co">#&gt; Input:</span></span>
+<span><span class="co">#&gt;   Units: 51 (AUS, AUT, BEL, ...)</span></span>
+<span><span class="co">#&gt;   Indicators: 49 (Goods, Services, FDI, ...)</span></span>
+<span><span class="co">#&gt;   Denominators: 4 (Area, Energy, GDP, ...)</span></span>
+<span><span class="co">#&gt;   Groups: 4 (GDP_group, GDPpc_group, Pop_group, ...)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Structure:</span></span>
+<span><span class="co">#&gt;   Level 1 Indicator: 49 indicators (FDI, ForPort, Goods, ...) </span></span>
+<span><span class="co">#&gt;   Level 2 Pillar: 8 groups (ConEcFin, Instit, P2P, ...) </span></span>
+<span><span class="co">#&gt;   Level 3 Sub-index: 2 groups (Conn, Sust) </span></span>
+<span><span class="co">#&gt;   Level 4 Index: 1 groups (Index) </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Data sets:</span></span>
+<span><span class="co">#&gt;   Raw (51 units)</span></span>
+<span><span class="co">#&gt;   Denominated (51 units)</span></span>
+<span><span class="co">#&gt;   Screened (46 units)</span></span>
+<span><span class="co">#&gt;   Treated (46 units)</span></span>
+<span><span class="co">#&gt;   Normalised (46 units)</span></span>
+<span><span class="co">#&gt;   Aggregated (46 units)</span></span></code></pre></div>
 <p>We can see that we are down to 46 units after the screening step. Now
 let’s compare with the original coin:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># compare index, sort by absolute rank difference</span>
-<span class="fu"><a href="../reference/compare_coins.html">compare_coins</a></span><span class="op">(</span><span class="va">coin</span>, <span class="va">coin90</span>, dset <span class="op">=</span> <span class="st">"Aggregated"</span>, iCode <span class="op">=</span> <span class="st">"Index"</span>,
-              sort_by <span class="op">=</span> <span class="st">"Abs.diff"</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt;    uCode coin.1 coin.2 Diff Abs.diff</span>
-<span class="co">#&gt; 40   PAK     50     44    6        6</span>
-<span class="co">#&gt; 13   ESP     19     24   -5        5</span>
-<span class="co">#&gt; 22   IND     45     40    5        5</span>
-<span class="co">#&gt; 45   RUS     51     46    5        5</span>
-<span class="co">#&gt; 50   THA     42     37    5        5</span>
-<span class="co">#&gt; 8    CHN     49     45    4        4</span>
-<span class="co">#&gt; 26   KAZ     47     43    4        4</span>
-<span class="co">#&gt; 16   FRA     21     18    3        3</span>
-<span class="co">#&gt; 33   MLT     10     13   -3        3</span>
-<span class="co">#&gt; 46   SGP     14     11    3        3</span>
-<span class="co">#&gt; 21   IDN     43     41    2        2</span>
-<span class="co">#&gt; 32   LVA     23     21    2        2</span>
-<span class="co">#&gt; 35   MNG     44     42    2        2</span>
-<span class="co">#&gt; 47   SVK     24     22    2        2</span>
-<span class="co">#&gt; 5    BGR     30     31   -1        1</span>
-<span class="co">#&gt; 12   DNK      3      2    1        1</span>
-<span class="co">#&gt; 14   EST     22     23   -1        1</span>
-<span class="co">#&gt; 15   FIN     13     14   -1        1</span>
-<span class="co">#&gt; 18   GRC     32     33   -1        1</span>
-<span class="co">#&gt; 19   HRV     18     19   -1        1</span>
-<span class="co">#&gt; 28   KOR     31     30    1        1</span>
-<span class="co">#&gt; 36   MYS     39     38    1        1</span>
-<span class="co">#&gt; 37   NLD      2      3   -1        1</span>
-<span class="co">#&gt; 39   NZL     33     32    1        1</span>
-<span class="co">#&gt; 41   PHL     38     39   -1        1</span>
-<span class="co">#&gt; 42   POL     26     27   -1        1</span>
-<span class="co">#&gt; 43   PRT     27     26    1        1</span>
-<span class="co">#&gt; 48   SVN     11     10    1        1</span>
-<span class="co">#&gt; 1    AUS     35     35    0        0</span>
-<span class="co">#&gt; 2    AUT      7      7    0        0</span>
-<span class="co">#&gt; 3    BEL      5      5    0        0</span>
-<span class="co">#&gt; 7    CHE      1      1    0        0</span>
-<span class="co">#&gt; 9    CYP     29     29    0        0</span>
-<span class="co">#&gt; 10   CZE     17     17    0        0</span>
-<span class="co">#&gt; 11   DEU      9      9    0        0</span>
-<span class="co">#&gt; 17   GBR     15     15    0        0</span>
-<span class="co">#&gt; 20   HUN     20     20    0        0</span>
-<span class="co">#&gt; 23   IRL     12     12    0        0</span>
-<span class="co">#&gt; 24   ITA     28     28    0        0</span>
-<span class="co">#&gt; 25   JPN     34     34    0        0</span>
-<span class="co">#&gt; 30   LTU     16     16    0        0</span>
-<span class="co">#&gt; 31   LUX      8      8    0        0</span>
-<span class="co">#&gt; 38   NOR      4      4    0        0</span>
-<span class="co">#&gt; 44   ROU     25     25    0        0</span>
-<span class="co">#&gt; 49   SWE      6      6    0        0</span>
-<span class="co">#&gt; 51   VNM     36     36    0        0</span>
-<span class="co">#&gt; 4    BGD     46     NA   NA       NA</span>
-<span class="co">#&gt; 6    BRN     40     NA   NA       NA</span>
-<span class="co">#&gt; 27   KHM     37     NA   NA       NA</span>
-<span class="co">#&gt; 29   LAO     48     NA   NA       NA</span>
-<span class="co">#&gt; 34   MMR     41     NA   NA       NA</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># compare index, sort by absolute rank difference</span></span>
+<span><span class="fu"><a href="../reference/compare_coins.html">compare_coins</a></span><span class="op">(</span><span class="va">coin</span>, <span class="va">coin90</span>, dset <span class="op">=</span> <span class="st">"Aggregated"</span>, iCode <span class="op">=</span> <span class="st">"Index"</span>,</span>
+<span>              sort_by <span class="op">=</span> <span class="st">"Abs.diff"</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    uCode coin.1 coin.2 Diff Abs.diff</span></span>
+<span><span class="co">#&gt; 40   PAK     50     44    6        6</span></span>
+<span><span class="co">#&gt; 13   ESP     19     24   -5        5</span></span>
+<span><span class="co">#&gt; 22   IND     45     40    5        5</span></span>
+<span><span class="co">#&gt; 45   RUS     51     46    5        5</span></span>
+<span><span class="co">#&gt; 50   THA     42     37    5        5</span></span>
+<span><span class="co">#&gt; 8    CHN     49     45    4        4</span></span>
+<span><span class="co">#&gt; 26   KAZ     47     43    4        4</span></span>
+<span><span class="co">#&gt; 16   FRA     21     18    3        3</span></span>
+<span><span class="co">#&gt; 33   MLT     10     13   -3        3</span></span>
+<span><span class="co">#&gt; 46   SGP     14     11    3        3</span></span>
+<span><span class="co">#&gt; 21   IDN     43     41    2        2</span></span>
+<span><span class="co">#&gt; 32   LVA     23     21    2        2</span></span>
+<span><span class="co">#&gt; 35   MNG     44     42    2        2</span></span>
+<span><span class="co">#&gt; 47   SVK     24     22    2        2</span></span>
+<span><span class="co">#&gt; 5    BGR     30     31   -1        1</span></span>
+<span><span class="co">#&gt; 12   DNK      3      2    1        1</span></span>
+<span><span class="co">#&gt; 14   EST     22     23   -1        1</span></span>
+<span><span class="co">#&gt; 15   FIN     13     14   -1        1</span></span>
+<span><span class="co">#&gt; 18   GRC     32     33   -1        1</span></span>
+<span><span class="co">#&gt; 19   HRV     18     19   -1        1</span></span>
+<span><span class="co">#&gt; 28   KOR     31     30    1        1</span></span>
+<span><span class="co">#&gt; 36   MYS     39     38    1        1</span></span>
+<span><span class="co">#&gt; 37   NLD      2      3   -1        1</span></span>
+<span><span class="co">#&gt; 39   NZL     33     32    1        1</span></span>
+<span><span class="co">#&gt; 41   PHL     38     39   -1        1</span></span>
+<span><span class="co">#&gt; 42   POL     26     27   -1        1</span></span>
+<span><span class="co">#&gt; 43   PRT     27     26    1        1</span></span>
+<span><span class="co">#&gt; 48   SVN     11     10    1        1</span></span>
+<span><span class="co">#&gt; 1    AUS     35     35    0        0</span></span>
+<span><span class="co">#&gt; 2    AUT      7      7    0        0</span></span>
+<span><span class="co">#&gt; 3    BEL      5      5    0        0</span></span>
+<span><span class="co">#&gt; 7    CHE      1      1    0        0</span></span>
+<span><span class="co">#&gt; 9    CYP     29     29    0        0</span></span>
+<span><span class="co">#&gt; 10   CZE     17     17    0        0</span></span>
+<span><span class="co">#&gt; 11   DEU      9      9    0        0</span></span>
+<span><span class="co">#&gt; 17   GBR     15     15    0        0</span></span>
+<span><span class="co">#&gt; 20   HUN     20     20    0        0</span></span>
+<span><span class="co">#&gt; 23   IRL     12     12    0        0</span></span>
+<span><span class="co">#&gt; 24   ITA     28     28    0        0</span></span>
+<span><span class="co">#&gt; 25   JPN     34     34    0        0</span></span>
+<span><span class="co">#&gt; 30   LTU     16     16    0        0</span></span>
+<span><span class="co">#&gt; 31   LUX      8      8    0        0</span></span>
+<span><span class="co">#&gt; 38   NOR      4      4    0        0</span></span>
+<span><span class="co">#&gt; 44   ROU     25     25    0        0</span></span>
+<span><span class="co">#&gt; 49   SWE      6      6    0        0</span></span>
+<span><span class="co">#&gt; 51   VNM     36     36    0        0</span></span>
+<span><span class="co">#&gt; 4    BGD     46     NA   NA       NA</span></span>
+<span><span class="co">#&gt; 6    BRN     40     NA   NA       NA</span></span>
+<span><span class="co">#&gt; 27   KHM     37     NA   NA       NA</span></span>
+<span><span class="co">#&gt; 29   LAO     48     NA   NA       NA</span></span>
+<span><span class="co">#&gt; 34   MMR     41     NA   NA       NA</span></span></code></pre></div>
 <p>The removed units are marked as <code>NA</code> in the second
 coin.</p>
 <p>Finally, to demonstrate comparing multiple coins, we can call the
 <code><a href="../reference/compare_coins_multi.html">compare_coins_multi()</a></code> function:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/compare_coins_multi.html">compare_coins_multi</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Nominal <span class="op">=</span> <span class="va">coin</span>, Prank <span class="op">=</span> <span class="va">coin2</span>, NoLPIFor <span class="op">=</span> <span class="va">coin_remove</span>,
-                         Screen90 <span class="op">=</span> <span class="va">coin90</span><span class="op">)</span>, dset <span class="op">=</span> <span class="st">"Aggregated"</span>, iCode <span class="op">=</span> <span class="st">"Index"</span><span class="op">)</span>
-<span class="co">#&gt;    uCode Nominal Prank NoLPIFor Screen90</span>
-<span class="co">#&gt; 7    CHE       1     1        1        1</span>
-<span class="co">#&gt; 37   NLD       2     4        4        3</span>
-<span class="co">#&gt; 12   DNK       3     2        2        2</span>
-<span class="co">#&gt; 38   NOR       4     3        3        4</span>
-<span class="co">#&gt; 3    BEL       5     7        6        5</span>
-<span class="co">#&gt; 49   SWE       6     5        5        6</span>
-<span class="co">#&gt; 2    AUT       7     6        7        7</span>
-<span class="co">#&gt; 31   LUX       8    10        8        8</span>
-<span class="co">#&gt; 11   DEU       9     8       11        9</span>
-<span class="co">#&gt; 33   MLT      10    19        9       13</span>
-<span class="co">#&gt; 48   SVN      11     9       10       10</span>
-<span class="co">#&gt; 23   IRL      12    14       12       12</span>
-<span class="co">#&gt; 15   FIN      13    13       13       14</span>
-<span class="co">#&gt; 46   SGP      14    15       14       11</span>
-<span class="co">#&gt; 17   GBR      15    12       16       15</span>
-<span class="co">#&gt; 30   LTU      16    11       15       16</span>
-<span class="co">#&gt; 10   CZE      17    18       19       17</span>
-<span class="co">#&gt; 19   HRV      18    23       21       19</span>
-<span class="co">#&gt; 13   ESP      19    24       20       24</span>
-<span class="co">#&gt; 20   HUN      20    22       22       20</span>
-<span class="co">#&gt; 16   FRA      21    21       25       18</span>
-<span class="co">#&gt; 14   EST      22    16       23       23</span>
-<span class="co">#&gt; 32   LVA      23    20       17       21</span>
-<span class="co">#&gt; 47   SVK      24    26       24       22</span>
-<span class="co">#&gt; 44   ROU      25    25       26       25</span>
-<span class="co">#&gt; 42   POL      26    28       27       27</span>
-<span class="co">#&gt; 43   PRT      27    17       18       26</span>
-<span class="co">#&gt; 24   ITA      28    27       28       28</span>
-<span class="co">#&gt; 9    CYP      29    30       29       29</span>
-<span class="co">#&gt; 5    BGR      30    29       30       31</span>
-<span class="co">#&gt; 28   KOR      31    33       31       30</span>
-<span class="co">#&gt; 18   GRC      32    32       32       33</span>
-<span class="co">#&gt; 39   NZL      33    34       33       32</span>
-<span class="co">#&gt; 25   JPN      34    31       34       34</span>
-<span class="co">#&gt; 1    AUS      35    35       37       35</span>
-<span class="co">#&gt; 51   VNM      36    37       36       36</span>
-<span class="co">#&gt; 27   KHM      37    36       35       NA</span>
-<span class="co">#&gt; 41   PHL      38    40       40       39</span>
-<span class="co">#&gt; 36   MYS      39    38       38       38</span>
-<span class="co">#&gt; 6    BRN      40    41       45       NA</span>
-<span class="co">#&gt; 34   MMR      41    42       39       NA</span>
-<span class="co">#&gt; 50   THA      42    43       42       37</span>
-<span class="co">#&gt; 21   IDN      43    49       41       41</span>
-<span class="co">#&gt; 35   MNG      44    48       47       42</span>
-<span class="co">#&gt; 22   IND      45    46       46       40</span>
-<span class="co">#&gt; 4    BGD      46    44       44       NA</span>
-<span class="co">#&gt; 26   KAZ      47    45       49       43</span>
-<span class="co">#&gt; 29   LAO      48    39       43       NA</span>
-<span class="co">#&gt; 8    CHN      49    51       50       45</span>
-<span class="co">#&gt; 40   PAK      50    47       48       44</span>
-<span class="co">#&gt; 45   RUS      51    50       51       46</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/compare_coins_multi.html">compare_coins_multi</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Nominal <span class="op">=</span> <span class="va">coin</span>, Prank <span class="op">=</span> <span class="va">coin2</span>, NoLPIFor <span class="op">=</span> <span class="va">coin_remove</span>,</span>
+<span>                         Screen90 <span class="op">=</span> <span class="va">coin90</span><span class="op">)</span>, dset <span class="op">=</span> <span class="st">"Aggregated"</span>, iCode <span class="op">=</span> <span class="st">"Index"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    uCode Nominal Prank NoLPIFor Screen90</span></span>
+<span><span class="co">#&gt; 7    CHE       1     1        1        1</span></span>
+<span><span class="co">#&gt; 37   NLD       2     4        4        3</span></span>
+<span><span class="co">#&gt; 12   DNK       3     2        2        2</span></span>
+<span><span class="co">#&gt; 38   NOR       4     3        3        4</span></span>
+<span><span class="co">#&gt; 3    BEL       5     7        6        5</span></span>
+<span><span class="co">#&gt; 49   SWE       6     5        5        6</span></span>
+<span><span class="co">#&gt; 2    AUT       7     6        7        7</span></span>
+<span><span class="co">#&gt; 31   LUX       8    10        8        8</span></span>
+<span><span class="co">#&gt; 11   DEU       9     8       11        9</span></span>
+<span><span class="co">#&gt; 33   MLT      10    19        9       13</span></span>
+<span><span class="co">#&gt; 48   SVN      11     9       10       10</span></span>
+<span><span class="co">#&gt; 23   IRL      12    14       12       12</span></span>
+<span><span class="co">#&gt; 15   FIN      13    13       13       14</span></span>
+<span><span class="co">#&gt; 46   SGP      14    15       14       11</span></span>
+<span><span class="co">#&gt; 17   GBR      15    12       16       15</span></span>
+<span><span class="co">#&gt; 30   LTU      16    11       15       16</span></span>
+<span><span class="co">#&gt; 10   CZE      17    18       19       17</span></span>
+<span><span class="co">#&gt; 19   HRV      18    23       21       19</span></span>
+<span><span class="co">#&gt; 13   ESP      19    24       20       24</span></span>
+<span><span class="co">#&gt; 20   HUN      20    22       22       20</span></span>
+<span><span class="co">#&gt; 16   FRA      21    21       25       18</span></span>
+<span><span class="co">#&gt; 14   EST      22    16       23       23</span></span>
+<span><span class="co">#&gt; 32   LVA      23    20       17       21</span></span>
+<span><span class="co">#&gt; 47   SVK      24    26       24       22</span></span>
+<span><span class="co">#&gt; 44   ROU      25    25       26       25</span></span>
+<span><span class="co">#&gt; 42   POL      26    28       27       27</span></span>
+<span><span class="co">#&gt; 43   PRT      27    17       18       26</span></span>
+<span><span class="co">#&gt; 24   ITA      28    27       28       28</span></span>
+<span><span class="co">#&gt; 9    CYP      29    30       29       29</span></span>
+<span><span class="co">#&gt; 5    BGR      30    29       30       31</span></span>
+<span><span class="co">#&gt; 28   KOR      31    33       31       30</span></span>
+<span><span class="co">#&gt; 18   GRC      32    32       32       33</span></span>
+<span><span class="co">#&gt; 39   NZL      33    34       33       32</span></span>
+<span><span class="co">#&gt; 25   JPN      34    31       34       34</span></span>
+<span><span class="co">#&gt; 1    AUS      35    35       37       35</span></span>
+<span><span class="co">#&gt; 51   VNM      36    37       36       36</span></span>
+<span><span class="co">#&gt; 27   KHM      37    36       35       NA</span></span>
+<span><span class="co">#&gt; 41   PHL      38    40       40       39</span></span>
+<span><span class="co">#&gt; 36   MYS      39    38       38       38</span></span>
+<span><span class="co">#&gt; 6    BRN      40    41       45       NA</span></span>
+<span><span class="co">#&gt; 34   MMR      41    42       39       NA</span></span>
+<span><span class="co">#&gt; 50   THA      42    43       42       37</span></span>
+<span><span class="co">#&gt; 21   IDN      43    49       41       41</span></span>
+<span><span class="co">#&gt; 35   MNG      44    48       47       42</span></span>
+<span><span class="co">#&gt; 22   IND      45    46       46       40</span></span>
+<span><span class="co">#&gt; 4    BGD      46    44       44       NA</span></span>
+<span><span class="co">#&gt; 26   KAZ      47    45       49       43</span></span>
+<span><span class="co">#&gt; 29   LAO      48    39       43       NA</span></span>
+<span><span class="co">#&gt; 8    CHN      49    51       50       45</span></span>
+<span><span class="co">#&gt; 40   PAK      50    47       48       44</span></span>
+<span><span class="co">#&gt; 45   RUS      51    50       51       46</span></span></code></pre></div>
 <p>This simply shows the ranks of each of the three coins side by side.
 We can also choose to compare scores, and to display rank changes or
 absolute rank changes. Obviously a requirement is that the coins must
@@ -637,7 +637,7 @@ all have some common units, and must all have <code>iCode</code> and
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
     </footer>

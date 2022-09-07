@@ -94,6 +94,9 @@
     <loc>https://bluefoxr.github.io/COINr/reference/Aggregate.purse.html</loc>
   </url>
   <url>
+    <loc>https://bluefoxr.github.io/COINr/reference/approx_df.html</loc>
+  </url>
+  <url>
     <loc>https://bluefoxr.github.io/COINr/reference/ASEM_iData.html</loc>
   </url>
   <url>
@@ -128,6 +131,9 @@
   </url>
   <url>
     <loc>https://bluefoxr.github.io/COINr/reference/build_example_purse.html</loc>
+  </url>
+  <url>
+    <loc>https://bluefoxr.github.io/COINr/reference/CAGR.html</loc>
   </url>
   <url>
     <loc>https://bluefoxr.github.io/COINr/reference/change_ind.html</loc>
@@ -199,7 +205,13 @@
     <loc>https://bluefoxr.github.io/COINr/reference/effectiveWeight.html</loc>
   </url>
   <url>
+    <loc>https://bluefoxr.github.io/COINr/reference/export_to_excel.coin.html</loc>
+  </url>
+  <url>
     <loc>https://bluefoxr.github.io/COINr/reference/export_to_excel.html</loc>
+  </url>
+  <url>
+    <loc>https://bluefoxr.github.io/COINr/reference/export_to_excel.purse.html</loc>
   </url>
   <url>
     <loc>https://bluefoxr.github.io/COINr/reference/extractYear.html</loc>
@@ -308,6 +320,9 @@
   </url>
   <url>
     <loc>https://bluefoxr.github.io/COINr/reference/get_str_weak.html</loc>
+  </url>
+  <url>
+    <loc>https://bluefoxr.github.io/COINr/reference/get_trends.html</loc>
   </url>
   <url>
     <loc>https://bluefoxr.github.io/COINr/reference/get_unit_summary.html</loc>
@@ -506,6 +521,9 @@
   </url>
   <url>
     <loc>https://bluefoxr.github.io/COINr/reference/plot_uncertainty.html</loc>
+  </url>
+  <url>
+    <loc>https://bluefoxr.github.io/COINr/reference/prc_change.html</loc>
   </url>
   <url>
     <loc>https://bluefoxr.github.io/COINr/reference/print.coin.html</loc>
