@@ -96,6 +96,7 @@ reference:
   - get_sensitivity
   - get_stats
   - get_str_weak
+  - get_trends
   - get_unit_summary
   - remove_elements
 
@@ -139,6 +140,7 @@ reference:
   - a_gmean
   - a_hmean
   - boxcox
+  - CAGR
   - check_iData
   - check_iMeta
   - check_SkewKurt
@@ -147,6 +149,8 @@ reference:
   - Denominate.coin
   - Denominate.data.frame
   - Denominate.purse
+  - export_to_excel.coin
+  - export_to_excel.purse
   - get_data.coin
   - get_data.purse
   - get_data_avail.coin
@@ -191,6 +195,7 @@ reference:
   - n_scaled
   - n_zscore
   - outrankMatrix
+  - prc_change
   - print.coin
   - print.purse
   - qNormalise.coin
