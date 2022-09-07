@@ -92,6 +92,9 @@ reference:
   - get_denom_corr
   - get_eff_weights
   - get_opt_weights
+  - get_noisy_weights
+  - get_PCA
+  - get_pvals
   - get_results
   - get_sensitivity
   - get_stats
@@ -159,9 +162,6 @@ reference:
   - get_dset.coin
   - get_dset.purse
   - get_dset
-  - get_noisy_weights
-  - get_PCA
-  - get_pvals
   - get_stats.coin
   - get_stats.data.frame
   - Impute.coin
