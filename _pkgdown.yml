@@ -53,12 +53,6 @@ navbar:
           href: articles/data_selection.html
         - text: "Other functions"
           href: articles/other_functions.html
-    - text: "Examples"
-      menu:
-        - text: "Building a composite indicator"
-          href: articles/build_example.html
-        - text: "Panel data"
-          href: articles/panel_data.html
     - text: "Functions"
       href: reference/index.html
     - text: "News"
