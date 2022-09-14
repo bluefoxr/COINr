@@ -85,7 +85,7 @@ This function calls \code{\link[=get_corr]{get_corr()}}.
 Note that this function can only call correlations within the same data set (i.e. only one data set in \code{.$Data}).
 
 This function uses ggplot2 to generate plots, so the plot can be further manipulated using ggplot2 commands.
-See \verb{vignette("visualisation}) for more details on plotting.
+See \code{vignette("visualisation")} for more details on plotting.
 
 This function replaces the now-defunct \code{plotCorr()} from COINr < v1.0.
 }

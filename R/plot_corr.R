@@ -11,7 +11,7 @@
 #' Note that this function can only call correlations within the same data set (i.e. only one data set in `.$Data`).
 #'
 #' This function uses ggplot2 to generate plots, so the plot can be further manipulated using ggplot2 commands.
-#' See `vignette("visualisation`) for more details on plotting.
+#' See `vignette("visualisation")` for more details on plotting.
 #'
 #' This function replaces the now-defunct `plotCorr()` from COINr < v1.0.
 #'
