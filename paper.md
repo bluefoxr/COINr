@@ -118,7 +118,7 @@ We may also visualise the same results using a bar chart - here we see how count
 plot_bar(coin, dset = "Aggregated", iCode = "Sust", stack_children = TRUE)
 ```
 
-![Density matrix of the main trips' travel distance in different age and period groups. Two cohort groups are exemplarily highlighted. \label{fig:descriptive}](paper_figs/results_bar.png){width=80%}
+![Density matrix of the main trips' travel distance in different age and period groups. Two cohort groups are exemplarily highlighted. \label{fig:descriptive}](paper_figs/results_bar.png){width=100%}
 
 As a final example, we show one of the analysis features of COINr: the possibility to plot and analyse correlations:
 
@@ -127,7 +127,7 @@ plot_corr(coin, dset = "Normalised", iCodes = list("Sust"),
           grouplev = 2, flagcolours = T)
 ```
 
-![Density matrix of the main trips' travel distance in different age and period groups. Two cohort groups are exemplarily highlighted. \label{fig:descriptive}](paper_figs/corr_plot.png){width=60%}
+![Density matrix of the main trips' travel distance in different age and period groups. Two cohort groups are exemplarily highlighted. \label{fig:descriptive}](paper_figs/corr_plot.png){width=80%}
 
 The correlation plot illustrates where e.g. negative correlations exist within aggregation groups, which may lead to poor representation of indicators in the aggregated scores.
 
