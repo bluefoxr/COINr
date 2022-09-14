@@ -5,7 +5,7 @@ tags:
 - composite indicators
 - indicators
 - policy
-date: 6 July 2022
+date: "14 September 2022"
 affiliations:
 - name: Freelance consultant, Ispra, Italy
   index: 1
@@ -15,13 +15,13 @@ affiliations:
   index: 3
 authors:
 - name: William Becker
-  orcid: 0000-0002-6467-4472
+  orcid: "0000-0002-6467-4472"
   corresponding: yes
   affiliation: 1
 - name: Giulio Caperna
   affiliation: 2
 - name: Maria Del Sorbo
-  orcid: 0000-0001-8717-0202
+  orcid: "0000-0001-8717-0202"
   affiliation: 3
 - name: Hedvig Norlén
   affiliation: 1
@@ -29,7 +29,7 @@ authors:
   affiliation: 2
 - name: Michaela Saisana
   affiliation: 2
-  orcid: 0000-0001-5361-0222
+  orcid: "0000-0001-5361-0222"
 bibliography: paper.bib
 ---
 
@@ -67,34 +67,97 @@ In short, **COINr** aims to be a flexible, fast and comprehensive development en
 
 # Features
 
-**COINr** is extensively documented with many vignettes and examples, all of which can be easily browsed at its **pkgdown** [website](https://bluefoxr.github.io/COINr/). Here, a brief overview of features is given.
+**COINr** is extensively documented with many vignettes and examples, all of which can be easily browsed at its **pkgdown** [website](https://bluefoxr.github.io/COINr/). Here, a brief overview is given.
+
+Primarily, COINr is used for building composite indicators: in practice this would usually involve assembling a set of indicators (usually from different sources) and accompanying metadata, and assembling them into a data frame that can be read by COINr to build a "coin" (see [vignette](https://bluefoxr.github.io/COINr/articles/coins.html)). After that, the composite scores are calculated by operating on the coin using any of the "building functions", which specify *which* methodological steps to apply, and *how* to apply them.
+
+The full process of building a composite indicator is too lengthy to describe in this brief paper. Instead, we simply give a very short example. We use the built-in "ASEM" data set which comprises two data frames (one of indicator data, and the other of metadata) that are formatted such that they can be recognised by COINr to build a coin. To build a coin, we call `new_coin()`:
+
+```
+# load COINr
+library(COINr)
+
+# build a coin with example data set
+coin <- new_coin(iData = ASEM_iData, iMeta = ASEM_iMeta)
+```
+
+To see how these data frames are formatted, use e.g. `str(ASEM_iData)` or `View(ASEM_iData)` and see the "coins" [vignette](https://bluefoxr.github.io/COINr/articles/coins.html).
+
+In the most simple case, we could build a composite indicator by [normalising](https://bluefoxr.github.io/COINr/articles/normalise.html) the indicators (bringing them onto a common scale), and [aggregating](https://bluefoxr.github.io/COINr/articles/aggregate.html) them (using weighted averages to calculate index scores). This can be done in COINr using the `Normalise()` and `Aggregate()` functions respectively:
+
+```
+# normalise (scale) each indicator onto [0, 100] interval
+coin <- qNormalise(coin, dset = "Raw", f_n = "n_minmax",
+                   f_n_para = list(l_u = c(0, 100)))
+                   
+# aggregate using weighted arithmetic mean
+# (note weights are input in data frames when calling new_coin() )
+coin <- Aggregate(coin, dset = "Normalised", f_ag = "a_amean") 
+```
+Both of these functions allow any other function to be passed to them, allowing more complex types of normalisation and aggregation. Here, we have simply used the "min-max" normalisation method (scaling indicators onto the $$[0, 100]$$ interval), and aggregated using the weighted arithmetic mean. Notice that these COINr functions take coins as inputs, but also have methods for data frames and "purses", among others.
+
+To see the results in a table form, we can call the `get_results()` function:
+
+```
+# generate data frame with results at highest aggregation level (index)
+get_results(coin, dset = "Aggregated") |>
+    head()
+    
+  uCode Index Rank
+1   DEU 75.23    1
+2   GBR 68.94    2
+3   FRA 65.92    3
+4   CHE 62.61    4
+5   NLD 61.24    5
+6   SWE 60.59    6
+```
+
+We may also visualise the same results using a bar chart - here we see how countries rank on the "connectivity" sub-index:
+
+```
+plot_bar(coin, dset = "Aggregated", iCode = "Sust", stack_children = TRUE)
+```
+
+![Density matrix of the main trips' travel distance in different age and period groups. Two cohort groups are exemplarily highlighted. \label{fig:descriptive}](paper_figs/results_bar.png){width=80%}
+
+As a final example, we show one of the analysis features of COINr: the possibility to plot and analyse correlations:
+
+```
+plot_corr(coin, dset = "Normalised", iCodes = list("Sust"),
+          grouplev = 2, flagcolours = T)
+```
+
+![Density matrix of the main trips' travel distance in different age and period groups. Two cohort groups are exemplarily highlighted. \label{fig:descriptive}](paper_figs/corr_plot.png){width=60%}
+
+The correlation plot illustrates where e.g. negative correlations exist within aggregation groups, which may lead to poor representation of indicators in the aggregated scores.
+
+COINr includes far more features than those shown here. Remaining features (with vignette links) include:
 
 **Building features**:
 
-* Flexible and fast development of composite indicators with no limits on aggregation levels, numbers of indicators, highly flexible set of methodological choices.
-* Denomination by other indicators
-* Screening units by data requirements
-* Imputation of missing data, by a variety of methods
-* Data treatment using Winsorisation and nonlinear transformations
-* Normalisation (scaling) using a variety of methods 
-* Weighting using either manual weighting, PCA weights or correlation-optimised weights.
-* Aggregation of indicators using a variety of methods which can be different for each aggregation level.
-* Support for panel data (time-indexed data) for constructing multi-year composite indicators
+* [Denomination](https://bluefoxr.github.io/COINr/articles/denomination.html) by other indicators
+* [Screening](https://bluefoxr.github.io/COINr/articles/screening.html) units by data requirements
+* [Imputation](https://bluefoxr.github.io/COINr/articles/imputation.html) of missing data
+* [Outlier treatment](https://bluefoxr.github.io/COINr/articles/treat.html) using Winsorisation and nonlinear transformations
+* [Weighting](https://bluefoxr.github.io/COINr/articles/weights.html) using either manual weighting, PCA weights or correlation-optimised weights.
 
 **Analysis features:**
 
-* Detailed indicator statistics, and data availability within aggregation groups
-* Multivariate analysis, including quick functions for PCA, and a detailed correlation analysis and visualisation
-* Easy "what if" analysis - very quickly checking the effects of adding and removing indicators, changing weights, methodological variations
-* Global uncertainty and sensitivity analysis which can check the impacts of uncertainties in weighting and many methodological choices
+* Detailed indicator statistics, data availability, correlation analysis and multivariate analysis (e.g. PCA) - see [Analysis](https://bluefoxr.github.io/COINr/articles/analysis.html) vignette.
+* Easy "what if" analysis - very quickly checking the effects of adding and removing indicators, changing weights, methodological variations. See [Adjustments and Comparisons](https://bluefoxr.github.io/COINr/articles/adjustments.html) vignette.
+* Global uncertainty and [sensitivity analysis](https://bluefoxr.github.io/COINr/articles/sensitivity.html) which can check the impacts of uncertainties in weighting and many methodological choices
 
 **Visualisation and presentation:**
+
+A number of plotting options are described in the [Visualisation](https://bluefoxr.github.io/COINr/articles/visualisation.html) vignette, including:
 
 * Statistical plots of indicators - histograms, violin plots, dot plots, scatter plots and more
 * Bar charts, stacked bar charts and tables for presenting indicator data and making comparisons between units
 * Correlation plots for visualising correlations between indicators and between aggregation levels
 
 COINr also allows fast import from the [COIN Tool](https://knowledge4policy.ec.europa.eu/composite-indicators/coin-tool_en) and fast export to Excel.
+
+For the full range of COINr features, see COINr documentation which is conveniently accessible at COINr's [**pkgdown** website](https://bluefoxr.github.io/COINr/index.html).
 
 # Acknowledgements
 
