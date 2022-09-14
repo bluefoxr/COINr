@@ -20,6 +20,9 @@ A corresponding character vector, but with short codes, and no duplicates.
 Given a character vector of long names (probably with spaces), generates short codes.
 Intended for use when importing from the COIN Tool.
 }
+\details{
+This function replaces the now-defunct \code{names2Codes()} from COINr < v1.0.
+}
 \examples{
 # get names from example data
 iNames <- ASEM_iMeta$iName

@@ -139,7 +139,7 @@ denominate <- function(...){
 #' @export
 effectiveWeight <- function(...){
   defunct_message()
-  .Defunct("get_eff_wts")
+  .Defunct("get_eff_weights")
 }
 
 #' extractYear

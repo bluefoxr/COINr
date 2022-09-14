@@ -13,6 +13,8 @@
 #' This function uses ggplot2 to generate plots, so the plot can be further manipulated using ggplot2 commands.
 #' See `vignette("visualisation`) for more details on plotting.
 #'
+#' This function replaces the now-defunct `plotCorr()` from COINr < v1.0.
+#'
 #' @param coin The coin object
 #' @param dset The target data set.
 #' @param iCodes An optional list of character vectors where the first entry specifies the indicator/aggregate

@@ -17,6 +17,9 @@ A data frame, with any numeric columns rounded to the specified amount.
 \description{
 Tiny function just to round down a data frame for display in a table, ignoring non-numeric columns.
 }
+\details{
+This function replaces the now-defunct \code{roundDF()} from COINr < v1.0.
+}
 \examples{
 round_df( as.data.frame(matrix(runif(20),10,2)), decimals = 3)
 

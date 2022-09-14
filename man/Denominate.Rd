@@ -25,6 +25,8 @@ See documentation for individual methods:
 \item \code{\link[=Denominate.coin]{Denominate.coin()}}
 \item \code{\link[=Denominate.purse]{Denominate.purse()}}.
 }
+
+This function replaces the now-defunct \code{denominate()} from COINr < v1.0.
 }
 \examples{
 # See individual method documentation

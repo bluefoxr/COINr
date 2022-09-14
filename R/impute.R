@@ -587,6 +587,8 @@ Impute.numeric <- function(x, f_i = NULL, f_i_para = NULL, ...){
 #'
 #' See those methods for individual documentation.
 #'
+#' This function replaces the now-defunct `impute()` from COINr < v1.0.
+#'
 #' @param x Object to be imputed
 #' @param ... arguments passed to or from other methods.
 #'

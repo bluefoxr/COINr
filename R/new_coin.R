@@ -96,6 +96,8 @@
 #' Splitting panel data results in a so-called "purse" class, which is a data frame of COINs, indexed by `Time`.
 #' See `vignette("panel_data")` and `vignette("coins")` for more details.
 #'
+#' This function replaces the now-defunct `assemble()` from COINr < v1.0.
+#'
 #' @param iData The indicator data and metadata of each unit
 #' @param iMeta Indicator metadata
 #' @param exclude Optional character vector of any indicator codes (`iCode`s) to exclude from the coin(s).

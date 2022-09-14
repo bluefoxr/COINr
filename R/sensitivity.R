@@ -27,6 +27,8 @@
 #' to take when estimating confidence intervals on sensitivity indices. This does *not* perform extra regenerations of the
 #' coin, so setting this to a higher number shouldn't have much impact on computational time.
 #'
+#' This function replaces the now-defunct `sensitivity()` from COINr < v1.0.
+#'
 #' @param coin A coin
 #' @param SA_specs Specifications of the input uncertainties
 #' @param N The number of regenerations
@@ -583,6 +585,8 @@ SA_sample <- function(N, d){
 #'
 #' See `vignette("sensitivity")`.
 #'
+#' This function replaces the now-defunct `plotSARanks()` from COINr < v1.0.
+#'
 #' @param SAresults A list of sensitivity/uncertainty analysis results from [get_sensitivity()].
 #' @param plot_units A character vector of units to plot. Defaults to all units. You can also set
 #' to `"top10"` to only plot top 10 units, and `"bottom10"` for bottom ten.
@@ -688,6 +692,8 @@ plot_uncertainty <- function(SAresults, plot_units = NULL, order_by = "nominal",
 #' `SAresults` argument here.
 #'
 #' See `vignette("sensitivity")`.
+#'
+#' This function replaces the now-defunct `plotSA()` from COINr < v1.0.
 #'
 #' @param SAresults A list of sensitivity/uncertainty analysis results from [plot_sensitivity()].
 #' @param ptype Type of plot to generate - either `"bar"`, `"pie"` or `"box"`.
@@ -798,6 +804,8 @@ plot_sensitivity <- function(SAresults, ptype = "bar"){
 #' while the `NoiseFactor` refers to the size of the perturbation. If e.g. a row is `Level = 1` and
 #' `NoiseFactor = 0.2`, this will allow the weights in aggregation level 1 to deviate by +/- 20% of their
 #' nominal values (the values in `w`).
+#'
+#' This function replaces the now-defunct `noisyWeights()` from COINr < v1.0.
 #'
 #' @param w A data frame of weights, in the format found in `.$Meta$Weights`.
 #' @param noise_specs a data frame with columns:

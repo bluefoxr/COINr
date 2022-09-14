@@ -21,6 +21,9 @@ Shortcut function to build the ASEM example coin, using inbuilt example data. Th
 for building reproducible examples. To see the underlying commands run \code{edit(build_example_coin)}. See also
 \code{vignette("coins")}.
 }
+\details{
+This function replaces the now-defunct \code{build_ASEM()} from COINr < v1.0.
+}
 \examples{
 # build example coin up to data treatment step
 coin <- build_example_coin(up_to = "Treat")

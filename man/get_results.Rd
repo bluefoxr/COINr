@@ -51,6 +51,8 @@ generates results tables that are suitable for immediate presentation, i.e. sort
 relevant columns. Scores are also rounded by default, and there is the option to present scores or ranks.
 
 See also \code{vignette("results")} for more info.
+
+This function replaces the now-defunct \code{getResults()} from COINr < v1.0.
 }
 \examples{
 # build full example coin

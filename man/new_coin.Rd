@@ -132,6 +132,8 @@ to split to a subset of the entries to \code{Time}.
 
 Splitting panel data results in a so-called "purse" class, which is a data frame of COINs, indexed by \code{Time}.
 See \code{vignette("panel_data")} and \code{vignette("coins")} for more details.
+
+This function replaces the now-defunct \code{assemble()} from COINr < v1.0.
 }
 }
 \examples{

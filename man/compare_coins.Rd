@@ -41,6 +41,9 @@ A data frame of comparison information.
 \description{
 Compares two coin class objects using a specified \code{iCode} (column of data) from specified data sets.
 }
+\details{
+This function replaces the now-defunct \code{compTable()} from COINr < v1.0.
+}
 \examples{
 # build full example coin
 coin <- build_example_coin(quietly = TRUE)

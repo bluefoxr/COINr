@@ -26,6 +26,8 @@ This is a generic function with the following methods:
 }
 
 See those methods for individual documentation.
+
+This function replaces the now-defunct \code{impute()} from COINr < v1.0.
 }
 \examples{
 # See individual method documentation

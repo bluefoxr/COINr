@@ -5,6 +5,8 @@
 #' each aggregation that it is involved in, plus the number of indicators/aggregates in each group. The effective weight
 #' is one way of understanding the final contribution of each indicator to the index. See also `vignette("weights")`.
 #'
+#' This function replaces the now-defunct `effectiveWeight()` from COINr < v1.0.
+#'
 #' @param coin A coin class object
 #' @param out2 Either `"coin"` or `"df"`
 #'
@@ -89,6 +91,8 @@ get_eff_weights <-  function(coin, out2 = "df"){
 #'
 #' See `vignette("weights")` for more details on the usage of this function and an explanation of the underlying
 #' method.
+#'
+#' This function replaces the now-defunct `weightOpt()` from COINr < v1.0.
 #'
 #' @param coin coin object
 #' @param itarg a vector of (relative) target importances. For example, `c(1,2,1)` would specify that the second

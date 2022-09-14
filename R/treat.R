@@ -587,6 +587,8 @@ Treat.numeric <- function(x, f1, f1_para = NULL, f2 = NULL, f2_para = NULL,
 #'
 #' See also `vignette("treat")`.
 #'
+#' This function replaces the now-defunct `treat()` from COINr < v1.0.
+#'
 #' @param x Object to be treated
 #' @param ... arguments passed to or from other methods.
 #'
@@ -607,6 +609,8 @@ Treat <- function (x, ...){
 #' Winsorisation here is defined as reassigning the point with the highest/lowest value with the value of the
 #' next highest/lowest point. Whether to Winsorise at the high or low end of the scale is decided by the direction
 #' of the skewness of `x`.
+#'
+#' This function replaces the now-defunct `coin_win()` from COINr < v1.0.
 #'
 #' @param x A numeric vector.
 #' @param na.rm Set `TRUE` to remove `NA` values, otherwise returns `NA`.
@@ -801,6 +805,8 @@ log_CT_orig <- function(x, na.rm = FALSE){
 #' Box Cox transformation
 #'
 #' Simple Box Cox, with no optimisation of lambda.
+#'
+#' This function replaces the now-defunct `BoxCox()` from COINr < v1.0.
 #'
 #' @param x A vector or column of data to transform
 #' @param lambda The lambda parameter of the Box Cox transform

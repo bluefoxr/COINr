@@ -18,6 +18,9 @@ Weighted harmonic mean, as a numeric value.
 \description{
 Weighted harmonic mean of a vector. \code{NA} are skipped by default.
 }
+\details{
+This function replaces the now-defunct \code{harMean()} from COINr < v1.0.
+}
 \examples{
 # a vector of values
 x <- 1:10

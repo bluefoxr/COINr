@@ -26,4 +26,6 @@ Generic function for treating outliers using a two-step process. See individual 
 }
 
 See also \code{vignette("treat")}.
+
+This function replaces the now-defunct \code{treat()} from COINr < v1.0.
 }

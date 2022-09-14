@@ -17,6 +17,8 @@
 #' change colour palette, individual colours, add titles, etc.
 #' See `vignette("visualisation`) for more details on plotting.
 #'
+#' This function replaces the now-defunct `plotframework()` from COINr < v1.0.
+#'
 #' @param coin A coin class object
 #' @param type Either `"sunburst"` or `"stack"`.
 #' @param colour_level The framework level, as an integer, to colour from. See details.

@@ -51,6 +51,8 @@ zero weights, and the others retain their original weights. The output is a seri
 Note that "removing the indicator" here means more precisely "setting its weight to zero". In most cases the first implies the second,
 but check that the aggregation method that you are using satisfies this relationship. For example, if the aggregation method does not
 use any weights, then setting the weight to zero will have no effect.
+
+This function replaces the now-defunct \code{removeElements()} from COINr < v1.0.
 }
 \examples{
 # build example coin

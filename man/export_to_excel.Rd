@@ -21,6 +21,7 @@ Writes coins and purses to Excel. See individual method
 documentation:
 }
 \details{
+This function replaces the now-defunct \code{coin2Excel()} from COINr < v1.0.
 \itemize{
 \item \code{\link[=export_to_excel.coin]{export_to_excel.coin()}}
 \item \code{\link[=export_to_excel.purse]{export_to_excel.purse()}}

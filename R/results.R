@@ -8,6 +8,8 @@
 #'
 #' See also `vignette("results")` for more info.
 #'
+#' This function replaces the now-defunct `getResults()` from COINr < v1.0.
+#'
 #' @param coin The coin object, or a data frame of indicator data
 #' @param dset Name of data set in `.$Data`
 #' @param also_get Names of further columns to attach to table.
@@ -158,6 +160,8 @@ get_results <- function(coin, dset, tab_type = "Summ", also_get = NULL, use = "s
 #' This returns the scores and ranks for each indicator/aggregate as specified in `aglevs`. It orders the table so that
 #' the highest aggregation levels are first. This means that if the index level is included, it will be first.
 #'
+#' This function replaces the now-defunct `getUnitSummary()` from COINr < v1.0.
+#'
 #' @param coin A coin
 #' @param usel A selected unit code
 #' @param Levels The aggregation levels to display results from.
@@ -244,6 +248,8 @@ get_unit_summary <- function(coin, usel, Levels, dset = "Aggregated", nround = 2
 #' But a zero value can hardly be called a strength. This is where the `min_discard` function can help out.
 #'
 #' Problems such as these mainly arise when e.g. generating a large number of country profiles.
+#'
+#' This function replaces the now-defunct `getStrengthNWeak()` from COINr < v1.0.
 #'
 #' @param coin A coin
 #' @param dset The data set to extract indicator data from, to use as strengths and weaknesses.

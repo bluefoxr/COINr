@@ -21,6 +21,9 @@ A vector of length \code{length(x)} with transformed values.
 \description{
 Simple Box Cox, with no optimisation of lambda.
 }
+\details{
+This function replaces the now-defunct \code{BoxCox()} from COINr < v1.0.
+}
 \examples{
 # example data
 x <- runif(30)

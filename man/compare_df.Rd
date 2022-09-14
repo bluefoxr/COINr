@@ -44,6 +44,8 @@ It then summarises for each column whether there are any differences, and also w
 
 This is intended to cross-check results. For example, if you run something in COINr and want to check indicator results against
 external calculations.
+
+This function replaces the now-defunct \code{compareDF()} from COINr < v1.0.
 }
 \examples{
 # take a sample of indicator data (including the uCode column)

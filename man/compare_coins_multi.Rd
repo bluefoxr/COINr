@@ -55,6 +55,8 @@ in all the coins in \code{coins}.
 By default, the ranks of the target indicator/aggregate of each coin will be merged using the \code{uCode}s within each coin.
 Optionally, specifying \code{also_get} (passed to \code{\link[=get_data]{get_data()}}) will additionally merge using the metadata columns.
 This means that coins must share the same metadata columns that are returned as a result of \code{also_get}.
+
+This function replaces the now-defunct \code{compTableMulti()} from COINr < v1.0.
 }
 \examples{
 # see vignette("adjustments")

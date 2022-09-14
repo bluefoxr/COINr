@@ -89,6 +89,8 @@ unbalanced set of weights. Moreover, PCA can only be performed on one level at a
 
 All these considerations point to the fact: while PCA as an analysis tool is well-established, please use PCA weights
 with care and understanding of what is going on.
+
+This function replaces the now-defunct \code{getPCA()} from COINr < v1.0.
 }
 \examples{
 # build example coin

@@ -21,6 +21,9 @@ as the final weight of each component in the index, and this is due to not just 
 each aggregation that it is involved in, plus the number of indicators/aggregates in each group. The effective weight
 is one way of understanding the final contribution of each indicator to the index. See also \code{vignette("weights")}.
 }
+\details{
+This function replaces the now-defunct \code{effectiveWeight()} from COINr < v1.0.
+}
 \examples{
 # build example coin
 coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)

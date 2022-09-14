@@ -299,6 +299,8 @@ Denominate.data.frame <- function(x, denoms, denomby, x_ID = NULL, denoms_ID = N
 #' * [Denominate.coin()]
 #' * [Denominate.purse()].
 #'
+#' This function replaces the now-defunct `denominate()` from COINr < v1.0.
+#'
 #' @param x Object to be denominated
 #' @param ... arguments passed to or from other methods
 #'

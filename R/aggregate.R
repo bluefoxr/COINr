@@ -484,6 +484,8 @@ a_amean <- function(x, w){
 #'
 #' Weighted geometric mean of a vector. `NA` are skipped by default.
 #'
+#' This function replaces the now-defunct `geoMean()` from COINr < v1.0.
+#'
 #' @param x A numeric vector of positive values.
 #' @param w A vector of weights, which should have length equal to `length(x)`. Weights are relative
 #' and will be re-scaled to sum to 1. If `w` is not specified, defaults to equal weights.
@@ -531,6 +533,8 @@ a_gmean <- function(x, w = NULL){
 #' Weighted harmonic mean
 #'
 #' Weighted harmonic mean of a vector. `NA` are skipped by default.
+#'
+#' This function replaces the now-defunct `harMean()` from COINr < v1.0.
 #'
 #' @param x A numeric vector of positive values.
 #' @param w A vector of weights, which should have length equal to `length(x)`. Weights are relative
@@ -666,6 +670,8 @@ outrankMatrix <- function(X, w = NULL){
 #'
 #' Aggregates a data frame of indicator values into a single column using the Copeland method.
 #' This function calls `outrankMatrix()`.
+#'
+#' This function replaces the now-defunct `copeland()` from COINr < v1.0.
 #'
 #' @param X A numeric data frame or matrix of indicator data, with observations as rows and indicators
 #' as columns. No other columns should be present (e.g. label columns).

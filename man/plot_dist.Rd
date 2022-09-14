@@ -41,6 +41,8 @@ Supports plotting multiple indicators by calling aggregation groups.
 \details{
 This function uses ggplot2 to generate plots, so the plot can be further manipulated using ggplot2 commands.
 See \verb{vignette("visualisation}) for more details on plotting.
+
+This function replaces the now-defunct \code{plotIndDist()} from COINr < v1.0.
 }
 \examples{
 # build example coin

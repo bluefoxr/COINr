@@ -24,6 +24,8 @@ Generic function for reports various statistics from a data frame or coin. See m
 }
 
 See also \code{vignette("analysis")}.
+
+This function replaces the now-defunct \code{getStats()} from COINr < v1.0.
 }
 \examples{
 #

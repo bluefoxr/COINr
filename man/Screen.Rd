@@ -19,6 +19,7 @@ This is a generic function for screening units/rows based on data availability. 
 for more details:
 }
 \details{
+This function replaces the now-defunct \code{checkData()} from COINr < v1.0.
 \itemize{
 \item \code{\link[=Screen.data.frame]{Screen.data.frame()}}
 \item \code{\link[=Screen.coin]{Screen.coin()}}

@@ -33,6 +33,8 @@ Noise is added using the \code{noise_specs} argument, which is specified by a da
 while the \code{NoiseFactor} refers to the size of the perturbation. If e.g. a row is \code{Level = 1} and
 \code{NoiseFactor = 0.2}, this will allow the weights in aggregation level 1 to deviate by +/- 20\% of their
 nominal values (the values in \code{w}).
+
+This function replaces the now-defunct \code{noisyWeights()} from COINr < v1.0.
 }
 \examples{
 # build example coin

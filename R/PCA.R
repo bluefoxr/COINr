@@ -42,6 +42,8 @@
 #' All these considerations point to the fact: while PCA as an analysis tool is well-established, please use PCA weights
 #' with care and understanding of what is going on.
 #'
+#' This function replaces the now-defunct `getPCA()` from COINr < v1.0.
+#'
 #' @param coin A coin
 #' @param dset The name of the data set in `.$Data` to use.
 #' @param iCodes An optional character vector of indicator codes to subset the indicator data, passed to [get_data()]

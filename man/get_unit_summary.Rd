@@ -26,6 +26,8 @@ Generates a summary table for a single unit. This is mostly useful in unit repor
 \details{
 This returns the scores and ranks for each indicator/aggregate as specified in \code{aglevs}. It orders the table so that
 the highest aggregation levels are first. This means that if the index level is included, it will be first.
+
+This function replaces the now-defunct \code{getUnitSummary()} from COINr < v1.0.
 }
 \examples{
 # build full example coin

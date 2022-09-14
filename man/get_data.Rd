@@ -23,6 +23,8 @@ documentation:
 \item \code{\link[=get_data.coin]{get_data.coin()}}
 \item \code{\link[=get_data.purse]{get_data.purse()}}
 }
+
+This function replaces the now-defunct \code{getIn()} from COINr < v1.0.
 }
 \examples{
 # see individual method documentation

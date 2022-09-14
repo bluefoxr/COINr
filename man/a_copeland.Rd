@@ -20,6 +20,9 @@ Numeric vector of Copeland scores.
 Aggregates a data frame of indicator values into a single column using the Copeland method.
 This function calls \code{outrankMatrix()}.
 }
+\details{
+This function replaces the now-defunct \code{copeland()} from COINr < v1.0.
+}
 \examples{
 # some example data
 ind_data <- COINr::ASEM_iData[12:16]

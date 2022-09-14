@@ -85,6 +85,8 @@ of units divided by two. This then might be counted as a "strength" for some uni
 But a zero value can hardly be called a strength. This is where the \code{min_discard} function can help out.
 
 Problems such as these mainly arise when e.g. generating a large number of country profiles.
+
+This function replaces the now-defunct \code{getStrengthNWeak()} from COINr < v1.0.
 }
 \examples{
 # build example coin

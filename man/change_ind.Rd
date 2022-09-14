@@ -28,6 +28,8 @@ present in the original \code{iData} and \code{iMeta} that were input to \code{n
 }
 \details{
 See also \code{vignette("adjustments")}.
+
+This function replaces the now-defunct \code{indChange()} from COINr < v1.0.
 }
 \examples{
 # build full example coin

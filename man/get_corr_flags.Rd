@@ -42,6 +42,8 @@ grouping can be controlled by the \code{grouplev} argument.
 \details{
 This function is motivated by the idea that having very highly-correlated indicators within the same group may
 amount to double counting, or possibly redundancy in the framework.
+
+This function replaces the now-defunct \code{hicorrSP()} from COINr < v1.0.
 }
 \examples{
 # build example coin

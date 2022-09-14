@@ -47,6 +47,8 @@ This function returns a ggplot2 class object. If you want more control over the 
 return the output of this function to a variable, and manipulate this further with ggplot2 commands to e.g.
 change colour palette, individual colours, add titles, etc.
 See \verb{vignette("visualisation}) for more details on plotting.
+
+This function replaces the now-defunct \code{plotframework()} from COINr < v1.0.
 }
 \examples{
 # build example coin

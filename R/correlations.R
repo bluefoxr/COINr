@@ -90,6 +90,8 @@ get_denom_corr <- function(coin, dset, cor_thresh = 0.6, cortype = "pearson", nr
 #' This function is motivated by the idea that having very highly-correlated indicators within the same group may
 #' amount to double counting, or possibly redundancy in the framework.
 #'
+#' This function replaces the now-defunct `hicorrSP()` from COINr < v1.0.
+#'
 #' @param coin A coin class object
 #' @param dset The name of the data set to apply the function to, which should be accessible in `.$Data`.
 #' @param cor_thresh A threshold to flag high correlation. Default 0.9.
@@ -208,6 +210,8 @@ get_corr_flags <- function(coin, dset, cor_thresh = 0.9, thresh_type = "high", c
 #' The `grouplev` and `withparent` options are disabled if `make_long = FALSE`.
 #'
 #' Note that this function can only call correlations within the same data set (i.e. only one data set in `.$Data`).
+#'
+#' This function replaces the now-defunct `getCorr()` from COINr < v1.0.
 #'
 #' @param coin A coin class coin object
 #' @param dset  The name of the data set to apply the function to, which should be accessible in `.$Data`.
@@ -486,6 +490,8 @@ get_pvals = function(X, ...) {
 #'
 #' This function simply returns Cronbach's alpha. If you want a lot more details on reliability, the 'psych' package has
 #' a much more detailed analysis.
+#'
+#' This function replaces the now-defunct `getCronbach()` from COINr < v1.0.
 #'
 #' @param coin A coin or a data frame containing only numerical columns of data.
 #' @param ... Further arguments passed to [get_data()], other than those explicitly specified here.

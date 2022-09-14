@@ -3,6 +3,8 @@
 #' This is a generic function for screening units/rows based on data availability. See method documentation
 #' for more details:
 #'
+#' This function replaces the now-defunct `checkData()` from COINr < v1.0.
+#'
 #' * [Screen.data.frame()]
 #' * [Screen.coin()]
 #' * [Screen.purse()]

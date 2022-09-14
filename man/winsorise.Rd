@@ -42,6 +42,8 @@ below a threshold (default 2.25) and kurtosis below another threshold (default 3
 Winsorisation here is defined as reassigning the point with the highest/lowest value with the value of the
 next highest/lowest point. Whether to Winsorise at the high or low end of the scale is decided by the direction
 of the skewness of \code{x}.
+
+This function replaces the now-defunct \code{coin_win()} from COINr < v1.0.
 }
 \examples{
 # numbers between 1 and 10

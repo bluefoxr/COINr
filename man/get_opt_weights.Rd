@@ -56,6 +56,8 @@ Weights are optimised to agree with a pre-specified vector of "importances". The
 
 See \code{vignette("weights")} for more details on the usage of this function and an explanation of the underlying
 method.
+
+This function replaces the now-defunct \code{weightOpt()} from COINr < v1.0.
 }
 \examples{
 # build example coin

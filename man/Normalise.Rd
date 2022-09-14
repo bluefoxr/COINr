@@ -24,6 +24,8 @@ a common scale. Please see individual method documentation depending on your dat
 }
 
 See also \code{vignette("normalise")} for more details.
+
+This function replaces the now-defunct \code{normalise()} from COINr < v1.0.
 }
 \examples{
 # See individual method documentation.

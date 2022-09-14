@@ -2,6 +2,8 @@
 #'
 #' Compares two coin class objects using a specified `iCode` (column of data) from specified data sets.
 #'
+#' This function replaces the now-defunct `compTable()` from COINr < v1.0.
+#'
 #' @param coin1 A coin class object
 #' @param coin2 A coin class object
 #' @param dset A data set that is found in `.$Data`.
@@ -130,6 +132,8 @@ compare_coins <- function(coin1, coin2, dset, iCode, also_get = NULL, compare_by
 #' By default, the ranks of the target indicator/aggregate of each coin will be merged using the `uCode`s within each coin.
 #' Optionally, specifying `also_get` (passed to [get_data()]) will additionally merge using the metadata columns.
 #' This means that coins must share the same metadata columns that are returned as a result of `also_get`.
+#'
+#' This function replaces the now-defunct `compTableMulti()` from COINr < v1.0.
 #'
 #' @param coins A list of coins. If names are provided, these will be used in the tables returned by this function.
 #' @param tabtype The type of table to generate. One of:

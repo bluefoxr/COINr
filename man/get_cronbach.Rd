@@ -32,6 +32,8 @@ indicators or aggregates.
 \details{
 This function simply returns Cronbach's alpha. If you want a lot more details on reliability, the 'psych' package has
 a much more detailed analysis.
+
+This function replaces the now-defunct \code{getCronbach()} from COINr < v1.0.
 }
 \examples{
 # build example coin

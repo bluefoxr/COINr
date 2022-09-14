@@ -4,6 +4,8 @@
 #' share the highest rank place. Ignores non-numerical columns. See [rank()]. Optionally, returns in-group ranks
 #' using a specified grouping column.
 #'
+#' This function replaces the now-defunct `rankDF()` from COINr < v1.0.
+#'
 #' @param df A data frame
 #' @param use_group An optional column of df (specified as a string) to use as a grouping variable. If specified, returns ranks
 #' inside each group present in this column.
@@ -73,6 +75,8 @@ rank_df <- function(df, use_group = NULL){
 #'
 #' This is intended to cross-check results. For example, if you run something in COINr and want to check indicator results against
 #' external calculations.
+#'
+#' This function replaces the now-defunct `compareDF()` from COINr < v1.0.
 #'
 #' @param df1 A data frame
 #' @param df2 Another data frame
@@ -230,6 +234,8 @@ compare_df <- function(df1, df2, matchcol, sigfigs = 5){
 #' the class of the old value must match the class of the new value. This is to keep classes of data frames columns consistent.
 #' If you wish to replace with a different class, you should convert classes in your data frame before using this function.
 #'
+#' This function replaces the now-defunct `replaceDF()` from COINr < v1.0.
+#'
 #' @param df A data frame or a vector
 #' @param lookup A data frame with columns `old` (the values to be replaced) and `new` the values to replace with. See details.
 #'
@@ -284,6 +290,8 @@ replace_df <- function(df, lookup){
 #' Round down a data frame
 #'
 #' Tiny function just to round down a data frame for display in a table, ignoring non-numeric columns.
+#'
+#' This function replaces the now-defunct `roundDF()` from COINr < v1.0.
 #'
 #' @param df A data frame to input
 #' @param decimals The number of decimal places to round to (default 2)

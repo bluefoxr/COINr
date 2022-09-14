@@ -6,6 +6,8 @@
 #' for building reproducible examples. To see the underlying commands run `edit(build_example_coin)`. See also
 #' `vignette("coins")`.
 #'
+#' This function replaces the now-defunct `build_ASEM()` from COINr < v1.0.
+#'
 #' @param up_to The point up to which to build the index. If `NULL`, builds full index. Else specify a building function
 #' (as a string) - the index will be built up to and including this function. This option is mainly for helping with
 #' function examples. Example: `up_to = "Normalise"`.

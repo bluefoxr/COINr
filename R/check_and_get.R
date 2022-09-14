@@ -590,6 +590,8 @@ get_data.purse <- function(x, dset, iCodes = NULL, Level = NULL, uCodes = NULL,
 #' * [get_data.coin()]
 #' * [get_data.purse()]
 #'
+#' This function replaces the now-defunct `getIn()` from COINr < v1.0.
+#'
 #' @param x A coin or purse
 #' @param ... Arguments passed to methods
 #'

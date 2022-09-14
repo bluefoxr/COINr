@@ -74,6 +74,8 @@ defined at Level 2.
 The \code{grouplev} and \code{withparent} options are disabled if \code{make_long = FALSE}.
 
 Note that this function can only call correlations within the same data set (i.e. only one data set in \code{.$Data}).
+
+This function replaces the now-defunct \code{getCorr()} from COINr < v1.0.
 }
 \examples{
 # build example coin

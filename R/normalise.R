@@ -454,6 +454,8 @@ Normalise.numeric <- function(x, f_n = NULL, f_n_para = NULL,
 #'
 #' See also `vignette("normalise")` for more details.
 #'
+#' This function replaces the now-defunct `normalise()` from COINr < v1.0.
+#'
 #' @param x Object to be normalised
 #' @param ... Further arguments to be passed to methods.
 #'

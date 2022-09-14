@@ -63,6 +63,8 @@ plot. For the latter, use \code{\link[=plot_dist]{plot_dist()}}.
 \details{
 This function uses ggplot2 to generate plots, so the plot can be further manipulated using ggplot2 commands.
 See \verb{vignette("visualisation}) for more details on plotting.
+
+This function replaces the now-defunct \code{plotIndDot()} from COINr < v1.0.
 }
 \examples{
 # build example coin

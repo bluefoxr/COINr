@@ -29,6 +29,8 @@ Please see individual method documentation:
 }
 
 See also \code{vignette("adjustments")}.
+
+This function replaces the now-defunct \code{regen()} from COINr < v1.0.
 }
 \examples{
 # see individual method examples

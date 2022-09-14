@@ -20,6 +20,9 @@ Replaces all numerical columns of a data frame with their ranks. Uses sport rank
 share the highest rank place. Ignores non-numerical columns. See \code{\link[=rank]{rank()}}. Optionally, returns in-group ranks
 using a specified grouping column.
 }
+\details{
+This function replaces the now-defunct \code{rankDF()} from COINr < v1.0.
+}
 \examples{
 # some random data, with a column of characters
 df <- data.frame(RName = c("A", "B", "C"),

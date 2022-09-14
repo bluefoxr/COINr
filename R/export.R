@@ -163,6 +163,8 @@ export_to_excel.purse <- function(x, fname = "coin_export.xlsx", include_log = F
 #' Writes coins and purses to Excel. See individual method
 #' documentation:
 #'
+#' This function replaces the now-defunct `coin2Excel()` from COINr < v1.0.
+#'
 #' * [export_to_excel.coin()]
 #' * [export_to_excel.purse()]
 #'

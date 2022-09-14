@@ -38,6 +38,8 @@ To use this function you first need to run \code{\link[=get_sensitivity]{get_sen
 \code{SAresults} argument here.
 
 See \code{vignette("sensitivity")}.
+
+This function replaces the now-defunct \code{plotSARanks()} from COINr < v1.0.
 }
 \examples{
 # for examples, see `vignette("sensitivity")`

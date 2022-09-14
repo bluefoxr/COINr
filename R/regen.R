@@ -195,6 +195,8 @@ Regen.coin <- function(x, from = NULL, quietly = TRUE, ...){
 #'
 #' See also `vignette("adjustments")`.
 #'
+#' This function replaces the now-defunct `regen()` from COINr < v1.0.
+#'
 #' @param x A coin or purse object to be regenerated
 #' @param from Optional: a construction function name. If specified, regeneration begins from this function, rather
 #' than re-running all functions.
@@ -219,6 +221,8 @@ Regen <- function(x, from = NULL, quietly = TRUE){
 #' present in the original `iData` and `iMeta` that were input to `new_coin()`.
 #'
 #' See also `vignette("adjustments")`.
+#'
+#' This function replaces the now-defunct `indChange()` from COINr < v1.0.
 #'
 #' @param coin coin object
 #' @param add A character vector of indicator codes to add (must be present in the original input data)

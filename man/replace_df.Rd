@@ -23,6 +23,8 @@ The lookup data frame must not have any duplicated values in the \code{old} colu
 elements of the \code{old} column and replaces them with the corresponding value in the \code{new} column. For each row of \code{lookup},
 the class of the old value must match the class of the new value. This is to keep classes of data frames columns consistent.
 If you wish to replace with a different class, you should convert classes in your data frame before using this function.
+
+This function replaces the now-defunct \code{replaceDF()} from COINr < v1.0.
 }
 \examples{
 # replace sub-pillar codes in ASEM indicator metadata

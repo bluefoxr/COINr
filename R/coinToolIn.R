@@ -1,8 +1,10 @@
 #' Import data directly from COIN Tool
 #'
-#' #' The [COIN Tool](https://knowledge4policy.ec.europa.eu/composite-indicators/coin-tool_en) is an Excel-based tool
+#' The [COIN Tool](https://knowledge4policy.ec.europa.eu/composite-indicators/coin-tool_en) is an Excel-based tool
 #' for building composite indicators. This function provides a direct interface for reading a COIN Tool input deck and
 #' converting it to COINr. You need to provide a COIN Tool file, with the "Database" sheet properly compiled.
+#'
+#' This function replaces the now-defunct `COINToolIn()` from COINr < v1.0.
 #'
 #' @param fname The file name and path to read, e.g. `"C:/Documents/COINToolFile.xlsx"`.
 #' @param makecodes Logical: if `TRUE`, will generate short indicator codes based on indicator names,
@@ -144,6 +146,8 @@ import_coin_tool <- function(fname, makecodes = FALSE, oldtool = FALSE, out2 = "
 #'
 #' Given a character vector of long names (probably with spaces), generates short codes.
 #' Intended for use when importing from the COIN Tool.
+#'
+#' This function replaces the now-defunct `names2Codes()` from COINr < v1.0.
 #'
 #' @param cvec A character vector of names
 #' @param maxword The maximum number of words to use in building a short name (default 2)
