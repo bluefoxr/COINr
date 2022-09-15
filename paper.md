@@ -112,24 +112,24 @@ get_results(coin, dset = "Aggregated") |>
 6   SWE 60.59    6
 ```
 
-We may also visualise the same results using a bar chart - here we see how countries rank on the "connectivity" sub-index:
+We may also visualise the same results using a bar chart - here we see how countries rank on the "connectivity" sub-index (see \autoref{fig:bar}).
 
 ```
 plot_bar(coin, dset = "Aggregated", iCode = "Sust", stack_children = TRUE)
 ```
 
-![Density matrix of the main trips' travel distance in different age and period groups. Two cohort groups are exemplarily highlighted. \label{fig:descriptive}](paper_figs/results_bar.png){width=100%}
+![Connectivity scores broken down by component scores. \label{fig:bar}](paper_figs/results_bar.png){width=100%}
 
-As a final example, we show one of the analysis features of COINr: the possibility to plot and analyse correlations:
+As a final example, we show one of the analysis features of COINr: the possibility to plot and analyse correlations.
 
 ```
 plot_corr(coin, dset = "Normalised", iCodes = list("Sust"),
           grouplev = 2, flagcolours = T)
 ```
 
-![Density matrix of the main trips' travel distance in different age and period groups. Two cohort groups are exemplarily highlighted. \label{fig:descriptive}](paper_figs/corr_plot.png){width=80%}
+![Example correlation plot. \label{fig:corr}](paper_figs/corr_plot.png){width=80%}
 
-The correlation plot illustrates where e.g. negative correlations exist within aggregation groups, which may lead to poor representation of indicators in the aggregated scores.
+The correlation plot in \autoref{fig:corr} illustrates where e.g. negative correlations exist within aggregation groups, which may lead to poor representation of indicators in the aggregated scores.
 
 COINr includes far more features than those shown here. Remaining features (with vignette links) include:
 
