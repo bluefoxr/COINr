@@ -57,13 +57,6 @@ parameters of the coin to vary, and the alternatives/distributions for those par
     <a class="dropdown-item" href="../articles/other_functions.html">Other functions</a>
   </div>
 </li>
-<li class="nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-examples">Examples</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-examples">
-    <a class="dropdown-item" href="../articles/build_example.html">Building a composite indicator</a>
-    <a class="dropdown-item" href="../articles/panel_data.html">Panel data</a>
-  </div>
-</li>
 <li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Functions</a>
 </li>
@@ -179,6 +172,7 @@ found in one of the data sets of the coin, and is specified using the <code>dset
 <p>Finally, if <code>SA_type = "SA"</code>, it is advisable to set <code>Nboot</code> to e.g. 100 or more, which is the number of bootstrap samples
 to take when estimating confidence intervals on sensitivity indices. This does <em>not</em> perform extra regenerations of the
 coin, so setting this to a higher number shouldn't have much impact on computational time.</p>
+<p>This function replaces the now-defunct <code>sensitivity()</code> from COINr &lt; v1.0.</p>
     </div>
 
     <div class="section level2">

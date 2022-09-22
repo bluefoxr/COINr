@@ -59,13 +59,6 @@ in all the coins in coins."><!-- mathjax --><script src="https://cdnjs.cloudflar
     <a class="dropdown-item" href="../articles/other_functions.html">Other functions</a>
   </div>
 </li>
-<li class="nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-examples">Examples</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-examples">
-    <a class="dropdown-item" href="../articles/build_example.html">Building a composite indicator</a>
-    <a class="dropdown-item" href="../articles/panel_data.html">Panel data</a>
-  </div>
-</li>
 <li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Functions</a>
 </li>
@@ -135,8 +128,8 @@ are returned as a result of <code>also_get</code>.</p></dd>
 
 
 <dt>tabtype</dt>
-<dd><p>The type of table to generate. One of:</p><ul><li><p><code>"Ranks"</code>: returns a data frame of index ranks for each coin provided, plus ISO3 column</p></li>
-<li><p><code>"Diffs"</code>: returns a data frame of index rank differences between the base coin and each other coin (see <code>ibase</code>)</p></li>
+<dd><p>The type of table to generate. One of:</p><ul><li><p><code>"Values"</code>: returns a data frame of rank values for each coin provided, plus ISO3 column</p></li>
+<li><p><code>"Diffs"</code>: returns a data frame of rank differences between the base coin and each other coin (see <code>ibase</code>)</p></li>
 <li><p><code>"AbsDiffs"</code>: as <code>"Diffs"</code> but absolute rank differences are returned</p></li>
 <li><p><code>"All"</code>: returns all of the three previous rank tables, as a list of data frames</p></li>
 </ul></dd>
@@ -167,6 +160,7 @@ e.g. for different normalisation methods.</p></dd>
     <p>By default, the ranks of the target indicator/aggregate of each coin will be merged using the <code>uCode</code>s within each coin.
 Optionally, specifying <code>also_get</code> (passed to <code><a href="get_data.html">get_data()</a></code>) will additionally merge using the metadata columns.
 This means that coins must share the same metadata columns that are returned as a result of <code>also_get</code>.</p>
+<p>This function replaces the now-defunct <code>compTableMulti()</code> from COINr &lt; v1.0.</p>
     </div>
 
     <div class="section level2">

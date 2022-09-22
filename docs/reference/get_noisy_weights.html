@@ -57,13 +57,6 @@ noise. This is intended for use in uncertainty and sensitivity analysis."><!-- m
     <a class="dropdown-item" href="../articles/other_functions.html">Other functions</a>
   </div>
 </li>
-<li class="nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-examples">Examples</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-examples">
-    <a class="dropdown-item" href="../articles/build_example.html">Building a composite indicator</a>
-    <a class="dropdown-item" href="../articles/panel_data.html">Panel data</a>
-  </div>
-</li>
 <li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Functions</a>
 </li>
@@ -132,6 +125,7 @@ used in <code>iMeta</code>. Note that no <code>NA</code>s are allowed anywhere i
 while the <code>NoiseFactor</code> refers to the size of the perturbation. If e.g. a row is <code>Level = 1</code> and
 <code>NoiseFactor = 0.2</code>, this will allow the weights in aggregation level 1 to deviate by +/- 20% of their
 nominal values (the values in <code>w</code>).</p>
+<p>This function replaces the now-defunct <code>noisyWeights()</code> from COINr &lt; v1.0.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

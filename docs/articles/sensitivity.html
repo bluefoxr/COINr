@@ -72,13 +72,6 @@
     <a class="dropdown-item" href="../articles/other_functions.html">Other functions</a>
   </div>
 </li>
-<li class="nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-examples">Examples</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-examples">
-    <a class="dropdown-item" href="../articles/build_example.html">Building a composite indicator</a>
-    <a class="dropdown-item" href="../articles/panel_data.html">Panel data</a>
-  </div>
-</li>
 <li class="nav-item">
   <a class="nav-link" href="../reference/index.html">Functions</a>
 </li>
@@ -289,11 +282,11 @@ the function:</p>
 <span><span class="co"># examine one of the noisy weight sets</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">noisy_wts</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt;       iCode Level    Weight</span></span>
-<span><span class="co">#&gt; 55  Environ     2 1.1486037</span></span>
-<span><span class="co">#&gt; 56   Social     2 1.2002199</span></span>
-<span><span class="co">#&gt; 57 SusEcFin     2 0.8091857</span></span>
-<span><span class="co">#&gt; 58     Conn     3 1.1284389</span></span>
-<span><span class="co">#&gt; 59     Sust     3 1.1652827</span></span>
+<span><span class="co">#&gt; 55  Environ     2 0.8028519</span></span>
+<span><span class="co">#&gt; 56   Social     2 1.2056305</span></span>
+<span><span class="co">#&gt; 57 SusEcFin     2 1.0677516</span></span>
+<span><span class="co">#&gt; 58     Conn     3 1.1894412</span></span>
+<span><span class="co">#&gt; 59     Sust     3 0.7898470</span></span>
 <span><span class="co">#&gt; 60    Index     4 1.0000000</span></span></code></pre></div>
 <p>The <code>noisy_wts</code> object is a list containing 100 data
 frames, each of which is a set of weights with slightly different

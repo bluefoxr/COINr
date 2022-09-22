@@ -59,13 +59,6 @@ data frames by simply attaching them to the coin object somewhere."><!-- mathjax
     <a class="dropdown-item" href="../articles/other_functions.html">Other functions</a>
   </div>
 </li>
-<li class="nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-examples">Examples</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-examples">
-    <a class="dropdown-item" href="../articles/build_example.html">Building a composite indicator</a>
-    <a class="dropdown-item" href="../articles/panel_data.html">Panel data</a>
-  </div>
-</li>
 <li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Functions</a>
 </li>
@@ -148,11 +141,10 @@ data frames by simply attaching them to the coin object somewhere.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># write to Excel in temporary directory</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="export_to_excel.html">export_to_excel</a></span><span class="op">(</span><span class="va">coin</span>, fname <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"\\ASEM_results.xlsx"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in inherits(x, "coin"):</span> object 'coin' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># spreadsheet is at:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"\\ASEM_results.xlsx"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "C:\\Users\\becke\\AppData\\Local\\Temp\\Rtmp2pXM68\\ASEM_results.xlsx"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "C:\\Users\\becke\\AppData\\Local\\Temp\\RtmpSy9dEx\\ASEM_results.xlsx"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># now delete temporary file to keep things tidy in testing</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>,<span class="st">"\\ASEM_results.xlsx"</span><span class="op">)</span><span class="op">)</span></span></span>

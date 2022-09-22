@@ -55,13 +55,6 @@
     <a class="dropdown-item" href="../articles/other_functions.html">Other functions</a>
   </div>
 </li>
-<li class="nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-examples">Examples</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-examples">
-    <a class="dropdown-item" href="../articles/build_example.html">Building a composite indicator</a>
-    <a class="dropdown-item" href="../articles/panel_data.html">Panel data</a>
-  </div>
-</li>
 <li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Functions</a>
 </li>
@@ -117,7 +110,7 @@
 
 
 <dt>nround</dt>
-<dd><p>Number of decimals to round scores to, default 2.</p></dd>
+<dd><p>Number of decimals to round scores to, default 2. Set to <code>NULL</code> to disable rounding.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -130,6 +123,7 @@
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>This returns the scores and ranks for each indicator/aggregate as specified in <code>aglevs</code>. It orders the table so that
 the highest aggregation levels are first. This means that if the index level is included, it will be first.</p>
+<p>This function replaces the now-defunct <code>getUnitSummary()</code> from COINr &lt; v1.0.</p>
     </div>
 
     <div class="section level2">

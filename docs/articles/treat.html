@@ -72,13 +72,6 @@
     <a class="dropdown-item" href="../articles/other_functions.html">Other functions</a>
   </div>
 </li>
-<li class="nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-examples">Examples</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-examples">
-    <a class="dropdown-item" href="../articles/build_example.html">Building a composite indicator</a>
-    <a class="dropdown-item" href="../articles/panel_data.html">Panel data</a>
-  </div>
-</li>
 <li class="nav-item">
   <a class="nav-link" href="../reference/index.html">Functions</a>
 </li>
@@ -618,7 +611,7 @@ package installed.</p>
 <span><span class="co"># i.e. there are outliers</span></span>
 <span><span class="va">outlier_pass</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="co"># return FALSE if any outliers</span></span>
-<span>  <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/any.html" class="external-link">any</a></span><span class="op">(</span><span class="fu">check_outliers</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/any.html" class="external-link">any</a></span><span class="op">(</span><span class="fu"><a href="https://easystats.github.io/performance/reference/check_outliers.html" class="external-link">check_outliers</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="co"># now call treat(), passing this function</span></span>
@@ -627,10 +620,23 @@ package installed.</p>
 <span>               global_specs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>f_pass <span class="op">=</span> <span class="st">"outlier_pass"</span>,</span>
 <span>                                    f_pass_para <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; Written data set to .$Data$Treated</span></span>
+<span><span class="co">#&gt; (overwritten existing data set)</span></span>
 <span></span>
 <span><span class="co"># see what happened</span></span>
 <span><span class="va">coin</span><span class="op">$</span><span class="va">Analysis</span><span class="op">$</span><span class="va">Treated</span><span class="op">$</span><span class="va">Dets_Table</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span>
+<span><span class="co">#&gt;       iCode outlier_pass0 winsorise.nwin outlier_pass1 outlier_pass2</span></span>
+<span><span class="co">#&gt; 1       LPI         FALSE              0         FALSE         FALSE</span></span>
+<span><span class="co">#&gt; 2   Flights         FALSE              1         FALSE          TRUE</span></span>
+<span><span class="co">#&gt; 3      Ship         FALSE              0         FALSE         FALSE</span></span>
+<span><span class="co">#&gt; 4      Bord         FALSE              1         FALSE         FALSE</span></span>
+<span><span class="co">#&gt; 5      Elec         FALSE              1         FALSE          TRUE</span></span>
+<span><span class="co">#&gt; 6       Gas         FALSE              1         FALSE         FALSE</span></span>
+<span><span class="co">#&gt; 7  ConSpeed         FALSE              0         FALSE         FALSE</span></span>
+<span><span class="co">#&gt; 8     Cov4G         FALSE              0         FALSE         FALSE</span></span>
+<span><span class="co">#&gt; 9     Goods         FALSE              2         FALSE          TRUE</span></span>
+<span><span class="co">#&gt; 10 Services         FALSE              0         FALSE          TRUE</span></span></code></pre></div>
 <p>Here we see that the test for outliers is much stricter and very few
 of the indicators pass the test, even after applying a log
 transformation. Clearly, how an outlier is defined can vary and depend

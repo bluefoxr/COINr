@@ -57,13 +57,6 @@ This function calls outrankMatrix()."><!-- mathjax --><script src="https://cdnjs
     <a class="dropdown-item" href="../articles/other_functions.html">Other functions</a>
   </div>
 </li>
-<li class="nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-examples">Examples</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-examples">
-    <a class="dropdown-item" href="../articles/build_example.html">Building a composite indicator</a>
-    <a class="dropdown-item" href="../articles/panel_data.html">Panel data</a>
-  </div>
-</li>
 <li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Functions</a>
 </li>
@@ -118,6 +111,15 @@ and will be re-scaled to sum to 1. If <code>w</code> is not specified, defaults 
     
 
 <p>Numeric vector of Copeland scores.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>The outranking matrix is transformed as follows:</p><ul><li><p>values &gt; 0.5 are replaced by 1</p></li>
+<li><p>values &lt; 0.5 are replaced by -1</p></li>
+<li><p>values == 0.5 are replaced by 0</p></li>
+<li><p>the diagonal of the matrix is all zeros</p></li>
+</ul><p>The Copeland scores are calculated as the row sums of this transformed matrix.</p>
+<p>This function replaces the now-defunct <code>copeland()</code> from COINr &lt; v1.0.</p>
     </div>
 
     <div class="section level2">

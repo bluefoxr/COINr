@@ -57,13 +57,6 @@ At a minimum, you must specify the data set and iCode of both x and y using the 
     <a class="dropdown-item" href="../articles/other_functions.html">Other functions</a>
   </div>
 </li>
-<li class="nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-examples">Examples</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-examples">
-    <a class="dropdown-item" href="../articles/build_example.html">Building a composite indicator</a>
-    <a class="dropdown-item" href="../articles/panel_data.html">Panel data</a>
-  </div>
-</li>
 <li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Functions</a>
 </li>
@@ -109,6 +102,7 @@ At a minimum, you must specify the data set and iCode of both x and y using the 
 <span>  dset_label <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  point_label <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  check_overlap <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  nudge_y <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  log_scale <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -161,6 +155,10 @@ else if <code>"uName"</code>, points are labelled with their unit names. Set <co
 <dt>check_overlap</dt>
 <dd><p>Logical: if <code>TRUE</code> (default), point labels that overlap are removed - this results in a legible
 plot but some labels may be missing. Else if <code>FALSE</code>, all labels are plotted.</p></dd>
+
+
+<dt>nudge_y</dt>
+<dd><p>Parameter passed to ggplot which controls the vertical adjustment of the text labels if present.</p></dd>
 
 
 <dt>log_scale</dt>

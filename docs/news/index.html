@@ -55,13 +55,6 @@
     <a class="dropdown-item" href="../articles/other_functions.html">Other functions</a>
   </div>
 </li>
-<li class="nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-examples">Examples</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-examples">
-    <a class="dropdown-item" href="../articles/build_example.html">Building a composite indicator</a>
-    <a class="dropdown-item" href="../articles/panel_data.html">Panel data</a>
-  </div>
-</li>
 <li class="nav-item">
   <a class="nav-link" href="../reference/index.html">Functions</a>
 </li>
@@ -112,10 +105,10 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.6.2" id="coinr-062">COINr 0.6.2<a class="anchor" aria-label="anchor" href="#coinr-062"></a></h2>
 <ul><li>Fixed bug in <code><a href="https://rdrr.io/r/stats/aggregate.html" class="external-link">aggregate()</a></code> which was wrongly assigning weights in some circumstances (note this is a fairly significant bug - worth re-running your results as it may have affected them)</li>
-<li>Added colour option to <code><a href="../reference/plotframework.html">plotframework()</a></code>
+<li>Added colour option to <code>plotframework()</code>
 </li>
-<li>Fixed bug in <code><a href="../reference/compareDF.html">compareDF()</a></code> (resulting from tibbles vs data frames)</li>
-<li>Fixed bug in <code><a href="../reference/sensitivity.html">sensitivity()</a></code> causing trouble with running SA with no weights uncertainty specified</li>
+<li>Fixed bug in <code>compareDF()</code> (resulting from tibbles vs data frames)</li>
+<li>Fixed bug in <code>sensitivity()</code> causing trouble with running SA with no weights uncertainty specified</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.6.1" id="coinr-061">COINr 0.6.1<a class="anchor" aria-label="anchor" href="#coinr-061"></a></h2><p class="text-muted">CRAN release: 2021-11-30</p>
@@ -123,18 +116,18 @@
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.6.0" id="coinr-060">COINr 0.6.0<a class="anchor" aria-label="anchor" href="#coinr-060"></a></h2><p class="text-muted">CRAN release: 2021-11-26</p>
-<ul><li>New plot function <code><a href="../reference/plotIndDot.html">plotIndDot()</a></code> for plotting single indicators with possibility to label units</li>
+<ul><li>New plot function <code>plotIndDot()</code> for plotting single indicators with possibility to label units</li>
 <li>Added <code>print</code> method for COIN class. More methods to come.</li>
-<li>Extended support for panel data in <code><a href="../reference/assemble.html">assemble()</a></code>. This can now output multiple COINs structured into a tibble. The idea of working with multiple COINs will be extended in future versions.</li>
+<li>Extended support for panel data in <code>assemble()</code>. This can now output multiple COINs structured into a tibble. The idea of working with multiple COINs will be extended in future versions.</li>
 <li>Improved bug trapping in Winsorisation function</li>
 <li>Added data availability thresholds during aggregation - see <code><a href="https://rdrr.io/r/stats/aggregate.html" class="external-link">aggregate()</a></code> function.</li>
-<li>Better NA colour for <code><a href="../reference/plotCorr.html">plotCorr()</a></code> plus fixed variable ordering</li>
-<li>Further colour options in <code><a href="../reference/plotCorr.html">plotCorr()</a></code>
+<li>Better NA colour for <code>plotCorr()</code> plus fixed variable ordering</li>
+<li>Further colour options in <code>plotCorr()</code>
 </li>
-<li>Variable/aggregate ordering in <code><a href="../reference/plotCorr.html">plotCorr()</a></code> now matches grouping in higher levels</li>
-<li>Add option to do PCA not in groups in <code><a href="../reference/getPCA.html">getPCA()</a></code>
+<li>Variable/aggregate ordering in <code>plotCorr()</code> now matches grouping in higher levels</li>
+<li>Add option to do PCA not in groups in <code>getPCA()</code>
 </li>
-<li>Colour options for <code><a href="../reference/plotSARanks.html">plotSARanks()</a></code>
+<li>Colour options for <code>plotSARanks()</code>
 </li>
 <li>Added dominance pairs calculation to <code>ourankMatrix()</code>
 </li>
@@ -147,18 +140,18 @@
 <ul><li>COINr now requires R version 4.0.0 or above - this is following some issues on some distributions during CRAN checks.</li>
 <li>Improved documentation and bug catching in <code><a href="https://rdrr.io/r/stats/aggregate.html" class="external-link">aggregate()</a></code>
 </li>
-<li>New function <code><a href="../reference/replaceDF.html">replaceDF()</a></code> which is a simple utility for multiple values in one go for a data frame.</li>
-<li>New function <code><a href="../reference/removeElements.html">removeElements()</a></code> which successively removes indicators or aggregates one at a time and summarises the effects.</li>
+<li>New function <code>replaceDF()</code> which is a simple utility for multiple values in one go for a data frame.</li>
+<li>New function <code>removeElements()</code> which successively removes indicators or aggregates one at a time and summarises the effects.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.5.4" id="coinr-054">COINr 0.5.4<a class="anchor" aria-label="anchor" href="#coinr-054"></a></h2><p class="text-muted">CRAN release: 2021-09-09</p>
 <ul><li>Fixed various small issues that were flagged by CRAN</li>
-<li>New function <code>extractYear</code> which allows panel data to be passed to <code><a href="../reference/assemble.html">assemble()</a></code> and (optionally) imputed by latest year.</li>
-<li>Fixed bug in <code>plorCorr()</code> and <code><a href="../reference/getCorr.html">getCorr()</a></code>
+<li>New function <code>extractYear</code> which allows panel data to be passed to <code>assemble()</code> and (optionally) imputed by latest year.</li>
+<li>Fixed bug in <code>plorCorr()</code> and <code>getCorr()</code>
 </li>
 <li>Changed <code>WorldDenoms</code> data set slightly to only use ASCII coding - this involved unfortunately removing a few accents on country names which is necessary to avoid warning notes when submitting to CRAN.</li>
 <li>Added goalpost normalisation method, as in European Skills Index</li>
-<li>Fixed small bug in <code><a href="../reference/compareDF.html">compareDF()</a></code>
+<li>Fixed small bug in <code>compareDF()</code>
 </li>
 </ul></div>
     <div class="section level2">

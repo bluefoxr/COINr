@@ -63,13 +63,6 @@ plots by higher aggregation levels."><!-- mathjax --><script src="https://cdnjs.
     <a class="dropdown-item" href="../articles/other_functions.html">Other functions</a>
   </div>
 </li>
-<li class="nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-examples">Examples</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-examples">
-    <a class="dropdown-item" href="../articles/build_example.html">Building a composite indicator</a>
-    <a class="dropdown-item" href="../articles/panel_data.html">Panel data</a>
-  </div>
-</li>
 <li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Functions</a>
 </li>
@@ -219,7 +212,8 @@ colour map if <code>flagcolours = TRUE</code> (from high to low correlation cate
     <p>This function calls <code><a href="get_corr.html">get_corr()</a></code>.</p>
 <p>Note that this function can only call correlations within the same data set (i.e. only one data set in <code>.$Data</code>).</p>
 <p>This function uses ggplot2 to generate plots, so the plot can be further manipulated using ggplot2 commands.
-See <code>vignette("visualisation</code>) for more details on plotting.</p>
+See <code><a href="../articles/visualisation.html">vignette("visualisation")</a></code> for more details on plotting.</p>
+<p>This function replaces the now-defunct <code>plotCorr()</code> from COINr &lt; v1.0.</p>
     </div>
 
     <div class="section level2">

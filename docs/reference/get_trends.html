@@ -59,13 +59,6 @@ the time series for each indicator/unit pair and passes it to CAGR().'><!-- math
     <a class="dropdown-item" href="../articles/other_functions.html">Other functions</a>
   </div>
 </li>
-<li class="nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-examples">Examples</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-examples">
-    <a class="dropdown-item" href="../articles/build_example.html">Building a composite indicator</a>
-    <a class="dropdown-item" href="../articles/panel_data.html">Panel data</a>
-  </div>
-</li>
 <li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Functions</a>
 </li>
@@ -150,7 +143,7 @@ non-<code>NA</code> point.</p></dd>
 <dd><p>Option to linearly interpolate missing data points in each time series. Must be specified as a vector
 of time values where to apply interpolation. If <code>interp_at = "all"</code>, will attempt to interpolate at every
 time point. Uses linear interpolation - note that any <code>NA</code>s outside of the range of observed values will not
-be estimated, i.e. this does not extrapolate beyond the range of data. See <code><a href="approx_df.html">approx_df()</a></code>.</p></dd>
+be estimated, i.e. this does not <em>extrapolate</em> beyond the range of data. See <code><a href="approx_df.html">approx_df()</a></code>.</p></dd>
 
 
 <dt>adjust_directions</dt>
