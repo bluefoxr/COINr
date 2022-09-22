@@ -77,4 +77,56 @@ test_that("impute.coin", {
 
   expect_equal(df1, df2)
 
+  # test group and by-row imputation
+  coin <- Impute(coin, dset = "Raw", impute_by = "row", f_i = "i_mean", group_level = 2)
+
+  # this should have imputed using a grouped row median, normalising first. let's see
+  xr <- get_data(coin, dset = "Raw", iCodes = "Physical", Level = 1, uCodes = "BGD")
+  xn <- get_data(coin, dset = "Imputed", iCodes = "Physical", Level = 1, uCodes = "BGD")
+  expect_mapequal(xn[names(xn) != "ConSpeed"], xr[names(xr) != "ConSpeed"])
+
+  # have to normalise this df
+  X <- get_data(coin, dset = "Raw", iCodes = "Physical", Level = 1)
+  Xn <- lapply(X, function(x){
+    if(is.numeric(x)){
+      (x - min(x, na.rm = TRUE))/(max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
+    } else {
+      x
+    }
+  })
+  Xn <- as.data.frame(Xn)
+
+  # the still-normalised imputed vector
+  xn_unsc <- Xn[Xn$uCode == "BGD", ]
+  # est conspeed
+  xref <- rowMeans(xn_unsc[-1], na.rm = TRUE)
+  xref_sc <- xref*(max(X$ConSpeed, na.rm = TRUE) - min(X$ConSpeed, na.rm = TRUE)) + min(X$ConSpeed, na.rm = TRUE)
+
+  # FINALLY the test
+  expect_equal(xn$ConSpeed, as.numeric(xref_sc))
+
+
+})
+
+test_that("impute.purse", {
+
+  purse <- build_example_purse(up_to = "new_coin", quietly = TRUE)
+
+  pursei <- Impute(purse, dset = "Raw")
+
+  # compare
+  coin1 <- Impute(purse$coin[[1]], dset = "Raw")
+  expect_equal(pursei$coin[[1]], coin1)
+
+  # manually set up panel imputation NA
+  purse$coin$`2022`$Data$Raw$Flights[1] <- NA
+
+  pursei <- Impute(purse, dset = "Raw", f_i = "impute_panel")
+
+  # we should see that the 2022 value is equal to the 2021 value now
+  x21 <- pursei$coin$`2021`$Data$Imputed$Flights[1]
+  x22 <- pursei$coin$`2022`$Data$Imputed$Flights[1]
+
+  expect_equal(x22, x21)
+
 })

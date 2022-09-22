@@ -105,3 +105,83 @@ test_that("agg_coin", {
   expect_equal(Xagg, Xagg2)
 
 })
+
+test_that("agg_purse", {
+
+  # purse
+  purse <- build_example_purse(up_to = "Normalise", quietly = TRUE)
+
+  # aggregate via coin method
+  coin1 <- Aggregate(purse$coin[[1]], dset = "Normalised")
+
+  # aggregate via purse method
+  purse <- Aggregate(purse, dset = "Normalised")
+
+  # check
+  expect_equal(purse$coin[[1]]$Data$Aggregated, coin1$Data$Aggregated)
+})
+
+test_that("agg_functions", {
+
+  # geometric
+  x <- c(1, 2, 3)
+  y1 <- a_gmean(x)
+
+  expect_equal(y1, (1*2*3)^(1/3))
+  expect_error(a_gmean(c(1, 2, -1)))
+  expect_error(a_gmean(c(1, 2, 0)))
+
+  y1 <- a_gmean(x, c(1,1,2))
+  expect_equal(y1, (1*2*3^2)^(1/4))
+
+  # harmonic
+  x <- c(1, 2, 3)
+  y1 <- a_hmean(x, c(2, 1, 1))
+  expect_equal(y1, 4/(2/1 + 1/2 + 1/3))
+
+})
+
+test_that("outranking", {
+
+  # a df
+  X <- data.frame(
+    x1 = 1:4,
+    x2 = c(3:1, 5),
+    x3 = c(2,3,1, 4)
+  )
+
+  orm <- outrankMatrix(X)
+
+  expect_equal(nrow(orm$OutRankMatrix), 4)
+  expect_equal(ncol(orm$OutRankMatrix), 4)
+
+  # check some scores
+  expect_equal(diag(orm$OutRankMatrix), c(0,0,0,0))
+  expect_equal(orm$OutRankMatrix[2,1], 2/3)
+  expect_equal(orm$OutRankMatrix[3,1], 1/3)
+  expect_equal(orm$OutRankMatrix[4,1], 1)
+  expect_equal(orm$nDominant, 3)
+  expect_equal(orm$fracDominant, 3/6)
+
+})
+
+test_that("copeland", {
+
+  # a df
+  X <- data.frame(
+    x1 = 1:4,
+    x2 = c(3:1, 5),
+    x3 = c(2,3,1, 4)
+  )
+
+  y <- a_copeland(X)
+
+  orm <- outrankMatrix(X)$OutRankMatrix
+  orm[orm > 0.5] <- 1
+  orm[orm == 0.5] <- 0
+  orm[orm < 0.5] <- -1
+  diag(orm) <- 0
+
+  expect_equal(y, rowSums(orm))
+
+})

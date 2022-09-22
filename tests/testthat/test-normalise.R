@@ -83,3 +83,35 @@ test_that("norm_coin", {
   expect_equal(dsetn, dsetn2)
 
 })
+
+test_that("n_funcs", {
+
+  # test data
+  x <- runif(10)
+
+  xn <- n_scaled(x, npara = c(1, 10))
+  expect_length(xn, length(x))
+  expect_equal(xn, (x-1)/(10-1)*100)  # (x-l)/(u-l) * 100
+
+  xn <- n_dist2max(x)
+  expect_equal(xn, 1 - (max(x) - x)/(max(x)-min(x))) # 1 - (x_{max} - x)/(x_{max} - x_{min})
+
+  xn <- n_dist2ref(x, iref = 1)
+  xn2 <- 1- (x[1] - x)/(x[1] - min(x)) # 1 - (x_{ref} - x)/(x_{ref} - x_{min})
+  expect_equal(xn, xn2)
+  xn <- n_dist2ref(x, iref = 1, cap_max = TRUE)
+  xn2[xn2 > 1] <- 1
+  expect_equal(xn, xn2)
+
+  xn <- n_fracmax(x)
+  expect_equal(xn, x/max(x))
+
+  xn <- n_goalposts(x, gposts = c(0.2, 0.8, 10))
+  xn2 <- (x - 0.2)/0.6
+  xn2[xn2 < 0] <- 0
+  xn2[xn2 > 1] <- 1
+  xn2 <- xn2 * 10
+  expect_equal(xn, xn2)
+
+
+})
