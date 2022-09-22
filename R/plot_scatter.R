@@ -29,6 +29,7 @@
 #' else if `"uName"`, points are labelled with their unit names. Set `NULL` to remove labels (default).
 #' @param check_overlap Logical: if `TRUE` (default), point labels that overlap are removed - this results in a legible
 #' plot but some labels may be missing. Else if `FALSE`, all labels are plotted.
+#' @param nudge_y Parameter passed to ggplot which controls the vertical adjustment of the text labels if present.
 #' @param log_scale A 2-length logical vector specifying whether to use log axes for x and y respectively: if `TRUE`,
 #' a log axis will be used. Defaults to not-log.
 #'
@@ -51,7 +52,7 @@
 #'
 plot_scatter <- function(coin, dsets, iCodes, ..., by_group = NULL,
                          alpha = 0.5, axes_label = "iCode", dset_label = TRUE,
-                         point_label = NULL, check_overlap = TRUE, log_scale = c(FALSE, FALSE)){
+                         point_label = NULL, check_overlap = TRUE, nudge_y = 5, log_scale = c(FALSE, FALSE)){
 
   # PREP --------------------------------------------------------------------
 
@@ -166,7 +167,7 @@ plot_scatter <- function(coin, dsets, iCodes, ..., by_group = NULL,
   if(!is.null(point_label)){
 
     plt <- plt + ggplot2::geom_text(size = 3,
-                                    vjust = 0, nudge_y = 5,
+                                    vjust = 0, nudge_y = nudge_y,
                                     check_overlap = check_overlap)
   }
 
