@@ -455,6 +455,12 @@ check_address <- function(address, coin){
 #' @export
 SA_estimate <- function(yy, N, d, Nboot = NULL){
 
+  # checks
+  stopifnot(is.numeric(yy))
+  if(length(yy) != N*(d+2)){
+    stop("The length of 'yy' does not correspond to the values of 'N' and 'd'. The vector 'yy' should be of length N(d+2).")
+  }
+
   # put into matrix format: just the ABis
   yyABi <- matrix(yy[(2*N +1):length(yy)], nrow = N)
   # get yA and yB
