@@ -331,7 +331,7 @@ Normalise.data.frame <- function(x, global_specs = NULL, indiv_specs = NULL,
 
     # add direction
     specs$direction <- directions$Direction[directions$iCode == col_name]
-    if(is.null(specs$direction)){
+    if(length(specs$direction) != 1){
       stop("No 'direction' entry found for numerical column ", col_name)
     }
 
