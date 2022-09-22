@@ -62,7 +62,9 @@ rank_df <- function(df, use_group = NULL){
 #' Compare two data frames
 #'
 #' A custom function for comparing two data frames of indicator data, to see whether they match up, at a specified number of
-#' significant figures.
+#' significant figures. Specifically, this is intended to compare two data frames, without regard to row or column ordering.
+#' Rows are matched by the required `matchcol` argument. Hence, it is different from e.g. [all.equal()] which requires rows
+#' to be ordered. In COINr, typically `matchcol` is the `uCode` column, for example.
 #'
 #' This function compares numerical and non-numerical columns to see if they match. Rows and columns can be in any order. The function
 #' performs the following checks:
@@ -124,19 +126,13 @@ compare_df <- function(df1, df2, matchcol, sigfigs = 5){
   if(nrow(df1)!=nrow(df2)){
     sameanswer <- FALSE
     details <- "Different number of rows."
-  }
-  if(ncol(df1)!=ncol(df2)){
+  } else if(ncol(df1)!=ncol(df2)){
     sameanswer <- FALSE
     details <- "Different number of columns."
-  }
-
-  # check column names
-  if(!setequal(colnames(df1), colnames(df2))){
+  } else if(!setequal(colnames(df1), colnames(df2))){
     sameanswer <- FALSE
     details <- "Column names not the same."
-  }
-  # check row names same in matchcol
-  if(!setequal(df1[[matchcol]], df2[[matchcol]])){
+  } else if(!setequal(df1[[matchcol]], df2[[matchcol]])){
     sameanswer <- FALSE
     details <- "Elements in matchcol are not the same."
   }
