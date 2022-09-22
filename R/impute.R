@@ -44,47 +44,62 @@ Impute.purse <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "colu
   # input check
   check_purse(x)
 
-  if(f_i == "impute_panel"){
+  if(!is.null(f_i)){
 
-    # this is a special case
-    iDatas <- get_dset(x, dset)
+    if(f_i == "impute_panel"){
 
-    # impute
-    l_imp <- impute_panel(iDatas, max_time = f_i_para$max_time)
+      # this is a special case
+      iDatas <- get_dset(x, dset)
 
-    # extract imputed data
-    iDatas_i <- l_imp$iData_imp
+      # impute
+      l_imp <- impute_panel(iDatas, max_time = f_i_para$max_time)
 
-    # split by Time
-    iDatas_i_l <- split(iDatas_i, iDatas$Time)
+      # extract imputed data
+      iDatas_i <- l_imp$iData_imp
 
-    # now write dsets to coins
-    x$coin <- lapply(x$coin, function(coin){
+      # split by Time
+      iDatas_i_l <- split(iDatas_i, iDatas$Time)
 
-      # get Time
-      tt <- coin$Meta$Unit$Time[[1]]
-      if(is.null(tt)){
-        stop("Time index is NULL or not found in writing imputed data set to coin.")
-      }
+      # now write dsets to coins
+      x$coin <- lapply(x$coin, function(coin){
 
-      if(is.null(write_to)){
-        write_to <- "Imputed"
-      }
+        # get Time
+        tt <- coin$Meta$Unit$Time[[1]]
+        if(is.null(tt)){
+          stop("Time index is NULL or not found in writing imputed data set to coin.")
+        }
 
-      # isolate data from the time point
-      iData_write <- iDatas_i_l[[which(names(iDatas_i_l) == tt)]]
-      # remove Time column
-      iData_write <- iData_write[names(iData_write) != "Time"]
+        if(is.null(write_to)){
+          write_to <- "Imputed"
+        }
 
-      # write dset first
-      coin <- write_dset(coin, iData_write, dset = write_to)
+        # isolate data from the time point
+        iData_write <- iDatas_i_l[[which(names(iDatas_i_l) == tt)]]
+        # remove Time column
+        iData_write <- iData_write[names(iData_write) != "Time"]
 
-      # also write to log - we signal that coin can't be regenerated any more
-      coin$Log$can_regen <- FALSE
-      coin$Log$message <- "Coin was imputed inside a purse with using panel imputation. Cannot be regenerated."
+        # write dset first
+        coin <- write_dset(coin, iData_write, dset = write_to)
 
-      coin
-    })
+        # also write to log - we signal that coin can't be regenerated any more
+        coin$Log$can_regen <- FALSE
+        coin$Log$message <- "Coin was imputed inside a purse with using panel imputation. Cannot be regenerated."
+
+        coin
+      })
+
+    } else {
+
+      # apply unit screening to each coin
+      x$coin <- lapply(x$coin, function(coin){
+        Impute.coin(coin, dset = dset, f_i = f_i, f_i_para = f_i_para, impute_by = impute_by,
+                    group_level = group_level, use_group = use_group,
+                    normalise_first = normalise_first, out2 = "coin",
+                    write_to = write_to)})
+
+    }
+
+
 
   } else {
 
@@ -252,9 +267,9 @@ Impute.coin <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "colum
 
     # check non-NAs have not changed
     x_check <- iData_i
-    iData_i[is.na(iData_)] <- NA
+    x_check[is.na(iData_)] <- NA
 
-    if(!identical(iData_i, iData_)){
+    if(!identical(x_check, iData_)){
       warning("Differences detected in non-NA values of imputed data frame.")
     }
 
