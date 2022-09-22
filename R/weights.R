@@ -75,7 +75,7 @@ get_eff_weights <-  function(coin, out2 = "df"){
   if(out2 == "df"){
     iMeta[c("iCode", "Level", "Weight", "EffWeight")]
   } else if(out2 == "coin"){
-    coin$Meta$Ind <- iMeta
+    coin$Meta$Ind$EffWeight <- iMeta$EffWeight[match(coin$Meta$Ind$iCode, iMeta$iCode )]
     coin
   }
 
