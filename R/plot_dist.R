@@ -194,7 +194,7 @@ plot_dot <- function(coin, dset, iCode, Level = NULL, ..., usel = NULL, marker_t
   plt <- ggplot2::ggplot(ind_data, ggplot2::aes(x=.data$x, y=.data$y)) +
     ggplot2::theme_minimal() +
     ggplot2::geom_point(
-      color="transparent",
+      color="blue",
       fill="blue",
       shape=mno,
       alpha=0.5,
