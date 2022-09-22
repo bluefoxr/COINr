@@ -616,7 +616,7 @@ outrankMatrix <- function(X, w = NULL){
 
   if(is.null(w)){
     # default equal weights
-    w <- rep(1,nUnit)
+    w <- rep(1,nInd)
     message("No weights specified for outranking matrix, using equal weights.")
   }
 
@@ -671,6 +671,15 @@ outrankMatrix <- function(X, w = NULL){
 #' Aggregates a data frame of indicator values into a single column using the Copeland method.
 #' This function calls `outrankMatrix()`.
 #'
+#' The outranking matrix is transformed as follows:
+#'
+#' * values > 0.5 are replaced by 1
+#' * values < 0.5 are replaced by -1
+#' * values == 0.5 are replaced by 0
+#' * the diagonal of the matrix is all zeros
+#'
+#' The Copeland scores are calculated as the row sums of this transformed matrix.
+#'
 #' This function replaces the now-defunct `copeland()` from COINr < v1.0.
 #'
 #' @param X A numeric data frame or matrix of indicator data, with observations as rows and indicators
@@ -692,6 +701,11 @@ a_copeland <- function(X, w = NULL){
 
   # get outranking matrix
   orm <- outrankMatrix(X, w)$OutRankMatrix
+
+  orm[orm > 0.5] <- 1
+  orm[orm == 0.5] <- 0
+  orm[orm < 0.5] <- -1
+  diag(orm) <- 0
 
   # get scores by summing across rows
   rowSums(orm, na.rm = TRUE)
