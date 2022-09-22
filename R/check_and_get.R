@@ -121,7 +121,16 @@ get_dset.purse <- function(x, dset, Time = NULL, also_get = NULL, ...){
   })
   iData <- Reduce(rbind, iDatas)
   # sometimes we get two "Time" cols - here make sure only 1 (remove duplicate cols)
-  iData[unique(names(iData))]
+  iData <- iData[unique(names(iData))]
+
+  # may have to additionally remove Time col
+  if(!is.null(also_get)){
+    if(also_get == "none"){
+      iData <- iData[names(iData) != "Time"]
+    }
+  }
+
+  iData
 }
 
 #' Gets a named data set and performs checks
