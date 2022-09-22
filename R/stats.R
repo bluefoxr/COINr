@@ -210,7 +210,7 @@ get_stats.data.frame <- function(x, t_skew = 2, t_kurt = 3.5, t_avail = 0.65, t_
 #' @param ... Further arguments to be passed to methods.
 #'
 #' @examples
-#' #
+#' # see individual method documentation
 #'
 #' @return A data frame of statistics for each column
 #'
