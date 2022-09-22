@@ -27,7 +27,7 @@
 #' @param interp_at Option to linearly interpolate missing data points in each time series. Must be specified as a vector
 #' of time values where to apply interpolation. If `interp_at = "all"`, will attempt to interpolate at every
 #' time point. Uses linear interpolation - note that any `NA`s outside of the range of observed values will not
-#' be estimated, i.e. this does not extrapolate beyond the range of data. See [approx_df()].
+#' be estimated, i.e. this does not *extrapolate* beyond the range of data. See [approx_df()].
 #' @param adjust_directions Logical: if `TRUE`, trend metrics are adjusted according to indicator/aggregate
 #' directions input in `iMeta` (i.e. if the corresponding direction is -1, the metric will be multiplied by -1).
 #'
@@ -47,12 +47,12 @@ get_trends <- function(purse, dset, uCodes = NULL, iCodes = NULL,
 
   # Input checks ------------------------------------------------------------
 
+  # general checks
   check_purse_input(purse)
   if(!is.null(use_latest)){
     stopifnot(is.numeric(use_latest),
               length(use_latest) == 1)
   }
-
 
   # Get data and check ------------------------------------------------------
 
@@ -77,9 +77,11 @@ get_trends <- function(purse, dset, uCodes = NULL, iCodes = NULL,
 
     stopifnot(is.numeric(interp_at),
               all(!is.na(interp_at)))
+
     if( any(interp_at < min(iData$Time)) || any(interp_at > max(iData$Time))){
       stop("One or more entries in interp_at are outside the time range of the data.", call. = FALSE)
     }
+
   }
 
   if(!is.null(Time)){
@@ -87,7 +89,6 @@ get_trends <- function(purse, dset, uCodes = NULL, iCodes = NULL,
       stop("One or more entries in Time are not found in the selected data set.")
     }
   }
-
 
   # Prep for data avail records ---------------------------------------------
 
@@ -225,7 +226,7 @@ get_trends <- function(purse, dset, uCodes = NULL, iCodes = NULL,
           tt_ii <- tt_use[i_first : i_latest]
           yraw_ii <- yraw[i_first : i_latest]
 
-          # record these in data frames TEST
+          # record these in data frames
           df_x[i_dat_avail, 3:ncol(df_x)] <<- tt_ii
           df_y[i_dat_avail, 3:ncol(df_y)] <<- yraw_ii
 
@@ -290,6 +291,9 @@ get_trends <- function(purse, dset, uCodes = NULL, iCodes = NULL,
 
   })
 
+
+  # Post-proc and output ----------------------------------------------------
+
   # reshape this into a data frame
   df_trends <- as.data.frame(l_trends)
   df_trends <- cbind(iCode = row.names(df_trends), df_trends)
@@ -307,9 +311,16 @@ get_trends <- function(purse, dset, uCodes = NULL, iCodes = NULL,
   df_long <- df_long[order(df_long$iCode, df_long$uCode), ]
 
   # output
-  list(Trends = df_long,
-       x = df_x[order(df_x$iCode, df_x$uCode), ],
-       y = df_y[order(df_y$iCode, df_y$uCode), ])
+  if(!is.null(use_latest)){
+    l_out <- list(Trends = df_long,
+                  x = df_x[order(df_x$iCode, df_x$uCode), ],
+                  y = df_y[order(df_y$iCode, df_y$uCode), ])
+  } else {
+    df_long <- df_long[names(df_long) %nin% c("Avail_use_latest", "t_first_use_latest")]
+    l_out <- list(Trends = df_long)
+  }
+
+  l_out
 
 }
 
