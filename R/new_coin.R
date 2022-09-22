@@ -271,8 +271,10 @@ new_coin <- function(iData, iMeta, exclude = NULL, split_to = NULL,
     coin_i <- write_dset(coin_i, iDatai[c("uCode", iCodes)], dset = "Raw",
                          ignore_class = TRUE, quietly = quietly)
 
-    # alter Log to only include iData of the COIN (not whole panel)
-    coin_i$Log$new_coin$iData <- iDatai
+    if(is_panel){
+      # alter Log to only include iData of the COIN (not whole panel)
+      coin_i$Log$new_coin$iData <- iDatai
+    }
 
     # Extract denominators, groups and other non-indicator cols
     coin_i$Meta$Unit <- iDatai[c("uCode", not_icodes)]
