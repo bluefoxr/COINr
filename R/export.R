@@ -33,7 +33,7 @@
 #' @export
 export_to_excel.coin <- function(x, fname = "coin_export.xlsx", include_log = FALSE, ...){
 
-  check_coin_input(coin)
+  check_coin_input(x)
 
   # function to stop tab names exceeding 31 characters, avoiding errors.
   trunc_str <- function(x){
@@ -47,7 +47,7 @@ export_to_excel.coin <- function(x, fname = "coin_export.xlsx", include_log = FA
   }
 
   if(!include_log){
-    coin$Log <- NULL
+    x$Log <- NULL
   }
 
   # recursive func to get all dfs in coin into a single list
@@ -60,7 +60,7 @@ export_to_excel.coin <- function(x, fname = "coin_export.xlsx", include_log = FA
   }
 
   # unlist and alter any names that are too long
-  coinwrite <- unlist_2_df(coin)
+  coinwrite <- unlist_2_df(x)
   names(coinwrite) <- sapply(names(coinwrite), trunc_str)
 
   # write to excel
