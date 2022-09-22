@@ -166,7 +166,7 @@ get_results <- function(coin, dset, tab_type = "Summ", also_get = NULL, use = "s
 #' @param usel A selected unit code
 #' @param Levels The aggregation levels to display results from.
 #' @param dset The data set within the coin to extract scores and ranks from
-#' @param nround Number of decimals to round scores to, default 2.
+#' @param nround Number of decimals to round scores to, default 2. Set to `NULL` to disable rounding.
 #'
 #' @examples
 #' # build full example coin
@@ -218,7 +218,13 @@ get_unit_summary <- function(coin, usel, Levels, dset = "Aggregated", nround = 2
   )
 
   # round
-  round_df(tabout, nround)
+  if(!is.null(nround)){
+    df_out <- round_df(tabout, nround)
+  } else {
+    df_out <- tabout
+  }
+
+  df_out
 
 }
 
