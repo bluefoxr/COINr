@@ -35,7 +35,9 @@ Defaults to indicator level.}
 \item{pval}{The significance level for including correlations. Correlations with \eqn{p > pval} will be returned as \code{NA}.
 Default 0.05. Set to 0 to disable this.}
 
-\item{withparent}{If \code{TRUE}, and \code{aglev[1] != aglev[2]}, will only return correlations of each row with its parent.}
+\item{withparent}{If \code{TRUE}, and \code{aglev[1] != aglev[2]}, will only return correlations of each row with its parent. Alternatively, if
+\code{withparent = "family"}, will return correlations with parents, grandparents etc, up to the highest level. In both cases the data set
+must be aggregated for this to work.}
 
 \item{grouplev}{The aggregation level to group correlations by if \code{aglev[1] == aglev[2]}. Requires that
 \code{make_long = TRUE}.}
@@ -51,7 +53,8 @@ Correlations with \eqn{p > pval} will be returned as \code{NA}.
 \description{
 Helper function for getting correlations between indicators and aggregates. This retrieves subsets of correlation
 matrices between different aggregation levels, in different formats. By default, it will return a
-long-form data frame, unless \code{make_long = FALSE}.
+long-form data frame, unless \code{make_long = FALSE}. By default, any correlations with a p-value less than 0.05 are
+replaced with \code{NA}. See \code{pval} argument to adjust this.
 }
 \details{
 This function allows you to obtain correlations between any subset of indicators or aggregates, from

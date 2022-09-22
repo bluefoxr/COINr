@@ -36,7 +36,7 @@ non-\code{NA} point.}
 \item{interp_at}{Option to linearly interpolate missing data points in each time series. Must be specified as a vector
 of time values where to apply interpolation. If \code{interp_at = "all"}, will attempt to interpolate at every
 time point. Uses linear interpolation - note that any \code{NA}s outside of the range of observed values will not
-be estimated, i.e. this does not extrapolate beyond the range of data. See \code{\link[=approx_df]{approx_df()}}.}
+be estimated, i.e. this does not \emph{extrapolate} beyond the range of data. See \code{\link[=approx_df]{approx_df()}}.}
 
 \item{adjust_directions}{Logical: if \code{TRUE}, trend metrics are adjusted according to indicator/aggregate
 directions input in \code{iMeta} (i.e. if the corresponding direction is -1, the metric will be multiplied by -1).}

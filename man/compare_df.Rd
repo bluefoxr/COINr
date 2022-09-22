@@ -29,7 +29,9 @@ a data frame with one row for each difference, reporting the value from \code{df
 }
 \description{
 A custom function for comparing two data frames of indicator data, to see whether they match up, at a specified number of
-significant figures.
+significant figures. Specifically, this is intended to compare two data frames, without regard to row or column ordering.
+Rows are matched by the required \code{matchcol} argument. Hence, it is different from e.g. \code{\link[=all.equal]{all.equal()}} which requires rows
+to be ordered. In COINr, typically \code{matchcol} is the \code{uCode} column, for example.
 }
 \details{
 This function compares numerical and non-numerical columns to see if they match. Rows and columns can be in any order. The function

@@ -15,6 +15,7 @@ plot_scatter(
   dset_label = TRUE,
   point_label = NULL,
   check_overlap = TRUE,
+  nudge_y = 5,
   log_scale = c(FALSE, FALSE)
 )
 }
@@ -46,6 +47,8 @@ else if \code{"uName"}, points are labelled with their unit names. Set \code{NUL
 
 \item{check_overlap}{Logical: if \code{TRUE} (default), point labels that overlap are removed - this results in a legible
 plot but some labels may be missing. Else if \code{FALSE}, all labels are plotted.}
+
+\item{nudge_y}{Parameter passed to ggplot which controls the vertical adjustment of the text labels if present.}
 
 \item{log_scale}{A 2-length logical vector specifying whether to use log axes for x and y respectively: if \code{TRUE},
 a log axis will be used. Defaults to not-log.}

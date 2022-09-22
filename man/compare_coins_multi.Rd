@@ -29,8 +29,8 @@ are returned as a result of \code{also_get}.}
 
 \item{tabtype}{The type of table to generate. One of:
 \itemize{
-\item \code{"Ranks"}: returns a data frame of index ranks for each coin provided, plus ISO3 column
-\item \code{"Diffs"}: returns a data frame of index rank differences between the base coin and each other coin (see \code{ibase})
+\item \code{"Values"}: returns a data frame of rank values for each coin provided, plus ISO3 column
+\item \code{"Diffs"}: returns a data frame of rank differences between the base coin and each other coin (see \code{ibase})
 \item \code{"AbsDiffs"}: as \code{"Diffs"} but absolute rank differences are returned
 \item \code{"All"}: returns all of the three previous rank tables, as a list of data frames
 }}

@@ -21,6 +21,16 @@ Aggregates a data frame of indicator values into a single column using the Copel
 This function calls \code{outrankMatrix()}.
 }
 \details{
+The outranking matrix is transformed as follows:
+\itemize{
+\item values > 0.5 are replaced by 1
+\item values < 0.5 are replaced by -1
+\item values == 0.5 are replaced by 0
+\item the diagonal of the matrix is all zeros
+}
+
+The Copeland scores are calculated as the row sums of this transformed matrix.
+
 This function replaces the now-defunct \code{copeland()} from COINr < v1.0.
 }
 \examples{
