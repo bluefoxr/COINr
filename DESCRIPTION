@@ -31,7 +31,8 @@ Suggests:
     testthat (>= 3.0.0),
     Compind,
     matrixStats,
-    performance
+    performance,
+    COINr6
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
 Language: en-GB
