@@ -9,9 +9,11 @@
 \arguments{
 \item{x}{A data frame. Can have both numeric and non-numeric columns.}
 
-\item{global_specs}{First stage data treatment function}
+\item{global_specs}{A list specifying the treatment to apply to all columns. This will be applied to all columns, except any
+that are specified in the \code{indiv_specs} argument. Alternatively, set to \code{"none"} to apply no treatment. See details.}
 
-\item{indiv_specs}{First stage data treatment function parameters}
+\item{indiv_specs}{A list specifying any individual treatment to apply to specific columns, overriding \code{global_specs}
+for those columns. See details.}
 
 \item{combine_treat}{By default, if \code{f1} fails to pass \code{f_pass}, then \code{f2} is applied to the original \code{x},
 rather than the treated output of \code{f1}. If \code{combine_treat = TRUE}, \code{f2} will instead be applied to the output
@@ -24,11 +26,76 @@ A treated data frame of data
 }
 \description{
 Operates a two-stage data treatment process, based on two data treatment functions, and a pass/fail
-function which detects outliers. This function is set up to allow any functions to be passed as the
-data treatment functions (\code{f1} and \code{f2}), as well as any function to be passed as the outlier detection
-function \code{f_pass}.
+function which detects outliers. The method of data treatment can be either specified by the \code{global_specs} argument (which applies
+the same specifications to all columns in \code{x}), or else (additionally) by the \code{indiv_specs} argument which allows different
+methods to be applied for each column. See details. For a simpler function for data treatment, see the wrapper function \code{\link[=qTreat]{qTreat()}}.
 }
-\details{
+\section{Global specifications}{
+If the same method of data treatment should be applied to all the columns, use the \code{global_specs} argument. This argument takes a structured
+list which looks like this:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{global_specs = list(f1 = .,
+                    f1_para = list(.),
+                    f2 = .,
+                    f2_para = list(.),
+                    f_pass = .,
+                    f_pass_para = list()
+                    )
+}\if{html}{\out{</div>}}
+
+The entries in this list correspond to arguments in \code{\link[=Treat.numeric]{Treat.numeric()}}, and the meanings of each are also described in more detail here
+below. In brief, \code{f1} is the name of a function to apply at the first round of data treatment, \code{f1_para} is a list of any additional
+parameters to pass to \code{f1}, \code{f2} and \code{f2_para} are equivalently the function name and parameters of the second round of data treatment, and
+\code{f_pass} and \code{f_pass_para} are the function and additional arguments to check for the existence of outliers.
+
+The default values for \code{global_specs} are as follows:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{global_specs = list(f1 = "winsorise",
+                     f1_para = list(na.rm = TRUE,
+                                    winmax = 5,
+                                    skew_thresh = 2,
+                                    kurt_thresh = 3.5,
+                                    force_win = FALSE),
+                     f2 = "log_CT",
+                     f2_para = list(na.rm = TRUE),
+                     f_pass = "check_SkewKurt",
+                     f_pass_para = list(na.rm = TRUE,
+                                        skew_thresh = 2,
+                                        kurt_thresh = 3.5))
+}\if{html}{\out{</div>}}
+
+This shows that by default (i.e. if \code{global_specs} is not specified), each column is checked for outliers by the \code{\link[=check_SkewKurt]{check_SkewKurt()}} function, which
+uses skew and kurtosis thresholds as its parameters. Then, if outliers exist, the first function \code{\link[=winsorsise]{winsorsise()}} is applied, which also
+uses skew and kurtosis parameters, as well as a maximum number of winsorised points. If the Winsorisation function does not satisfy
+\code{f_pass}, the \code{\link[=log_CT]{log_CT()}} function is invoked.
+
+To change the global specifications, you don't have to supply the whole list. If, for example, you are happy with all the defaults but
+want to simply change the maximum number of Winsorsised points, you could specify e.g. \code{global_specs = list(f1_para = list(winmax = 3))}.
+In other words, a subset of the list can be specified, as long as the structure of the list is correct.
+}
+
+\section{Individual specifications}{
+The \code{indiv_specs} argument allows different specifications for each column in \code{x}. This is done by wrapping multiple lists of the format of the
+list described in \code{global_specs} into one single list, named according to the column names of \code{x}. For example, if \code{x} has column names
+"x1", "x2" and "x3", we could specify individual treatment as follows:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{indiv_specs = list(x1 = list(.),
+                   x2 = list(.)
+                   x3 = list(.))
+}\if{html}{\out{</div>}}
+
+where each \code{list(.)} is a specifications list of the same format as \code{global_specs}. Any columns that are not named in \code{indiv_specs} are
+treated using the specifications from \code{global_specs} (which will be the defaults if it is not specified). As with \code{global_specs},
+a subset of the \code{global_specs} list may be specified for
+each entry. Additionally, as a special case, specifying a list entry as e.g. \code{x1 = "none"} will apply no data treatment to the column "x1". See
+\code{vignette("treat")} for examples of individual treatment.
+}
+
+\section{Function methodology}{
+This function is set up to allow any functions to be passed as the
+data treatment functions (\code{f1} and \code{f2}), as well as any function to be passed as the outlier detection
+function \code{f_pass}, as specified in the \code{global_specs} and \code{indiv_specs} arguments.
+
 The arrangement of this function is inspired by a fairly standard data treatment process applied to
 indicators, which consists of checking skew and kurtosis, then if the criteria are not met, applying
 Winsorisation up to a specified limit. Then if Winsorisation still does not bring skew and kurtosis
@@ -60,6 +127,7 @@ therefore doesn't need any (more) treatment), and \code{FALSE} means that it fai
 
 See also \code{vignette("treat")}.
 }
+
 \examples{
 # select three indicators
 df1 <- ASEM_iData[c("Flights", "Goods", "Services")]
