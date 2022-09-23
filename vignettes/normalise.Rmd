@@ -74,6 +74,8 @@ Again, the z-score transformation is linear. It simply puts the resulting indica
 
 Notice the syntax of `global_specs`. If specified, it takes entries `f_n` (the name of the function to apply to each column) and `f_n_para` (any further arguments to `f_n`, not including `x`). Importantly, `f_n_para` *must* be specified as a list, even if it only contains one parameter.
 
+Note that **COINr has a number of normalisation functions built in**, all of which are of the form `n_*()`, such as `n_minmax()`, `n_borda()`, etc. Type `n_` in the R Studio console and press the Tab key to see a list, or else browse the COINr functions alphabetically.
+
 Since `f_n` points to a function name, any function can be passed to `Normalise()` as long as it is available in the namespace. To illustrate, consider an example where we want to categorise into discrete bins. We can use base R's `cut()` function for this purpose. We simply need to specify the number of bins. We could directly call `cut()`, but for clarity we will create a simple wrapper function around it, then pass that function to `Normalise()`.
 
 ```{r}

@@ -53,7 +53,8 @@ else if \code{out2 = "df"} outputs the aggregated data set as a data frame.
 }
 \description{
 Aggregates a named data set specified by \code{dset} using aggregation function \code{f_ag}, weights \code{w}, and optional
-function parameters \code{f_ag_para}.
+function parameters \code{f_ag_para}. Note that COINr has a number of aggregation functions built in,
+all of which are of the form \verb{a_*()}, e.g. \code{\link[=a_amean]{a_amean()}}, \code{\link[=a_gmean]{a_gmean()}} and friends.
 }
 \details{
 Aggregation is performed row-wise using the function \code{f_ag}, such that for each row \code{x_row}, the output is
@@ -66,6 +67,10 @@ case \code{f_ag} should return a single numeric value (i.e. the result of aggreg
 a numeric vector (the result of aggregating the whole data frame in one go).
 
 \code{f_ag} can optionally have other parameters, e.g. weights, specified as a list in \code{f_ag_para}.
+
+Note that COINr has a number of aggregation functions built in,
+all of which are of the form \verb{a_*()}, e.g. \code{\link[=a_amean]{a_amean()}}, \code{\link[=a_gmean]{a_gmean()}} and friends. To see a list browse COINr functions alphabetically or
+type \code{a_} in the R Studio console and press the tab key (after loading COINr).
 
 Optionally, a data availability threshold can be assigned below which the aggregated value will return
 \code{NA} (see \code{dat_thresh} argument). If \code{by_df = TRUE}, this will however be ignored because aggregation is not

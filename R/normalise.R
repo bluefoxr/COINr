@@ -102,7 +102,8 @@ Normalise.purse <- function(x, dset, global_specs = NULL, indiv_specs = NULL,
 #' Creates a normalised data set using specifications specified in `global_specs`. Columns of `dset` can also optionally be
 #' normalised with individual specifications using the `indiv_specs` argument. If indicators should have their
 #' directions reversed, this can be specified using the `directions` argument. Non-numeric columns are ignored
-#' automatically by this function.
+#' automatically by this function. By default, this function normalises each indicator using the "min-max" method, scaling indicators to lie between
+#' 0 and 100. This calls the [n_minmax()] function. Note, all COINr normalisation functions are of the form `n_*()`.
 #'
 #' ## Global specification
 #'
@@ -125,6 +126,8 @@ Normalise.purse <- function(x, dset, global_specs = NULL, indiv_specs = NULL,
 #'
 #' The default list for `global_specs` is: `list(f_n = "n_minmax", f_n_para = list(l_u = c(0,100)))`, i.e.
 #' min-max normalisation between 0 and 100.
+#'
+#' Note, all COINr normalisation functions (passed to `f_n`) are of the form `n_*()`. Type `n_` in the R Studio console and press the Tab key to see a list.
 #'
 #' ## Individual column specification
 #'
@@ -215,7 +218,8 @@ Normalise.coin <- function(x, dset, global_specs = NULL, indiv_specs = NULL,
 #' Normalises a data frame using specifications specified in `global_specs`. Columns can also optionally be
 #' normalised with individual specifications using the `indiv_specs` argument. If variables should have their
 #' directions reversed, this can be specified using the `directions` argument. Non-numeric columns are ignored
-#' automatically by this function.
+#' automatically by this function. By default, this function normalises each indicator using the "min-max" method, scaling indicators to lie between
+#' 0 and 100. This calls the [n_minmax()] function. Note, all COINr normalisation functions are of the form `n_*()`.
 #'
 #' ## Global specification
 #'
@@ -237,6 +241,8 @@ Normalise.coin <- function(x, dset, global_specs = NULL, indiv_specs = NULL,
 #' values assigned to the arguments `arg1` and `arg2` respectively.
 #'
 #' The default list for `global_specs` is: `list(f_n = "n_minmax", f_n_para = list(l_u = c(0,100)))`.
+#'
+#' Note, all COINr normalisation functions (passed to `f_n`) are of the form `n_*()`. Type `n_` in the R Studio console and press the Tab key to see a list.
 #'
 #' ## Individual column specification
 #'

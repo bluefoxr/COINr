@@ -45,7 +45,7 @@ An updated purse with new treated data sets added at \code{.$Data[[write_to]]} i
 }
 \description{
 Aggregates indicators following the structure specified in \code{iMeta}, for each coin inside the purse.
-See \code{\link[=Aggregate.coin]{Aggregate.coin()}} for more information.
+See \code{\link[=Aggregate.coin]{Aggregate.coin()}}, which is applied to each coin, for more information
 }
 \examples{
 # build example purse up to normalised data set

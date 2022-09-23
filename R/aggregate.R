@@ -1,7 +1,7 @@
 #' Aggregate indicators
 #'
 #' Aggregates indicators following the structure specified in `iMeta`, for each coin inside the purse.
-#' See [Aggregate.coin()] for more information.
+#' See [Aggregate.coin()], which is applied to each coin, for more information
 #'
 #' @param x A purse-class object
 #' @param dset The name of the data set to apply the function to, which should be accessible in `.$Data`.
@@ -50,7 +50,8 @@ Aggregate.purse <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, da
 #' Aggregate indicators
 #'
 #' Aggregates a named data set specified by `dset` using aggregation function `f_ag`, weights `w`, and optional
-#' function parameters `f_ag_para`.
+#' function parameters `f_ag_para`. Note that COINr has a number of aggregation functions built in,
+#' all of which are of the form `a_*()`, e.g. [a_amean()], [a_gmean()] and friends.
 #'
 #' Aggregation is performed row-wise using the function `f_ag`, such that for each row `x_row`, the output is
 #' `f_ag(x_row, f_ag_para)`, and for the whole data frame, it outputs a numeric vector. The data frame `x` must
@@ -62,6 +63,10 @@ Aggregate.purse <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, da
 #' a numeric vector (the result of aggregating the whole data frame in one go).
 #'
 #' `f_ag` can optionally have other parameters, e.g. weights, specified as a list in `f_ag_para`.
+#'
+#' Note that COINr has a number of aggregation functions built in,
+#' all of which are of the form `a_*()`, e.g. [a_amean()], [a_gmean()] and friends. To see a list browse COINr functions alphabetically or
+#' type `a_` in the R Studio console and press the tab key (after loading COINr).
 #'
 #' Optionally, a data availability threshold can be assigned below which the aggregated value will return
 #' `NA` (see `dat_thresh` argument). If `by_df = TRUE`, this will however be ignored because aggregation is not
@@ -285,7 +290,8 @@ Aggregate.coin <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, dat
 
 #' Aggregate data frame
 #'
-#' Aggregates a data frame into a single column using a specified function.
+#' Aggregates a data frame into a single column using a specified function. Note that COINr has a number of aggregation functions built in,
+#' all of which are of the form `a_*()`, e.g. [a_amean()], [a_gmean()] and friends.
 #'
 #' Aggregation is performed row-wise using the function `f_ag`, such that for each row `x_row`, the output is
 #' `f_ag(x_row, f_ag_para)`, and for the whole data frame, it outputs a numeric vector. The data frame `x` must
@@ -298,11 +304,15 @@ Aggregate.coin <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, dat
 #'
 #' `f_ag` can optionally have other parameters, e.g. weights, specified as a list in `f_ag_para`.
 #'
+#' Note that COINr has a number of aggregation functions built in,
+#' all of which are of the form `a_*()`, e.g. [a_amean()], [a_gmean()] and friends. To see a list browse COINr functions alphabetically or
+#' type `a_` in the R Studio console and press the tab key (after loading COINr).
+#'
 #' Optionally, a data availability threshold can be assigned below which the aggregated value will return
 #' `NA` (see `dat_thresh` argument). If `by_df = TRUE`, this will however be ignored because aggregation is not
 #' done on individual rows. Note that more complex constraints could be built into `f_ag` if needed.
 #'
-#' @param x Object to be aggregated
+#' @param x Data frame to be aggregated
 #' @param f_ag The name of an aggregation function, as a string.
 #' @param f_ag_para Any additional parameters to pass to `f_ag`, as a named list.
 #' @param dat_thresh An optional data availability threshold, specified as a number between 0 and 1. If a row

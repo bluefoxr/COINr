@@ -51,7 +51,8 @@ An updated coin
 Creates a normalised data set using specifications specified in \code{global_specs}. Columns of \code{dset} can also optionally be
 normalised with individual specifications using the \code{indiv_specs} argument. If indicators should have their
 directions reversed, this can be specified using the \code{directions} argument. Non-numeric columns are ignored
-automatically by this function.
+automatically by this function. By default, this function normalises each indicator using the "min-max" method, scaling indicators to lie between
+0 and 100. This calls the \code{\link[=n_minmax]{n_minmax()}} function. Note, all COINr normalisation functions are of the form \verb{n_*()}.
 }
 \details{
 \subsection{Global specification}{
@@ -76,6 +77,8 @@ values assigned to the arguments \code{arg1} and \code{arg2} respectively.
 
 The default list for \code{global_specs} is: \code{list(f_n = "n_minmax", f_n_para = list(l_u = c(0,100)))}, i.e.
 min-max normalisation between 0 and 100.
+
+Note, all COINr normalisation functions (passed to \code{f_n}) are of the form \verb{n_*()}. Type \code{n_} in the R Studio console and press the Tab key to see a list.
 }
 
 \subsection{Individual column specification}{
