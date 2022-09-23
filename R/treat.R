@@ -4,9 +4,9 @@
 #' details. See also `vignette("treat")`.
 #'
 #' @param x A purse object
-#' @param dset The data set to treat in each coin
-#' @param global_specs Default specifications
-#' @param indiv_specs Individual specifications
+#' @param dset The data set to treat in each coin.
+#' @param global_specs Default specifications. See details in [Treat.coin()].
+#' @param indiv_specs Individual specifications. See details in [Treat.coin()].
 #' @param combine_treat By default, if `f1` fails to pass `f_pass`, then `f2` is applied to the original `x`,
 #' rather than the treated output of `f1`. If `combine_treat = TRUE`, `f2` will instead be applied to the output
 #' of `f1`, so the two treatments will be combined.
@@ -38,10 +38,81 @@ Treat.purse <- function(x, dset, global_specs = NULL, indiv_specs = NULL,
 
 #' Treat a data set in a coin for outliers
 #'
-#' Operates a two-stage data treatment process, based on two data treatment functions, and a pass/fail
-#' function which detects outliers. This function is set up to allow any functions to be passed as the
+#' Operates a two-stage data treatment process on the data set specified by `dset`, based on two data treatment functions, and a pass/fail
+#' function which detects outliers. The method of data treatment can be either specified by the `global_specs` argument (which applies
+#' the same specifications to all indicators in the specified data set), or else (additionally) by the `indiv_specs` argument which allows different
+#' methods to be applied for each indicator. See details. For a simpler function for data treatment, see the wrapper function [qTreat()].
+#'
+#' @details
+#' # Global specifications
+#'
+#' If the same method of data treatment should be applied to all indicators, use the `global_specs` argument. This argument takes a structured
+#' list which looks like this:
+#'
+#' ```
+#' global_specs = list(f1 = .,
+#'                     f1_para = list(.),
+#'                     f2 = .,
+#'                     f2_para = list(.),
+#'                     f_pass = .,
+#'                     f_pass_para = list()
+#'                     )
+#' ```
+#'
+#' The entries in this list correspond to arguments in [Treat.numeric()], and the meanings of each are also described in more detail here
+#' below. In brief, `f1` is the name of a function to apply at the first round of data treatment, `f1_para` is a list of any additional
+#' parameters to pass to `f1`, `f2` and `f2_para` are equivalently the function name and parameters of the second round of data treatment, and
+#' `f_pass` and `f_pass_para` are the function and additional arguments to check for the existence of outliers.
+#'
+#' The default values for `global_specs` are as follows:
+#'
+#' ```
+#' global_specs = list(f1 = "winsorise",
+#'                      f1_para = list(na.rm = TRUE,
+#'                                     winmax = 5,
+#'                                     skew_thresh = 2,
+#'                                     kurt_thresh = 3.5,
+#'                                     force_win = FALSE),
+#'                      f2 = "log_CT",
+#'                      f2_para = list(na.rm = TRUE),
+#'                      f_pass = "check_SkewKurt",
+#'                      f_pass_para = list(na.rm = TRUE,
+#'                                         skew_thresh = 2,
+#'                                         kurt_thresh = 3.5))
+#' ```
+#'
+#' This shows that by default (i.e. if `global_specs` is not specified), each indicator is checked for outliers by the [check_SkewKurt()] function, which
+#' uses skew and kurtosis thresholds as its parameters. Then, if outliers exist, the first function [winsorsise()] is applied, which also
+#' uses skew and kurtosis parameters, as well as a maximum number of winsorised points. If the Winsorisation function does not satisfy
+#' `f_pass`, the [log_CT()] function is invoked.
+#'
+#' To change the global specifications, you don't have to supply the whole list. If, for example, you are happy with all the defaults but
+#' want to simply change the maximum number of Winsorsised points, you could specify e.g. `global_specs = list(f1_para = list(winmax = 3))`.
+#' In other words, a subset of the list can be specified, as long as the structure of the list is correct.
+#'
+#' # Individual specifications
+#'
+#' The `indiv_specs` argument allows different specifications for each indicator. This is done by wrapping multiple lists of the format of the
+#' list described in `global_specs` into one single list, named according to the column names of `x`. For example, if the date set has indicators with codes
+#' "x1", "x2" and "x3", we could specify individual treatment as follows:
+#'
+#' ```
+#' indiv_specs = list(x1 = list(.),
+#'                    x2 = list(.)
+#'                    x3 = list(.))
+#' ```
+#'
+#' where each `list(.)` is a specifications list of the same format as `global_specs`. Any indicators that are *not* named in `indiv_specs` are
+#' treated using the specifications from `global_specs` (which will be the defaults if it is not specified). As with `global_specs`,
+#' a subset of the `global_specs` list may be specified for
+#' each entry. Additionally, as a special case, specifying a list entry as e.g. `x1 = "none"` will apply no data treatment to the indicator "x1". See
+#' `vignette("treat")` for examples of individual treatment.
+#'
+#' # Function methodology
+#'
+#' This function is set up to allow any functions to be passed as the
 #' data treatment functions (`f1` and `f2`), as well as any function to be passed as the outlier detection
-#' function `f_pass`. The data set in the coin to be treated is specified by `dset`.
+#' function `f_pass`, as specified in the `global_specs` and `indiv_specs` arguments.
 #'
 #' The arrangement of this function is inspired by a fairly standard data treatment process applied to
 #' indicators, which consists of checking skew and kurtosis, then if the criteria are not met, applying
@@ -74,8 +145,10 @@ Treat.purse <- function(x, dset, global_specs = NULL, indiv_specs = NULL,
 #'
 #' @param x A coin
 #' @param dset A named data set available in `.$Data`
-#' @param global_specs Default specifications
-#' @param indiv_specs Individual specifications
+#' @param global_specs A list specifying the treatment to apply to all columns. This will be applied to all columns, except any
+#' that are specified in the `indiv_specs` argument. Alternatively, set to `"none"` to apply no treatment. See details.
+#' @param indiv_specs A list specifying any individual treatment to apply to specific columns, overriding `global_specs`
+#' for those columns. See details.
 #' @param combine_treat By default, if `f1` fails to pass `f_pass`, then `f2` is applied to the original `x`,
 #' rather than the treated output of `f1`. If `combine_treat = TRUE`, `f2` will instead be applied to the output
 #' of `f1`, so the two treatments will be combined.
@@ -133,9 +206,80 @@ Treat.coin <- function(x, dset, global_specs = NULL, indiv_specs = NULL,
 #' Treat a data frame for outliers
 #'
 #' Operates a two-stage data treatment process, based on two data treatment functions, and a pass/fail
-#' function which detects outliers. This function is set up to allow any functions to be passed as the
+#' function which detects outliers. The method of data treatment can be either specified by the `global_specs` argument (which applies
+#' the same specifications to all columns in `x`), or else (additionally) by the `indiv_specs` argument which allows different
+#' methods to be applied for each column. See details. For a simpler function for data treatment, see the wrapper function [qTreat()].
+#'
+#' @details
+#' # Global specifications
+#'
+#' If the same method of data treatment should be applied to all the columns, use the `global_specs` argument. This argument takes a structured
+#' list which looks like this:
+#'
+#' ```
+#' global_specs = list(f1 = .,
+#'                     f1_para = list(.),
+#'                     f2 = .,
+#'                     f2_para = list(.),
+#'                     f_pass = .,
+#'                     f_pass_para = list()
+#'                     )
+#' ```
+#'
+#' The entries in this list correspond to arguments in [Treat.numeric()], and the meanings of each are also described in more detail here
+#' below. In brief, `f1` is the name of a function to apply at the first round of data treatment, `f1_para` is a list of any additional
+#' parameters to pass to `f1`, `f2` and `f2_para` are equivalently the function name and parameters of the second round of data treatment, and
+#' `f_pass` and `f_pass_para` are the function and additional arguments to check for the existence of outliers.
+#'
+#' The default values for `global_specs` are as follows:
+#'
+#' ```
+#' global_specs = list(f1 = "winsorise",
+#'                      f1_para = list(na.rm = TRUE,
+#'                                     winmax = 5,
+#'                                     skew_thresh = 2,
+#'                                     kurt_thresh = 3.5,
+#'                                     force_win = FALSE),
+#'                      f2 = "log_CT",
+#'                      f2_para = list(na.rm = TRUE),
+#'                      f_pass = "check_SkewKurt",
+#'                      f_pass_para = list(na.rm = TRUE,
+#'                                         skew_thresh = 2,
+#'                                         kurt_thresh = 3.5))
+#' ```
+#'
+#' This shows that by default (i.e. if `global_specs` is not specified), each column is checked for outliers by the [check_SkewKurt()] function, which
+#' uses skew and kurtosis thresholds as its parameters. Then, if outliers exist, the first function [winsorsise()] is applied, which also
+#' uses skew and kurtosis parameters, as well as a maximum number of winsorised points. If the Winsorisation function does not satisfy
+#' `f_pass`, the [log_CT()] function is invoked.
+#'
+#' To change the global specifications, you don't have to supply the whole list. If, for example, you are happy with all the defaults but
+#' want to simply change the maximum number of Winsorsised points, you could specify e.g. `global_specs = list(f1_para = list(winmax = 3))`.
+#' In other words, a subset of the list can be specified, as long as the structure of the list is correct.
+#'
+#' # Individual specifications
+#'
+#' The `indiv_specs` argument allows different specifications for each column in `x`. This is done by wrapping multiple lists of the format of the
+#' list described in `global_specs` into one single list, named according to the column names of `x`. For example, if `x` has column names
+#' "x1", "x2" and "x3", we could specify individual treatment as follows:
+#'
+#' ```
+#' indiv_specs = list(x1 = list(.),
+#'                    x2 = list(.)
+#'                    x3 = list(.))
+#' ```
+#'
+#' where each `list(.)` is a specifications list of the same format as `global_specs`. Any columns that are not named in `indiv_specs` are
+#' treated using the specifications from `global_specs` (which will be the defaults if it is not specified). As with `global_specs`,
+#' a subset of the `global_specs` list may be specified for
+#' each entry. Additionally, as a special case, specifying a list entry as e.g. `x1 = "none"` will apply no data treatment to the column "x1". See
+#' `vignette("treat")` for examples of individual treatment.
+#'
+#' # Function methodology
+#'
+#' This function is set up to allow any functions to be passed as the
 #' data treatment functions (`f1` and `f2`), as well as any function to be passed as the outlier detection
-#' function `f_pass`.
+#' function `f_pass`, as specified in the `global_specs` and `indiv_specs` arguments.
 #'
 #' The arrangement of this function is inspired by a fairly standard data treatment process applied to
 #' indicators, which consists of checking skew and kurtosis, then if the criteria are not met, applying
@@ -167,8 +311,10 @@ Treat.coin <- function(x, dset, global_specs = NULL, indiv_specs = NULL,
 #' See also `vignette("treat")`.
 #'
 #' @param x A data frame. Can have both numeric and non-numeric columns.
-#' @param global_specs First stage data treatment function
-#' @param indiv_specs First stage data treatment function parameters
+#' @param global_specs A list specifying the treatment to apply to all columns. This will be applied to all columns, except any
+#' that are specified in the `indiv_specs` argument. Alternatively, set to `"none"` to apply no treatment. See details.
+#' @param indiv_specs A list specifying any individual treatment to apply to specific columns, overriding `global_specs`
+#' for those columns. See details.
 #' @param combine_treat By default, if `f1` fails to pass `f_pass`, then `f2` is applied to the original `x`,
 #' rather than the treated output of `f1`. If `combine_treat = TRUE`, `f2` will instead be applied to the output
 #' of `f1`, so the two treatments will be combined.
@@ -343,15 +489,15 @@ Treat.data.frame <- function(x, global_specs = NULL, indiv_specs = NULL, combine
 #' See also `vignette("treat")`.
 #'
 #' @param x A numeric vector.
-#' @param f1 First stage data treatment function
-#' @param f1_para First stage data treatment function parameters
-#' @param f2 First stage data treatment function
-#' @param f2_para First stage data treatment function parameters
+#' @param f1 First stage data treatment function e.g. as a string.
+#' @param f1_para First stage data treatment function parameters as a named list.
+#' @param f2 First stage data treatment function as a string.
+#' @param f2_para First stage data treatment function parameters as a named list.
 #' @param combine_treat By default, if `f1` fails to pass `f_pass`, then `f2` is applied to the original `x`,
 #' rather than the treated output of `f1`. If `combine_treat = TRUE`, `f2` will instead be applied to the output
 #' of `f1`, so the two treatments will be combined.
 #' @param f_pass A string specifying an outlier detection function - see details. Default `"check_SkewKurt"`
-#' @param f_pass_para Any further arguments to pass to `f_pass()`.
+#' @param f_pass_para Any further arguments to pass to `f_pass()`, as a named list.
 #' @param ... arguments passed to or from other methods.
 #'
 #' @examples

@@ -17,11 +17,11 @@
 \arguments{
 \item{x}{A purse object}
 
-\item{dset}{The data set to treat in each coin}
+\item{dset}{The data set to treat in each coin.}
 
-\item{global_specs}{Default specifications}
+\item{global_specs}{Default specifications. See details in \code{\link[=Treat.coin]{Treat.coin()}}.}
 
-\item{indiv_specs}{Individual specifications}
+\item{indiv_specs}{Individual specifications. See details in \code{\link[=Treat.coin]{Treat.coin()}}.}
 
 \item{combine_treat}{By default, if \code{f1} fails to pass \code{f_pass}, then \code{f2} is applied to the original \code{x},
 rather than the treated output of \code{f1}. If \code{combine_treat = TRUE}, \code{f2} will instead be applied to the output
