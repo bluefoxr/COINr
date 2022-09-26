@@ -187,6 +187,8 @@ values assigned to the arguments <code>arg1</code> and <code>arg2</code> respect
 <p>The default list for <code>global_specs</code> is: <code>list(f_n = "n_minmax", f_n_para = list(l_u = c(0,100)))</code>, i.e.
 min-max normalisation between 0 and 100.</p>
 <p>Note, all COINr normalisation functions (passed to <code>f_n</code>) are of the form <code>n_*()</code>. Type <code>n_</code> in the R Studio console and press the Tab key to see a list.</p>
+<p>This function includes a special case for "distance to target" normalisation. Setting <code>global_specs = list(f_n = "n_dist2targ")</code> will apply distance to
+target normalisation, automatically passing targets found in the "Target" column of <code>iMeta</code>.</p>
 </div>
 
 <div class="section">

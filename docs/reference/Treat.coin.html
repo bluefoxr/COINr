@@ -191,11 +191,11 @@ parameters to pass to <code>f1</code>, <code>f2</code> and <code>f2_para</code> 
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">skew_thresh =</span> <span class="dv">2</span>,</span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">kurt_thresh =</span> <span class="fl">3.5</span>))</span></code></pre><p></p></div>
 <p>This shows that by default (i.e. if <code>global_specs</code> is not specified), each indicator is checked for outliers by the <code><a href="check_SkewKurt.html">check_SkewKurt()</a></code> function, which
-uses skew and kurtosis thresholds as its parameters. Then, if outliers exist, the first function <code>winsorsise()</code> is applied, which also
+uses skew and kurtosis thresholds as its parameters. Then, if outliers exist, the first function <code><a href="winsorise.html">winsorise()</a></code> is applied, which also
 uses skew and kurtosis parameters, as well as a maximum number of winsorised points. If the Winsorisation function does not satisfy
 <code>f_pass</code>, the <code><a href="log_CT.html">log_CT()</a></code> function is invoked.</p>
 <p>To change the global specifications, you don't have to supply the whole list. If, for example, you are happy with all the defaults but
-want to simply change the maximum number of Winsorsised points, you could specify e.g. <code>global_specs = list(f1_para = list(winmax = 3))</code>.
+want to simply change the maximum number of Winsorised points, you could specify e.g. <code>global_specs = list(f1_para = list(winmax = 3))</code>.
 In other words, a subset of the list can be specified, as long as the structure of the list is correct.</p>
     </div>
     <div class="section level2">
