@@ -113,5 +113,48 @@ test_that("n_funcs", {
   xn2 <- xn2 * 10
   expect_equal(xn, xn2)
 
+})
 
+test_that("dist2targ", {
+
+  x <- c(0, 5, 11)
+  y <- n_dist2targ(x, targ = 10, direction = 1, cap_max = FALSE)
+  expect_equal(y, c(0, 0.5, 1.1))
+  # with cap
+  y <- n_dist2targ(x, targ = 10, direction = 1, cap_max = TRUE)
+  expect_equal(y, c(0, 0.5, 1))
+  # reverse direction
+  x <- c(-1, 1, 10)
+  y <- n_dist2targ(x, targ = 0, direction = -1, cap_max = FALSE)
+  expect_equal(y, c(1.1, 0.9, 0))
+  # with cap
+  y <- n_dist2targ(x, targ = 0, direction = -1, cap_max = TRUE)
+  expect_equal(y, c(1, 0.9, 0))
+
+})
+
+test_that("dist2targ_coin", {
+
+  # test for normalising a coin with dist2targ
+  coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
+
+  # normalise using dist2targ
+  coin <- Normalise(coin, dset = "Raw", global_specs = list(f_n = "n_dist2targ"))
+
+  Xr <- get_dset(coin, dset = "Raw")
+  Xn <- get_dset(coin, dset = "Normalised")
+
+  # cross-check a couple of indicators
+
+  # LPI (direction = 1)
+  targ <- coin$Meta$Ind$Target[coin$Meta$Ind$iCode == "LPI"]
+  # manual normalisation
+  xn <- (Xr$LPI - min(Xr$LPI, na.rm = TRUE))/(targ - min(Xr$LPI, na.rm = TRUE))
+  expect_equal(Xn$LPI, xn)
+
+  # CO2 (direction = -1)
+  targ <- coin$Meta$Ind$Target[coin$Meta$Ind$iCode == "CO2"]
+  # manual normalisation
+  xn <- (max(Xr$CO2, na.rm = TRUE) - Xr$CO2)/(max(Xr$CO2, na.rm = TRUE) - targ)
+  expect_equal(Xn$CO2, xn)
 })

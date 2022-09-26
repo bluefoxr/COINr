@@ -79,6 +79,9 @@ The default list for \code{global_specs} is: \code{list(f_n = "n_minmax", f_n_pa
 min-max normalisation between 0 and 100.
 
 Note, all COINr normalisation functions (passed to \code{f_n}) are of the form \verb{n_*()}. Type \code{n_} in the R Studio console and press the Tab key to see a list.
+
+This function includes a special case for "distance to target" normalisation. Setting \code{global_specs = list(f_n = "n_dist2targ")} will apply distance to
+target normalisation, automatically passing targets found in the "Target" column of \code{iMeta}.
 }
 
 \subsection{Individual column specification}{

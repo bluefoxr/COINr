@@ -76,6 +76,8 @@ Notice the syntax of `global_specs`. If specified, it takes entries `f_n` (the n
 
 Note that **COINr has a number of normalisation functions built in**, all of which are of the form `n_*()`, such as `n_minmax()`, `n_borda()`, etc. Type `n_` in the R Studio console and press the Tab key to see a list, or else browse the COINr functions alphabetically.
 
+## Calling external functions
+
 Since `f_n` points to a function name, any function can be passed to `Normalise()` as long as it is available in the namespace. To illustrate, consider an example where we want to categorise into discrete bins. We can use base R's `cut()` function for this purpose. We simply need to specify the number of bins. We could directly call `cut()`, but for clarity we will create a simple wrapper function around it, then pass that function to `Normalise()`.
 
 ```{r}
@@ -100,6 +102,8 @@ Obviously this is *not* linear.
 
 Generally, the requirements of a function to be passed to `Normalise()` are that its first argument should be `x`, a numeric vector, and it should return a numeric vector of the same length as `x`. It should also be able to handle `NA`s. Any further arguments can be passed via the `f_n_para` entry.
 
+## Directions
+
 By default, the directions are taken from the coin. These will have been specified as the `Direction` column of `iMeta` when constructing a coin with `new_coin()`. However, you can specify different directions using the `directions` argument of `normalise()`: in this case you need to specify a data frame with two columns: `iCode` (with an entry for each indicator code found in the target data set) and `Direction` giving the direction as -1 or 1.
 
 To show an example, we take the existing directions from the coin, modify them slightly, and then run the normalisation function again:
@@ -120,6 +124,8 @@ directions$Direction[directions$iCode == "Goods"] <- -1
 # re-run (using min max default)
 coin <- Normalise(coin, dset = "Raw", directions = directions)
 ```
+
+## Individual normalisation
 
 Finally let's explore how to specify different normalisation methods for different indicators. The `indiv_specs` argument takes a named list for each indicator, and will override the specifications in `global_specs`. If `indiv_specs` is specified, we only need to include sub-lists for indicators that differ from `global_specs`.
 
@@ -146,6 +152,34 @@ get_dset(coin, "Normalised")[1:4] |>
 This example is meant to be illustrative of the functionality of `Normalise()`, rather than being a sensible normalisation strategy, because the indicators are now on very different ranges.
 
 In practice, if different normalisation strategies are selected, it is a good idea to keep the indicators on similar ranges, otherwise the effects will be very unequal in the aggregation step.
+
+## Use of targets
+
+A particular type of normalisation is "distance to target". This normalises indicators by the distance of each value to a specified target. Targets may often have a political or business meaning, such as e.g. emissions targets or sales targets.
+
+Targets should be input into a coin using the `iMeta` argument when building the coin using `new_coin()`. In fact, the built-in example data has targets for all indicators:
+
+```{r}
+head(ASEM_iMeta[c("iCode", "Target")])
+```
+
+*(Note that these targets are fabricated just for the purposes of an example)*
+
+To use distance-to-target normalisation, we call the `n_dist2targ()` function. Like other built in normalisation functions, this normalises a vector using a specified target. We can't use the `f_n_para` entry in `Normalise()` here because this would only pass a single target value, whereas we need to use a different target for each indicator.
+
+However, COINr has a special case built in so that targets from `iMeta` can be used automatically. Simply set `global_specs = list(f_n = "n_dist2targ")`, and the `Normalise()` function will automatically retrieve targets from `iMeta$Target`. If targets are not present, this will generate an error. Note that the directions of indicators are also passed to `n_dist2targ()` - see that function documentation for how the normalisation is performed depending on the direction specified.
+
+Our normalisation will then look like this:
+
+```{r, eval=FALSE}
+coin <- Normalise(coin, dset = "Raw", global_specs = list(f_n = "n_dist2targ"))
+```
+
+It is also possible to specify the `cap_max` parameter of `n_dist2targ()` as follows:
+
+```{r, eval=FALSE}
+coin <- Normalise(coin, dset = "Raw", global_specs = list(f_n = "n_dist2targ", f_n_para = list(cap_max = TRUE)))
+```
 
 # Data frames and vectors
 
