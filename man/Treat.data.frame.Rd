@@ -65,12 +65,12 @@ The default values for \code{global_specs} are as follows:
 }\if{html}{\out{</div>}}
 
 This shows that by default (i.e. if \code{global_specs} is not specified), each column is checked for outliers by the \code{\link[=check_SkewKurt]{check_SkewKurt()}} function, which
-uses skew and kurtosis thresholds as its parameters. Then, if outliers exist, the first function \code{\link[=winsorsise]{winsorsise()}} is applied, which also
+uses skew and kurtosis thresholds as its parameters. Then, if outliers exist, the first function \code{\link[=winsorise]{winsorise()}} is applied, which also
 uses skew and kurtosis parameters, as well as a maximum number of winsorised points. If the Winsorisation function does not satisfy
 \code{f_pass}, the \code{\link[=log_CT]{log_CT()}} function is invoked.
 
 To change the global specifications, you don't have to supply the whole list. If, for example, you are happy with all the defaults but
-want to simply change the maximum number of Winsorsised points, you could specify e.g. \code{global_specs = list(f1_para = list(winmax = 3))}.
+want to simply change the maximum number of Winsorised points, you could specify e.g. \code{global_specs = list(f1_para = list(winmax = 3))}.
 In other words, a subset of the list can be specified, as long as the structure of the list is correct.
 }
 

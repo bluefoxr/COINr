@@ -82,12 +82,12 @@ Treat.purse <- function(x, dset, global_specs = NULL, indiv_specs = NULL,
 #' ```
 #'
 #' This shows that by default (i.e. if `global_specs` is not specified), each indicator is checked for outliers by the [check_SkewKurt()] function, which
-#' uses skew and kurtosis thresholds as its parameters. Then, if outliers exist, the first function [winsorsise()] is applied, which also
+#' uses skew and kurtosis thresholds as its parameters. Then, if outliers exist, the first function [winsorise()] is applied, which also
 #' uses skew and kurtosis parameters, as well as a maximum number of winsorised points. If the Winsorisation function does not satisfy
 #' `f_pass`, the [log_CT()] function is invoked.
 #'
 #' To change the global specifications, you don't have to supply the whole list. If, for example, you are happy with all the defaults but
-#' want to simply change the maximum number of Winsorsised points, you could specify e.g. `global_specs = list(f1_para = list(winmax = 3))`.
+#' want to simply change the maximum number of Winsorised points, you could specify e.g. `global_specs = list(f1_para = list(winmax = 3))`.
 #' In other words, a subset of the list can be specified, as long as the structure of the list is correct.
 #'
 #' # Individual specifications
@@ -249,12 +249,12 @@ Treat.coin <- function(x, dset, global_specs = NULL, indiv_specs = NULL,
 #' ```
 #'
 #' This shows that by default (i.e. if `global_specs` is not specified), each column is checked for outliers by the [check_SkewKurt()] function, which
-#' uses skew and kurtosis thresholds as its parameters. Then, if outliers exist, the first function [winsorsise()] is applied, which also
+#' uses skew and kurtosis thresholds as its parameters. Then, if outliers exist, the first function [winsorise()] is applied, which also
 #' uses skew and kurtosis parameters, as well as a maximum number of winsorised points. If the Winsorisation function does not satisfy
 #' `f_pass`, the [log_CT()] function is invoked.
 #'
 #' To change the global specifications, you don't have to supply the whole list. If, for example, you are happy with all the defaults but
-#' want to simply change the maximum number of Winsorsised points, you could specify e.g. `global_specs = list(f1_para = list(winmax = 3))`.
+#' want to simply change the maximum number of Winsorised points, you could specify e.g. `global_specs = list(f1_para = list(winmax = 3))`.
 #' In other words, a subset of the list can be specified, as long as the structure of the list is correct.
 #'
 #' # Individual specifications
