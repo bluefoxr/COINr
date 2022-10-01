@@ -175,10 +175,12 @@ plot_corr <- function(coin, dset, iCodes = NULL, Levels = 1, ..., cortype = "pea
   }
 
   if (showvals){
-    if(flagcolours){
-      text_colour <- "#6a6a6a"
-    } else {
-      text_colour <- "white"
+    if(is.null(text_colour)){
+      if(flagcolours){
+        text_colour <- "#6a6a6a"
+      } else {
+        text_colour <- "white"
+      }
     }
     plt <- plt + ggplot2::geom_text(colour = text_colour, size = 3, na.rm = TRUE)
   }
