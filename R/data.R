@@ -50,3 +50,14 @@
 #'
 #' @source \url{https://data.worldbank.org/}
 "WorldDenoms"
+
+#' ASEM COIN (COINr < v1.0)
+#'
+#' This is an "old format" "COIN" object which is stored for testing purposes.
+#' It is generated using the COINr6 package (only available on GitHub) using
+#' `COINr6::build_ASEM()`
+#'
+#' @format A "COIN" class object
+#'
+#' @source \url{https://github.com/bluefoxr/COINr6}
+"ASEM_COIN"

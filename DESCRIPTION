@@ -32,7 +32,6 @@ Suggests:
     Compind,
     matrixStats,
     performance,
-    COINr6 (>= 0.6.1.9000),
     covr
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
@@ -40,5 +39,3 @@ Language: en-GB
 Authors@R: person("William", "Becker", email = "william.becker@bluefoxdata.eu",
   role = c("aut", "cre", "cph"), comment = c(ORCID = "0000-0002-6467-4472"))
 Config/testthat/edition: 3
-Remotes:  
-    bluefoxr/COINr

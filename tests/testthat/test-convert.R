@@ -4,7 +4,7 @@ test_that("COIN_to_coin", {
   if(requireNamespace("COINr6", quietly=TRUE)){
 
     # build COIN
-    COIN <- COINr6::build_ASEM()
+    COIN <- COINr::ASEM_COIN
 
     # convert to coin
     coin <- COIN_to_coin(COIN, recover_dsets = TRUE)

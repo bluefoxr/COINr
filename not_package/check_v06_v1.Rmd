@@ -10,7 +10,7 @@ This file is in the development project of COINr so we assume it is open and ava
 We need to load up old COINr which is now called COINr6.
 
 ```{r}
-library(COINr6)
+  library(COINr6)
 ```
 
 We will start by checking the old ASEM example against the new COINr.
