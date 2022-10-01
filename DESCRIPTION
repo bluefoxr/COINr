@@ -32,7 +32,8 @@ Suggests:
     Compind,
     matrixStats,
     performance,
-    COINr6
+    COINr6,
+    covr
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
 Language: en-GB

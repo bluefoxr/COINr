@@ -18,3 +18,5 @@
 ^paper\.bib$
 ^.github$
 ^paper_figs$
+^\.github$
+^codecov\.yml$
