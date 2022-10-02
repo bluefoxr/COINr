@@ -219,6 +219,7 @@ reference:
 - title: Data
   desc: Built in data sets used in examples and testing.
   contents:
+  - ASEM_COIN
   - ASEM_iData
   - ASEM_iData_p
   - ASEM_iMeta
