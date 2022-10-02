@@ -685,7 +685,8 @@ plot_uncertainty <- function(SAresults, plot_units = NULL, order_by = "nominal",
     ggplot2::scale_y_discrete(limits = plot_order) +
     ggplot2::scale_x_reverse() +
     ggplot2::coord_flip() +
-    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1))
+    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1))  +
+    ggplot2::theme(text=ggplot2::element_text(family="sans"))
 
 }
 
@@ -748,7 +749,7 @@ plot_sensitivity <- function(SAresults, ptype = "bar"){
     #                              cols = c("MainEffect", "Interactions"))
 
     # make stacked bar plot
-    ggplot2::ggplot(bardf, ggplot2::aes(fill=.data$name, y=.data$Value, x=.data$Variable)) +
+    plt <- ggplot2::ggplot(bardf, ggplot2::aes(fill=.data$name, y=.data$Value, x=.data$Variable)) +
       ggplot2::geom_bar(position="stack", stat="identity") +
       ggplot2::labs(
         x = NULL,
@@ -765,7 +766,7 @@ plot_sensitivity <- function(SAresults, ptype = "bar"){
     Sis <- rbind(Sis, data.frame(Variable = "Interactions", Si = intsum))
 
     # Basic piechart
-    ggplot2::ggplot(Sis, ggplot2::aes(x = "", y = .data$Si, fill = .data$Variable)) +
+    plt <- ggplot2::ggplot(Sis, ggplot2::aes(x = "", y = .data$Si, fill = .data$Variable)) +
       ggplot2::geom_bar(stat="identity", width=1, color="white") +
       ggplot2::coord_polar("y", start=0) +
       ggplot2::theme_void() # remove background, grid, numeric labels
@@ -783,7 +784,7 @@ plot_sensitivity <- function(SAresults, ptype = "bar"){
     Sdf$q95[Sdf$q95 > 1] <- 1
     Sdf$Value[Sdf$Value > 1] <- 1
 
-    ggplot2::ggplot(Sdf, ggplot2::aes(x = .data$Variable, y = .data$Value, ymax = .data$q95, ymin = .data$q5)) +
+    plt <- ggplot2::ggplot(Sdf, ggplot2::aes(x = .data$Variable, y = .data$Value, ymax = .data$q95, ymin = .data$q5)) +
       ggplot2::geom_point(size = 1.5) +
       ggplot2::geom_errorbar(width = 0.2) +
       ggplot2::theme_bw() +
@@ -793,6 +794,9 @@ plot_sensitivity <- function(SAresults, ptype = "bar"){
         y = NULL)
 
   }
+
+  plt +
+    ggplot2::theme(text=element_text(family="sans"))
 
 }
 

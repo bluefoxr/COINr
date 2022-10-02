@@ -141,7 +141,8 @@ plot_framework <- function(coin, type = "sunburst", colour_level = NULL,
           legend.position="none"
     )
 
-  plt
+  plt  +
+    ggplot2::theme(text=ggplot2::element_text(family="sans"))
 
 
 }

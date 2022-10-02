@@ -115,7 +115,8 @@ plot_dist <- function(coin, dset, iCodes, ..., type = "Box", normalise = FALSE,
     plt <- plt + ggplot2::labs(title = names(iData_))
   }
 
-  plt
+  plt  +
+    ggplot2::theme(text=ggplot2::element_text(family="sans"))
 
 }
 
@@ -309,6 +310,7 @@ plot_dot <- function(coin, dset, iCode, Level = NULL, ..., usel = NULL, marker_t
 
   # OUTPUT ------------------------------------------------------------------
 
-  plt + ggplot2::ylim(c(0.98, 1.02))
+  plt + ggplot2::ylim(c(0.98, 1.02))  +
+    ggplot2::theme(text=ggplot2::element_text(family="sans"))
 
 }

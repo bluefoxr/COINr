@@ -266,6 +266,7 @@ plot_corr <- function(coin, dset, iCodes = NULL, Levels = 1, ..., cortype = "pea
 
   }
 
-  plt
+  plt  +
+    ggplot2::theme(text=ggplot2::element_text(family="sans"))
 
 }
