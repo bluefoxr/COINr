@@ -1,69 +1,65 @@
-url: https://bluefoxr.github.io/COINr
-
+url: https://bluefoxr.github.io/COINr/
 template:
   bootstrap: 5
   bootswatch: flatly
-
 bslib:
-    pkgdown-nav-height: 74px
-
+  pkgdown-nav-height: 74px
 navbar:
-  title: "COINr"
+  title: COINr
   left:
-    - icon: fa-home fa-lg
-      href: index.html
-    - text: "Overview"
-      href: articles/overview.html
-    - text: "v1.0 updates"
-      href: articles/v1.html
-    - text: "Guides"
-      menu:
-        - text: "Construction"
-        - text: "Building coins"
-          href: articles/coins.html
-        - text: "Imputation of missing data"
-          href: articles/imputation.html
-        - text: "Denomination"
-          href: articles/denomination.html
-        - text: "Unit screening"
-          href: articles/screening.html
-        - text: "Outlier treatment"
-          href: articles/treat.html
-        - text: "Normalisation"
-          href: articles/normalise.html
-        - text: "Weighting"
-          href: articles/weights.html
-        - text: "Aggregation"
-          href: articles/aggregate.html
-        - text: "-------"
-        - text: "Post-processing"
-        - text: "Visualisation"
-          href: articles/visualisation.html
-        - text: "Statistical analysis"
-          href: articles/analysis.html
-        - text: "Presenting results"
-          href: articles/results.html
-        - text: "Adjustments and comparisons"
-          href: articles/adjustments.html
-        - text: "Sensitivity analysis"
-          href: articles/sensitivity.html
-        - text: "-------"
-        - text: "Other"
-        - text: "Data selection"
-          href: articles/data_selection.html
-        - text: "Other functions"
-          href: articles/other_functions.html
-    - text: "Functions"
-      href: reference/index.html
-    - text: "News"
-      href: news/index.html
+  - icon: fa-home fa-lg
+    href: index.html
+  - text: Overview
+    href: articles/overview.html
+  - text: v1.0 updates
+    href: articles/v1.html
+  - text: Guides
+    menu:
+    - text: Construction
+    - text: Building coins
+      href: articles/coins.html
+    - text: Imputation of missing data
+      href: articles/imputation.html
+    - text: Denomination
+      href: articles/denomination.html
+    - text: Unit screening
+      href: articles/screening.html
+    - text: Outlier treatment
+      href: articles/treat.html
+    - text: Normalisation
+      href: articles/normalise.html
+    - text: Weighting
+      href: articles/weights.html
+    - text: Aggregation
+      href: articles/aggregate.html
+    - text: '-------'
+    - text: Post-processing
+    - text: Visualisation
+      href: articles/visualisation.html
+    - text: Statistical analysis
+      href: articles/analysis.html
+    - text: Presenting results
+      href: articles/results.html
+    - text: Adjustments and comparisons
+      href: articles/adjustments.html
+    - text: Sensitivity analysis
+      href: articles/sensitivity.html
+    - text: '-------'
+    - text: Other
+    - text: Data selection
+      href: articles/data_selection.html
+    - text: Other functions
+      href: articles/other_functions.html
+  - text: Functions
+    href: reference/index.html
+  - text: News
+    href: news/index.html
   right:
-   - icon: fa-github
-     href: https://github.com/bluefoxr/COINr/
-
+  - icon: fa-github
+    href: https://github.com/bluefoxr/COINr/
 reference:
 - title: Build
-  desc:  Modify and create new data sets
+  desc: Modify and create new data sets
   contents:
   - new_coin
   - Screen
@@ -74,9 +70,8 @@ reference:
   - Normalise
   - qNormalise
   - Aggregate
-
 - title: Analyse
-  desc:  Analyse data sets, summarise results and check sensitivity
+  desc: Analyse data sets, summarise results and check sensitivity
   contents:
   - get_corr
   - get_corr_flags
@@ -96,9 +91,8 @@ reference:
   - get_trends
   - get_unit_summary
   - remove_elements
-
 - title: Plot
-  desc:  Plot indicators, distributions and others
+  desc: Plot indicators, distributions and others
   contents:
   - plot_bar
   - plot_corr
@@ -108,15 +102,13 @@ reference:
   - plot_scatter
   - plot_sensitivity
   - plot_uncertainty
-
 - title: Adjust and compare
-  desc:  Adjust coins, regenerate them and compare alternative versions
+  desc: Adjust coins, regenerate them and compare alternative versions
   contents:
   - Regen
   - change_ind
   - compare_coins
   - compare_coins_multi
-
 - title: Helpers
   desc: Helper functions to take care of common tasks
   contents:
@@ -125,7 +117,6 @@ reference:
   - build_example_coin
   - build_example_purse
   - export_to_excel
-
 - title: Other functions
   desc: Other functions including methods and small functions called by other functions
   contents:
@@ -215,7 +206,6 @@ reference:
   - Treat.numeric
   - Treat.purse
   - winsorise
-
 - title: Data
   desc: Built in data sets used in examples and testing.
   contents:
@@ -224,3 +214,4 @@ reference:
   - ASEM_iData_p
   - ASEM_iMeta
   - WorldDenoms
+

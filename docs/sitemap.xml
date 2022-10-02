@@ -37,9 +37,6 @@
     <loc>https://bluefoxr.github.io/COINr/articles/overview.html</loc>
   </url>
   <url>
-    <loc>https://bluefoxr.github.io/COINr/articles/panel_data.html</loc>
-  </url>
-  <url>
     <loc>https://bluefoxr.github.io/COINr/articles/results.html</loc>
   </url>
   <url>
@@ -94,6 +91,9 @@
     <loc>https://bluefoxr.github.io/COINr/reference/approx_df.html</loc>
   </url>
   <url>
+    <loc>https://bluefoxr.github.io/COINr/reference/ASEM_COIN.html</loc>
+  </url>
+  <url>
     <loc>https://bluefoxr.github.io/COINr/reference/ASEM_iData.html</loc>
   </url>
   <url>
@@ -101,9 +101,6 @@
   </url>
   <url>
     <loc>https://bluefoxr.github.io/COINr/reference/ASEM_iMeta.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/assemble.html</loc>
   </url>
   <url>
     <loc>https://bluefoxr.github.io/COINr/reference/a_amean.html</loc>
@@ -121,9 +118,6 @@
     <loc>https://bluefoxr.github.io/COINr/reference/boxcox.html</loc>
   </url>
   <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/build_ASEM.html</loc>
-  </url>
-  <url>
     <loc>https://bluefoxr.github.io/COINr/reference/build_example_coin.html</loc>
   </url>
   <url>
@@ -136,9 +130,6 @@
     <loc>https://bluefoxr.github.io/COINr/reference/change_ind.html</loc>
   </url>
   <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/checkData.html</loc>
-  </url>
-  <url>
     <loc>https://bluefoxr.github.io/COINr/reference/check_iData.html</loc>
   </url>
   <url>
@@ -148,22 +139,7 @@
     <loc>https://bluefoxr.github.io/COINr/reference/check_SkewKurt.html</loc>
   </url>
   <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/coin2Excel.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/COINToolIn.html</loc>
-  </url>
-  <url>
     <loc>https://bluefoxr.github.io/COINr/reference/COIN_to_coin.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/coin_win.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/colourTable.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/compareDF.html</loc>
   </url>
   <url>
     <loc>https://bluefoxr.github.io/COINr/reference/compare_coins.html</loc>
@@ -173,18 +149,6 @@
   </url>
   <url>
     <loc>https://bluefoxr.github.io/COINr/reference/compare_df.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/compTable.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/compTableMulti.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/copeland.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/corrweightscat.html</loc>
   </url>
   <url>
     <loc>https://bluefoxr.github.io/COINr/reference/Denominate.coin.html</loc>
@@ -199,9 +163,6 @@
     <loc>https://bluefoxr.github.io/COINr/reference/Denominate.purse.html</loc>
   </url>
   <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/effectiveWeight.html</loc>
-  </url>
-  <url>
     <loc>https://bluefoxr.github.io/COINr/reference/export_to_excel.coin.html</loc>
   </url>
   <url>
@@ -209,42 +170,6 @@
   </url>
   <url>
     <loc>https://bluefoxr.github.io/COINr/reference/export_to_excel.purse.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/extractYear.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/geoMean.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/geoMean_rescaled.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/getCorr.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/getCronbach.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/getIn.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/getPCA.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/getResults.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/getStats.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/getStrengthNWeak.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/getUnitReport.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/getUnitSummary.html</loc>
   </url>
   <url>
     <loc>https://bluefoxr.github.io/COINr/reference/get_corr.html</loc>
@@ -325,12 +250,6 @@
     <loc>https://bluefoxr.github.io/COINr/reference/get_unit_summary.html</loc>
   </url>
   <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/harMean.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/hicorrSP.html</loc>
-  </url>
-  <url>
     <loc>https://bluefoxr.github.io/COINr/reference/import_coin_tool.html</loc>
   </url>
   <url>
@@ -352,34 +271,7 @@
     <loc>https://bluefoxr.github.io/COINr/reference/impute_panel.html</loc>
   </url>
   <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/indChange.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/indDash.html</loc>
-  </url>
-  <url>
     <loc>https://bluefoxr.github.io/COINr/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/iplotBar.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/iplotCorr.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/iplotIndDist.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/iplotIndDist2.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/iplotMap.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/iplotRadar.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/iplotTable.html</loc>
   </url>
   <url>
     <loc>https://bluefoxr.github.io/COINr/reference/is.coin.html</loc>
@@ -403,9 +295,6 @@
     <loc>https://bluefoxr.github.io/COINr/reference/kurt.html</loc>
   </url>
   <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/loggish.html</loc>
-  </url>
-  <url>
     <loc>https://bluefoxr.github.io/COINr/reference/log_CT.html</loc>
   </url>
   <url>
@@ -415,16 +304,10 @@
     <loc>https://bluefoxr.github.io/COINr/reference/log_GII.html</loc>
   </url>
   <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/names2Codes.html</loc>
-  </url>
-  <url>
     <loc>https://bluefoxr.github.io/COINr/reference/names_to_codes.html</loc>
   </url>
   <url>
     <loc>https://bluefoxr.github.io/COINr/reference/new_coin.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/noisyWeights.html</loc>
   </url>
   <url>
     <loc>https://bluefoxr.github.io/COINr/reference/Normalise.coin.html</loc>
@@ -476,24 +359,6 @@
   </url>
   <url>
     <loc>https://bluefoxr.github.io/COINr/reference/outrankMatrix.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/plotCorr.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/plotframework.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/plotIndDist.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/plotIndDot.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/plotSA.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/plotSARanks.html</loc>
   </url>
   <url>
     <loc>https://bluefoxr.github.io/COINr/reference/plot_bar.html</loc>
@@ -553,9 +418,6 @@
     <loc>https://bluefoxr.github.io/COINr/reference/qTreat.purse.html</loc>
   </url>
   <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/rankDF.html</loc>
-  </url>
-  <url>
     <loc>https://bluefoxr.github.io/COINr/reference/rank_df.html</loc>
   </url>
   <url>
@@ -568,25 +430,10 @@
     <loc>https://bluefoxr.github.io/COINr/reference/Regen.purse.html</loc>
   </url>
   <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/removeElements.html</loc>
-  </url>
-  <url>
     <loc>https://bluefoxr.github.io/COINr/reference/remove_elements.html</loc>
   </url>
   <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/replaceDF.html</loc>
-  </url>
-  <url>
     <loc>https://bluefoxr.github.io/COINr/reference/replace_df.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/resultsDash.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/rew8r.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/roundDF.html</loc>
   </url>
   <url>
     <loc>https://bluefoxr.github.io/COINr/reference/round_df.html</loc>
@@ -610,9 +457,6 @@
     <loc>https://bluefoxr.github.io/COINr/reference/Screen.purse.html</loc>
   </url>
   <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/sensitivity.html</loc>
-  </url>
-  <url>
     <loc>https://bluefoxr.github.io/COINr/reference/signif_df.html</loc>
   </url>
   <url>
@@ -632,9 +476,6 @@
   </url>
   <url>
     <loc>https://bluefoxr.github.io/COINr/reference/Treat.purse.html</loc>
-  </url>
-  <url>
-    <loc>https://bluefoxr.github.io/COINr/reference/weightOpt.html</loc>
   </url>
   <url>
     <loc>https://bluefoxr.github.io/COINr/reference/winsorise.html</loc>
