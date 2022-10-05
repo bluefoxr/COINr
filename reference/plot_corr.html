@@ -112,7 +112,7 @@ plots by higher aggregation levels.</p>
 <span>  box_level <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  showvals <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  flagcolours <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  flagthresh <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.4</span>, <span class="fl">0.3</span>, <span class="fl">0.9</span><span class="op">)</span>,</span>
+<span>  flagthresh <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  pval <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  insig_colour <span class="op">=</span> <span class="st">"#F0F0F0"</span>,</span>
 <span>  text_colour <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -173,9 +173,9 @@ aggregation level above. Set to 0 to disable grouping and plot the full matrix.<
 
 <dt>flagthresh</dt>
 <dd><p>A 3-length vector of thresholds for highlighting correlations, if <code>flagcolours = TRUE</code>.
-<code>flagthresh[1]</code> is the negative threshold. Below this value, values will be flagged red.
-<code>flagthresh[2]</code> is the "weak" threshold. Values between <code>flagthresh[1]</code> and <code>flagthresh[2]</code> are coloured grey.
-<code>flagthresh[3]</code> is the "high" threshold. Anything between <code>flagthresh[2]</code> and <code>flagthresh[3]</code> is flagged "OK",
+<code>flagthresh[1]</code> is the negative threshold (default -0.4). Below this value, values will be flagged red.
+<code>flagthresh[2]</code> is the "weak" threshold (default 0.3). Values between <code>flagthresh[1]</code> and <code>flagthresh[2]</code> are coloured grey.
+<code>flagthresh[3]</code> is the "high" threshold (default 0.9). Anything between <code>flagthresh[2]</code> and <code>flagthresh[3]</code> is flagged "OK",
 and anything above <code>flagthresh[3]</code> is flagged "high".</p></dd>
 
 
