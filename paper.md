@@ -115,7 +115,7 @@ get_results(coin, dset = "Aggregated") |>
 We may also visualise the same results using a bar chart - here we see how countries rank on the "connectivity" sub-index (see \autoref{fig:bar}).
 
 ```
-plot_bar(coin, dset = "Aggregated", iCode = "Sust", stack_children = TRUE)
+plot_bar(coin, dset = "Aggregated", iCode = "Conn", stack_children = TRUE)
 ```
 
 ![Connectivity scores broken down by component scores. \label{fig:bar}](paper_figs/results_bar.png){width=100%}
