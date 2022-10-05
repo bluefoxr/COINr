@@ -32,7 +32,7 @@ COINr was the first CRAN package that I built (everyone say "aww"). In the proce
 
 ## Focus
 
-COINr is a package meant to focus on developing composite indicators. But the focus got lost at some point when I got carried away with html plotly plots and shiny apps. These things, although nice, were in retrospect not really that useful in the package and are also difficult to maintain and bloat out the package. I decided to cut out all interactive plots and apps, but to archive them in a separate package called "COINrX" (see below).
+COINr is a package meant to focus on developing composite indicators. But the focus got lost at some point when I got carried away with html plotly plots and shiny apps. These things, although nice, were in retrospect not really that useful in the package and are also difficult to maintain and bloat out the package. I decided to cut out all interactive plots and apps, but these can still be accessed through the COINr6 package and the conversion functions between COINr and COINr6 (see below).
 
 ## Dependencies
 
@@ -76,12 +76,6 @@ The next thing is that the documentation has been completely re-written, with lo
 
 The last very obvious change is that some functions have disappeared! Where have they gone? You may notice that all functions that generated interactive plots (often called `iPlot*` in previous versions of COINr), plus all shiny apps, have vanished. The reason for this, as explained above, is that these tools were distracting from the main point of the package and were too much effort to maintain. Moreover, even though interactive plots are great if you are outputting html documents, for pdf and word they are a hassle because it is quite unpredictable how they will be rendered. The good news is that I have replaced some of the interactive plots with static versions, such as `plot_framework()`, and `plot_scatter()`, so you can still do most of the plotting as in the previous versions, but with more predictable (and more usable) outputs.
 
-# COINrX: Apps and widgets
-
-It may be that actually, you rather liked the Shiny apps and interactive plots. A shame, you say, to chuck those things away. Well, along those lines I have/will archive the removed apps and plots in a separate extension package called "COINrX". At the time of writing, I haven't yet got round to doing this, but it shouldn't take too long.
-
-The idea of COINrX is that if you don't want all the interactive stuff, just install COINr. If you *do* also want that, install COINr and then also install COINrX. When you want to generate interactive plots, load up COINrX and it will add the missing functions.
-
 # COINr6: I want out!
 
 If this level of upheaval is all a bit too much, and you'd like to go back to how things were before, you have two options. The easiest "roll-back" option is to install the "COINr6" package. COINr6 is the latest version of COINr *before* the major syntax changes. This means that if you wrote some scripts or markdown files in the old syntax, instead of loading COINr, install and load COINr6, and this will run as before.
@@ -104,6 +98,8 @@ remotes::install_github("bluefoxr/COINr6")
 And that's it. I will continue to lightly maintain this package for a while (e.g. fixing any critical bugs if any arise) but in general the main focus will be on the new COINr version.
 
 Another way to roll back COINr to an older version is to use `devtools::install_version()`, in which you can specify a version number of any package to install. This might be a bit more fiddly, and personally I would recommend to rather install COINr6. But if you want, check out [this article](https://support.rstudio.com/hc/en-us/articles/219949047-Installing-older-versions-of-packages) for some info on installing older package versions.
+
+COINr and COINr6 have conversion functions: in COINr there is the `COIN_to_coin()` function which allows conversion from the older "COIN" class to the newer "coin" class. In COINr6 there is also now the reverse function, `coin_to_COIN()`, which allows access to all the old interactive plotting of COINr6 if you liked that, as well as the apps. Note that conversion comes with some limitations in both directions, which are discussed in those functions' documentation.
 
 # Summary
 
