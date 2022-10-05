@@ -7,7 +7,7 @@ test_that("plot_corr", {
 
   # plot correlations between indicators in Sust group, using Normalised dset
   plt <- plot_corr(coin, dset = "Normalised", iCodes = list("Sust"),
-            grouplev = 2, flagcolours = TRUE)
+            grouplev = 2, flagcolours = TRUE, flagthresh = c(-0.1, 0.2, 0.6))
   expect_s3_class(plt, "ggplot")
 
   # test some further options

@@ -16,7 +16,7 @@ plot_corr(
   box_level = NULL,
   showvals = TRUE,
   flagcolours = FALSE,
-  flagthresh = c(-0.4, 0.3, 0.9),
+  flagthresh = NULL,
   pval = 0.05,
   insig_colour = "#F0F0F0",
   text_colour = NULL,
@@ -52,9 +52,9 @@ aggregation level above. Set to 0 to disable grouping and plot the full matrix.}
 \item{flagcolours}{If \code{TRUE}, uses discrete colour map with thresholds defined by \code{flagthresh}. If \code{FALSE} uses continuous colour map.}
 
 \item{flagthresh}{A 3-length vector of thresholds for highlighting correlations, if \code{flagcolours = TRUE}.
-\code{flagthresh[1]} is the negative threshold. Below this value, values will be flagged red.
-\code{flagthresh[2]} is the "weak" threshold. Values between \code{flagthresh[1]} and \code{flagthresh[2]} are coloured grey.
-\code{flagthresh[3]} is the "high" threshold. Anything between \code{flagthresh[2]} and \code{flagthresh[3]} is flagged "OK",
+\code{flagthresh[1]} is the negative threshold (default -0.4). Below this value, values will be flagged red.
+\code{flagthresh[2]} is the "weak" threshold (default 0.3). Values between \code{flagthresh[1]} and \code{flagthresh[2]} are coloured grey.
+\code{flagthresh[3]} is the "high" threshold (default 0.9). Anything between \code{flagthresh[2]} and \code{flagthresh[3]} is flagged "OK",
 and anything above \code{flagthresh[3]} is flagged "high".}
 
 \item{pval}{The significance level for plotting correlations. Correlations with \eqn{p < pval} will be shown,
