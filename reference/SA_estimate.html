@@ -153,10 +153,10 @@ each variable, as well as bootstrapped confidence intervals if <code>!is.null(Nb
 <span class="r-in"><span><span class="co"># Estimate sensitivity indices using sample</span></span></span>
 <span class="r-in"><span><span class="va">SAinds</span> <span class="op">&lt;-</span> <span class="fu">SA_estimate</span><span class="op">(</span><span class="va">y</span>, N <span class="op">=</span> <span class="fl">500</span>, d <span class="op">=</span> <span class="fl">3</span>, Nboot <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">SAinds</span><span class="op">$</span><span class="va">SensInd</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Variable           Si        STi       Si_q5    Si_q95     STi_q5    STi_q95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       V1  0.109571637 0.07942265  0.02604231 0.1984474 0.07292167 0.08614065</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       V2 -0.008994304 0.29726920 -0.16604778 0.1522174 0.26989772 0.32386203</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3       V3  0.480726533 0.70731208  0.24173879 0.7605982 0.65148848 0.76367456</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Variable        Si        STi       Si_q5    Si_q95    STi_q5    STi_q95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       V1 0.0387308 0.06875706 -0.03565170 0.1171460 0.0624651 0.07512234</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       V2 0.1779216 0.26655445  0.02414984 0.3220238 0.2440545 0.28984513</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       V3 0.6449060 0.66151918  0.39268231 0.8660898 0.6038434 0.71807608</span>
 <span class="r-in"><span><span class="co"># Notice that total order indices have narrower confidence intervals than first order.</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
