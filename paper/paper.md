@@ -127,7 +127,7 @@ plot_corr(coin, dset = "Normalised", iCodes = list("Sust"),
           grouplev = 2, flagcolours = T, text_colour = "darkblue")
 ```
 
-![Correlations between sustainability indicators, with colouring thresholds. Only correlations with aggregation groups shown. \label{fig:corr}](figs/corr_plot.png){width=80%}
+![Correlations between sustainability indicators, with colouring thresholds. Only correlations with aggregation groups shown. \label{fig:corr}](figs/corr_plot.png){width=100%}
 
 The correlation plot in \autoref{fig:corr} illustrates where e.g. negative correlations exist within aggregation groups, which may lead to poor representation of indicators in the aggregated scores.
 
