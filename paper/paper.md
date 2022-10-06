@@ -118,7 +118,7 @@ We may also visualise the same results using a bar chart - here we see how count
 plot_bar(coin, dset = "Aggregated", iCode = "Conn", stack_children = TRUE)
 ```
 
-![Connectivity scores broken down by component scores. \label{fig:bar}](paper_figs/results_bar.png){width=100%}
+![Connectivity scores broken down by component scores. \label{fig:bar}](figs/results_bar.png){width=100%}
 
 As a final example, we show one of the analysis features of COINr: the possibility to plot and analyse correlations.
 
@@ -127,7 +127,7 @@ plot_corr(coin, dset = "Normalised", iCodes = list("Sust"),
           grouplev = 2, flagcolours = T)
 ```
 
-![Example correlation plot. \label{fig:corr}](paper_figs/corr_plot.png){width=80%}
+![Example correlation plot. \label{fig:corr}](figs/corr_plot.png){width=80%}
 
 The correlation plot in \autoref{fig:corr} illustrates where e.g. negative correlations exist within aggregation groups, which may lead to poor representation of indicators in the aggregated scores.
 
