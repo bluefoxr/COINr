@@ -2,9 +2,13 @@
 
 Development version with improved support for time series analysis:
 
-* New `get_trends()` function for analsing time trends
+* Removed defunct function messages and startup message
+* New `get_trends()` function for analysing time trends
 * Option to export purse class to Excel
-* Small bug fixes
+* Expand unit test coverage to 80%
+* Quite a lot of small bug fixes
+* Improved documentation in many places
+* Enabled distance to target normalisation plus examples in vignette
 
 # COINr 1.0.0
 
