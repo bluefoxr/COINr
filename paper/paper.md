@@ -37,17 +37,15 @@ bibliography: paper.bib
 
 Composite indicators (CIs) are aggregations of indicators that aim to measure complex, multi-dimensional and typically socio-economic concepts such as sustainable development [@HDI2020], innovation [@dutta2020global], globalisation [@becker2021exploring], gender equality [@EM2030] and many more. CIs are very widely used in policy-making and by international organisations, but are equally well-covered in academic literature [@el2019building; @stefana2021composite; @linden2021_weighting]. They are often used to rank and benchmark countries or regions to help direct policy making, but are also frequently used for advocacy [@cobham2015financial].
 
-The construction of a composite indicator includes a number of statistical and data processing steps. The *COINr* package, introduced in this article, aims to provide a harmonised development environment for composite indicators that includes all common operations from indicator selection, data treatment and imputation up to aggregation, presentation of results and sensitivity analysis. COINr enables development, visualisation and exploration of methodological variations, and encourages transparency and reproducibility.
+The *COINr* package, introduced in this article, aims to provide a harmonised development environment for composite indicators that includes all common operations from indicator selection, data treatment and imputation up to aggregation, presentation of results and sensitivity analysis. COINr enables development, visualisation and exploration of methodological variations, and encourages transparency and reproducibility.
 
 # Statement of need
 
 ## Existing tools
 
-Although it is hard to say for sure which tools are mostly used for constructing composite indicators, from the experience of the authors, the majority of CIs are built using Microsoft Excel, although in some cases the data processing may be done partially or entirely in R, Python or similar.
+Some dedicated tools for composite indicators exist: in Excel, the *COIN Tool* is a spreadsheet-based system which allows users to build and analyse a composite indicator [@COINTool]. In MATLAB, there are some packages addressing specific parts of index development: the *CIAO* package uses a nonlinear regression and optimisation approach to tune weights to agree with expert opinions [@CIAOtool]. In R there is an existing package for composite indicator development, called *compind* [@compindPackage], focusing on weighting and aggregation, although this is more a toolbox of useful functions for constructing composite indicators, and gives no special consideration to hierarchical structures, uncertainty and sensitivity analysis, and so on.
 
-Some dedicated tools exist however: in Excel, the *COIN Tool* is a spreadsheet-based system which allows users to build and analyse a composite indicator [@COINTool]. In MATLAB, there are some packages addressing specific parts of index development: the *CIAO* package uses a nonlinear regression and optimisation approach to tune weights to agree with expert opinions [@CIAOtool]. In R there is an existing package for composite indicator development, called *compind* [@compindPackage]. This has some sophisticated tools for weighting, particularly relating to data envelopment analysis approaches, as well as a number of aggregation functions. However, this is arguably more a toolbox of useful functions for constructing composite indicators, and gives no special consideration to hierarchical structures, uncertainty and sensitivity analysis, and so on.
-
-The Python library *CIF* gives a number of tools for building composite indicators, from loading data to aggregation and visualisation [@cif]. This is focused in particular on Business Cycle Analysis. Finally, there is a recently launched web-based tool called the *MCDA Index Tool* [@cinelli2021mcda]. This is mostly focused on multi-criteria decision analysis, and doesn't include different levels of aggregation. Nonetheless, for the purposes of MCDA, and certain types of indexes, it is a very useful application.
+The Python library *CIF* gives a number of tools for building composite indicators, from loading data to aggregation and visualisation [@cif]. This is focused in particular on Business Cycle Analysis. Finally, there is a recently launched web-based tool called the *MCDA Index Tool* [@cinelli2021mcda]. This is mostly focused on multi-criteria decision analysis, and doesn't include different levels of aggregation.
 
 ## Why COINr
 
@@ -63,15 +61,11 @@ All major COINr functions have methods for coins, and many have methods for purs
 
 COINr also offers a far wider range of functions and methodological options than any existing package. It not only includes a range of options for treating, imputing, normalising and aggregating indicator data (among others), but also has a suite of analysis tools to check data availability and perform correlation/multivariate analysis. Moreover, it has many options for plotting and visualising data using wrapper functions for the *ggplot2* package [@ggplot2]. Many core COINr functions are written with hooks to link with other packages, for example allowing other imputation or aggregation packages to be used with coins.
 
-In short, COINr aims to be a flexible, fast and comprehensive development environment for composite indicators. This enables users to develop composite indicators more quickly, more accurately, and encourages reproducibility and transparency.
-
 # Features
 
-COINr is extensively documented with many vignettes and examples, all of which can be easily browsed at its [website](https://bluefoxr.github.io/COINr/). Here, a brief overview is given.
+Primarily, COINr is used for *building* composite indicators: in practice this would usually involve assembling a set of indicators (usually from different sources) and accompanying metadata, and assembling them into data frames that can be read by COINr to build a "coin" (see [vignette](https://bluefoxr.github.io/COINr/articles/coins.html)). After that, the composite scores are calculated by operating on the coin using any of the "building functions", which specify *which* methodological steps to apply, and *how* to apply them.
 
-Primarily, COINr is used for building composite indicators: in practice this would usually involve assembling a set of indicators (usually from different sources) and accompanying metadata, and assembling them into data frames that can be read by COINr to build a "coin" (see [vignette](https://bluefoxr.github.io/COINr/articles/coins.html)). After that, the composite scores are calculated by operating on the coin using any of the "building functions", which specify *which* methodological steps to apply, and *how* to apply them.
-
-The full process of building a composite indicator is too lengthy to describe in this brief paper. Instead, we simply give a very short example. We use the built-in "ASEM" data set which comprises two data frames (one of indicator data, and the other of metadata) that are formatted such that they can be recognised by COINr to build a coin. To build a coin, we call `new_coin()`:
+To give a flavour of COINr, we give a very short example using the built-in "ASEM" data set which comprises two data frames (one of indicator data, and the other of metadata). To build a coin, we call `new_coin()`:
 
 ```
 # load COINr
@@ -94,7 +88,7 @@ coin <- qNormalise(coin, dset = "Raw", f_n = "n_minmax",
 # (note weights are input in data frames when calling new_coin() )
 coin <- Aggregate(coin, dset = "Normalised", f_ag = "a_amean") 
 ```
-Both of these functions allow any other function to be passed to them, allowing more complex types of normalisation and aggregation. Here, we have simply used the "min-max" normalisation method (scaling indicators onto the $[0, 100]$ interval), and aggregated using the weighted arithmetic mean. Notice that these COINr functions take coins as inputs, but also have methods for data frames and "purses", among others.
+Both of these functions allow any other function to be passed to them, allowing more complex types of normalisation and aggregation. Here, we have simply used the "min-max" normalisation method (scaling indicators onto the $[0, 100]$ interval), and aggregated using the weighted arithmetic mean.
 
 To see the results in a table form, we can call the `get_results()` function:
 
@@ -133,7 +127,7 @@ The correlation plot in \autoref{fig:corr} illustrates where e.g. negative corre
 
 COINr includes far more features than those shown here. Remaining features (with vignette links) include:
 
-**Building features**:
+**Building:**
 
 * [Denomination](https://bluefoxr.github.io/COINr/articles/denomination.html) by other indicators
 * [Screening](https://bluefoxr.github.io/COINr/articles/screening.html) units by data requirements
@@ -141,23 +135,18 @@ COINr includes far more features than those shown here. Remaining features (with
 * [Outlier treatment](https://bluefoxr.github.io/COINr/articles/treat.html) using Winsorisation and nonlinear transformations
 * [Weighting](https://bluefoxr.github.io/COINr/articles/weights.html) using either manual weighting, PCA weights or correlation-optimised weights.
 
-**Analysis features:**
+**Analysis:**
 
-* Detailed indicator statistics, data availability, correlation analysis and multivariate analysis (e.g. PCA) - see [Analysis](https://bluefoxr.github.io/COINr/articles/analysis.html) vignette.
-* Easy "what if" analysis - very quickly checking the effects of adding and removing indicators, changing weights, methodological variations. See [Adjustments and Comparisons](https://bluefoxr.github.io/COINr/articles/adjustments.html) vignette.
-* Global uncertainty and [sensitivity analysis](https://bluefoxr.github.io/COINr/articles/sensitivity.html) which can check the impacts of uncertainties in weighting and many methodological choices
+* [Analysis](https://bluefoxr.github.io/COINr/articles/analysis.html) via indicator statistics, data availability, correlation analysis and multivariate analysis (e.g. PCA).
+* [Adjustments and Comparisons](https://bluefoxr.github.io/COINr/articles/adjustments.html): checking the effects of methodological variations.
+* Global uncertainty and [sensitivity analysis](https://bluefoxr.github.io/COINr/articles/sensitivity.html) of the impacts of uncertainties in weighting and many methodological choices
 
-**Visualisation and presentation:**
+**Others:**
 
-A number of plotting options are described in the [Visualisation](https://bluefoxr.github.io/COINr/articles/visualisation.html) vignette, including:
+* A range of [visualisation](https://bluefoxr.github.io/COINr/articles/visualisation.html) options, including statistical plots, bar charts and correlation plots
+* Automatic import from the [COIN Tool](https://knowledge4policy.ec.europa.eu/composite-indicators/coin-tool_en) and fast export to Excel.
 
-* Statistical plots of indicators - histograms, violin plots, dot plots, scatter plots and more
-* Bar charts, stacked bar charts and tables for presenting indicator data and making comparisons between units
-* Correlation plots for visualising correlations between indicators and between aggregation levels
-
-COINr also allows fast import from the [COIN Tool](https://knowledge4policy.ec.europa.eu/composite-indicators/coin-tool_en) and fast export to Excel.
-
-For the full range of COINr features, see COINr documentation which is conveniently accessible at COINr's [website](https://bluefoxr.github.io/COINr/index.html).
+For the full range of COINr features, see COINr documentation which is accessible at COINr's [website](https://bluefoxr.github.io/COINr/index.html).
 
 # Acknowledgements
 
