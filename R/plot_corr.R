@@ -152,7 +152,7 @@ plot_corr <- function(coin, dset, iCodes = NULL, Levels = 1, ..., cortype = "pea
       ggplot2::scale_y_discrete(expand=c(0,0))
 
     if(is.null(discrete_colours)){
-      discrete_colours <- c("#80d67b", "#b8e8b5", "#e2e6e1", "#b25491")
+      discrete_colours <- c("#80d67b", "#b8e8b5", "#e2e6e1", "#d098bd")
     } else {
       stopifnot(is.character(discrete_colours),
                 length(discrete_colours)==4)
