@@ -35,9 +35,9 @@ bibliography: paper.bib
 
 # Summary
 
-Composite indicators (CIs) are aggregations of indicators that aim to measure complex, multi-dimensional and typically socio-economic concepts such as sustainable development [@HDI2020], innovation [@dutta2020global], globalisation [@becker2021exploring], gender equality [@EM2030] and many more. Composite indicators are very widely used in policy-making and by international organisations, but are equally well-covered in academic literature [@el2019building; @stefana2021composite; @linden2021_weighting]. They are often used to rank and benchmark countries or regions to help direct policy making, but are also frequently used for advocacy [@cobham2015financial].
+Composite indicators (CIs) are aggregations of indicators that aim to measure complex, multi-dimensional and typically socio-economic concepts such as sustainable development [@HDI2020], innovation [@dutta2020global], globalisation [@becker2021exploring], gender equality [@EM2030] and many more. CIs are very widely used in policy-making and by international organisations, but are equally well-covered in academic literature [@el2019building; @stefana2021composite; @linden2021_weighting]. They are often used to rank and benchmark countries or regions to help direct policy making, but are also frequently used for advocacy [@cobham2015financial].
 
-The construction of a composite indicator includes a number of statistical and data processing steps. The COINr package, introduced in this article, aims to provide a harmonised development environment for composite indicators that includes all common operations from indicator selection, data treatment and imputation up to aggregation, presentation of results and sensitivity analysis. **COINr** enables development, visualisation and exploration of methodological variations, and encourages transparency and reproducibility.
+The construction of a composite indicator includes a number of statistical and data processing steps. The *COINr* package, introduced in this article, aims to provide a harmonised development environment for composite indicators that includes all common operations from indicator selection, data treatment and imputation up to aggregation, presentation of results and sensitivity analysis. COINr enables development, visualisation and exploration of methodological variations, and encourages transparency and reproducibility.
 
 # Statement of need
 
@@ -45,15 +45,15 @@ The construction of a composite indicator includes a number of statistical and d
 
 Although it is hard to say for sure which tools are mostly used for constructing composite indicators, from the experience of the authors, the majority of CIs are built using Microsoft Excel, although in some cases the data processing may be done partially or entirely in R, Python or similar.
 
-Some dedicated tools exist however: in Excel, the *COIN Tool* is a spreadsheet-based system which allows users to build and analyse a composite indicator [@COINTool]. In Matlab, there are some packages addressing specific parts of index development: the *CIAO* package uses a nonlinear regression and optimisation approach to tune weights to agree with expert opinions [@CIAOtool]. In R there is an existing package for composite indicator development, called **compind** [@compindPackage]. This has some sophisticated tools for weighting, particularly relating to data envelopment analysis approaches, as well as a number of aggregation functions. However, this is arguably more a toolbox of useful functions for constructing composite indicators, and gives no special consideration to hierarchical structures, uncertainty and sensitivity analysis, and so on.
+Some dedicated tools exist however: in Excel, the *COIN Tool* is a spreadsheet-based system which allows users to build and analyse a composite indicator [@COINTool]. In MATLAB, there are some packages addressing specific parts of index development: the *CIAO* package uses a nonlinear regression and optimisation approach to tune weights to agree with expert opinions [@CIAOtool]. In R there is an existing package for composite indicator development, called *compind* [@compindPackage]. This has some sophisticated tools for weighting, particularly relating to data envelopment analysis approaches, as well as a number of aggregation functions. However, this is arguably more a toolbox of useful functions for constructing composite indicators, and gives no special consideration to hierarchical structures, uncertainty and sensitivity analysis, and so on.
 
-The Python library *CIF* gives a number of tools for building composite indicators, from loading data to aggregation and visualisation. This is focused in particular on Business Cycle Analysis. Finally, there is a recently launched web-based tool called the *MCDA Index Tool* [@cinelli2021mcda]. This is mostly focused on multi-criteria decision analysis, and doesn't include different levels of aggregation. Nonetheless, for the purposes of MCDA, and certain types of indexes, it is a very useful application.
+The Python library *CIF* gives a number of tools for building composite indicators, from loading data to aggregation and visualisation [@cif]. This is focused in particular on Business Cycle Analysis. Finally, there is a recently launched web-based tool called the *MCDA Index Tool* [@cinelli2021mcda]. This is mostly focused on multi-criteria decision analysis, and doesn't include different levels of aggregation. Nonetheless, for the purposes of MCDA, and certain types of indexes, it is a very useful application.
 
 ## Why COINr
 
-**COINr** is a significant step beyond existing composite indicator tools in many respects. COINr wraps all composite indicator data, analysis and methodological choices into a single S3 class object called a "coin". A coin is a structured list including:
+COINr is a significant step beyond existing composite indicator tools in many respects. COINr wraps all composite indicator data, analysis and methodological choices into a single S3 class object called a "coin". A coin is a structured list including:
 
-* Indicator data sets for each processing step (e.g. imputation, normalisation, etc.)
+* Indicator data sets for each processing step (e.g. imputation and normalisation)
 * Metadata pertaining to indicators and units (e.g. names and weights, but also the hierarchical structure of the index)
 * A record of the COINr functions applied in constructing the coin
 
@@ -61,15 +61,15 @@ This enables a neat and structured environment, simplifies the syntax of functio
 
 All major COINr functions have methods for coins, and many have methods for purses, data frames and numerical vectors. This means that COINr can be used either as an integrated development environment via coins and purses, but equally as a toolbox of functions for other related purposes.
 
-COINr also offers a far wider range of functions and methodological options than any existing package. It not only includes a range of options for treating, imputing, normalising and aggregating indicator data (among others), but also has a suite of analysis tools to check data availability and perform correlation/multivariate analysis. Moreover, it has many options for plotting and visualising data using wrapper functions for **ggplot2**. Many core COINr functions are written with hooks to link with other packages, for example allowing other imputation or aggregation packages to be used with coins.
+COINr also offers a far wider range of functions and methodological options than any existing package. It not only includes a range of options for treating, imputing, normalising and aggregating indicator data (among others), but also has a suite of analysis tools to check data availability and perform correlation/multivariate analysis. Moreover, it has many options for plotting and visualising data using wrapper functions for the *ggplot2* package [@ggplot2]. Many core COINr functions are written with hooks to link with other packages, for example allowing other imputation or aggregation packages to be used with coins.
 
-In short, **COINr** aims to be a flexible, fast and comprehensive development environment for composite indicators. This enables users to develop composite indicators more quickly, more accurately, and encourages reproducibility and transparency.
+In short, COINr aims to be a flexible, fast and comprehensive development environment for composite indicators. This enables users to develop composite indicators more quickly, more accurately, and encourages reproducibility and transparency.
 
 # Features
 
-**COINr** is extensively documented with many vignettes and examples, all of which can be easily browsed at its **pkgdown** [website](https://bluefoxr.github.io/COINr/). Here, a brief overview is given.
+COINr is extensively documented with many vignettes and examples, all of which can be easily browsed at its [website](https://bluefoxr.github.io/COINr/). Here, a brief overview is given.
 
-Primarily, COINr is used for building composite indicators: in practice this would usually involve assembling a set of indicators (usually from different sources) and accompanying metadata, and assembling them into a data frame that can be read by COINr to build a "coin" (see [vignette](https://bluefoxr.github.io/COINr/articles/coins.html)). After that, the composite scores are calculated by operating on the coin using any of the "building functions", which specify *which* methodological steps to apply, and *how* to apply them.
+Primarily, COINr is used for building composite indicators: in practice this would usually involve assembling a set of indicators (usually from different sources) and accompanying metadata, and assembling them into data frames that can be read by COINr to build a "coin" (see [vignette](https://bluefoxr.github.io/COINr/articles/coins.html)). After that, the composite scores are calculated by operating on the coin using any of the "building functions", which specify *which* methodological steps to apply, and *how* to apply them.
 
 The full process of building a composite indicator is too lengthy to describe in this brief paper. Instead, we simply give a very short example. We use the built-in "ASEM" data set which comprises two data frames (one of indicator data, and the other of metadata) that are formatted such that they can be recognised by COINr to build a coin. To build a coin, we call `new_coin()`:
 
@@ -94,7 +94,7 @@ coin <- qNormalise(coin, dset = "Raw", f_n = "n_minmax",
 # (note weights are input in data frames when calling new_coin() )
 coin <- Aggregate(coin, dset = "Normalised", f_ag = "a_amean") 
 ```
-Both of these functions allow any other function to be passed to them, allowing more complex types of normalisation and aggregation. Here, we have simply used the "min-max" normalisation method (scaling indicators onto the $$[0, 100]$$ interval), and aggregated using the weighted arithmetic mean. Notice that these COINr functions take coins as inputs, but also have methods for data frames and "purses", among others.
+Both of these functions allow any other function to be passed to them, allowing more complex types of normalisation and aggregation. Here, we have simply used the "min-max" normalisation method (scaling indicators onto the $[0, 100]$ interval), and aggregated using the weighted arithmetic mean. Notice that these COINr functions take coins as inputs, but also have methods for data frames and "purses", among others.
 
 To see the results in a table form, we can call the `get_results()` function:
 
@@ -118,16 +118,16 @@ We may also visualise the same results using a bar chart - here we see how count
 plot_bar(coin, dset = "Aggregated", iCode = "Conn", stack_children = TRUE)
 ```
 
-![Connectivity scores broken down by component scores. \label{fig:bar}](figs/results_bar.png){width=100%}
+![National connectivity scores broken down into component scores and sorted from highest to lowest. \label{fig:bar}](figs/results_bar.png){width=100%}
 
 As a final example, we show one of the analysis features of COINr: the possibility to plot and analyse correlations.
 
 ```
 plot_corr(coin, dset = "Normalised", iCodes = list("Sust"),
-          grouplev = 2, flagcolours = T)
+          grouplev = 2, flagcolours = T, text_colour = "darkblue")
 ```
 
-![Example correlation plot. \label{fig:corr}](figs/corr_plot.png){width=80%}
+![Correlations between sustainability indicators, with colouring thresholds. Only correlations with aggregation groups shown. \label{fig:corr}](figs/corr_plot.png){width=80%}
 
 The correlation plot in \autoref{fig:corr} illustrates where e.g. negative correlations exist within aggregation groups, which may lead to poor representation of indicators in the aggregated scores.
 
@@ -157,7 +157,7 @@ A number of plotting options are described in the [Visualisation](https://bluefo
 
 COINr also allows fast import from the [COIN Tool](https://knowledge4policy.ec.europa.eu/composite-indicators/coin-tool_en) and fast export to Excel.
 
-For the full range of COINr features, see COINr documentation which is conveniently accessible at COINr's [**pkgdown** website](https://bluefoxr.github.io/COINr/index.html).
+For the full range of COINr features, see COINr documentation which is conveniently accessible at COINr's [website](https://bluefoxr.github.io/COINr/index.html).
 
 # Acknowledgements
 
