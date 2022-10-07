@@ -65,7 +65,7 @@ COINr also offers a far wider range of functions and methodological options than
 
 Primarily, COINr is used for *building* composite indicators: In practice this would usually involve assembling a set of indicators (usually from different sources) and accompanying metadata, and assembling them into data frames that can be read by COINr to build a "coin" (see [vignette](https://bluefoxr.github.io/COINr/articles/coins.html)). After that, the composite scores are calculated by operating on the coin using any of the "building functions", which specify the methodological steps to apply, and *how* to apply them.
 
-To give a flavour of COINr, we give a very short example using the built-in "ASEM" data set which comprises two data frames (one of indicator data, and the other of metadata). To build a coin, we call `new_coin()`:
+To give a flavour of COINr, we present a very short example using the built-in "ASEM" data set which comprises two data frames (one of indicator data, and the other of metadata). To build a coin, we call `new_coin()`:
 
 ```R
 # load COINr
