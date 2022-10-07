@@ -43,7 +43,7 @@ The *COINr* package, introduced in this article, aims to provide a harmonised de
 
 ## Existing tools
 
-Some dedicated tools for composite indicators exist: in Excel, the *COIN Tool* is a spreadsheet-based system which allows users to build and analyse a composite indicator [@COINTool]. In MATLAB, there are some packages addressing specific parts of index development: the *CIAO* package uses a nonlinear regression and optimisation approach to tune weights to agree with expert opinions [@CIAOtool]. In R there is an existing package for composite indicator development, called *compind* [@compindPackage], focusing on weighting and aggregation, although this is more a toolbox of useful functions for constructing composite indicators, and gives no special consideration to hierarchical structures, uncertainty and sensitivity analysis, and so on.
+Some dedicated tools for composite indicators exist: in Microsoft Excel, the *COIN Tool* is a spreadsheet-based system which allows users to build and analyse a composite indicator [@COINTool]. In MATLAB, there are some packages addressing specific parts of index development: the *CIAO* package uses a nonlinear regression and optimisation approach to tune weights to agree with expert opinions [@CIAOtool]. In R there is an existing package for composite indicator development, called *compind* [@compindPackage], focusing on weighting and aggregation, although this is more a toolbox of useful functions for constructing composite indicators, and gives no special consideration to hierarchical structures, uncertainty and sensitivity analysis, and so on.
 
 The Python library *CIF* gives a number of tools for building composite indicators, from loading data to aggregation and visualisation [@cif]. This is focused in particular on Business Cycle Analysis. Finally, there is a recently launched web-based tool called the *MCDA Index Tool* [@cinelli2021mcda]. This is mostly focused on multi-criteria decision analysis, and doesn't include different levels of aggregation.
 
@@ -135,7 +135,7 @@ COINr includes far more features than those shown here. Remaining features (with
 **Others:**
 
 -   A range of [visualisation](https://bluefoxr.github.io/COINr/articles/visualisation.html) options, including statistical plots, bar charts and correlation plots
--   Automatic import from the [COIN Tool](https://knowledge4policy.ec.europa.eu/composite-indicators/coin-tool_en) and fast export to Excel.
+-   Automatic import from the [COIN Tool](https://knowledge4policy.ec.europa.eu/composite-indicators/coin-tool_en) and fast export to Microsoft Excel.
 
 For the full range of COINr features, see COINr documentation which is accessible at COINr's [website](https://bluefoxr.github.io/COINr/index.html).
 
