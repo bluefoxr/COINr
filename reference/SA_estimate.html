@@ -153,10 +153,10 @@ each variable, as well as bootstrapped confidence intervals if <code>!is.null(Nb
 <span class="r-in"><span><span class="co"># Estimate sensitivity indices using sample</span></span></span>
 <span class="r-in"><span><span class="va">SAinds</span> <span class="op">&lt;-</span> <span class="fu">SA_estimate</span><span class="op">(</span><span class="va">y</span>, N <span class="op">=</span> <span class="fl">500</span>, d <span class="op">=</span> <span class="fl">3</span>, Nboot <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">SAinds</span><span class="op">$</span><span class="va">SensInd</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Variable         Si        STi       Si_q5    Si_q95     STi_q5    STi_q95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       V1 0.05386075 0.06805717 -0.02261454 0.1329986 0.06214931 0.07400306</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       V2 0.21831424 0.29017408  0.05239611 0.3777453 0.26647881 0.31522597</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3       V3 0.68661559 0.69753096  0.44861574 0.9208396 0.64005675 0.75352331</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Variable        Si        STi      Si_q5    Si_q95     STi_q5    STi_q95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       V1 0.1650935 0.07005058 0.08542475 0.2553374 0.06410339 0.07639956</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       V2 0.3387026 0.28512015 0.16972611 0.5092914 0.26060152 0.31078794</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       V3 0.7122828 0.64672583 0.46131461 0.9564753 0.58749470 0.70318293</span>
 <span class="r-in"><span><span class="co"># Notice that total order indices have narrower confidence intervals than first order.</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
