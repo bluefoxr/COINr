@@ -11,6 +11,7 @@
 [![R-CMD-check](https://github.com/bluefoxr/COINr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/bluefoxr/COINr/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/bluefoxr/COINr/branch/master/graph/badge.svg)](https://app.codecov.io/gh/bluefoxr/COINr?branch=master)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7180389.svg)](https://doi.org/10.5281/zenodo.7180389)
 <!-- badges: end -->
 
 **Full documentation is available at [COINr’s
