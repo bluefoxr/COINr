@@ -43,7 +43,7 @@ The *COINr* package, introduced in this article, aims to provide a harmonised de
 
 ## Existing tools
 
-Some dedicated tools for composite indicators exist: in Microsoft Excel, the *COIN Tool* is a spreadsheet-based system which allows users to build and analyse a composite indicator [@COINTool]. In MATLAB, there are some packages addressing specific parts of index development: the *CIAO* package uses a nonlinear regression and optimisation approach to tune weights to agree with expert opinions [@CIAOtool]. In R [@rstats] there is an existing package for composite indicator development, called *compind* [@compindPackage], focusing on weighting and aggregation, although this is more a toolbox of useful functions for constructing composite indicators, and gives no special consideration to hierarchical structures, uncertainty and sensitivity analysis, and so on.
+Some dedicated tools for composite indicators exist: in Microsoft Excel, the *COIN Tool* is a spreadsheet-based system which allows users to build and analyse a composite indicator [@COINTool]. In MATLAB, there are some packages addressing specific parts of index development: the *CIAO* package uses a nonlinear regression and optimisation approach to tune weights to agree with expert opinions [@CIAOtool]. In R [@rstats] there is an existing package for composite indicator development, called *compind* [@compindPackage], focusing on weighting and aggregation, although this gives no special consideration to hierarchical structures, uncertainty and sensitivity analysis, and so on.
 
 The Python library *CIF* gives a number of tools for building composite indicators, from loading data to aggregation and visualisation [@cif]. This is focused in particular on Business Cycle Analysis. Finally, there is a recently launched Web-based tool called the *MCDA Index Tool* [@cinelli2021mcda]. This is mostly focused on multi-criteria decision analysis, and doesn't include different levels of aggregation.
 
@@ -55,7 +55,7 @@ COINr is a significant step beyond existing composite indicator tools in many re
 -   Metadata pertaining to indicators and units (e.g. names and weights, but also the hierarchical structure of the index).
 -   A record of the COINr functions applied in constructing the coin.
 
-This enables a neat and structured environment, simplifies the syntax of functions, and also allows comparisons between different versions of the same index, as well as global sensitivity analysis along the lines of [@saisana2005uncertainty] (for the distinction between "local" and "global" sensitivity analysis, see e.g. [@saltelli2019so]). COINr also supports time-indexed (panel) data, represented by the "purse" class (a data frame containing a time-indexed collection of coins). For more information on coins and purses, see the "coins" [vignette](https://bluefoxr.github.io/COINr/articles/coins.html).
+This enables a neat and structured environment, simplifies the syntax of functions, and also allows comparisons between different versions of the same index, as well as global sensitivity analysis along the lines of [@saisana2005uncertainty] (for the distinction between "local" and "global" sensitivity analysis, see e.g. [@saltelli2019so]). COINr also supports time-indexed (panel) data, represented by the "purse" class (a data frame containing a time-indexed collection of coins). For more information on coins and purses, see the [coins vignette](https://bluefoxr.github.io/COINr/articles/coins.html).
 
 All major COINr functions have methods for coins, and many have methods for purses, data frames, and numerical vectors. This means that COINr can be used either as an integrated development environment via coins and purses, but equally as a toolbox of functions for other related purposes.
 
@@ -63,7 +63,7 @@ COINr also offers a far wider range of functions and methodological options than
 
 # Features
 
-Primarily, COINr is used for *building* composite indicators: In practice this would usually involve assembling a set of indicators (usually from different sources) and accompanying metadata, and assembling them into data frames that can be read by COINr to build a "coin" (see [vignette](https://bluefoxr.github.io/COINr/articles/coins.html)). After that, the composite scores are calculated by operating on the coin using any of the "building functions", which specify the methodological steps to apply, and *how* to apply them.
+Primarily, COINr is used for *building* composite indicators: In practice this involves assembling a set of indicators (usually from different sources) and accompanying metadata, and assembling them into data frames that can be read by COINr to build a "coin" (see [vignette](https://bluefoxr.github.io/COINr/articles/coins.html)). After that, the composite scores are calculated by applying COINr functions to the coin, which specify the methodological steps to apply, and how to apply them.
 
 To give a flavour of COINr, we present a very short example using the built-in "ASEM" data set which comprises two data frames (one of indicator data, and the other of metadata). To build a coin, the `new_coin()` function is called:
 
@@ -75,7 +75,7 @@ library(COINr)
 coin <- new_coin(iData = ASEM_iData, iMeta = ASEM_iMeta)
 ```
 
-To see how these data frames are formatted, one can use e.g. `str(ASEM_iData)` or `View(ASEM_iData)` and see the "coins" [vignette](https://bluefoxr.github.io/COINr/articles/coins.html).
+To see how these data frames are formatted, one can use e.g. `str(ASEM_iData)` or `View(ASEM_iData)` and refer to the [coins vignette](https://bluefoxr.github.io/COINr/articles/coins.html).
 
 In the most simple case, we could build a composite indicator by [normalising](https://bluefoxr.github.io/COINr/articles/normalise.html) the indicators (bringing them onto a common scale), and [aggregating](https://bluefoxr.github.io/COINr/articles/aggregate.html) them (using weighted averages to calculate index scores). This can be done in COINr using the `Normalise()` and `Aggregate()` functions respectively:
 
@@ -89,7 +89,7 @@ coin <- qNormalise(coin, dset = "Raw", f_n = "n_minmax",
 coin <- Aggregate(coin, dset = "Normalised", f_ag = "a_amean") 
 ```
 
-Both of these functions allow any other function to be passed to them, allowing more complex types of normalisation and aggregation. Here, the code simply uses the "min-max" normalisation method (scaling indicators onto the $[0, 100]$ interval), and aggregated using the weighted arithmetic mean.
+Both of these functions allow any other function to be passed to them, allowing more complex types of normalisation and aggregation. Here, the code simply uses the "min-max" normalisation method (scaling indicators onto the $[0, 100]$ interval), and aggregates using the weighted arithmetic mean, following the hierarchical structure and weights specified in the `iMeta` argument of `new_coin()`.
 
 To see the results in a table form, one can call the `get_results()` function:
 
@@ -122,7 +122,7 @@ plot_corr(coin, dset = "Normalised", iCodes = list("Sust"),
           grouplev = 2, flagcolours = T, text_colour = "darkblue")
 ``` 
 
-![Correlations between sustainability indicators, with colouring thresholds. Only correlations with aggregation groups are shown. \label{fig:corr}](figs/corr_plot.png){width="100%"}
+![Correlations between sustainability indicators, with colouring thresholds. Only correlations within aggregation groups are shown. \label{fig:corr}](figs/corr_plot.png){width="100%"}
 
 The correlation plot in \autoref{fig:corr} illustrates where e.g. negative correlations exist within aggregation groups, which may lead to poor representation of indicators in the aggregated scores.
 
