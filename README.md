@@ -11,7 +11,6 @@
 [![R-CMD-check](https://github.com/bluefoxr/COINr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/bluefoxr/COINr/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/bluefoxr/COINr/branch/master/graph/badge.svg)](https://app.codecov.io/gh/bluefoxr/COINr?branch=master)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7180389.svg)](https://doi.org/10.5281/zenodo.7180389)
 <!-- badges: end -->
 
 **Full documentation is available at [COINr’s
@@ -143,3 +142,13 @@ errors or warnings. To do this, run:
 ``` r
 devtools::test()
 ```
+
+# Citing COINr
+
+If you have found COINr helpful, we are grateful if you cite the
+package. COINr is citable by a paper in the Journal of Open Source
+Software which you can find [here](https://doi.org/10.21105/joss.04567)
+(with citation information).
+
+In R you can also generate the citation info using
+`citation(package = "COINr")`.

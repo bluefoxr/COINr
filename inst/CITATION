@@ -1,0 +1,16 @@
+citHeader("To cite COINr in publications use:")
+
+x <- citEntry(
+  entry    = "Article",
+  title    = "COINr: An R package for developing composite indicators",
+  author   = c(person("William", "Becker"), person("Giulio", "Caperna"), person("Maria", "Del Sorbo"), person("Hedvig", "Norlen"), person("Eleni", "Papadimitriou"), person("Michaela", "Saisana")),
+  journal  = "Journal of Open Source Software",
+  year     = 2022,
+  volume   = 7,
+  number   = 78,
+  pages    = 4567,
+  url      = "https://doi.org/10.21105/joss.04567",
+  doi      = "10.21105/joss.04567",
+  pubisher = "The Open Journal",
+  textVersion = "Becker et al., (2022). COINr: An R package for developing composite indicators. Journal of Open Source Software, 7(78), 4567, https://doi.org/10.21105/joss.04567"
+)
