@@ -153,10 +153,10 @@ each variable, as well as bootstrapped confidence intervals if <code>!is.null(Nb
 <span class="r-in"><span><span class="co"># Estimate sensitivity indices using sample</span></span></span>
 <span class="r-in"><span><span class="va">SAinds</span> <span class="op">&lt;-</span> <span class="fu">SA_estimate</span><span class="op">(</span><span class="va">y</span>, N <span class="op">=</span> <span class="fl">500</span>, d <span class="op">=</span> <span class="fl">3</span>, Nboot <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">SAinds</span><span class="op">$</span><span class="va">SensInd</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Variable          Si        STi       Si_q5    Si_q95     STi_q5    STi_q95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       V1 0.008164237 0.06874541 -0.07188943 0.0931612 0.06323635 0.07527816</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       V2 0.429333930 0.29760195  0.27742634 0.5954525 0.27285032 0.32302898</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3       V3 0.343312876 0.62840127  0.10788262 0.5857088 0.57524175 0.68028371</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Variable         Si        STi       Si_q5     Si_q95     STi_q5    STi_q95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       V1 0.01714497 0.06598474 -0.04853492 0.09169621 0.06022844 0.07201789</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       V2 0.41589675 0.26689432  0.26009285 0.56427414 0.24524720 0.28811186</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       V3 0.76530464 0.60020627  0.52555051 0.98556208 0.54688765 0.65682380</span>
 <span class="r-in"><span><span class="co"># Notice that total order indices have narrower confidence intervals than first order.</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
