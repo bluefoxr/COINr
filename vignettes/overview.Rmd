@@ -117,7 +117,7 @@ Function                  Description
 
 All functions are fully documented and individual function help can be accessed in the usual way by `?function_name`.
 
-The COINr package is loosely object oriented, in the sense that the a composite indicator is encapsulated in an S3 class object called a "coin", and a time-indexed collection of coins is called a "purse" (see [Building coins](coins.html)) Most of the main functions listed in the previous tables take this "coin" class as the main input (and often also as the output) with other function arguments specifying how to apply the function. E.g. the syntax is typically:
+The COINr package is loosely object oriented, in the sense that the composite indicator is encapsulated in an S3 class object called a "coin", and a time-indexed collection of coins is called a "purse" (see [Building coins](coins.html)) Most of the main functions listed in the previous tables take this "coin" class as the main input (and often also as the output) with other function arguments specifying how to apply the function. E.g. the syntax is typically:
 
 ```{r, eval=F}
 coin <- COINr_function(coin, function_arguments)
