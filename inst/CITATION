@@ -11,6 +11,6 @@ x <- citEntry(
   pages    = 4567,
   url      = "https://doi.org/10.21105/joss.04567",
   doi      = "10.21105/joss.04567",
-  pubisher = "The Open Journal",
+  publisher = "The Open Journal",
   textVersion = "Becker et al., (2022). COINr: An R package for developing composite indicators. Journal of Open Source Software, 7(78), 4567, https://doi.org/10.21105/joss.04567"
 )
