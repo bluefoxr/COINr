@@ -345,7 +345,7 @@
 </tbody>
 </table>
 <p>All functions are fully documented and individual function help can be accessed in the usual way by <code>?function_name</code>.</p>
-<p>The COINr package is loosely object oriented, in the sense that the a composite indicator is encapsulated in an S3 class object called a “coin”, and a time-indexed collection of coins is called a “purse” (see <a href="coins.html">Building coins</a>) Most of the main functions listed in the previous tables take this “coin” class as the main input (and often also as the output) with other function arguments specifying how to apply the function. E.g. the syntax is typically:</p>
+<p>The COINr package is loosely object oriented, in the sense that the composite indicator is encapsulated in an S3 class object called a “coin”, and a time-indexed collection of coins is called a “purse” (see <a href="coins.html">Building coins</a>) Most of the main functions listed in the previous tables take this “coin” class as the main input (and often also as the output) with other function arguments specifying how to apply the function. E.g. the syntax is typically:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu">COINr_function</span><span class="op">(</span><span class="va">coin</span>, <span class="va">function_arguments</span><span class="op">)</span></span></code></pre></div>
 <p>Many of the main COINr functions are <em>generics</em>: they have methods also for data frames, purses, and in some cases numeric vectors. This means that COINr functions can also be used for ad-hoc operations without needing to build coins.</p>
