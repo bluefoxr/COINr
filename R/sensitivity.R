@@ -86,11 +86,6 @@ get_sensitivity <- function(coin, SA_specs, N, SA_type = "UA", dset, iCode, Nboo
   # number of uncertain input paras
   d <- length(SA_specs)
 
-  if(d==1){
-    stop("Only one uncertain input defined. It is not meaningful to run a sensitivity analysis
-      with only one input variable. Consider changing SA_type to \"UA\".")
-  }
-
   # get sample
   if(SA_type == "UA"){
 
