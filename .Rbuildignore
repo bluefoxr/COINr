@@ -17,6 +17,6 @@
 ^paper\.md$
 ^paper\.bib$
 ^.github$
-^paper_figs$
+^paper$
 ^\.github$
 ^codecov\.yml$
