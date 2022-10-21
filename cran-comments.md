@@ -1,12 +1,10 @@
 ## Resubmission
 
-This is a resubmission, which comprises a major update, hence the jump in numbering from 0.6.1 to 1.0.0.
-
-Updates are described in NEWS.md, and there is a vignette describing the upgrades in more detail at `vignette("v1")`.
+This is a resubmission to version 1.1.
 
 ## R CMD check results
 
-There was 1 note regarding possibly valid URLs. I have checked this on the R package development mailing list and the conclusion was that this is due to the automatic checks run by R. All URLs are valid, but Cloudflare and other content distribution companies block these types of automatic checks, hence the note.
+There was 1 note regarding possibly invalid URLs. I have checked this on the R package development mailing list and the conclusion was that this is due to the automatic checks run by R. All URLs are valid, but Cloudflare and other content distribution companies block these types of automatic checks, hence the note.
 
 NOTE
 
