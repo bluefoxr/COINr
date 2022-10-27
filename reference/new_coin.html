@@ -147,8 +147,7 @@ including its type, name, position in the index, units, and other properties.</p
 <p>These data frames need to follow fairly strict requirements regarding their format and consistency.
 Run <code><a href="check_iData.html">check_iData()</a></code> and <code><a href="check_iMeta.html">check_iMeta()</a></code> to validate your data frames, and these should generate helpful
 error messages when things go wrong.</p>
-<p>It is worth reading a little about coins and purses to use COINr. See <code><a href="../articles/coins.html">vignette("coins")</a></code> for more details,
-and also <code>vignette("panel_data")</code> for details on using panel data with COINr.</p><div class="section">
+<p>It is worth reading a little about coins and purses to use COINr. See <code><a href="../articles/coins.html">vignette("coins")</a></code> for more details.</p><div class="section">
 <h3 id="idata"><code>iData</code><a class="anchor" aria-label="anchor" href="#idata"></a></h3>
 
 
@@ -219,7 +218,7 @@ possible to order it. To split panel data, specify <code>split_to = "all"</code>
 of the unique entries in <code>Time</code>. Alternatively, you can pass a vector of entries in <code>Time</code> which allows
 to split to a subset of the entries to <code>Time</code>.</p>
 <p>Splitting panel data results in a so-called "purse" class, which is a data frame of COINs, indexed by <code>Time</code>.
-See <code>vignette("panel_data")</code> and <code><a href="../articles/coins.html">vignette("coins")</a></code> for more details.</p>
+See <code><a href="../articles/coins.html">vignette("coins")</a></code> for more details.</p>
 <p>This function replaces the now-defunct <code>assemble()</code> from COINr &lt; v1.0.</p>
 </div>
 
