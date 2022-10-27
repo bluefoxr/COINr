@@ -111,7 +111,11 @@
 
     
     
-<p>One of the most powerful features of COINr is the possibility to copy, adjust and compare coins. A coin is structured list that represents a composite indicator. Since it is an R object like any other, it can be copied and modified, and alternative versions can be easily compared. This generally requires four steps:</p>
+<p>One of the most powerful features of COINr is the possibility to
+copy, adjust and compare coins. A coin is structured list that
+represents a composite indicator. Since it is an R object like any
+other, it can be copied and modified, and alternative versions can be
+easily compared. This generally requires four steps:</p>
 <ol style="list-style-type: decimal">
 <li>Make a copy of the coin</li>
 <li>Adjust the coin</li>
@@ -122,10 +126,16 @@
 <div class="section level2">
 <h2 id="regeneration">Regeneration<a class="anchor" aria-label="anchor" href="#regeneration"></a>
 </h2>
-<p>The first three points on the list above will be addressed here. We must begin by explaining the “Log” of a coin. In COINr, some functions are distinguished as “building functions”. These functions start with a capital letter (with one exception), and have the following defining features:</p>
+<p>The first three points on the list above will be addressed here. We
+must begin by explaining the “Log” of a coin. In COINr, some functions
+are distinguished as “building functions”. These functions start with a
+capital letter (with one exception), and have the following defining
+features:</p>
 <ol style="list-style-type: decimal">
-<li>When a building function is run, it creates a new data set in <code>.$Data</code>.</li>
-<li>When a building function is run, it records its function arguments in <code>.$Log</code>.</li>
+<li>When a building function is run, it creates a new data set in
+<code>.$Data</code>.</li>
+<li>When a building function is run, it records its function arguments
+in <code>.$Log</code>.</li>
 </ol>
 <p>Building functions are the following:</p>
 <table class="table">
@@ -136,7 +146,8 @@
 <tbody>
 <tr class="odd">
 <td align="left"><code><a href="../reference/new_coin.html">new_coin()</a></code></td>
-<td align="left">Initialise a coin object given indicator data and metadata</td>
+<td align="left">Initialise a coin object given indicator data and
+metadata</td>
 </tr>
 <tr class="even">
 <td align="left"><code><a href="../reference/Screen.html">Screen()</a></code></td>
@@ -164,7 +175,9 @@
 </tr>
 </tbody>
 </table>
-<p>Let’s explain the concept of the “Log” now with an example. We will build the example coin manually, then look inside the coin’s Log list:</p>
+<p>Let’s explain the concept of the “Log” now with an example. We will
+build the example coin manually, then look inside the coin’s Log
+list:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bluefoxr.github.io/COINr/">COINr</a></span><span class="op">)</span></span>
 <span></span>
@@ -185,8 +198,15 @@
 <span><span class="co">#&gt;   ..$ level_names: chr [1:4] "Indicator" "Pillar" "Sub-index" "Index"</span></span>
 <span><span class="co">#&gt;   ..$ quietly    : logi FALSE</span></span>
 <span><span class="co">#&gt;  $ can_regen: logi TRUE</span></span></code></pre></div>
-<p>Looking in the log, we can see that it is a list with an entry “new_coin”, which contains exactly the arguments that we passed to <code><a href="../reference/new_coin.html">new_coin()</a></code>: <code>iData</code>, <code>iMeta</code>, the level names, and two other arguments which are the default values of the function. There is also another logical variable called <code>can_regen</code> which is for internal use only.</p>
-<p>This demonstrates that when we call a building function, its arguments are stored in the coin. To show another example, if we apply the <code><a href="../reference/Normalise.html">Normalise()</a></code> function:</p>
+<p>Looking in the log, we can see that it is a list with an entry
+“new_coin”, which contains exactly the arguments that we passed to
+<code><a href="../reference/new_coin.html">new_coin()</a></code>: <code>iData</code>, <code>iMeta</code>, the
+level names, and two other arguments which are the default values of the
+function. There is also another logical variable called
+<code>can_regen</code> which is for internal use only.</p>
+<p>This demonstrates that when we call a building function, its
+arguments are stored in the coin. To show another example, if we apply
+the <code><a href="../reference/Normalise.html">Normalise()</a></code> function:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># normalise</span></span>
 <span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Normalise.html">Normalise</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Raw"</span><span class="op">)</span></span>
@@ -210,8 +230,13 @@
 <span><span class="co">#&gt;   ..$ out2        : chr "coin"</span></span>
 <span><span class="co">#&gt;   ..$ write_to    : NULL</span></span>
 <span><span class="co">#&gt;   ..$ write2log   : logi TRUE</span></span></code></pre></div>
-<p>Now we additionally have a “Normalise” entry, with all the function arguments that we specified, plus defaults.</p>
-<p>Now, the reason that building functions write to the log, is that it allows coins to be <em>regenerated</em>, which means automatically re-running the building functions that were used to create the coin and its data sets. This is done with a function called <code><a href="../reference/Regen.html">Regen()</a></code>:</p>
+<p>Now we additionally have a “Normalise” entry, with all the function
+arguments that we specified, plus defaults.</p>
+<p>Now, the reason that building functions write to the log, is that it
+allows coins to be <em>regenerated</em>, which means automatically
+re-running the building functions that were used to create the coin and
+its data sets. This is done with a function called
+<code><a href="../reference/Regen.html">Regen()</a></code>:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># regenerate the coin</span></span>
 <span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Regen.html">Regen</a></span><span class="op">(</span><span class="va">coin</span>, quietly <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -219,15 +244,30 @@
 <span><span class="co">#&gt; iMeta checked and OK.</span></span>
 <span><span class="co">#&gt; Written data set to .$Data$Raw</span></span>
 <span><span class="co">#&gt; Written data set to .$Data$Normalised</span></span></code></pre></div>
-<p>When <code><a href="../reference/Regen.html">Regen()</a></code> is called, it runs the buildings <em>in the order that they are found in the log</em>. This is an important point because if you iteratively re-run building functions, you might end up with an order that is not what you expect. You can check the log if you have any doubts (anyway you would probably encounter an error if the order is incorrect). Also, each building function can only be run once in a regeneration.</p>
-<p>So why regenerate coins - aren’t the results exactly the same? Yes, unless you modify something first. And this brings us to the copying and modifying points. Let us take an example: first, we’ll build the full example coin, then we’ll make a copy of our existing coin:</p>
+<p>When <code><a href="../reference/Regen.html">Regen()</a></code> is called, it runs the buildings <em>in the
+order that they are found in the log</em>. This is an important point
+because if you iteratively re-run building functions, you might end up
+with an order that is not what you expect. You can check the log if you
+have any doubts (anyway you would probably encounter an error if the
+order is incorrect). Also, each building function can only be run once
+in a regeneration.</p>
+<p>So why regenerate coins - aren’t the results exactly the same? Yes,
+unless you modify something first. And this brings us to the copying and
+modifying points. Let us take an example: first, we’ll build the full
+example coin, then we’ll make a copy of our existing coin:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># build full example coin</span></span>
 <span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_example_coin.html">build_example_coin</a></span><span class="op">(</span>quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># copy coin</span></span>
 <span><span class="va">coin2</span> <span class="op">&lt;-</span> <span class="va">coin</span></span></code></pre></div>
-<p>At this point, the coins are identical. What if we want to test an alternative methodology, for example a different normalisation method? This can be done by editing the Log of the coin, then regenerating. Here, we will change the normalisation method to percentile ranks, and regenerate. To make this change it is necessary to target the right argument. Let’s first see what is already in the Log for <code><a href="../reference/Normalise.html">Normalise()</a></code>:</p>
+<p>At this point, the coins are identical. What if we want to test an
+alternative methodology, for example a different normalisation method?
+This can be done by editing the Log of the coin, then regenerating.
+Here, we will change the normalisation method to percentile ranks, and
+regenerate. To make this change it is necessary to target the right
+argument. Let’s first see what is already in the Log for
+<code><a href="../reference/Normalise.html">Normalise()</a></code>:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">coin2</span><span class="op">$</span><span class="va">Log</span><span class="op">$</span><span class="va">Normalise</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 7</span></span>
@@ -241,7 +281,8 @@
 <span><span class="co">#&gt;  $ out2        : chr "coin"</span></span>
 <span><span class="co">#&gt;  $ write_to    : NULL</span></span>
 <span><span class="co">#&gt;  $ write2log   : logi TRUE</span></span></code></pre></div>
-<p>At the moment, the normalisation is min-max onto the interval of 0 to 100. We will change this to the new function <code><a href="../reference/n_prank.html">n_prank()</a></code>:</p>
+<p>At the moment, the normalisation is min-max onto the interval of 0 to
+100. We will change this to the new function <code><a href="../reference/n_prank.html">n_prank()</a></code>:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># change to prank function (percentile ranks)</span></span>
 <span><span class="co"># we don't need to specify any additional parameters (f_n_para) here</span></span>
@@ -249,15 +290,40 @@
 <span></span>
 <span><span class="co"># regenerate</span></span>
 <span><span class="va">coin2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Regen.html">Regen</a></span><span class="op">(</span><span class="va">coin2</span><span class="op">)</span></span></code></pre></div>
-<p>And that’s it. In summary, we copied the coin, edited its log to a different normalisation methodology, and then regenerated the results. Now what remains is to compare the results, and this is dealt with in the next section.</p>
-<p>Before that, let’s consider what kind of things we can change in a coin. Anything in the Log can be changed, but of course it is up to you to change it to something valid. As long as you carefully follow the function help pages, this shouldn’t be any more difficult than using the functions directly. You can also change anything else about the coin, including the input data, by targeting the log of <code><a href="../reference/new_coin.html">new_coin()</a></code>. Changing anything outside of the Log will not generally have an effect because the coin will be recreated by <code><a href="../reference/new_coin.html">new_coin()</a></code> during regeneration and this will be overwritten. The exception is if you use the <code>from</code> argument of <code><a href="../reference/Regen.html">Regen()</a></code>: in this case the regeneration will only begin from the function name that you pass to it. This partial regeneration can also be useful to speed up computation time.</p>
+<p>And that’s it. In summary, we copied the coin, edited its log to a
+different normalisation methodology, and then regenerated the results.
+Now what remains is to compare the results, and this is dealt with in
+the next section.</p>
+<p>Before that, let’s consider what kind of things we can change in a
+coin. Anything in the Log can be changed, but of course it is up to you
+to change it to something valid. As long as you carefully follow the
+function help pages, this shouldn’t be any more difficult than using the
+functions directly. You can also change anything else about the coin,
+including the input data, by targeting the log of
+<code><a href="../reference/new_coin.html">new_coin()</a></code>. Changing anything outside of the Log will not
+generally have an effect because the coin will be recreated by
+<code><a href="../reference/new_coin.html">new_coin()</a></code> during regeneration and this will be
+overwritten. The exception is if you use the <code>from</code> argument
+of <code><a href="../reference/Regen.html">Regen()</a></code>: in this case the regeneration will only begin
+from the function name that you pass to it. This partial regeneration
+can also be useful to speed up computation time.</p>
 </div>
 <div class="section level2">
 <h2 id="addingremoving-indicators">Adding/removing indicators<a class="anchor" aria-label="anchor" href="#addingremoving-indicators"></a>
 </h2>
-<p>One adjustment that may be of interest is to add and remove indicators. This needs to be done with care because removing an indicator requires that it is removed from both <code>iData</code> and <code>iMeta</code> when building the coin with <code><a href="../reference/new_coin.html">new_coin()</a></code>. It is not possible to remove indicators after the coin is assembled, without completely regenerating the coin.</p>
-<p>One way to add or remove indicators is to edit the <code>iData</code> and <code>iMeta</code> data frames by hand and then rebuild the coin. Another way is to regenerate the coin, but use the <code>exclude</code> argument of <code><a href="../reference/new_coin.html">new_coin()</a></code>.</p>
-<p>A short cut function, <code><a href="../reference/change_ind.html">change_ind()</a></code> can be also used to quickly add or remove indicators from the framework, and regenerate the coin, all in one command.</p>
+<p>One adjustment that may be of interest is to add and remove
+indicators. This needs to be done with care because removing an
+indicator requires that it is removed from both <code>iData</code> and
+<code>iMeta</code> when building the coin with <code><a href="../reference/new_coin.html">new_coin()</a></code>.
+It is not possible to remove indicators after the coin is assembled,
+without completely regenerating the coin.</p>
+<p>One way to add or remove indicators is to edit the <code>iData</code>
+and <code>iMeta</code> data frames by hand and then rebuild the coin.
+Another way is to regenerate the coin, but use the <code>exclude</code>
+argument of <code><a href="../reference/new_coin.html">new_coin()</a></code>.</p>
+<p>A short cut function, <code><a href="../reference/change_ind.html">change_ind()</a></code> can be also used to
+quickly add or remove indicators from the framework, and regenerate the
+coin, all in one command.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># copy base coin</span></span>
 <span><span class="va">coin_remove</span> <span class="op">&lt;-</span> <span class="va">coin</span></span>
@@ -290,16 +356,42 @@
 <span><span class="co">#&gt;   Treated (51 units)</span></span>
 <span><span class="co">#&gt;   Normalised (51 units)</span></span>
 <span><span class="co">#&gt;   Aggregated (51 units)</span></span></code></pre></div>
-<p>The <code>drop</code> argument is used to specify which indicators to remove. The <code>add</code> argument adds indicators, although any indicators specified by <code>add</code> must be available in the original <code>iData</code> and <code>iMeta</code> that were passed to <code><a href="../reference/new_coin.html">new_coin()</a></code>. This means that <code>add</code> can only be used if you have previously excluded some of the indicators.</p>
-<p>In general, if you want to test the effect of different indicators, you should include all candidate indicators in <code>iData</code> and <code>iMeta</code> and use <code>exclude</code> from <code><a href="../reference/new_coin.html">new_coin()</a></code> and/or <code><a href="../reference/change_ind.html">change_ind()</a></code> to select subsets. The advantage of doing it this way is that different subsets can be tested as part of a sensitivity analysis, for example.</p>
-<p>In fact <code><a href="../reference/change_ind.html">change_ind()</a></code> simply edits the <code>exclude</code> argument of <code><a href="../reference/new_coin.html">new_coin()</a></code>, but is a quick way of doing this. Moreover it is safer, because it performs a few checks on the indicator codes to add or remove.</p>
-<p>It is also possible to effectively remove indicators by setting weights to zero. This is similar to the above approach but not necessarily identical: weights only come into play at the aggregation step, which is usually the last operation. If you perform unit screening, or imputation, the presence of zero-weighted indicators could still influence the results, depending on the settings.</p>
-<p>The effects of removing indicators and aggregates can also be tested using the <code><a href="../reference/remove_elements.html">remove_elements()</a></code> function, which removes all indicators or aggregates in a specified level and calculates the impact.</p>
+<p>The <code>drop</code> argument is used to specify which indicators to
+remove. The <code>add</code> argument adds indicators, although any
+indicators specified by <code>add</code> must be available in the
+original <code>iData</code> and <code>iMeta</code> that were passed to
+<code><a href="../reference/new_coin.html">new_coin()</a></code>. This means that <code>add</code> can only be
+used if you have previously excluded some of the indicators.</p>
+<p>In general, if you want to test the effect of different indicators,
+you should include all candidate indicators in <code>iData</code> and
+<code>iMeta</code> and use <code>exclude</code> from
+<code><a href="../reference/new_coin.html">new_coin()</a></code> and/or <code><a href="../reference/change_ind.html">change_ind()</a></code> to select
+subsets. The advantage of doing it this way is that different subsets
+can be tested as part of a sensitivity analysis, for example.</p>
+<p>In fact <code><a href="../reference/change_ind.html">change_ind()</a></code> simply edits the
+<code>exclude</code> argument of <code><a href="../reference/new_coin.html">new_coin()</a></code>, but is a quick
+way of doing this. Moreover it is safer, because it performs a few
+checks on the indicator codes to add or remove.</p>
+<p>It is also possible to effectively remove indicators by setting
+weights to zero. This is similar to the above approach but not
+necessarily identical: weights only come into play at the aggregation
+step, which is usually the last operation. If you perform unit
+screening, or imputation, the presence of zero-weighted indicators could
+still influence the results, depending on the settings.</p>
+<p>The effects of removing indicators and aggregates can also be tested
+using the <code><a href="../reference/remove_elements.html">remove_elements()</a></code> function, which removes all
+indicators or aggregates in a specified level and calculates the
+impact.</p>
 </div>
 <div class="section level2">
 <h2 id="comparison">Comparison<a class="anchor" aria-label="anchor" href="#comparison"></a>
 </h2>
-<p>Comparing coins is helped by two dedicated functions, <code><a href="../reference/compare_coins.html">compare_coins()</a></code> and <code><a href="../reference/compare_coins_multi.html">compare_coins_multi()</a></code>. The former is for comparing two coins only, whereas the latter allows to compare more than two coins. Let’s start by comparing the two coins we have: the default example coin, and the same coin but with a percentile rank normalisation method:</p>
+<p>Comparing coins is helped by two dedicated functions,
+<code><a href="../reference/compare_coins.html">compare_coins()</a></code> and <code><a href="../reference/compare_coins_multi.html">compare_coins_multi()</a></code>. The
+former is for comparing two coins only, whereas the latter allows to
+compare more than two coins. Let’s start by comparing the two coins we
+have: the default example coin, and the same coin but with a percentile
+rank normalisation method:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># compare index, sort by absolute rank difference</span></span>
 <span><span class="fu"><a href="../reference/compare_coins.html">compare_coins</a></span><span class="op">(</span><span class="va">coin</span>, <span class="va">coin2</span>, dset <span class="op">=</span> <span class="st">"Aggregated"</span>, iCode <span class="op">=</span> <span class="st">"Index"</span>,</span>
@@ -356,7 +448,12 @@
 <span><span class="co">#&gt; 16   FRA     21     21    0        0</span></span>
 <span><span class="co">#&gt; 18   GRC     32     32    0        0</span></span>
 <span><span class="co">#&gt; 44   ROU     25     25    0        0</span></span></code></pre></div>
-<p>This shows that for the overall index, the maximum rank change is 10 places for Portugal. We can compare ranks or scores, for any indicator or aggregate in the index. This also works if the number of units changes. At the moment, the coin has an imputation step which fills in all <code>NA</code>s. We could alternatively filter out any units with less than 90% data availability and remove the imputation step.</p>
+<p>This shows that for the overall index, the maximum rank change is 10
+places for Portugal. We can compare ranks or scores, for any indicator
+or aggregate in the index. This also works if the number of units
+changes. At the moment, the coin has an imputation step which fills in
+all <code>NA</code>s. We could alternatively filter out any units with
+less than 90% data availability and remove the imputation step.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># copy original coin</span></span>
 <span><span class="va">coin90</span> <span class="op">&lt;-</span> <span class="va">coin</span></span>
@@ -397,7 +494,8 @@
 <span><span class="co">#&gt;   Treated (46 units)</span></span>
 <span><span class="co">#&gt;   Normalised (46 units)</span></span>
 <span><span class="co">#&gt;   Aggregated (46 units)</span></span></code></pre></div>
-<p>We can see that we are down to 46 units after the screening step. Now let’s compare with the original coin:</p>
+<p>We can see that we are down to 46 units after the screening step. Now
+let’s compare with the original coin:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># compare index, sort by absolute rank difference</span></span>
 <span><span class="fu"><a href="../reference/compare_coins.html">compare_coins</a></span><span class="op">(</span><span class="va">coin</span>, <span class="va">coin90</span>, dset <span class="op">=</span> <span class="st">"Aggregated"</span>, iCode <span class="op">=</span> <span class="st">"Index"</span>,</span>
@@ -454,8 +552,10 @@
 <span><span class="co">#&gt; 27   KHM     37     NA   NA       NA</span></span>
 <span><span class="co">#&gt; 29   LAO     48     NA   NA       NA</span></span>
 <span><span class="co">#&gt; 34   MMR     41     NA   NA       NA</span></span></code></pre></div>
-<p>The removed units are marked as <code>NA</code> in the second coin.</p>
-<p>Finally, to demonstrate comparing multiple coins, we can call the <code><a href="../reference/compare_coins_multi.html">compare_coins_multi()</a></code> function:</p>
+<p>The removed units are marked as <code>NA</code> in the second
+coin.</p>
+<p>Finally, to demonstrate comparing multiple coins, we can call the
+<code><a href="../reference/compare_coins_multi.html">compare_coins_multi()</a></code> function:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/compare_coins_multi.html">compare_coins_multi</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Nominal <span class="op">=</span> <span class="va">coin</span>, Prank <span class="op">=</span> <span class="va">coin2</span>, NoLPIFor <span class="op">=</span> <span class="va">coin_remove</span>,</span>
 <span>                         Screen90 <span class="op">=</span> <span class="va">coin90</span><span class="op">)</span>, dset <span class="op">=</span> <span class="st">"Aggregated"</span>, iCode <span class="op">=</span> <span class="st">"Index"</span><span class="op">)</span></span>
@@ -511,7 +611,11 @@
 <span><span class="co">#&gt; 8    CHN      49    51       50       45</span></span>
 <span><span class="co">#&gt; 40   PAK      50    47       48       44</span></span>
 <span><span class="co">#&gt; 45   RUS      51    50       51       46</span></span></code></pre></div>
-<p>This simply shows the ranks of each of the three coins side by side. We can also choose to compare scores, and to display rank changes or absolute rank changes. Obviously a requirement is that the coins must all have some common units, and must all have <code>iCode</code> and <code>dset</code> available within.</p>
+<p>This simply shows the ranks of each of the three coins side by side.
+We can also choose to compare scores, and to display rank changes or
+absolute rank changes. Obviously a requirement is that the coins must
+all have some common units, and must all have <code>iCode</code> and
+<code>dset</code> available within.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

@@ -111,12 +111,21 @@
 
     
     
-<p>This vignette describes how to retrieve data from a coin. The main functions to do this are <code><a href="../reference/get_dset.html">get_dset()</a></code> and the more flexible <code><a href="../reference/get_data.html">get_data()</a></code>.</p>
-<p>These functions are important to understand, because many COINr functions use them to retrieve data for plotting, analysis and other functions. Both functions are <em>generics</em>, which means that they have methods for coins and purses.</p>
+<p>This vignette describes how to retrieve data from a coin. The main
+functions to do this are <code><a href="../reference/get_dset.html">get_dset()</a></code> and the more flexible
+<code><a href="../reference/get_data.html">get_data()</a></code>.</p>
+<p>These functions are important to understand, because many COINr
+functions use them to retrieve data for plotting, analysis and other
+functions. Both functions are <em>generics</em>, which means that they
+have methods for coins and purses.</p>
 <div class="section level2">
 <h2 id="data-sets">Data sets<a class="anchor" aria-label="anchor" href="#data-sets"></a>
 </h2>
-<p>Every time a “building” operation is applied to a coin, such as <code><a href="../reference/Treat.html">Treat()</a></code>, <code><a href="../reference/Screen.html">Screen()</a></code>, <code><a href="../reference/Normalise.html">Normalise()</a></code> and so on, a new data set is created. Data sets live in the <code>.$Data</code> sub-list of the coin. We can retrieve a data set at any time using the <code><a href="../reference/get_data.html">get_data()</a></code> function:</p>
+<p>Every time a “building” operation is applied to a coin, such as
+<code><a href="../reference/Treat.html">Treat()</a></code>, <code><a href="../reference/Screen.html">Screen()</a></code>, <code><a href="../reference/Normalise.html">Normalise()</a></code>
+and so on, a new data set is created. Data sets live in the
+<code>.$Data</code> sub-list of the coin. We can retrieve a data set at
+any time using the <code><a href="../reference/get_data.html">get_data()</a></code> function:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bluefoxr.github.io/COINr/">COINr</a></span><span class="op">)</span></span>
 <span></span>
@@ -134,7 +143,11 @@
 <span><span class="co">#&gt; 3   BEL 94.56023 23.3967426 97.14314 100.00000</span></span>
 <span><span class="co">#&gt; 4   BGD 27.63906  0.1243185 45.80661  10.85013</span></span>
 <span><span class="co">#&gt; 5   BGR 34.29965 10.8828790 37.40495  16.34359</span></span></code></pre></div>
-<p>By default, a data set in the coin consists of indicator columns plus the “uCode” column, which is the unique identifier of each row. You can also ask to attach unit metadata columns, such as unit names, groups, and anything else that was input when building the coin, using the <code>also_get</code> argument:</p>
+<p>By default, a data set in the coin consists of indicator columns plus
+the “uCode” column, which is the unique identifier of each row. You can
+also ask to attach unit metadata columns, such as unit names, groups,
+and anything else that was input when building the coin, using the
+<code>also_get</code> argument:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># retrieve normalised data set</span></span>
 <span><span class="va">dset_norm2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_dset.html">get_dset</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Normalised"</span>, also_get <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"uName"</span>, <span class="st">"GDP_group"</span><span class="op">)</span><span class="op">)</span></span>
@@ -151,11 +164,16 @@
 <div class="section level2">
 <h2 id="data-subsets">Data subsets<a class="anchor" aria-label="anchor" href="#data-subsets"></a>
 </h2>
-<p>While <code><a href="../reference/get_dset.html">get_dset()</a></code> is a quick way to retrieve an entire data set and metadata, the <code><a href="../reference/get_data.html">get_data()</a></code> function is a generalisation: it can also be used to obtain a whole data set, but also subsets of data, based on e.g. indicator selection and grouping (columns), as well as unit selection and grouping (rows).</p>
+<p>While <code><a href="../reference/get_dset.html">get_dset()</a></code> is a quick way to retrieve an entire
+data set and metadata, the <code><a href="../reference/get_data.html">get_data()</a></code> function is a
+generalisation: it can also be used to obtain a whole data set, but also
+subsets of data, based on e.g. indicator selection and grouping
+(columns), as well as unit selection and grouping (rows).</p>
 <div class="section level3">
 <h3 id="indicatorscolumns">Indicators/columns<a class="anchor" aria-label="anchor" href="#indicatorscolumns"></a>
 </h3>
-<p>A simple example is to extract one or more named indicators from a target data set:</p>
+<p>A simple example is to extract one or more named indicators from a
+target data set:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_data.html">get_data</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Raw"</span>, iCodes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Flights"</span>, <span class="st">"LPI"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -167,8 +185,13 @@
 <span><span class="co">#&gt; 2    BEL 31.88546 4.108538</span></span>
 <span><span class="co">#&gt; 32   BGD  4.27955 2.663902</span></span>
 <span><span class="co">#&gt; 3    BGR  9.23588 2.807685</span></span></code></pre></div>
-<p>By default, <code><a href="../reference/get_data.html">get_data()</a></code> returns the requested indicators, plus the <code>uCode</code> identifier column. We can also set <code>also_get = "none"</code> to return only the indicator columns.</p>
-<p>The <code>iCode</code> argument can also accept groups of indicators, based on the structure of the index. In our example, indicators are aggregated into “pillars” (level 2) within groups. We can name an aggregation group and extract the underlying indicators:</p>
+<p>By default, <code><a href="../reference/get_data.html">get_data()</a></code> returns the requested indicators,
+plus the <code>uCode</code> identifier column. We can also set
+<code>also_get = "none"</code> to return only the indicator columns.</p>
+<p>The <code>iCode</code> argument can also accept groups of indicators,
+based on the structure of the index. In our example, indicators are
+aggregated into “pillars” (level 2) within groups. We can name an
+aggregation group and extract the underlying indicators:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_data.html">get_data</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Raw"</span>, iCodes <span class="op">=</span> <span class="st">"Political"</span>, Level <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">5</span><span class="op">)</span></span>
@@ -178,7 +201,12 @@
 <span><span class="co">#&gt; 2    BEL   84  248 43.00308</span></span>
 <span><span class="co">#&gt; 32   BGD   52  145 38.60601</span></span>
 <span><span class="co">#&gt; 3    BGR   67  209 42.95986</span></span></code></pre></div>
-<p>Here we have requested all the indicators in level 1 (the indicator level), that belong to the group called “Political” (one of the pillars). Specifying the level becomes more relevant when we look at the aggregated data set, which also includes the pillar, sub-index and index scores. Here, for example, we can ask for all the pillar scores (level 2) which belong to the sustainability sub-index (level 3):</p>
+<p>Here we have requested all the indicators in level 1 (the indicator
+level), that belong to the group called “Political” (one of the
+pillars). Specifying the level becomes more relevant when we look at the
+aggregated data set, which also includes the pillar, sub-index and index
+scores. Here, for example, we can ask for all the pillar scores (level
+2) which belong to the sustainability sub-index (level 3):</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_data.html">get_data</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Aggregated"</span>, iCodes <span class="op">=</span> <span class="st">"Sust"</span>, Level <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span></span>
@@ -189,19 +217,32 @@
 <span><span class="co">#&gt; 3   BEL 53.00859 86.16783 50.09020</span></span>
 <span><span class="co">#&gt; 4   BGD 81.66988 27.51138 64.58884</span></span>
 <span><span class="co">#&gt; 5   BGR 55.69922 53.30489 61.68677</span></span></code></pre></div>
-<p>If this isn’t clear, look at the structure of the example index using e.g. <code>plot_framework(coin)</code>. If we wanted to select all the indicators within the “Sust” sub-index we would set <code>Level = 1</code>. If we wanted to select the sub-index scores themselves we would set <code>Level = 3</code>, and so on.</p>
-<p>The idea of selecting indicators and aggregates based on the structure of the index is useful in many places in COINr, for example examining correlations within aggregation groups using <code><a href="../reference/plot_corr.html">plot_corr()</a></code>.</p>
+<p>If this isn’t clear, look at the structure of the example index using
+e.g. <code>plot_framework(coin)</code>. If we wanted to select all the
+indicators within the “Sust” sub-index we would set
+<code>Level = 1</code>. If we wanted to select the sub-index scores
+themselves we would set <code>Level = 3</code>, and so on.</p>
+<p>The idea of selecting indicators and aggregates based on the
+structure of the index is useful in many places in COINr, for example
+examining correlations within aggregation groups using
+<code><a href="../reference/plot_corr.html">plot_corr()</a></code>.</p>
 </div>
 <div class="section level3">
 <h3 id="unitsrows">Units/rows<a class="anchor" aria-label="anchor" href="#unitsrows"></a>
 </h3>
-<p>Units (rows) of the data set can also be selected (also in combination with selecting indicators). Starting with a simple example, let’s select specified units for a specific indicator:</p>
+<p>Units (rows) of the data set can also be selected (also in
+combination with selecting indicators). Starting with a simple example,
+let’s select specified units for a specific indicator:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_data.html">get_data</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Raw"</span>, iCodes <span class="op">=</span> <span class="st">"Goods"</span>, uCodes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AUT"</span>, <span class="st">"VNM"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    uCode    Goods</span></span>
 <span><span class="co">#&gt; 1    AUT 278.4264</span></span>
 <span><span class="co">#&gt; 51   VNM 269.0766</span></span></code></pre></div>
-<p>Rows can also be sub-setted using groups, i.e. unit groupings that are defined using variables input with <code>iMeta$Type = "Group"</code> when building the coin. Recall that for our example coin we have several groups (a reminder that you can see some details about the coin using its print method):</p>
+<p>Rows can also be sub-setted using groups, i.e. unit groupings that
+are defined using variables input with <code>iMeta$Type = "Group"</code>
+when building the coin. Recall that for our example coin we have several
+groups (a reminder that you can see some details about the coin using
+its print method):</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">coin</span></span>
 <span><span class="co">#&gt; --------------</span></span>
@@ -227,7 +268,10 @@
 <span><span class="co">#&gt;   Treated (51 units)</span></span>
 <span><span class="co">#&gt;   Normalised (51 units)</span></span>
 <span><span class="co">#&gt;   Aggregated (51 units)</span></span></code></pre></div>
-<p>The first way to subset by unit group is to name a grouping variable, and a group within that variable to select. For example, say we want to know the values of the “Goods” indicator for all the countries in the “XL” GDP group:</p>
+<p>The first way to subset by unit group is to name a grouping variable,
+and a group within that variable to select. For example, say we want to
+know the values of the “Goods” indicator for all the countries in the
+“XL” GDP group:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_data.html">get_data</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Raw"</span>, iCodes <span class="op">=</span> <span class="st">"Goods"</span>, use_group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>GDP_group <span class="op">=</span> <span class="st">"XL"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    uCode GDP_group     Goods</span></span>
@@ -243,8 +287,15 @@
 <span><span class="co">#&gt; 25   JPN        XL  732.2078</span></span>
 <span><span class="co">#&gt; 28   KOR        XL  568.9920</span></span>
 <span><span class="co">#&gt; 45   RUS        XL  343.8504</span></span></code></pre></div>
-<p>Since we have subsetted by group, this also returns the group column which was used.</p>
-<p>Another way of sub-setting is to combine <code>uCodes</code> and <code>use_group</code>. When these two arguments are both specified, the result is to return the full group(s) to which the specified <code>uCodes</code> belong. This can be used to put a unit in context with its peers within a group. For example, we might want to see the values of the “Flights” indicator for a specific unit, as well as all other units within the same population group:</p>
+<p>Since we have subsetted by group, this also returns the group column
+which was used.</p>
+<p>Another way of sub-setting is to combine <code>uCodes</code> and
+<code>use_group</code>. When these two arguments are both specified, the
+result is to return the full group(s) to which the specified
+<code>uCodes</code> belong. This can be used to put a unit in context
+with its peers within a group. For example, we might want to see the
+values of the “Flights” indicator for a specific unit, as well as all
+other units within the same population group:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_data.html">get_data</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Raw"</span>, iCodes <span class="op">=</span> <span class="st">"Flights"</span>, uCodes <span class="op">=</span> <span class="st">"MLT"</span>, use_group <span class="op">=</span> <span class="st">"Pop_group"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    uCode Pop_group  Flights</span></span>
@@ -261,15 +312,25 @@
 <span><span class="co">#&gt; 38   NOR         S 25.64994</span></span>
 <span><span class="co">#&gt; 39   NZL         S 13.37242</span></span>
 <span><span class="co">#&gt; 48   SVN         S  1.51736</span></span></code></pre></div>
-<p>Here, we have to specify <code>use_group</code> simply as a string rather than a list. Since MLT is in the “S” population group, it returns all units within that group.</p>
-<p>Overall, the idea of <code><a href="../reference/get_data.html">get_data()</a></code> is to flexibly return subsets of indicator data, based on the structure of the index and unit groups.</p>
+<p>Here, we have to specify <code>use_group</code> simply as a string
+rather than a list. Since MLT is in the “S” population group, it returns
+all units within that group.</p>
+<p>Overall, the idea of <code><a href="../reference/get_data.html">get_data()</a></code> is to flexibly return
+subsets of indicator data, based on the structure of the index and unit
+groups.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="manual-selection">Manual selection<a class="anchor" aria-label="anchor" href="#manual-selection"></a>
 </h2>
-<p>As a final point, it’s worth pointing out that a coin is simply a list of R objects such as data frames, other lists, vectors and so on. It has a particular format which allows things to be easily accessed by COINr functions. But other than that, its an ordinary R object. This means that even without the helper functions mentioned, you can get at the data simply by exploring the coin yourself.</p>
-<p>The data sets live in the <code>.$Data</code> sub-list of the coin:</p>
+<p>As a final point, it’s worth pointing out that a coin is simply a
+list of R objects such as data frames, other lists, vectors and so on.
+It has a particular format which allows things to be easily accessed by
+COINr functions. But other than that, its an ordinary R object. This
+means that even without the helper functions mentioned, you can get at
+the data simply by exploring the coin yourself.</p>
+<p>The data sets live in the <code>.$Data</code> sub-list of the
+coin:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">coin</span><span class="op">$</span><span class="va">Data</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "Raw"         "Denominated" "Imputed"     "Screened"    "Treated"    </span></span>
@@ -285,7 +346,8 @@
 <span><span class="co">#&gt; 2    BEL 4.108538 31.88546 20.567121   48</span></span>
 <span><span class="co">#&gt; 32   BGD 2.663902  4.27955  9.698165   16</span></span>
 <span><span class="co">#&gt; 3    BGR 2.807685  9.23588  7.919366   18</span></span></code></pre></div>
-<p>The metadata lives in the <code>.$Meta</code> sub-list. For example, the unit metadata, which includes groups, names etc:</p>
+<p>The metadata lives in the <code>.$Meta</code> sub-list. For example,
+the unit metadata, which includes groups, names etc:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">coin</span><span class="op">$</span><span class="va">Meta</span><span class="op">$</span><span class="va">Unit</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 'data.frame':    51 obs. of  11 variables:</span></span>
@@ -300,7 +362,9 @@
 <span><span class="co">#&gt;  $ Energy       : num  81.3 27 41.83 27.92 9.96 ...</span></span>
 <span><span class="co">#&gt;  $ GDP          : num  1304.5 390.8 468 220.8 53.2 ...</span></span>
 <span><span class="co">#&gt;  $ Population   : num  24451 8735 11429 164670 7085 ...</span></span></code></pre></div>
-<p>The point is that if COINr tools don’t get you where you want to go, knowing your way around the coin allows you to access the data exactly how you want.</p>
+<p>The point is that if COINr tools don’t get you where you want to go,
+knowing your way around the coin allows you to access the data exactly
+how you want.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

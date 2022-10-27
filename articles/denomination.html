@@ -111,12 +111,25 @@
 
     
     
-<p>Denomination is the process of scaling one indicator by another quantity to adjust for the effect of size. This is because many indicators are linked to the unit’s size (economic size, physical size, population, etc.) in one way or another, and if no adjustments were made, a composite indicator would end up with the largest units at the top and the smallest at the bottom. Often, the adjustment is made by dividing the indicator by a so-called “denominator” or a denominating variable. If units are countries, denominators are typically things like GDP, population or land area.</p>
-<p>COINr’s <code><a href="../reference/Denominate.html">Denominate()</a></code> function allows to quickly perform this operation in a flexible and reproducible way. As with other building functions, it is a <em>generic</em> which means that it has different methods for data frames, coins and purses. They are however all fairly similar.</p>
+<p>Denomination is the process of scaling one indicator by another
+quantity to adjust for the effect of size. This is because many
+indicators are linked to the unit’s size (economic size, physical size,
+population, etc.) in one way or another, and if no adjustments were
+made, a composite indicator would end up with the largest units at the
+top and the smallest at the bottom. Often, the adjustment is made by
+dividing the indicator by a so-called “denominator” or a denominating
+variable. If units are countries, denominators are typically things like
+GDP, population or land area.</p>
+<p>COINr’s <code><a href="../reference/Denominate.html">Denominate()</a></code> function allows to quickly perform
+this operation in a flexible and reproducible way. As with other
+building functions, it is a <em>generic</em> which means that it has
+different methods for data frames, coins and purses. They are however
+all fairly similar.</p>
 <div class="section level2">
 <h2 id="data-frames">Data frames<a class="anchor" aria-label="anchor" href="#data-frames"></a>
 </h2>
-<p>We’ll begin by demonstrating denomination on a data frame. We’ll use the in-built data set to get a small sample of indicators:</p>
+<p>We’ll begin by demonstrating denomination on a data frame. We’ll use
+the in-built data set to get a small sample of indicators:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bluefoxr.github.io/COINr/">COINr</a></span><span class="op">)</span></span>
 <span></span>
@@ -130,7 +143,10 @@
 <span><span class="co">#&gt; 4   HRV  28.36795  9.24529 3.160829</span></span>
 <span><span class="co">#&gt; 5   CYP   8.76681  8.75467 2.999061</span></span>
 <span><span class="co">#&gt; 6   CZE 274.13650 15.30953 3.674309</span></span></code></pre></div>
-<p>This is the raw indicator data for three indicators, plus the “uCode” column which identifies each unit. We will also get some data for denominating the indicators. COINr has an in-built set of denominator data called <code>WorldDenoms</code>:</p>
+<p>This is the raw indicator data for three indicators, plus the “uCode”
+column which identifies each unit. We will also get some data for
+denominating the indicators. COINr has an in-built set of denominator
+data called <code>WorldDenoms</code>:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">WorldDenoms</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 7</span></span></span>
@@ -142,14 +158,37 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> American Samoa ASM      636<span style="text-decoration: underline;">000</span>000       <span style="text-decoration: underline;">55</span>312     200 <span style="text-decoration: underline;">11</span>467. Upper middle inc…</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> Andorra        AND     <span style="text-decoration: underline;">3</span>154<span style="text-decoration: underline;">057</span>987.      <span style="text-decoration: underline;">77</span>142     470 <span style="text-decoration: underline;">40</span>886. High income      </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> Angola         AGO    <span style="text-decoration: underline;">88</span>815<span style="text-decoration: underline;">697</span>793.   31<span style="text-decoration: underline;">825</span>295 1<span style="text-decoration: underline;">246</span>700  <span style="text-decoration: underline;">2</span>791. Lower middle inc…</span></span></code></pre></div>
-<p>Now, the main things to specify in denomination are which indicators to denominate, and by what. In other words, we need to map the indicators to the denominators. In the example, the export of goods should be denominated by GDP, passenger flight capacity by population (GDP could also possibly be reasonable), and “LPI” (the logistics performance index) is an intensive variable that does not need to be denominated.</p>
-<p>This specification is passed to <code><a href="../reference/Denominate.html">Denominate()</a></code> using the <code>denomby</code> argument. This takes a data frame which includes “iCode” (the name of the column to be denonimated), “Denominator” (the column name of the denominator data frame to use), and “ScaleFactor” is a multiplying factor to apply if needed. We create this data frame here:</p>
+<p>Now, the main things to specify in denomination are which indicators
+to denominate, and by what. In other words, we need to map the
+indicators to the denominators. In the example, the export of goods
+should be denominated by GDP, passenger flight capacity by population
+(GDP could also possibly be reasonable), and “LPI” (the logistics
+performance index) is an intensive variable that does not need to be
+denominated.</p>
+<p>This specification is passed to <code><a href="../reference/Denominate.html">Denominate()</a></code> using the
+<code>denomby</code> argument. This takes a data frame which includes
+“iCode” (the name of the column to be denonimated), “Denominator” (the
+column name of the denominator data frame to use), and “ScaleFactor” is
+a multiplying factor to apply if needed. We create this data frame
+here:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># specify how to denominate</span></span>
 <span><span class="va">denomby</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>iCode <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Goods"</span>, <span class="st">"Flights"</span><span class="op">)</span>,</span>
 <span>                      Denominator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"GDP"</span>, <span class="st">"Population"</span><span class="op">)</span>,</span>
 <span>                      ScaleFactor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1000</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>A second important consideration is that the rows of the indicators and the denominators need to be matched, so that each unit is denominated by the value corresponding to that unit, and not another unit. Notice that the <code>WorldDenoms</code> data frame covers more or less all countries in the world, whereas the sample indicators only cover 51 countries. The matching is performed inside the <code><a href="../reference/Denominate.html">Denominate()</a></code> function, using an identifier column which must be present in both data frames. Here, our common column is “uCode”, which is already found in both data frames. This is also the default column name expected by <code><a href="../reference/Denominate.html">Denominate()</a></code>, so we don’t even need to specify it. If you have other column names, use the <code>x_iD</code> and <code>denoms_ID</code> arguments to pass these names to the function.</p>
+<p>A second important consideration is that the rows of the indicators
+and the denominators need to be matched, so that each unit is
+denominated by the value corresponding to that unit, and not another
+unit. Notice that the <code>WorldDenoms</code> data frame covers more or
+less all countries in the world, whereas the sample indicators only
+cover 51 countries. The matching is performed inside the
+<code><a href="../reference/Denominate.html">Denominate()</a></code> function, using an identifier column which
+must be present in both data frames. Here, our common column is “uCode”,
+which is already found in both data frames. This is also the default
+column name expected by <code><a href="../reference/Denominate.html">Denominate()</a></code>, so we don’t even need
+to specify it. If you have other column names, use the <code>x_iD</code>
+and <code>denoms_ID</code> arguments to pass these names to the
+function.</p>
 <p>Ok so now we are ready to denominate:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Denominate one by the other</span></span>
@@ -163,13 +202,27 @@
 <span><span class="co">#&gt; 4   HRV 4.669422e-10 0.002272966 3.160829</span></span>
 <span><span class="co">#&gt; 5   CYP 3.513901e-10 0.007304232 2.999061</span></span>
 <span><span class="co">#&gt; 6   CZE 1.093569e-09 0.001434859 3.674309</span></span></code></pre></div>
-<p>The function has matched each unit in <code>iData</code> with its corresponding denominator value in <code>WorldDenoms</code> and divided the former by the latter. As expected, “Goods” and “Flights” have changed, but “LPI” has not because it was not included in the <code>denomby</code> data frame.</p>
-<p>Otherwise, the only other feature to mention is the <code>f_denom</code> argument, which allows other functions to be used other than the division operator. See the function documentation.</p>
+<p>The function has matched each unit in <code>iData</code> with its
+corresponding denominator value in <code>WorldDenoms</code> and divided
+the former by the latter. As expected, “Goods” and “Flights” have
+changed, but “LPI” has not because it was not included in the
+<code>denomby</code> data frame.</p>
+<p>Otherwise, the only other feature to mention is the
+<code>f_denom</code> argument, which allows other functions to be used
+other than the division operator. See the function documentation.</p>
 </div>
 <div class="section level2">
 <h2 id="coins">Coins<a class="anchor" aria-label="anchor" href="#coins"></a>
 </h2>
-<p>Now let’s look at denomination inside a coin. The main difference here is that the information needed to denominate the indicators may already be present inside the coin. When creating the coin using <code><a href="../reference/new_coin.html">new_coin()</a></code>, there is the option to specify denominating variables as part of <code>iData</code> (these are variables where <code>iMeta$Type = "Denominator"</code>), and to specify in <code>iMeta</code> the mapping between indicators and denominators, using the <code>iMeta$Type</code> column. To see what this looks like:</p>
+<p>Now let’s look at denomination inside a coin. The main difference
+here is that the information needed to denominate the indicators may
+already be present inside the coin. When creating the coin using
+<code><a href="../reference/new_coin.html">new_coin()</a></code>, there is the option to specify denominating
+variables as part of <code>iData</code> (these are variables where
+<code>iMeta$Type = "Denominator"</code>), and to specify in
+<code>iMeta</code> the mapping between indicators and denominators,
+using the <code>iMeta$Type</code> column. To see what this looks
+like:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># first few rows of the example iMeta, selected cols</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ASEM_iMeta</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"iCode"</span>, <span class="st">"Denominator"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
@@ -180,7 +233,8 @@
 <span><span class="co">#&gt; 4    Bord        Area</span></span>
 <span><span class="co">#&gt; 5    Elec      Energy</span></span>
 <span><span class="co">#&gt; 6     Gas      Energy</span></span></code></pre></div>
-<p>The entries in “Denominator” correspond to column names that are present in <code>iData</code>:</p>
+<p>The entries in “Denominator” correspond to column names that are
+present in <code>iData</code>:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># see names of example iData</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">ASEM_iData</span><span class="op">)</span></span>
@@ -199,7 +253,9 @@
 <span><span class="co">#&gt; [49] "TertGrad"      "FreePress"     "TolMin"        "NGOs"         </span></span>
 <span><span class="co">#&gt; [53] "CPI"           "FemLab"        "WomParl"       "PubDebt"      </span></span>
 <span><span class="co">#&gt; [57] "PrivDebt"      "GDPGrow"       "RDExp"         "NEET"</span></span></code></pre></div>
-<p>So in our example, all the information needed to denominate is already present in the coin - the denominator data, and the mapping. In this case, to denominate, we simply call:</p>
+<p>So in our example, all the information needed to denominate is
+already present in the coin - the denominator data, and the mapping. In
+this case, to denominate, we simply call:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># build example coin</span></span>
 <span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_example_coin.html">build_example_coin</a></span><span class="op">(</span>up_to <span class="op">=</span> <span class="st">"new_coin"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -207,20 +263,43 @@
 <span><span class="co"># denominate (here, we only need to say which dset to use)</span></span>
 <span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Denominate.html">Denominate</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Raw"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Written data set to .$Data$Denominated</span></span></code></pre></div>
-<p>If the denomination data and/or mapping isn’t present in the coin, or we wish to try an alternative specification, we can also pass this to <code><a href="../reference/Denominate.html">Denominate()</a></code> using the <code>denoms</code> and <code>denomby</code> arguments as in the previous section.</p>
-<p>This concludes the main features of <code><a href="../reference/Denominate.html">Denominate()</a></code> for a coin. Before moving on, consider that denomination needs extra care because it radically changes the indicator. It is a nonlinear transformation because each data point is divided by a different value. To demonstrate, consider the “Flights” indicator that we just denominated - let’s plot the raw indicator against the denominated version:</p>
+<p>If the denomination data and/or mapping isn’t present in the coin, or
+we wish to try an alternative specification, we can also pass this to
+<code><a href="../reference/Denominate.html">Denominate()</a></code> using the <code>denoms</code> and
+<code>denomby</code> arguments as in the previous section.</p>
+<p>This concludes the main features of <code><a href="../reference/Denominate.html">Denominate()</a></code> for a
+coin. Before moving on, consider that denomination needs extra care
+because it radically changes the indicator. It is a nonlinear
+transformation because each data point is divided by a different value.
+To demonstrate, consider the “Flights” indicator that we just
+denominated - let’s plot the raw indicator against the denominated
+version:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_scatter.html">plot_scatter</a></span><span class="op">(</span><span class="va">coin</span>, dsets <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Raw"</span>, <span class="st">"Denominated"</span><span class="op">)</span>, iCodes <span class="op">=</span> <span class="st">"Flights"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="denomination_files/figure-html/unnamed-chunk-9-1.png" width="700"></p>
-<p>This shows that the raw and denominated indicators show very little resemblance to one another.</p>
+<p>This shows that the raw and denominated indicators show very little
+resemblance to one another.</p>
 </div>
 <div class="section level2">
 <h2 id="purses">Purses<a class="anchor" aria-label="anchor" href="#purses"></a>
 </h2>
-<p>The final method for <code><a href="../reference/Denominate.html">Denominate()</a></code> is for purses. The purse method is exactly the same as the coin method, except applied to a purse.</p>
-<p>An important consideration here is that denominator variables can and do vary with time, just like indicators. This means that e.g. “Total value of exports” from 2019 should be divided by GDP from 2019, and not from another year. In other words, denominators are panel data just like the indicators.</p>
-<p>This is why denominators are ideally input as part of <code>iData</code> when calling <code><a href="../reference/new_coin.html">new_coin()</a></code>. In doing so, denominators are another column of the data frame like the indicators, and must have an entry for each unit/time pair. This also ensures that the unit-matching of denominator and indicator is correct (or more accurately, I leave that up to you!).</p>
-<p>In our example purse, the denominator data is already included, as is the mapping. This means that denomination is exactly the same operation as denominating a coin:</p>
+<p>The final method for <code><a href="../reference/Denominate.html">Denominate()</a></code> is for purses. The
+purse method is exactly the same as the coin method, except applied to a
+purse.</p>
+<p>An important consideration here is that denominator variables can and
+do vary with time, just like indicators. This means that e.g. “Total
+value of exports” from 2019 should be divided by GDP from 2019, and not
+from another year. In other words, denominators are panel data just like
+the indicators.</p>
+<p>This is why denominators are ideally input as part of
+<code>iData</code> when calling <code><a href="../reference/new_coin.html">new_coin()</a></code>. In doing so,
+denominators are another column of the data frame like the indicators,
+and must have an entry for each unit/time pair. This also ensures that
+the unit-matching of denominator and indicator is correct (or more
+accurately, I leave that up to you!).</p>
+<p>In our example purse, the denominator data is already included, as is
+the mapping. This means that denomination is exactly the same operation
+as denominating a coin:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># build example purse</span></span>
 <span><span class="va">purse</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_example_purse.html">build_example_purse</a></span><span class="op">(</span>up_to <span class="op">=</span> <span class="st">"new_coin"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -232,7 +311,14 @@
 <span><span class="co">#&gt; Written data set to .$Data$Denominated</span></span>
 <span><span class="co">#&gt; Written data set to .$Data$Denominated</span></span>
 <span><span class="co">#&gt; Written data set to .$Data$Denominated</span></span></code></pre></div>
-<p>In fact if you try to pass denominator data to <code><a href="../reference/Denominate.html">Denominate()</a></code> for a purse via <code>denoms</code>, there is a catch: at the moment, <code>denoms</code> does not support panel data, so it is required to use the same value for each time point. This is not ideal and may be sorted out in future releases. For now, it is better to denominate purses by passing all the specifications via <code>iData</code> and <code>iMeta</code> when building the purse with <code><a href="../reference/new_coin.html">new_coin()</a></code>.</p>
+<p>In fact if you try to pass denominator data to
+<code><a href="../reference/Denominate.html">Denominate()</a></code> for a purse via <code>denoms</code>, there is
+a catch: at the moment, <code>denoms</code> does not support panel data,
+so it is required to use the same value for each time point. This is not
+ideal and may be sorted out in future releases. For now, it is better to
+denominate purses by passing all the specifications via
+<code>iData</code> and <code>iMeta</code> when building the purse with
+<code><a href="../reference/new_coin.html">new_coin()</a></code>.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

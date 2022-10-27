@@ -114,31 +114,61 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>Data treatment is the process of altering indicators to improve their statistical properties, mainly for the purposes of aggregation. Data treatment is a delicate subject, because it essentially involves changing the values of certain observations, or transforming an entire distribution. Like any other step or assumption though, any data treatment should be carefully recorded and its implications understood. Of course, data treatment does not <em>have</em> to be applied, it is simply another tool in your toolbox.</p>
+<p>Data treatment is the process of altering indicators to improve their
+statistical properties, mainly for the purposes of aggregation. Data
+treatment is a delicate subject, because it essentially involves
+changing the values of certain observations, or transforming an entire
+distribution. Like any other step or assumption though, any data
+treatment should be carefully recorded and its implications understood.
+Of course, data treatment does not <em>have</em> to be applied, it is
+simply another tool in your toolbox.</p>
 </div>
 <div class="section level2">
 <h2 id="the-treat-function">The <code>Treat()</code> function<a class="anchor" aria-label="anchor" href="#the-treat-function"></a>
 </h2>
-<p>The COINr function for treating data is called <code><a href="../reference/Treat.html">Treat()</a></code>. This is a generic function with methods for coins, purses, data frames and numeric vectors. It is very flexible but this can add a layer of complexity. If you want to run mostly at default options, see the <code><a href="../reference/qTreat.html">qTreat()</a></code> function mentioned below in <a href="#simplified-function">Simplified function</a>.</p>
-<p>The <code><a href="../reference/Treat.html">Treat()</a></code> function operates a two-stage data treatment process, based on two data treatment functions (<code>f1</code> and <code>f2</code>), and a pass/fail function <code>f_pass</code> which detects outliers. The arrangement of this function is inspired by a fairly standard data treatment process applied to indicators, which consists of checking skew and kurtosis, then if the criteria are not met, applying Winsorisation up to a specified limit. Then if Winsorisation still does not bring skew and kurtosis within limits, applying a nonlinear transformation such as log or Box-Cox.</p>
-<p>This function generalises this process by using the following general steps:</p>
+<p>The COINr function for treating data is called <code><a href="../reference/Treat.html">Treat()</a></code>.
+This is a generic function with methods for coins, purses, data frames
+and numeric vectors. It is very flexible but this can add a layer of
+complexity. If you want to run mostly at default options, see the
+<code><a href="../reference/qTreat.html">qTreat()</a></code> function mentioned below in <a href="#simplified-function">Simplified function</a>.</p>
+<p>The <code><a href="../reference/Treat.html">Treat()</a></code> function operates a two-stage data treatment
+process, based on two data treatment functions (<code>f1</code> and
+<code>f2</code>), and a pass/fail function <code>f_pass</code> which
+detects outliers. The arrangement of this function is inspired by a
+fairly standard data treatment process applied to indicators, which
+consists of checking skew and kurtosis, then if the criteria are not
+met, applying Winsorisation up to a specified limit. Then if
+Winsorisation still does not bring skew and kurtosis within limits,
+applying a nonlinear transformation such as log or Box-Cox.</p>
+<p>This function generalises this process by using the following general
+steps:</p>
 <ol style="list-style-type: decimal">
 <li>Check if variable passes or fails using <code>f_pass</code>
 </li>
-<li>If <code>f_pass</code> returns <code>FALSE</code>, apply <code>f1</code>, else return <code>x</code> unmodified</li>
+<li>If <code>f_pass</code> returns <code>FALSE</code>, apply
+<code>f1</code>, else return <code>x</code> unmodified</li>
 <li>Check again using <code>f_pass</code>
 </li>
-<li>If <code>f_pass</code> still returns <code>FALSE</code>, apply <code>f2</code>
+<li>If <code>f_pass</code> still returns <code>FALSE</code>, apply
+<code>f2</code>
 </li>
-<li>Return the modified <code>x</code> as well as other information.</li>
+<li>Return the modified <code>x</code> as well as other
+information.</li>
 </ol>
-<p>For the “typical” case described above <code>f1</code> is a Winsorisation function, <code>f2</code> is a nonlinear transformation and <code>f_pass</code> is a skew and kurtosis check. However, any functions can be passed as <code>f1</code>, <code>f2</code> and <code>f_pass</code>, which makes it a flexible tool that is also compatible with other packages.</p>
-<p>Further details on how this works are given in the following sections.</p>
+<p>For the “typical” case described above <code>f1</code> is a
+Winsorisation function, <code>f2</code> is a nonlinear transformation
+and <code>f_pass</code> is a skew and kurtosis check. However, any
+functions can be passed as <code>f1</code>, <code>f2</code> and
+<code>f_pass</code>, which makes it a flexible tool that is also
+compatible with other packages.</p>
+<p>Further details on how this works are given in the following
+sections.</p>
 </div>
 <div class="section level2">
 <h2 id="numeric-vectors">Numeric vectors<a class="anchor" aria-label="anchor" href="#numeric-vectors"></a>
 </h2>
-<p>The clearest way to demonstrate the <code><a href="../reference/Treat.html">Treat()</a></code> function is on a numeric vector. Let’s make a vector with a couple of outliers:</p>
+<p>The clearest way to demonstrate the <code><a href="../reference/Treat.html">Treat()</a></code> function is
+on a numeric vector. Let’s make a vector with a couple of outliers:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># numbers between 1 and 10</span></span>
 <span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span></span>
@@ -154,7 +184,12 @@
 <span></span>
 <span><span class="fu"><a href="../reference/kurt.html">kurt</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 9.741391</span></span></code></pre></div>
-<p>The skew and kurtosis are both high. If we follow the default limits in COINr (absolute skew capped at 2, and kurtosis capped at 3.5), this would be classed as a vector with outliers. Indeed we can confirm this using the <code><a href="../reference/check_SkewKurt.html">check_SkewKurt()</a></code> function, which is the default pass/fail function used in <code><a href="../reference/Treat.html">Treat()</a></code>. This also anyway outputs the skew and kurtosis:</p>
+<p>The skew and kurtosis are both high. If we follow the default limits
+in COINr (absolute skew capped at 2, and kurtosis capped at 3.5), this
+would be classed as a vector with outliers. Indeed we can confirm this
+using the <code><a href="../reference/check_SkewKurt.html">check_SkewKurt()</a></code> function, which is the default
+pass/fail function used in <code><a href="../reference/Treat.html">Treat()</a></code>. This also anyway
+outputs the skew and kurtosis:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/check_SkewKurt.html">check_SkewKurt</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $Pass</span></span>
@@ -165,14 +200,24 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $Kurt</span></span>
 <span><span class="co">#&gt; [1] 9.741391</span></span></code></pre></div>
-<p>Now we know that <code>x</code> has outliers, we can treat it (if we want). We use the <code><a href="../reference/Treat.html">Treat()</a></code> function to specify that our function for checking for outliers <code>f_pass = "check_SkewKurt"</code>, and our first function for treating outliers is <code>f1 = "winsorise"</code>. We also pass an additional parameter to <code><a href="../reference/winsorise.html">winsorise()</a></code>, which is <code>winmax = 2</code>. You can check the <code><a href="../reference/winsorise.html">winsorise()</a></code> function documentation to better understand how it works.</p>
+<p>Now we know that <code>x</code> has outliers, we can treat it (if we
+want). We use the <code><a href="../reference/Treat.html">Treat()</a></code> function to specify that our
+function for checking for outliers
+<code>f_pass = "check_SkewKurt"</code>, and our first function for
+treating outliers is <code>f1 = "winsorise"</code>. We also pass an
+additional parameter to <code><a href="../reference/winsorise.html">winsorise()</a></code>, which is
+<code>winmax = 2</code>. You can check the <code><a href="../reference/winsorise.html">winsorise()</a></code>
+function documentation to better understand how it works.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">l_treat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Treat.html">Treat</a></span><span class="op">(</span><span class="va">x</span>, f1 <span class="op">=</span> <span class="st">"winsorise"</span>, f1_para <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>winmax <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>,</span>
 <span>                 f_pass <span class="op">=</span> <span class="st">"check_SkewKurt"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">l_treat</span><span class="op">$</span><span class="va">x</span><span class="op">)</span></span></code></pre></div>
 <p><img src="treat_files/figure-html/unnamed-chunk-5-1.png" width="480"></p>
-<p>The result of this data treatment is shown in the scatter plot: one point from <code>x</code> has been Winsorised (reassigned the next highest value). We can check the skew and kurtosis of the treated vector:</p>
+<p>The result of this data treatment is shown in the scatter plot: one
+point from <code>x</code> has been Winsorised (reassigned the next
+highest value). We can check the skew and kurtosis of the treated
+vector:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/check_SkewKurt.html">check_SkewKurt</a></span><span class="op">(</span><span class="va">l_treat</span><span class="op">$</span><span class="va">x</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $Pass</span></span>
@@ -183,12 +228,16 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $Kurt</span></span>
 <span><span class="co">#&gt; [1] 1.815781</span></span></code></pre></div>
-<p>Clearly, Winsorising one point was enough in this case to bring the skew and kurtosis within the specified thresholds.</p>
+<p>Clearly, Winsorising one point was enough in this case to bring the
+skew and kurtosis within the specified thresholds.</p>
 </div>
 <div class="section level2">
 <h2 id="data-frames">Data frames<a class="anchor" aria-label="anchor" href="#data-frames"></a>
 </h2>
-<p>Treatment of a data frame with <code><a href="../reference/Treat.html">Treat()</a></code> is effectively the same as treating a numeric vector, because the data frame method passes each column of the data frame to the numeric method. Here, we use some data from the COINr package to demonstrate.</p>
+<p>Treatment of a data frame with <code><a href="../reference/Treat.html">Treat()</a></code> is effectively
+the same as treating a numeric vector, because the data frame method
+passes each column of the data frame to the numeric method. Here, we use
+some data from the COINr package to demonstrate.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># select three indicators</span></span>
 <span><span class="va">df1</span> <span class="op">&lt;-</span> <span class="va">ASEM_iData</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Flights"</span>, <span class="st">"Goods"</span>, <span class="st">"Services"</span><span class="op">)</span><span class="op">]</span></span>
@@ -201,7 +250,11 @@
 <span><span class="co">#&gt;  $ x_treat       :'data.frame':  51 obs. of  3 variables:</span></span>
 <span><span class="co">#&gt;  $ Dets_Table    :'data.frame':  3 obs. of  8 variables:</span></span>
 <span><span class="co">#&gt;  $ Treated_Points:'data.frame':  51 obs. of  3 variables:</span></span></code></pre></div>
-<p>We can see the output is a list with <code>x_treat</code>, the treated data frame; <code>Dets_Table</code>, a table describing what happened to each indicator; and <code>Treated_Points</code>, which marks which individual points were adjusted. This is effectively the same output as for treating a numeric vector.</p>
+<p>We can see the output is a list with <code>x_treat</code>, the
+treated data frame; <code>Dets_Table</code>, a table describing what
+happened to each indicator; and <code>Treated_Points</code>, which marks
+which individual points were adjusted. This is effectively the same
+output as for treating a numeric vector.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">l_treat</span><span class="op">$</span><span class="va">Dets_Table</span></span>
 <span><span class="co">#&gt;      iCode check_SkewKurt0.Pass check_SkewKurt0.Skew check_SkewKurt0.Kurt</span></span>
@@ -271,8 +324,12 @@
 <div class="section level2">
 <h2 id="coins">Coins<a class="anchor" aria-label="anchor" href="#coins"></a>
 </h2>
-<p>Treating coins is a simple extension of treating a data frame. The coin method simply extracts the relevant data set as a data frame, and passes it to the data frame method. So more or less, the same arguments are present.</p>
-<p>We begin by building the example coin, which will be used for the examples here.</p>
+<p>Treating coins is a simple extension of treating a data frame. The
+coin method simply extracts the relevant data set as a data frame, and
+passes it to the data frame method. So more or less, the same arguments
+are present.</p>
+<p>We begin by building the example coin, which will be used for the
+examples here.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_example_coin.html">build_example_coin</a></span><span class="op">(</span>up_to <span class="op">=</span> <span class="st">"new_coin"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; iData checked and OK.</span></span>
@@ -281,19 +338,25 @@
 <div class="section level3">
 <h3 id="default-treatment">Default treatment<a class="anchor" aria-label="anchor" href="#default-treatment"></a>
 </h3>
-<p>The <code><a href="../reference/Treat.html">Treat()</a></code> function can be applied directly to a coin with completely default options:</p>
+<p>The <code><a href="../reference/Treat.html">Treat()</a></code> function can be applied directly to a coin
+with completely default options:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Treat.html">Treat</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Raw"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Written data set to .$Data$Treated</span></span></code></pre></div>
 <p>For each indicator, the <code><a href="../reference/Treat.html">Treat()</a></code> function:</p>
 <ol style="list-style-type: decimal">
-<li>Checks skew and kurtosis using the <code><a href="../reference/check_SkewKurt.html">check_SkewKurt()</a></code> function</li>
-<li>If the indicator fails the test (returns <code>FALSE</code>), applies Winsorisation</li>
+<li>Checks skew and kurtosis using the <code><a href="../reference/check_SkewKurt.html">check_SkewKurt()</a></code>
+function</li>
+<li>If the indicator fails the test (returns <code>FALSE</code>),
+applies Winsorisation</li>
 <li>Checks again skew and kurtosis</li>
 <li>If the indicator still fails, applies a log transformation.</li>
 </ol>
-<p>If at any stage the indicator passes the skew and kurtosis test, it is returned without further treatment.</p>
-<p>When we run <code><a href="../reference/Treat.html">Treat()</a></code> on a coin, it also stores information returned from <code>f1</code>, <code>f2</code> and <code>f_pass</code> in the coin:</p>
+<p>If at any stage the indicator passes the skew and kurtosis test, it
+is returned without further treatment.</p>
+<p>When we run <code><a href="../reference/Treat.html">Treat()</a></code> on a coin, it also stores
+information returned from <code>f1</code>, <code>f2</code> and
+<code>f_pass</code> in the coin:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># summary of treatment for each indicator</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">coin</span><span class="op">$</span><span class="va">Analysis</span><span class="op">$</span><span class="va">Treated</span><span class="op">$</span><span class="va">Dets_Table</span><span class="op">)</span></span>
@@ -311,10 +374,23 @@
 <span><span class="co">#&gt; 4              1                 TRUE             1.899211             4.346298</span></span>
 <span><span class="co">#&gt; 5              1                 TRUE             1.717744             2.586062</span></span>
 <span><span class="co">#&gt; 6              1                 TRUE             1.602518             1.525576</span></span></code></pre></div>
-<p>Notice that only one treatment function was used here, since after Winsorisation (<code>f1</code>), all indicators passed the skew and kurtosis test (<code>f_pass</code>).</p>
-<p>In general, <code><a href="../reference/Treat.html">Treat()</a></code> tries to collect all information returned from the functions that it calls. Details of the treatment of individual points are also stored in <code>.$Analysis$Treated$Treated_Points</code>.</p>
-<p>The <code><a href="../reference/Treat.html">Treat()</a></code> function gives you a high degree of control over which functions are used to treat and test indicators, and it is also possible to specify different functions for different indicators. Let’s begin though by seeing how we can change the specifications for all indicators, before proceeding to individual treatment.</p>
-<p>Unless <code>indiv_specs</code> is specified (see later), the same procedure is applied to all indicators. This process is specified by the <code>global_specs</code> argument. To see how to use this, it is easiest to show the default of this argument which is built into the <code>treat()</code> function:</p>
+<p>Notice that only one treatment function was used here, since after
+Winsorisation (<code>f1</code>), all indicators passed the skew and
+kurtosis test (<code>f_pass</code>).</p>
+<p>In general, <code><a href="../reference/Treat.html">Treat()</a></code> tries to collect all information
+returned from the functions that it calls. Details of the treatment of
+individual points are also stored in
+<code>.$Analysis$Treated$Treated_Points</code>.</p>
+<p>The <code><a href="../reference/Treat.html">Treat()</a></code> function gives you a high degree of control
+over which functions are used to treat and test indicators, and it is
+also possible to specify different functions for different indicators.
+Let’s begin though by seeing how we can change the specifications for
+all indicators, before proceeding to individual treatment.</p>
+<p>Unless <code>indiv_specs</code> is specified (see later), the same
+procedure is applied to all indicators. This process is specified by the
+<code>global_specs</code> argument. To see how to use this, it is
+easiest to show the default of this argument which is built into the
+<code>treat()</code> function:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># default treatment for all cols</span></span>
 <span><span class="va">specs_def</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>f1 <span class="op">=</span> <span class="st">"winsorise"</span>,</span>
@@ -332,33 +408,52 @@
 <p>Notice that there are six entries in the list:</p>
 <ul>
 <li>
-<code>f1</code> which is a string referring to the first treatment function</li>
+<code>f1</code> which is a string referring to the first treatment
+function</li>
 <li>
-<code>f1_para</code> which is a list of any other named arguments to <code>f1</code>, excluding <code>x</code> (the data to be treated)</li>
+<code>f1_para</code> which is a list of any other named arguments to
+<code>f1</code>, excluding <code>x</code> (the data to be treated)</li>
 <li>
-<code>f2</code> and <code>f2_para</code> which are analogous to <code>f1</code> and <code>f1_para</code> but for the second treatment function</li>
+<code>f2</code> and <code>f2_para</code> which are analogous to
+<code>f1</code> and <code>f1_para</code> but for the second treatment
+function</li>
 <li>
-<code>f_pass</code> is a string referring to the function to check for outliers</li>
+<code>f_pass</code> is a string referring to the function to check
+for outliers</li>
 <li>
-<code>f_pass_para</code> a list of any other named arguments to <code>f_pass</code>, other than <code>x</code> (the data to be checked)</li>
+<code>f_pass_para</code> a list of any other named arguments to
+<code>f_pass</code>, other than <code>x</code> (the data to be
+checked)</li>
 </ul>
-<p>To understand what the individual parameters do, for example in <code>f1_para</code>, we need to look at the function called by <code>f1</code>, which is the <code><a href="../reference/winsorise.html">winsorise()</a></code> function:</p>
+<p>To understand what the individual parameters do, for example in
+<code>f1_para</code>, we need to look at the function called by
+<code>f1</code>, which is the <code><a href="../reference/winsorise.html">winsorise()</a></code> function:</p>
 <ul>
 <li>
 <code>x</code> A numeric vector.</li>
 <li>
-<code>na.rm</code> Set <code>TRUE</code> to remove <code>NA</code> values, otherwise returns <code>NA</code>.</li>
+<code>na.rm</code> Set <code>TRUE</code> to remove <code>NA</code>
+values, otherwise returns <code>NA</code>.</li>
 <li>
-<code>winmax</code> Maximum number of points to Winsorise. Default 5. Set <code>NULL</code> to have no limit.</li>
+<code>winmax</code> Maximum number of points to Winsorise. Default
+5. Set <code>NULL</code> to have no limit.</li>
 <li>
-<code>skew_thresh</code> A threshold for absolute skewness (positive). Default 2.25.</li>
+<code>skew_thresh</code> A threshold for absolute skewness
+(positive). Default 2.25.</li>
 <li>
 <code>kurt_thresh</code> A threshold for kurtosis. Default 3.5.</li>
 <li>
-<code>force_win</code> Logical: if <code>TRUE</code>, forces winsorisation up to winmax (regardless of skew/kurt).</li>
+<code>force_win</code> Logical: if <code>TRUE</code>, forces
+winsorisation up to winmax (regardless of skew/kurt).</li>
 </ul>
-<p>Here we see the same parameters as named in the list <code>f1_para</code>, and we can change the maximum number of points to be Winsorised, the skew and kurtosis thresholds, and other things.</p>
-<p>To make adjustments, unless we want to redefine everything, we don’t need to specify the entire list. So for example, if we want to change the maximum Winsorisation limit <code>winmax</code>, we can just pass this part of the list (notice we still have to wrap the parameter inside a list):</p>
+<p>Here we see the same parameters as named in the list
+<code>f1_para</code>, and we can change the maximum number of points to
+be Winsorised, the skew and kurtosis thresholds, and other things.</p>
+<p>To make adjustments, unless we want to redefine everything, we don’t
+need to specify the entire list. So for example, if we want to change
+the maximum Winsorisation limit <code>winmax</code>, we can just pass
+this part of the list (notice we still have to wrap the parameter inside
+a list):</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># treat with max winsorisation of 3 points</span></span>
 <span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Treat.html">Treat</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Raw"</span>, global_specs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>f1_para <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>winmax <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
@@ -412,14 +507,40 @@
 <span><span class="co">#&gt; 8                    NA</span></span>
 <span><span class="co">#&gt; 9            -0.8888965</span></span>
 <span><span class="co">#&gt; 10                   NA</span></span></code></pre></div>
-<p>Having imposed a much stricter Winsorisation limit (only one point), we can see that now one indicator has been passed to the second treatment function <code>f2</code>, which has performed a log transformation. After doing this, the indicator passes the skew and kurtosis test.</p>
-<p>By default, if an indicator does not satisfy <code>f_pass</code> after applying <code>f1</code>, it is passed to <code>f2</code> <em>in its original form</em> - in other words it is not the output of <code>f1</code> that is passed to <code>f2</code>, and <code>f2</code> is applied <em>instead</em> of <code>f1</code>, rather than in addition to it. If you want to apply <code>f2</code> on top of <code>f1</code> set <code>combine_treat = TRUE</code>. In this case, if <code>f_pass</code> is not satisfied after <code>f1</code> then the output of <code>f1</code> is used as the input of <code>f2</code>. For the defaults of <code>f1</code> and <code>f2</code> this approach is probably not advisable because Winsorisation and the log transform are quite different approaches. However depending on what you want to do, it might be useful.</p>
+<p>Having imposed a much stricter Winsorisation limit (only one point),
+we can see that now one indicator has been passed to the second
+treatment function <code>f2</code>, which has performed a log
+transformation. After doing this, the indicator passes the skew and
+kurtosis test.</p>
+<p>By default, if an indicator does not satisfy <code>f_pass</code>
+after applying <code>f1</code>, it is passed to <code>f2</code> <em>in
+its original form</em> - in other words it is not the output of
+<code>f1</code> that is passed to <code>f2</code>, and <code>f2</code>
+is applied <em>instead</em> of <code>f1</code>, rather than in addition
+to it. If you want to apply <code>f2</code> on top of <code>f1</code>
+set <code>combine_treat = TRUE</code>. In this case, if
+<code>f_pass</code> is not satisfied after <code>f1</code> then the
+output of <code>f1</code> is used as the input of <code>f2</code>. For
+the defaults of <code>f1</code> and <code>f2</code> this approach is
+probably not advisable because Winsorisation and the log transform are
+quite different approaches. However depending on what you want to do, it
+might be useful.</p>
 </div>
 <div class="section level3">
 <h3 id="individual-treatment">Individual treatment<a class="anchor" aria-label="anchor" href="#individual-treatment"></a>
 </h3>
-<p>The <code>global_specs</code> specifies the treatment methodology to apply to all indicators. However, the <code>indiv_specs</code> argument (if specified), can be used to override the treatment specified in <code>global_specs</code> for specific indicators. It is specified in exactly the same way as <code>global_specs</code> but requires a parameter list for each indicator that is to have individual specifications applied, wrapped inside one list.</p>
-<p>This is probably clearer using an example. To begin with something simple, let’s say that we keep the defaults for all indicators except one, where we change the Winsorisation limit. We will set the Winsorisation limit of the indicator “Flights” to zero, to force it to be log-transformed.</p>
+<p>The <code>global_specs</code> specifies the treatment methodology to
+apply to all indicators. However, the <code>indiv_specs</code> argument
+(if specified), can be used to override the treatment specified in
+<code>global_specs</code> for specific indicators. It is specified in
+exactly the same way as <code>global_specs</code> but requires a
+parameter list for each indicator that is to have individual
+specifications applied, wrapped inside one list.</p>
+<p>This is probably clearer using an example. To begin with something
+simple, let’s say that we keep the defaults for all indicators except
+one, where we change the Winsorisation limit. We will set the
+Winsorisation limit of the indicator “Flights” to zero, to force it to
+be log-transformed.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># change individual specs for Flights</span></span>
 <span><span class="va">indiv_specs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -432,7 +553,14 @@
 <span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Treat.html">Treat</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Raw"</span>, indiv_specs <span class="op">=</span> <span class="va">indiv_specs</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Written data set to .$Data$Treated</span></span>
 <span><span class="co">#&gt; (overwritten existing data set)</span></span></code></pre></div>
-<p>The only thing to remember here is to make sure the list is created correctly. Each indicator to assign individual treatment must have its own list - here containing <code>f1_para</code>. Then <code>f1_para</code> itself is a list of named parameter values for <code>f1</code>. Finally, all lists for each indicator have to be wrapped into a single list to pass to <code>indiv_specs</code>. This looks a bit convoluted for changing a single parameter, but gives a high degree of control over how data treatment is performed.</p>
+<p>The only thing to remember here is to make sure the list is created
+correctly. Each indicator to assign individual treatment must have its
+own list - here containing <code>f1_para</code>. Then
+<code>f1_para</code> itself is a list of named parameter values for
+<code>f1</code>. Finally, all lists for each indicator have to be
+wrapped into a single list to pass to <code>indiv_specs</code>. This
+looks a bit convoluted for changing a single parameter, but gives a high
+degree of control over how data treatment is performed.</p>
 <p>We can now see what happened to “Flights”:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">coin</span><span class="op">$</span><span class="va">Analysis</span><span class="op">$</span><span class="va">Treated</span><span class="op">$</span><span class="va">Dets_Table</span><span class="op">[</span></span>
@@ -444,8 +572,13 @@
 <span><span class="co">#&gt; 2              0                FALSE             2.103287             4.508879</span></span>
 <span><span class="co">#&gt;   check_SkewKurt2.Pass check_SkewKurt2.Skew check_SkewKurt2.Kurt</span></span>
 <span><span class="co">#&gt; 2                 TRUE          -0.09502644           -0.8305217</span></span></code></pre></div>
-<p>Now we see that “Flights” didn’t pass the first Winsorisation step (because nothing happened to it), and was passed to the log transform. After that, the indicator passed the skew and kurtosis check.</p>
-<p>As another example, we may wish to exclude some indicators from data treatment completely. To do this, we can set the corresponding entries in <code>indiv_specs</code> to <code>"none"</code>. This is the only case where we don’t have to pass a list for each indicator.</p>
+<p>Now we see that “Flights” didn’t pass the first Winsorisation step
+(because nothing happened to it), and was passed to the log transform.
+After that, the indicator passed the skew and kurtosis check.</p>
+<p>As another example, we may wish to exclude some indicators from data
+treatment completely. To do this, we can set the corresponding entries
+in <code>indiv_specs</code> to <code>"none"</code>. This is the only
+case where we don’t have to pass a list for each indicator.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># change individual specs for two indicators</span></span>
 <span><span class="va">indiv_specs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -457,13 +590,19 @@
 <span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Treat.html">Treat</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Raw"</span>, indiv_specs <span class="op">=</span> <span class="va">indiv_specs</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Written data set to .$Data$Treated</span></span>
 <span><span class="co">#&gt; (overwritten existing data set)</span></span></code></pre></div>
-<p>Now if we examine the treatment table, we will find that these indicators have been excluded from the table, as they were not subjected to treatment.</p>
+<p>Now if we examine the treatment table, we will find that these
+indicators have been excluded from the table, as they were not subjected
+to treatment.</p>
 </div>
 <div class="section level3">
 <h3 id="external-functions">External functions<a class="anchor" aria-label="anchor" href="#external-functions"></a>
 </h3>
-<p>Any functions can be passed to <code><a href="../reference/Treat.html">Treat()</a></code>, for both treating and checking for outliers. As an example, we can pass an outlier detection function ` from the <a href="https://easystats.github.io/performance/reference/check_outliers.html" class="external-link">performance</a> package</p>
-<p>The following code chunk will only run if you have the ‘performance’ package installed.</p>
+<p>Any functions can be passed to <code><a href="../reference/Treat.html">Treat()</a></code>, for both
+treating and checking for outliers. As an example, we can pass an
+outlier detection function ` from the <a href="https://easystats.github.io/performance/reference/check_outliers.html" class="external-link">performance</a>
+package</p>
+<p>The following code chunk will only run if you have the ‘performance’
+package installed.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://easystats.github.io/performance/" class="external-link">performance</a></span><span class="op">)</span></span>
 <span></span>
@@ -518,13 +657,19 @@
 <span><span class="co">#&gt; 8     Cov4G         FALSE              0         FALSE         FALSE</span></span>
 <span><span class="co">#&gt; 9     Goods         FALSE              2         FALSE          TRUE</span></span>
 <span><span class="co">#&gt; 10 Services         FALSE              0         FALSE          TRUE</span></span></code></pre></div>
-<p>Here we see that the test for outliers is much stricter and very few of the indicators pass the test, even after applying a log transformation. Clearly, how an outlier is defined can vary and depend on your application.</p>
+<p>Here we see that the test for outliers is much stricter and very few
+of the indicators pass the test, even after applying a log
+transformation. Clearly, how an outlier is defined can vary and depend
+on your application.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="purses">Purses<a class="anchor" aria-label="anchor" href="#purses"></a>
 </h2>
-<p>The purse method for <code>treat()</code> is fairly straightforward. It takes almost the same arguments as the coin method, and applies the same specifications to each coin. Here we simply demonstrate it on the example purse.</p>
+<p>The purse method for <code>treat()</code> is fairly straightforward.
+It takes almost the same arguments as the coin method, and applies the
+same specifications to each coin. Here we simply demonstrate it on the
+example purse.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># build example purse</span></span>
 <span><span class="va">purse</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_example_purse.html">build_example_purse</a></span><span class="op">(</span>up_to <span class="op">=</span> <span class="st">"new_coin"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -540,16 +685,25 @@
 <div class="section level2">
 <h2 id="simplified-function">Simplified function<a class="anchor" aria-label="anchor" href="#simplified-function"></a>
 </h2>
-<p>The <code><a href="../reference/Treat.html">Treat()</a></code> function is very flexible but comes at the expense of a possibly fiddly syntax. If you don’t need that level of flexibility, consider using <code><a href="../reference/qTreat.html">qTreat()</a></code>, which is a simplified wrapper for <code><a href="../reference/Treat.html">Treat()</a></code>.</p>
+<p>The <code><a href="../reference/Treat.html">Treat()</a></code> function is very flexible but comes at the
+expense of a possibly fiddly syntax. If you don’t need that level of
+flexibility, consider using <code><a href="../reference/qTreat.html">qTreat()</a></code>, which is a simplified
+wrapper for <code><a href="../reference/Treat.html">Treat()</a></code>.</p>
 <p>The main features of <code><a href="../reference/qTreat.html">qTreat()</a></code> are that:</p>
 <ul>
-<li>The first treatment function <code>f1</code> cannot be changed and is set to <code><a href="../reference/winsorise.html">winsorise()</a></code>.</li>
-<li>The <code>winmax</code> parameter, as well as the skew and kurtosis limits, are available directly as function arguments to <code><a href="../reference/qTreat.html">qTreat()</a></code>.</li>
-<li>The <code>f_pass</code> function cannot be changed and is always set to <code><a href="../reference/check_SkewKurt.html">check_SkewKurt()</a></code>.</li>
+<li>The first treatment function <code>f1</code> cannot be changed and
+is set to <code><a href="../reference/winsorise.html">winsorise()</a></code>.</li>
+<li>The <code>winmax</code> parameter, as well as the skew and kurtosis
+limits, are available directly as function arguments to
+<code><a href="../reference/qTreat.html">qTreat()</a></code>.</li>
+<li>The <code>f_pass</code> function cannot be changed and is always set
+to <code><a href="../reference/check_SkewKurt.html">check_SkewKurt()</a></code>.</li>
 <li>You can still choose <code>f2</code>
 </li>
 </ul>
-<p>The <code><a href="../reference/qTreat.html">qTreat()</a></code> function is a generic with methods for data frames, coins and purses. Here, we’ll just demonstrate it on a data frame.</p>
+<p>The <code><a href="../reference/qTreat.html">qTreat()</a></code> function is a generic with methods for data
+frames, coins and purses. Here, we’ll just demonstrate it on a data
+frame.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># select three indicators</span></span>
 <span><span class="va">df1</span> <span class="op">&lt;-</span> <span class="va">ASEM_iData</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Flights"</span>, <span class="st">"Goods"</span>, <span class="st">"Services"</span><span class="op">)</span><span class="op">]</span></span>
@@ -571,7 +725,10 @@
 <span><span class="co">#&gt; 1                 TRUE          -0.09502644           -0.8305217</span></span>
 <span><span class="co">#&gt; 2                 TRUE           0.03104001           -0.8888965</span></span>
 <span><span class="co">#&gt; 3                   NA                   NA                   NA</span></span></code></pre></div>
-<p>We can see that in this case, Winsorsing by one point was not enough to bring “Flights” and “Goods” within the specified skew/kurtosis limits. Consequently, <code>f2</code> was invoked, which uses a log transform and brought both indicators within the specified limits.</p>
+<p>We can see that in this case, Winsorsing by one point was not enough
+to bring “Flights” and “Goods” within the specified skew/kurtosis
+limits. Consequently, <code>f2</code> was invoked, which uses a log
+transform and brought both indicators within the specified limits.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

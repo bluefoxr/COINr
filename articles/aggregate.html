@@ -111,19 +111,45 @@
 
     
     
-<p>This vignette describes the process of aggregating indicators, in COINr.</p>
+<p>This vignette describes the process of aggregating indicators, in
+COINr.</p>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>Aggregation is the operation of combining multiple indicators into one value. Many composite indicators have a hierarchical structure, so in practice this often involves multiple aggregations, for example aggregating groups of indicators into aggregate values, then aggregating those values into higher-level aggregates, and so on, until the final index value.</p>
-<p>Aggregating should almost always be done on normalised data, unless the indicators are already on very similar scales. Otherwise the relative influence of indicators will be very uneven.</p>
-<p>Of course you don’t <em>have</em> to aggregate indicators at all, and you might be content with a scoreboard, or perhaps aggregating into several aggregate values rather than a single index. However, consider that aggregation should not substitute the underlying indicator data, but complement it.</p>
-<p>Overall, aggregating indicators is a form of information compression - you are trying to combine many indicator values into one, and inevitably information will be lost (<a href="https://doi.org/10.1016/j.envsoft.2021.105208" class="external-link">this</a> recent paper may be of interest). As long as this is kept in mind, and indicator data is presented and made available along side aggregate values, then aggregate (index) values can complement indicators and be used as a useful tool for summarising the underlying data, and identifying overall trends and patterns.</p>
+<p>Aggregation is the operation of combining multiple indicators into
+one value. Many composite indicators have a hierarchical structure, so
+in practice this often involves multiple aggregations, for example
+aggregating groups of indicators into aggregate values, then aggregating
+those values into higher-level aggregates, and so on, until the final
+index value.</p>
+<p>Aggregating should almost always be done on normalised data, unless
+the indicators are already on very similar scales. Otherwise the
+relative influence of indicators will be very uneven.</p>
+<p>Of course you don’t <em>have</em> to aggregate indicators at all, and
+you might be content with a scoreboard, or perhaps aggregating into
+several aggregate values rather than a single index. However, consider
+that aggregation should not substitute the underlying indicator data,
+but complement it.</p>
+<p>Overall, aggregating indicators is a form of information compression
+- you are trying to combine many indicator values into one, and
+inevitably information will be lost (<a href="https://doi.org/10.1016/j.envsoft.2021.105208" class="external-link">this</a> recent
+paper may be of interest). As long as this is kept in mind, and
+indicator data is presented and made available along side aggregate
+values, then aggregate (index) values can complement indicators and be
+used as a useful tool for summarising the underlying data, and
+identifying overall trends and patterns.</p>
 <div class="section level3">
 <h3 id="weighting">Weighting<a class="anchor" aria-label="anchor" href="#weighting"></a>
 </h3>
-<p>Many aggregation methods involve some kind of weighting, i.e. coefficients that define the relative weight of the indicators/aggregates in the aggregation. In order to aggregate, weights need to first be specified, but to effectively adjust weights it is necessary to aggregate.</p>
-<p>This chicken and egg conundrum is best solved by aggregating initially with a trial set of weights, perhaps equal weights, then seeing the effects of the weighting, and making any weight adjustments necessary.</p>
+<p>Many aggregation methods involve some kind of weighting,
+i.e. coefficients that define the relative weight of the
+indicators/aggregates in the aggregation. In order to aggregate, weights
+need to first be specified, but to effectively adjust weights it is
+necessary to aggregate.</p>
+<p>This chicken and egg conundrum is best solved by aggregating
+initially with a trial set of weights, perhaps equal weights, then
+seeing the effects of the weighting, and making any weight adjustments
+necessary.</p>
 </div>
 <div class="section level3">
 <h3 id="approaches">Approaches<a class="anchor" aria-label="anchor" href="#approaches"></a>
@@ -131,38 +157,107 @@
 <div class="section level4">
 <h4 id="means">Means<a class="anchor" aria-label="anchor" href="#means"></a>
 </h4>
-<p>The most straightforward and widely-used approach to aggregation is the <strong>weighted arithmetic mean</strong>. Denoting the indicators as <span class="math inline">\(x_i \in \{x_1, x_2, ... , x_d \}\)</span>, a weighted arithmetic mean is calculated as:</p>
-<p><span class="math display">\[ y = \frac{1}{\sum_{i=1}^d w_i} \sum_{i=1}^d x_iw_i \]</span></p>
-<p>where the <span class="math inline">\(w_i\)</span> are the weights corresponding to each <span class="math inline">\(x_i\)</span>. Here, if the weights are chosen to sum to 1, it will simplify to the weighted sum of the indicators. In any case, the weighted mean is scaled by the sum of the weights, so weights operate relative to each other.</p>
-<p>Clearly, if the index has more than two levels, then there will be multiple aggregations. For example, there may be three groups of indicators which give three separate aggregate scores. These aggregate scores would then be fed back into the weighted arithmetic mean above to calculate the overall index.</p>
-<p>The arithmetic mean has “perfect compensability”, which means that a high score in one indicator will perfectly compensate a low score in another. In a simple example with two indicators scaled between 0 and 10 and equal weighting, a unit with scores (0, 10) would be given the same score as a unit with scores (5, 5) – both have a score of 5.</p>
-<p>An alternative is the <strong>weighted geometric mean</strong>, which uses the product of the indicators rather than the sum.</p>
-<p><span class="math display">\[ y = \left( \prod_{i=1}^d x_i^{w_i} \right)^{1 / \sum_{i=1}^d w_i} \]</span></p>
-<p>This is simply the product of each indicator to the power of its weight, all raised the the power of the inverse of the sum of the weights.</p>
-<p>The geometric mean is less compensatory than the arithmetic mean – low values in one indicator only partially substitute high values in others. For this reason, the geometric mean may sometimes be preferred when indicators represent “essentials”. An example might be quality of life: a longer life expectancy perhaps should not compensate severe restrictions on personal freedoms.</p>
-<p>A third type of mean, in fact the third of the so-called <a href="https://en.wikipedia.org/wiki/Pythagorean_means" class="external-link">Pythagorean means</a> is the <strong>weighted harmonic mean</strong>. This uses the mean of the reciprocals of the indicators:</p>
-<p><span class="math display">\[ y = \frac{\sum_{i=1}^d w_i}{\sum_{i=1}^d w_i/x_i} \]</span></p>
-<p>The harmonic mean is the the least compensatory of the the three means, even less so than the geometric mean. It is often used for taking the mean of rates and ratios.</p>
+<p>The most straightforward and widely-used approach to aggregation is
+the <strong>weighted arithmetic mean</strong>. Denoting the indicators
+as <span class="math inline">\(x_i \in \{x_1, x_2, ... , x_d
+\}\)</span>, a weighted arithmetic mean is calculated as:</p>
+<p><span class="math display">\[ y = \frac{1}{\sum_{i=1}^d w_i}
+\sum_{i=1}^d x_iw_i \]</span></p>
+<p>where the <span class="math inline">\(w_i\)</span> are the weights
+corresponding to each <span class="math inline">\(x_i\)</span>. Here, if
+the weights are chosen to sum to 1, it will simplify to the weighted sum
+of the indicators. In any case, the weighted mean is scaled by the sum
+of the weights, so weights operate relative to each other.</p>
+<p>Clearly, if the index has more than two levels, then there will be
+multiple aggregations. For example, there may be three groups of
+indicators which give three separate aggregate scores. These aggregate
+scores would then be fed back into the weighted arithmetic mean above to
+calculate the overall index.</p>
+<p>The arithmetic mean has “perfect compensability”, which means that a
+high score in one indicator will perfectly compensate a low score in
+another. In a simple example with two indicators scaled between 0 and 10
+and equal weighting, a unit with scores (0, 10) would be given the same
+score as a unit with scores (5, 5) – both have a score of 5.</p>
+<p>An alternative is the <strong>weighted geometric mean</strong>, which
+uses the product of the indicators rather than the sum.</p>
+<p><span class="math display">\[ y = \left( \prod_{i=1}^d x_i^{w_i}
+\right)^{1 / \sum_{i=1}^d w_i} \]</span></p>
+<p>This is simply the product of each indicator to the power of its
+weight, all raised the the power of the inverse of the sum of the
+weights.</p>
+<p>The geometric mean is less compensatory than the arithmetic mean –
+low values in one indicator only partially substitute high values in
+others. For this reason, the geometric mean may sometimes be preferred
+when indicators represent “essentials”. An example might be quality of
+life: a longer life expectancy perhaps should not compensate severe
+restrictions on personal freedoms.</p>
+<p>A third type of mean, in fact the third of the so-called <a href="https://en.wikipedia.org/wiki/Pythagorean_means" class="external-link">Pythagorean
+means</a> is the <strong>weighted harmonic mean</strong>. This uses the
+mean of the reciprocals of the indicators:</p>
+<p><span class="math display">\[ y = \frac{\sum_{i=1}^d
+w_i}{\sum_{i=1}^d w_i/x_i} \]</span></p>
+<p>The harmonic mean is the the least compensatory of the the three
+means, even less so than the geometric mean. It is often used for taking
+the mean of rates and ratios.</p>
 </div>
 <div class="section level4">
 <h4 id="other-methods">Other methods<a class="anchor" aria-label="anchor" href="#other-methods"></a>
 </h4>
-<p>The <em>weighted median</em> is also a simple alternative candidate. It is defined by ordering indicator values, then picking the value which has half of the assigned weight above it, and half below it. For <em>ordered</em> indicators <span class="math inline">\(x_1, x_2, ..., x_d\)</span> and corresponding weights <span class="math inline">\(w_1, w_2, ..., w_d\)</span> the weighted median is the indicator value <span class="math inline">\(x_m\)</span> that satisfies:</p>
-<p><span class="math display">\[ \sum_{i=1}^{m-1} w_i \leq \frac{1}{2}, \: \: \text{and} \sum_{i=m+1}^{d} w_i \leq \frac{1}{2} \]</span></p>
-<p>The median is known to be robust to outliers, and this may be of interest if the distribution of scores across indicators is skewed.</p>
-<p>Another somewhat different approach to aggregation is to use the <a href="https://en.wikipedia.org/wiki/Copeland%27s_method" class="external-link">Copeland method</a>. This approach is based pairwise comparisons between units and proceeds as follows. First, an <em>outranking matrix</em> is constructed, which is a square matrix with <span class="math inline">\(N\)</span> columns and <span class="math inline">\(N\)</span> rows, where <span class="math inline">\(N\)</span> is the number of units.</p>
-<p>The element in the <span class="math inline">\(p\)</span>th row and <span class="math inline">\(q\)</span>th column of the matrix is calculated by summing all the indicator weights where unit <span class="math inline">\(p\)</span> has a higher value in those indicators than unit <span class="math inline">\(q\)</span>. Similarly, the cell in the <span class="math inline">\(q\)</span>th row and <span class="math inline">\(p\)</span>th column (which is the cell opposite on the other side of the diagonal), is calculated as the sum of the weights unit where <span class="math inline">\(q\)</span> has a higher value than unit <span class="math inline">\(p\)</span>. If the indicator weights sum to one over all indicators, then these two scores will also sum to 1 by definition. The outranking matrix effectively summarises to what extent each unit scores better or worse than all other units, for all unit pairs.</p>
-<p>The Copeland score for each unit is calculated by taking the sum of the row values in the outranking matrix. This can be seen as an average measure of to what extent that unit performs above other units.</p>
-<p>Clearly, this can be applied at any level of aggregation and used hierarchically like the other aggregation methods presented here.</p>
-<p>In some cases, one unit may score higher than the other in all indicators. This is called a <em>dominance pair</em>, and corresponds to any pair scores equal to one (equivalent to any pair scores equal to zero).</p>
-<p>The percentage of dominance pairs is an indication of robustness. Under dominance, there is no way methodological choices (weighting, normalisation, etc.) can affect the relative standing of the pair in the ranking. One will always be ranked higher than the other. The greater the number of dominance (or robust) pairs in a classification, the less sensitive country ranks will be to methodological assumptions. COINr allows to calculate the percentage of dominance pairs with an inbuilt function.</p>
+<p>The <em>weighted median</em> is also a simple alternative candidate.
+It is defined by ordering indicator values, then picking the value which
+has half of the assigned weight above it, and half below it. For
+<em>ordered</em> indicators <span class="math inline">\(x_1, x_2, ...,
+x_d\)</span> and corresponding weights <span class="math inline">\(w_1,
+w_2, ..., w_d\)</span> the weighted median is the indicator value <span class="math inline">\(x_m\)</span> that satisfies:</p>
+<p><span class="math display">\[ \sum_{i=1}^{m-1} w_i \leq \frac{1}{2},
+\: \: \text{and} \sum_{i=m+1}^{d} w_i \leq \frac{1}{2} \]</span></p>
+<p>The median is known to be robust to outliers, and this may be of
+interest if the distribution of scores across indicators is skewed.</p>
+<p>Another somewhat different approach to aggregation is to use the <a href="https://en.wikipedia.org/wiki/Copeland%27s_method" class="external-link">Copeland
+method</a>. This approach is based pairwise comparisons between units
+and proceeds as follows. First, an <em>outranking matrix</em> is
+constructed, which is a square matrix with <span class="math inline">\(N\)</span> columns and <span class="math inline">\(N\)</span> rows, where <span class="math inline">\(N\)</span> is the number of units.</p>
+<p>The element in the <span class="math inline">\(p\)</span>th row and
+<span class="math inline">\(q\)</span>th column of the matrix is
+calculated by summing all the indicator weights where unit <span class="math inline">\(p\)</span> has a higher value in those indicators
+than unit <span class="math inline">\(q\)</span>. Similarly, the cell in
+the <span class="math inline">\(q\)</span>th row and <span class="math inline">\(p\)</span>th column (which is the cell opposite on
+the other side of the diagonal), is calculated as the sum of the weights
+unit where <span class="math inline">\(q\)</span> has a higher value
+than unit <span class="math inline">\(p\)</span>. If the indicator
+weights sum to one over all indicators, then these two scores will also
+sum to 1 by definition. The outranking matrix effectively summarises to
+what extent each unit scores better or worse than all other units, for
+all unit pairs.</p>
+<p>The Copeland score for each unit is calculated by taking the sum of
+the row values in the outranking matrix. This can be seen as an average
+measure of to what extent that unit performs above other units.</p>
+<p>Clearly, this can be applied at any level of aggregation and used
+hierarchically like the other aggregation methods presented here.</p>
+<p>In some cases, one unit may score higher than the other in all
+indicators. This is called a <em>dominance pair</em>, and corresponds to
+any pair scores equal to one (equivalent to any pair scores equal to
+zero).</p>
+<p>The percentage of dominance pairs is an indication of robustness.
+Under dominance, there is no way methodological choices (weighting,
+normalisation, etc.) can affect the relative standing of the pair in the
+ranking. One will always be ranked higher than the other. The greater
+the number of dominance (or robust) pairs in a classification, the less
+sensitive country ranks will be to methodological assumptions. COINr
+allows to calculate the percentage of dominance pairs with an inbuilt
+function.</p>
 </div>
 </div>
 </div>
 <div class="section level2">
 <h2 id="coins">Coins<a class="anchor" aria-label="anchor" href="#coins"></a>
 </h2>
-<p>We now turn to how data sets in a coin can be aggregated using the methods described previously. The function of interest is <code><a href="../reference/Aggregate.html">Aggregate()</a></code>, which is a generic with methods for coins, purses and data frames. To demonstrate COINr’s <code><a href="../reference/Aggregate.html">Aggregate()</a></code> function on a coin, we begin by loading the package, and building the example coin, up to the normalised data set.</p>
+<p>We now turn to how data sets in a coin can be aggregated using the
+methods described previously. The function of interest is
+<code><a href="../reference/Aggregate.html">Aggregate()</a></code>, which is a generic with methods for coins,
+purses and data frames. To demonstrate COINr’s <code><a href="../reference/Aggregate.html">Aggregate()</a></code>
+function on a coin, we begin by loading the package, and building the
+example coin, up to the normalised data set.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bluefoxr.github.io/COINr/">COINr</a></span><span class="op">)</span></span>
 <span></span>
@@ -176,27 +271,47 @@
 <span><span class="co">#&gt; Written data set to .$Data$Screened</span></span>
 <span><span class="co">#&gt; Written data set to .$Data$Treated</span></span>
 <span><span class="co">#&gt; Written data set to .$Data$Normalised</span></span></code></pre></div>
-<p>Consider what is needed to aggregate the normalised data into its higher levels. We need:</p>
+<p>Consider what is needed to aggregate the normalised data into its
+higher levels. We need:</p>
 <ul>
 <li>The data set to aggregate</li>
-<li>The structure of the index: which indicators belong to which groups, etc.</li>
+<li>The structure of the index: which indicators belong to which groups,
+etc.</li>
 <li>Weights to assign to indicators</li>
-<li>Specifications for aggregation: an aggregation function (e.g. the weighted mean) and any other parameters to be passed to that function</li>
+<li>Specifications for aggregation: an aggregation function (e.g. the
+weighted mean) and any other parameters to be passed to that
+function</li>
 </ul>
-<p>All of these elements are already present in the coin, except the last. For the first point, we simply need to tell <code><a href="../reference/Aggregate.html">Aggregate()</a></code> which data set to use (using the <code>dset</code> argument). The structure of the index was defined when building the coin in <code><a href="../reference/new_coin.html">new_coin()</a></code> (the <code>iMeta</code> argument). Weights were also attached to <code>iMeta</code>. Finally, specifications can be specified in the arguments of <code><a href="../reference/Aggregate.html">Aggregate()</a></code>. Let’s begin with the simple case though: using the function defaults.</p>
+<p>All of these elements are already present in the coin, except the
+last. For the first point, we simply need to tell
+<code><a href="../reference/Aggregate.html">Aggregate()</a></code> which data set to use (using the
+<code>dset</code> argument). The structure of the index was defined when
+building the coin in <code><a href="../reference/new_coin.html">new_coin()</a></code> (the <code>iMeta</code>
+argument). Weights were also attached to <code>iMeta</code>. Finally,
+specifications can be specified in the arguments of
+<code><a href="../reference/Aggregate.html">Aggregate()</a></code>. Let’s begin with the simple case though: using
+the function defaults.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># aggregate normalised data set</span></span>
 <span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Aggregate.html">Aggregate</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Normalised"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Written data set to .$Data$Aggregated</span></span></code></pre></div>
-<p>By default, the aggregation function performs the following steps:</p>
+<p>By default, the aggregation function performs the following
+steps:</p>
 <ul>
 <li>Uses the weights that were attached to <code>iMeta</code>
 </li>
-<li>Aggregates hierarchically (with default method of weighted arithmetic mean), following the index structure specified in <code>iMeta</code> and using the data specified in <code>dset</code>
+<li>Aggregates hierarchically (with default method of weighted
+arithmetic mean), following the index structure specified in
+<code>iMeta</code> and using the data specified in
+<code>dset</code>
 </li>
-<li>Creates a new data set <code>.$Data$Aggregated</code>, which consists of the data in <code>dset</code>, plus extra columns with scores for each aggregation group, at each aggregation level.</li>
+<li>Creates a new data set <code>.$Data$Aggregated</code>, which
+consists of the data in <code>dset</code>, plus extra columns with
+scores for each aggregation group, at each aggregation level.</li>
 </ul>
-<p>Let’s examine the new data set. The columns of each level are added successively, working from level 1 upwards, so the highest aggregation level (the index, here) will be the last column of the data frame.</p>
+<p>Let’s examine the new data set. The columns of each level are added
+successively, working from level 1 upwards, so the highest aggregation
+level (the index, here) will be the last column of the data frame.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dset_aggregated</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_dset.html">get_dset</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Aggregated"</span><span class="op">)</span></span>
 <span></span>
@@ -217,12 +332,23 @@
 <span><span class="co">#&gt; 3  63.5</span></span>
 <span><span class="co">#&gt; 4  39.0</span></span>
 <span><span class="co">#&gt; 5  50.8</span></span></code></pre></div>
-<p>Here we see the level 2 aggregated scores created by aggregating each group of indicators (the first eight columns), followed by the two sub-indexes (level 3) created by aggregating the scores of level 2, and finally the Index (level 4), which is created by aggregating the “Conn” and “Sust” sub-indexes.</p>
-<p>The format of this data frame is not hugely convenient for inspecting the results. To see a more user-friendly version, use the <code><a href="../reference/get_results.html">get_results()</a></code> function.</p>
+<p>Here we see the level 2 aggregated scores created by aggregating each
+group of indicators (the first eight columns), followed by the two
+sub-indexes (level 3) created by aggregating the scores of level 2, and
+finally the Index (level 4), which is created by aggregating the “Conn”
+and “Sust” sub-indexes.</p>
+<p>The format of this data frame is not hugely convenient for inspecting
+the results. To see a more user-friendly version, use the
+<code><a href="../reference/get_results.html">get_results()</a></code> function.</p>
 <div class="section level3">
 <h3 id="coinr-aggregation-functions">COINr aggregation functions<a class="anchor" aria-label="anchor" href="#coinr-aggregation-functions"></a>
 </h3>
-<p>Let’s now explore some of the options of the <code><a href="../reference/Aggregate.html">Aggregate()</a></code> function. Like other coin-building functions in COINr, <code><a href="../reference/Aggregate.html">Aggregate()</a></code> comes with a number of inbuilt options, but can also accept any function that is passed to it, as long as it satisfies some requirements. COINr’s inbuilt aggregation functions begin with <code>a_</code>, and are:</p>
+<p>Let’s now explore some of the options of the <code><a href="../reference/Aggregate.html">Aggregate()</a></code>
+function. Like other coin-building functions in COINr,
+<code><a href="../reference/Aggregate.html">Aggregate()</a></code> comes with a number of inbuilt options, but can
+also accept any function that is passed to it, as long as it satisfies
+some requirements. COINr’s inbuilt aggregation functions begin with
+<code>a_</code>, and are:</p>
 <ul>
 <li>
 <code><a href="../reference/a_amean.html">a_amean()</a></code>: the weighted arithmetic mean</li>
@@ -231,16 +357,24 @@
 <li>
 <code><a href="../reference/a_hmean.html">a_hmean()</a></code>: the weighted harmonic mean</li>
 <li>
-<code><a href="../reference/a_copeland.html">a_copeland()</a></code>: the Copeland method (note: requires <code>by_df = TRUE</code>)</li>
+<code><a href="../reference/a_copeland.html">a_copeland()</a></code>: the Copeland method (note: requires
+<code>by_df = TRUE</code>)</li>
 </ul>
-<p>By default, the arithmetic mean is called but we can easily change this to the geometric mean, for example. However here we run into a problem: the geometric mean will fail if any values to aggregate are less than or equal to zero. So to use the geometric mean we have to re-do the normalisation step to avoid this. Luckily this is straightforward in COINr:</p>
+<p>By default, the arithmetic mean is called but we can easily change
+this to the geometric mean, for example. However here we run into a
+problem: the geometric mean will fail if any values to aggregate are
+less than or equal to zero. So to use the geometric mean we have to
+re-do the normalisation step to avoid this. Luckily this is
+straightforward in COINr:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Normalise.html">Normalise</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Treated"</span>,</span>
 <span>                   global_specs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>f_n <span class="op">=</span> <span class="st">"n_minmax"</span>,</span>
 <span>                                        f_n_para <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>l_u <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">100</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Written data set to .$Data$Normalised</span></span>
 <span><span class="co">#&gt; (overwritten existing data set)</span></span></code></pre></div>
-<p>Now, since the indicators are scaled between 1 and 100 (instead of 0 and 100 as previously), they can be aggregated with the geometric mean.</p>
+<p>Now, since the indicators are scaled between 1 and 100 (instead of 0
+and 100 as previously), they can be aggregated with the geometric
+mean.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Aggregate.html">Aggregate</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Normalised"</span>,</span>
 <span>                   f_ag <span class="op">=</span> <span class="st">"a_gmean"</span><span class="op">)</span></span>
@@ -250,8 +384,15 @@
 <div class="section level3">
 <h3 id="external-functions">External functions<a class="anchor" aria-label="anchor" href="#external-functions"></a>
 </h3>
-<p>All of the four aggregation functions mentioned above have the same format (try e.g. <code><a href="../reference/a_gmean.html">?a_gmean</a></code>), and are built into the COINr package. But what if we want to use another type of aggregation function? The process is exactly the same.</p>
-<p>In this section we use some functions from other packages: the matrixStats package and the Compind package. These are not imported by COINr, so the code here will only work if you have these installed. If this vignette was built on your computer, we have to check whether these packages are installed:</p>
+<p>All of the four aggregation functions mentioned above have the same
+format (try e.g. <code><a href="../reference/a_gmean.html">?a_gmean</a></code>), and are built into the COINr
+package. But what if we want to use another type of aggregation
+function? The process is exactly the same.</p>
+<p>In this section we use some functions from other packages: the
+matrixStats package and the Compind package. These are not imported by
+COINr, so the code here will only work if you have these installed. If
+this vignette was built on your computer, we have to check whether these
+packages are installed:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ms_installed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"matrixStats"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">ms_installed</span></span>
@@ -260,8 +401,15 @@
 <span><span class="va">ci_installed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"Compind"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">ci_installed</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
-<p>If either of these have returned <code>FALSE</code>, in the following code chunks you will see some blanks. See the online version of this vignette to see the results, or install the above packages and rebuild the vignettes.</p>
-<p>Now for an example, we can use the <code><a href="https://rdrr.io/pkg/matrixStats/man/weightedMedian.html" class="external-link">weightedMedian()</a></code> function from the matrixStats package. This has a number of arguments, but the ones we will use are <code>x</code> and <code>w</code> (with the same meanings as COINr functions), and <code>na.rm</code> which we need to set to <code>TRUE</code>.</p>
+<p>If either of these have returned <code>FALSE</code>, in the following
+code chunks you will see some blanks. See the online version of this
+vignette to see the results, or install the above packages and rebuild
+the vignettes.</p>
+<p>Now for an example, we can use the <code><a href="https://rdrr.io/pkg/matrixStats/man/weightedMedian.html" class="external-link">weightedMedian()</a></code>
+function from the matrixStats package. This has a number of arguments,
+but the ones we will use are <code>x</code> and <code>w</code> (with the
+same meanings as COINr functions), and <code>na.rm</code> which we need
+to set to <code>TRUE</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># RESTORE above eval=ms_installed</span></span>
 <span><span class="co"># load matrixStats package</span></span>
@@ -271,15 +419,31 @@
 <span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Aggregate.html">Aggregate</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Normalised"</span>,</span>
 <span>                   f_ag <span class="op">=</span> <span class="st">"weightedMedian"</span>,</span>
 <span>                   f_ag_para <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>The weights <code>w</code> do not need to be specified in <code>f_ag_para</code> because they are automatically passed to <code>f_ag</code> unless specified otherwise.</p>
-<p>The general requirements for <code>f_ag</code> functions passed to <code><a href="../reference/Aggregate.html">Aggregate()</a></code> are that:</p>
+<p>The weights <code>w</code> do not need to be specified in
+<code>f_ag_para</code> because they are automatically passed to
+<code>f_ag</code> unless specified otherwise.</p>
+<p>The general requirements for <code>f_ag</code> functions passed to
+<code><a href="../reference/Aggregate.html">Aggregate()</a></code> are that:</p>
 <ol style="list-style-type: decimal">
-<li>The input to the function is a numeric vector <code>x</code>, possibly with missing values</li>
+<li>The input to the function is a numeric vector <code>x</code>,
+possibly with missing values</li>
 <li>The function returns a single (scalar) aggregated value</li>
-<li>If the function accepts a vector of weights, this vector (of the same length of <code>x</code>) is passed as function argument <code>w</code>. If the function doesn’t accept a vector of weights, we can set <code>w = "none"</code> in the arguments to <code><a href="../reference/Aggregate.html">Aggregate()</a></code>, and it will not try to pass <code>w</code>.</li>
-<li>Any other arguments to <code>f_ag</code>, apart from <code>x</code> and <code>w</code>, should be included in the named list <code>f_ag_para</code>.</li>
+<li>If the function accepts a vector of weights, this vector (of the
+same length of <code>x</code>) is passed as function argument
+<code>w</code>. If the function doesn’t accept a vector of weights, we
+can set <code>w = "none"</code> in the arguments to
+<code><a href="../reference/Aggregate.html">Aggregate()</a></code>, and it will not try to pass
+<code>w</code>.</li>
+<li>Any other arguments to <code>f_ag</code>, apart from <code>x</code>
+and <code>w</code>, should be included in the named list
+<code>f_ag_para</code>.</li>
 </ol>
-<p>Sometimes this may mean that we have to create a wrapper function to satisfy these requirements. For example, the ‘Compind’ package has a number of sophisticated aggregation approaches. The “benefit of the doubt” uses data envelopment analysis to aggregate indicators, however the function <code><a href="https://rdrr.io/pkg/Compind/man/ci_bod.html" class="external-link">Compind::ci_bod()</a></code> outputs a list. We can make a wrapper function to use this inside COINr:</p>
+<p>Sometimes this may mean that we have to create a wrapper function to
+satisfy these requirements. For example, the ‘Compind’ package has a
+number of sophisticated aggregation approaches. The “benefit of the
+doubt” uses data envelopment analysis to aggregate indicators, however
+the function <code><a href="https://rdrr.io/pkg/Compind/man/ci_bod.html" class="external-link">Compind::ci_bod()</a></code> outputs a list. We can make
+a wrapper function to use this inside COINr:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># RESTORE ABOVE eval= ci_installed</span></span>
 <span><span class="co"># load Compind</span></span>
@@ -294,12 +458,19 @@
 <span><span class="co"># aggregate</span></span>
 <span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Aggregate.html">Aggregate</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Normalised"</span>,</span>
 <span>                   f_ag <span class="op">=</span> <span class="st">"ci_bod2"</span>, by_df <span class="op">=</span> <span class="cn">TRUE</span>, w <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div>
-<p>The benefit of the doubt approach automatically assigns individual weights to each unit, so we need to specify <code>w = "none"</code> to stop <code><a href="../reference/Aggregate.html">Aggregate()</a></code> from attempting to pass weights to the function. Importantly, we also need to specify <code>by_df = TRUE</code> which tells <code><a href="../reference/Aggregate.html">Aggregate()</a></code> to pass a data frame to <code>f_ag</code> rather than a vector.</p>
+<p>The benefit of the doubt approach automatically assigns individual
+weights to each unit, so we need to specify <code>w = "none"</code> to
+stop <code><a href="../reference/Aggregate.html">Aggregate()</a></code> from attempting to pass weights to the
+function. Importantly, we also need to specify <code>by_df = TRUE</code>
+which tells <code><a href="../reference/Aggregate.html">Aggregate()</a></code> to pass a data frame to
+<code>f_ag</code> rather than a vector.</p>
 </div>
 <div class="section level3">
 <h3 id="data-availability-limits">Data availability limits<a class="anchor" aria-label="anchor" href="#data-availability-limits"></a>
 </h3>
-<p>Many aggregation functions will return an aggregated value as long as at least one of the values passed to it is non-<code>NA</code>. For example, R’s <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean()</a></code> function:</p>
+<p>Many aggregation functions will return an aggregated value as long as
+at least one of the values passed to it is non-<code>NA</code>. For
+example, R’s <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean()</a></code> function:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># data with all NAs except 1 value</span></span>
 <span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="fl">1</span>, <span class="cn">NA</span><span class="op">)</span></span>
@@ -309,8 +480,19 @@
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 1</span></span></code></pre></div>
-<p>Depending on how we set <code>na.rm</code>, we either get an answer or <code>NA</code>, and this is the same for many other aggregation functions (e.g. the ones built into COINr). Sometimes we might want a bit more control. For example, if we have five indicators in a group, it might only be reasonable to give an aggregated score if, say, at least three out of five indicators have non-<code>NA</code> values.</p>
-<p>The <code><a href="../reference/Aggregate.html">Aggregate()</a></code> function has the option to specify a data availability limit when aggregating. We simply set <code>dat_thresh</code> to a value between 0 and 1, and for each aggregation group, any unit that has a data availability lower than <code>dat_thresh</code> will get a <code>NA</code> value instead of an aggregated score. This is most easily illustrated on a data frame (see next section for more details on aggregating in data frames):</p>
+<p>Depending on how we set <code>na.rm</code>, we either get an answer
+or <code>NA</code>, and this is the same for many other aggregation
+functions (e.g. the ones built into COINr). Sometimes we might want a
+bit more control. For example, if we have five indicators in a group, it
+might only be reasonable to give an aggregated score if, say, at least
+three out of five indicators have non-<code>NA</code> values.</p>
+<p>The <code><a href="../reference/Aggregate.html">Aggregate()</a></code> function has the option to specify a
+data availability limit when aggregating. We simply set
+<code>dat_thresh</code> to a value between 0 and 1, and for each
+aggregation group, any unit that has a data availability lower than
+<code>dat_thresh</code> will get a <code>NA</code> value instead of an
+aggregated score. This is most easily illustrated on a data frame (see
+next section for more details on aggregating in data frames):</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  i1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>,</span>
@@ -322,31 +504,48 @@
 <span><span class="co">#&gt; 1  1  3  1</span></span>
 <span><span class="co">#&gt; 2  2 NA NA</span></span>
 <span><span class="co">#&gt; 3  3 NA  1</span></span></code></pre></div>
-<p>We will require that at least 2/3 of the indicators should be non-<code>NA</code> to give an aggregated value.</p>
+<p>We will require that at least 2/3 of the indicators should be
+non-<code>NA</code> to give an aggregated value.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># aggregate with arithmetic mean, equal weight and data avail limit of 2/3</span></span>
 <span><span class="fu"><a href="../reference/Aggregate.html">Aggregate</a></span><span class="op">(</span><span class="va">df1</span>, f_ag <span class="op">=</span> <span class="st">"a_amean"</span>,</span>
 <span>           f_ag_para <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>w <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>           dat_thresh <span class="op">=</span> <span class="fl">2</span><span class="op">/</span><span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 1.666667       NA 2.000000</span></span></code></pre></div>
-<p>Here we see that the second row is aggregated to give <code>NA</code> because it only has 1/3 data availability.</p>
+<p>Here we see that the second row is aggregated to give <code>NA</code>
+because it only has 1/3 data availability.</p>
 </div>
 <div class="section level3">
 <h3 id="by-level">By level<a class="anchor" aria-label="anchor" href="#by-level"></a>
 </h3>
-<p>We can also use a different aggregation function for each aggregation level by specifying <code>f_ag</code> as a vector of function names rather than a single function.</p>
+<p>We can also use a different aggregation function for each aggregation
+level by specifying <code>f_ag</code> as a vector of function names
+rather than a single function.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Aggregate.html">Aggregate</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Normalised"</span>, f_ag <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a_amean"</span>, <span class="st">"a_gmean"</span>, <span class="st">"a_amean"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Written data set to .$Data$Aggregated</span></span>
 <span><span class="co">#&gt; (overwritten existing data set)</span></span></code></pre></div>
-<p>In this example, there are four levels in the index, which means there are three aggregation operations to be performed: from Level 1 to Level 2, from Level 2 to Level 3, and from Level 3 to Level 4. This means that <code>f_ag</code> vector must have <code>n-1</code> entries, where <code>n</code> is the number of aggregation levels. The functions are run in the order of aggregation.</p>
-<p>In the same way, if parameters need to be passed to the functions specified by <code>f_ag</code>, <code>f_ag_para</code> can be specified as a list of length <code>n-1</code>, where each element is a list of parameters.</p>
+<p>In this example, there are four levels in the index, which means
+there are three aggregation operations to be performed: from Level 1 to
+Level 2, from Level 2 to Level 3, and from Level 3 to Level 4. This
+means that <code>f_ag</code> vector must have <code>n-1</code> entries,
+where <code>n</code> is the number of aggregation levels. The functions
+are run in the order of aggregation.</p>
+<p>In the same way, if parameters need to be passed to the functions
+specified by <code>f_ag</code>, <code>f_ag_para</code> can be specified
+as a list of length <code>n-1</code>, where each element is a list of
+parameters.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="data-frames">Data frames<a class="anchor" aria-label="anchor" href="#data-frames"></a>
 </h2>
-<p>The <code><a href="../reference/Aggregate.html">Aggregate()</a></code> function also works in the same way on data frames. This is probably more useful when aggregation functions take vectors as inputs, rather than data frames, since it would otherwise be easier to go directly to the underlying function. In any case, here are a couple of examples. First, using a built in COINr function to compute the weighted harmonic mean of a data frame.</p>
+<p>The <code><a href="../reference/Aggregate.html">Aggregate()</a></code> function also works in the same way on
+data frames. This is probably more useful when aggregation functions
+take vectors as inputs, rather than data frames, since it would
+otherwise be easier to go directly to the underlying function. In any
+case, here are a couple of examples. First, using a built in COINr
+function to compute the weighted harmonic mean of a data frame.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># get some indicator data - take a few columns from built in data set</span></span>
 <span><span class="va">X</span> <span class="op">&lt;-</span> <span class="va">ASEM_iData</span><span class="op">[</span><span class="fl">12</span><span class="op">:</span><span class="fl">15</span><span class="op">]</span></span>
@@ -372,7 +571,9 @@
 <div class="section level2">
 <h2 id="purses">Purses<a class="anchor" aria-label="anchor" href="#purses"></a>
 </h2>
-<p>The purse method for <code><a href="../reference/Aggregate.html">Aggregate()</a></code> is straightforward and simply applies the same aggregation specifications to each of the coins within. It has exactly the same parameters as the coin method.</p>
+<p>The purse method for <code><a href="../reference/Aggregate.html">Aggregate()</a></code> is straightforward and
+simply applies the same aggregation specifications to each of the coins
+within. It has exactly the same parameters as the coin method.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># build example purse up to normalised data set</span></span>
 <span><span class="va">purse</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_example_purse.html">build_example_purse</a></span><span class="op">(</span>up_to <span class="op">=</span> <span class="st">"Normalise"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -388,7 +589,8 @@
 <div class="section level2">
 <h2 id="what-next">What next?<a class="anchor" aria-label="anchor" href="#what-next"></a>
 </h2>
-<p>After aggregating indicators, it is likely that you will want to begin viewing and exploring the results. See the vignette on <a href="results.html">Exploring results</a> for more details.</p>
+<p>After aggregating indicators, it is likely that you will want to
+begin viewing and exploring the results. See the vignette on <a href="results.html">Exploring results</a> for more details.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

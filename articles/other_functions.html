@@ -111,11 +111,16 @@
 
     
     
-<p>This vignette covers other functions that don’t fit in other vignettes, but still seem useful. Mainly this involves import and export, and some helper functions.</p>
+<p>This vignette covers other functions that don’t fit in other
+vignettes, but still seem useful. Mainly this involves import and
+export, and some helper functions.</p>
 <div class="section level2">
 <h2 id="import-and-export">Import and export<a class="anchor" aria-label="anchor" href="#import-and-export"></a>
 </h2>
-<p>One of the most useful functions is <code><a href="../reference/export_to_excel.html">export_to_excel()</a></code>. This can be used to export the contents of a coin to Excel at at any point in its construction, and is very simple to run. We first build the example coin:</p>
+<p>One of the most useful functions is <code><a href="../reference/export_to_excel.html">export_to_excel()</a></code>.
+This can be used to export the contents of a coin to Excel at at any
+point in its construction, and is very simple to run. We first build the
+example coin:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bluefoxr.github.io/COINr/">COINr</a></span><span class="op">)</span></span>
 <span></span>
@@ -125,9 +130,20 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># export coin to Excel</span></span>
 <span><span class="fu"><a href="../reference/export_to_excel.html">export_to_excel</a></span><span class="op">(</span><span class="va">coin</span>, fname <span class="op">=</span> <span class="st">"example_coin_results.xlsx"</span><span class="op">)</span></span></code></pre></div>
-<p>This exports every data frame in the coin to a separate tab in the workbook, named according to its position in the coin. By default it excludes the Log of the coin, but this can be optionally included. The function is very useful for passing the results to people who don’t use R (let’s face it, that’s most people).</p>
-<p>Data can also be imported directly into COINr from the <a href="https://knowledge4policy.ec.europa.eu/composite-indicators/coin-tool_en" class="external-link">COIN Tool</a> which is an Excel-based tool for building and analysing composite indicators, similar in fact to COINr<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;Full disclosure, I was also involved in the development of the COIN Tool&lt;/p&gt;"><sup>1</sup></a>. With the <code><a href="../reference/import_COIN_tool.html">import_coin_tool()</a></code> function you can import data directly from the COIN Tool to cross check or extend your analysis in COINr.</p>
-<p>To demonstrate, we can take the example version of the COIN Tool, which you can download <a href="https://composite-indicators.jrc.ec.europa.eu/sites/default/files/COIN_Tool_v1_LITE_exampledata.xlsm" class="external-link">here</a>. Then it’s as simple as running:</p>
+<p>This exports every data frame in the coin to a separate tab in the
+workbook, named according to its position in the coin. By default it
+excludes the Log of the coin, but this can be optionally included. The
+function is very useful for passing the results to people who don’t use
+R (let’s face it, that’s most people).</p>
+<p>Data can also be imported directly into COINr from the <a href="https://knowledge4policy.ec.europa.eu/composite-indicators/coin-tool_en" class="external-link">COIN
+Tool</a> which is an Excel-based tool for building and analysing
+composite indicators, similar in fact to COINr<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;Full disclosure, I was also involved in the development
+of the COIN Tool&lt;/p&gt;"><sup>1</sup></a>. With the
+<code><a href="../reference/import_COIN_tool.html">import_coin_tool()</a></code> function you can import data directly
+from the COIN Tool to cross check or extend your analysis in COINr.</p>
+<p>To demonstrate, we can take the example version of the COIN Tool,
+which you can download <a href="https://composite-indicators.jrc.ec.europa.eu/sites/default/files/COIN_Tool_v1_LITE_exampledata.xlsm" class="external-link">here</a>.
+Then it’s as simple as running:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># make sure file is in working directory!</span></span>
 <span><span class="va">coin_import</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/import_COIN_tool.html">import_coin_tool</a></span><span class="op">(</span><span class="st">"COIN_Tool_v1_LITE_exampledata.xlsm"</span>,</span>
@@ -137,16 +153,28 @@
 <div class="section level2">
 <h2 id="converting-from-older-coinr-versions">Converting from older COINr versions<a class="anchor" aria-label="anchor" href="#converting-from-older-coinr-versions"></a>
 </h2>
-<p>COINr changed drastically from v0.6 to v1.0. So drastically that I skipped several version numbers. From v1.0, the main object of COINr is called a “coin” and this is different from the “COIN” used up to v0.6.x. If you have worked in COINr before v1.0, you can use the <code><a href="../reference/COIN_to_coin.html">COIN_to_coin()</a></code> function to convert old COINs into new coins:</p>
+<p>COINr changed drastically from v0.6 to v1.0. So drastically that I
+skipped several version numbers. From v1.0, the main object of COINr is
+called a “coin” and this is different from the “COIN” used up to v0.6.x.
+If you have worked in COINr before v1.0, you can use the
+<code><a href="../reference/COIN_to_coin.html">COIN_to_coin()</a></code> function to convert old COINs into new
+coins:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/COIN_to_coin.html">COIN_to_coin</a></span><span class="op">(</span><span class="va">COIN</span><span class="op">)</span></span></code></pre></div>
-<p>This comes with some limitations: any data sets present in the coin will not be passed on unless <code>recover_dsets = TRUE</code>. However, if this is specified, the coin cannot be regenerated because it is not possible to translate the log from the older COIN class (called the “Method”) to the log in the new coin class. Still, the conversion avoids having to reformat <code>iData</code> and <code>iMeta</code>.</p>
+<p>This comes with some limitations: any data sets present in the coin
+will not be passed on unless <code>recover_dsets = TRUE</code>. However,
+if this is specified, the coin cannot be regenerated because it is not
+possible to translate the log from the older COIN class (called the
+“Method”) to the log in the new coin class. Still, the conversion avoids
+having to reformat <code>iData</code> and <code>iMeta</code>.</p>
 </div>
 <div class="section level2">
 <h2 id="other-useful-functions">Other useful functions<a class="anchor" aria-label="anchor" href="#other-useful-functions"></a>
 </h2>
-<p>Here we list some accessory functions that could be useful in some circumstances.</p>
-<p>The <code><a href="../reference/rank_df.html">rank_df()</a></code> function converts a data frame to ranks, ignoring non-numeric columns. Taking some sample data:</p>
+<p>Here we list some accessory functions that could be useful in some
+circumstances.</p>
+<p>The <code><a href="../reference/rank_df.html">rank_df()</a></code> function converts a data frame to ranks,
+ignoring non-numeric columns. Taking some sample data:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">X</span> <span class="op">&lt;-</span> <span class="va">ASEM_iData</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">10</span><span class="op">:</span><span class="fl">12</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">X</span></span>
@@ -165,7 +193,8 @@
 <span><span class="co">#&gt; 3   BGR   3          3   5</span></span>
 <span><span class="co">#&gt; 4   HRV   4          4   3</span></span>
 <span><span class="co">#&gt; 5   CYP   5          5   4</span></span></code></pre></div>
-<p>The <code><a href="../reference/replace_df.html">replace_df()</a></code> function replaces values found anywhere in a data frame with corresponding new values:</p>
+<p>The <code><a href="../reference/replace_df.html">replace_df()</a></code> function replaces values found anywhere
+in a data frame with corresponding new values:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/replace_df.html">replace_df</a></span><span class="op">(</span><span class="va">X</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>old <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AUT"</span>, <span class="st">"BEL"</span><span class="op">)</span>, new <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"test1"</span>, <span class="st">"test2"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   uCode       GDP Population      LPI</span></span>
@@ -174,7 +203,8 @@
 <span><span class="co">#&gt; 3   BGR  53.23964   7084.571 2.807685</span></span>
 <span><span class="co">#&gt; 4   HRV  51.23100   4189.353 3.160829</span></span>
 <span><span class="co">#&gt; 5   CYP  20.04623   1179.551 2.999061</span></span></code></pre></div>
-<p>The <code><a href="../reference/round_df.html">round_df()</a></code> rounds to a specified number of decimal places, ignoring non-numeric columns:</p>
+<p>The <code><a href="../reference/round_df.html">round_df()</a></code> rounds to a specified number of decimal
+places, ignoring non-numeric columns:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/round_df.html">round_df</a></span><span class="op">(</span><span class="va">X</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   uCode   GDP Population LPI</span></span>
@@ -183,7 +213,8 @@
 <span><span class="co">#&gt; 3   BGR  53.2     7084.6 2.8</span></span>
 <span><span class="co">#&gt; 4   HRV  51.2     4189.4 3.2</span></span>
 <span><span class="co">#&gt; 5   CYP  20.0     1179.6 3.0</span></span></code></pre></div>
-<p>The <code><a href="../reference/signif_df.html">signif_df()</a></code> is equivalent but for a number of significant figures:</p>
+<p>The <code><a href="../reference/signif_df.html">signif_df()</a></code> is equivalent but for a number of
+significant figures:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/signif_df.html">signif_df</a></span><span class="op">(</span><span class="va">X</span>, <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   uCode   GDP Population  LPI</span></span>
@@ -192,8 +223,18 @@
 <span><span class="co">#&gt; 3   BGR  53.2       7080 2.81</span></span>
 <span><span class="co">#&gt; 4   HRV  51.2       4190 3.16</span></span>
 <span><span class="co">#&gt; 5   CYP  20.0       1180 3.00</span></span></code></pre></div>
-<p>Finally, the <code><a href="../reference/compare_df.html">compare_df()</a></code> function gives a detailed comparison between two similar data frames that are indexed by a specified column. This function is tailored to compare results in composite indicators. Say you have a set of results from COINr and want to cross check against a separate calculation. Often, you end up with a data frame with the same columns, but possibly in a different order. Rows could be in a different order but are indexed by an identifier, here “uCode”. The <code><a href="../reference/compare_df.html">compare_df()</a></code> function gives a detailed comparison between the two data frames and points out any differences.</p>
-<p>We’ll demonstrate this by copying the example data frame, altering some values and seeing what happens:</p>
+<p>Finally, the <code><a href="../reference/compare_df.html">compare_df()</a></code> function gives a detailed
+comparison between two similar data frames that are indexed by a
+specified column. This function is tailored to compare results in
+composite indicators. Say you have a set of results from COINr and want
+to cross check against a separate calculation. Often, you end up with a
+data frame with the same columns, but possibly in a different order.
+Rows could be in a different order but are indexed by an identifier,
+here “uCode”. The <code><a href="../reference/compare_df.html">compare_df()</a></code> function gives a detailed
+comparison between the two data frames and points out any
+differences.</p>
+<p>We’ll demonstrate this by copying the example data frame, altering
+some values and seeing what happens:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># copy</span></span>
 <span><span class="va">X1</span> <span class="op">&lt;-</span> <span class="va">X</span></span>
@@ -227,8 +268,17 @@
 <span><span class="co">#&gt;   uCode       df1   df2</span></span>
 <span><span class="co">#&gt; 1   AUT  8735.453 10000</span></span>
 <span><span class="co">#&gt; 2   BEL 11429.336 70000</span></span></code></pre></div>
-<p>The output is a list with several entries. First, it tells us that the two data frames are not the same. The “Details” data frame lists each column and says whether it is identical or not, and how many different points there are. Finally, the “Differences” list has one entry for each column that differs, and details the value of the point from the first data frame compared to the value from the second.</p>
-<p>From experience, this kind of output can be very helpful in quickly zooming in on differences between possibly large data frames of results. It is mainly intended for the use case described above, where the data frames are known to be similar, are of the same size, but we want to check for precise differences.</p>
+<p>The output is a list with several entries. First, it tells us that
+the two data frames are not the same. The “Details” data frame lists
+each column and says whether it is identical or not, and how many
+different points there are. Finally, the “Differences” list has one
+entry for each column that differs, and details the value of the point
+from the first data frame compared to the value from the second.</p>
+<p>From experience, this kind of output can be very helpful in quickly
+zooming in on differences between possibly large data frames of results.
+It is mainly intended for the use case described above, where the data
+frames are known to be similar, are of the same size, but we want to
+check for precise differences.</p>
 </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

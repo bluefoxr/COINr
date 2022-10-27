@@ -111,12 +111,22 @@
 
     
     
-<p>Unit screening is a screening or filtering of units based on data availability rules. Just like with indicators (columns), when a unit (row) has very few data points available, it may make sense to remove it. This avoids drawing conclusions on units with very few data points. It will also increase the percentage data availability of each indicator once the units have been removed.</p>
-<p>The COINr function <code><a href="../reference/Screen.html">Screen()</a></code> is a generic function with methods for data frames, coins and purses. It is a <em>building</em> function in that it creates a new data set in <code>$.Data</code> as its output.</p>
+<p>Unit screening is a screening or filtering of units based on data
+availability rules. Just like with indicators (columns), when a unit
+(row) has very few data points available, it may make sense to remove
+it. This avoids drawing conclusions on units with very few data points.
+It will also increase the percentage data availability of each indicator
+once the units have been removed.</p>
+<p>The COINr function <code><a href="../reference/Screen.html">Screen()</a></code> is a generic function with
+methods for data frames, coins and purses. It is a <em>building</em>
+function in that it creates a new data set in <code>$.Data</code> as its
+output.</p>
 <div class="section level2">
 <h2 id="data-frames">Data frames<a class="anchor" aria-label="anchor" href="#data-frames"></a>
 </h2>
-<p>We begin with data frames. Let’s take a subset of the inbuilt example data for demonstration. I cherry-pick some rows and columns which have some missing values.</p>
+<p>We begin with data frames. Let’s take a subset of the inbuilt example
+data for demonstration. I cherry-pick some rows and columns which have
+some missing values.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bluefoxr.github.io/COINr/">COINr</a></span><span class="op">)</span></span>
 <span></span>
@@ -137,8 +147,13 @@
 <span><span class="co">#&gt; 49   SGP    11411 270.5  0.92780   14.507</span></span>
 <span><span class="co">#&gt; 50   THA     5317  53.6  0.08969    6.661</span></span>
 <span><span class="co">#&gt; 51   VNM     3618    NA       NA       NA</span></span></code></pre></div>
-<p>The data has four indicators, plus an identifier column “uCode”. Looking at each unit, the data availability is variable. We have 12 units in total.</p>
-<p>Now let’s use <code><a href="../reference/Screen.html">Screen()</a></code> to screen out some of these units. Specifically, we will remove any units that have less than 75% data availabilty (3 of 4 indicators with non-<code>NA</code> values):</p>
+<p>The data has four indicators, plus an identifier column “uCode”.
+Looking at each unit, the data availability is variable. We have 12
+units in total.</p>
+<p>Now let’s use <code><a href="../reference/Screen.html">Screen()</a></code> to screen out some of these
+units. Specifically, we will remove any units that have less than 75%
+data availabilty (3 of 4 indicators with non-<code>NA</code>
+values):</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">l_scr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Screen.html">Screen</a></span><span class="op">(</span><span class="va">iData</span>, unit_screen <span class="op">=</span> <span class="st">"byNA"</span>, dat_thresh <span class="op">=</span> <span class="fl">0.75</span><span class="op">)</span></span></code></pre></div>
 <p>The output of <code><a href="../reference/Screen.html">Screen()</a></code> is a list:</p>
@@ -148,7 +163,9 @@
 <span><span class="co">#&gt;  $ ScreenedData:'data.frame':    9 obs. of  5 variables:</span></span>
 <span><span class="co">#&gt;  $ DataSummary :'data.frame':    12 obs. of  10 variables:</span></span>
 <span><span class="co">#&gt;  $ RemovedUnits: chr [1:3] "LAO" "MMR" "VNM"</span></span></code></pre></div>
-<p>We can see already that the “RemovedUnits” entry tells us that three units were removed based on our specifications. We now have our new screened data set:</p>
+<p>We can see already that the “RemovedUnits” entry tells us that three
+units were removed based on our specifications. We now have our new
+screened data set:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">l_scr</span><span class="op">$</span><span class="va">ScreenedData</span></span>
 <span><span class="co">#&gt;    uCode Research   Pat CultServ CultGood</span></span>
@@ -178,14 +195,26 @@
 <span><span class="co">#&gt; 43            FALSE     TRUE</span></span>
 <span><span class="co">#&gt; 44             TRUE    FALSE</span></span>
 <span><span class="co">#&gt; 45            FALSE     TRUE</span></span></code></pre></div>
-<p>This table is in fact generated by <code><a href="../reference/get_data_avail.html">get_data_avail()</a></code> - some more details can be found in the <a href="analysis.html">Analysis</a> vignette.</p>
-<p>Other than data availability, units can also be screened based on the presence of zeros, or on both - this is specified by the <code>unit_screen</code> argument. Use the <code>Force</code><a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;Luke. Sorry.&lt;/p&gt;"><sup>1</sup></a> argument to override the screening rules for specified units if required (either to force inclusion or force exclusion).</p>
+<p>This table is in fact generated by <code><a href="../reference/get_data_avail.html">get_data_avail()</a></code> -
+some more details can be found in the <a href="analysis.html">Analysis</a> vignette.</p>
+<p>Other than data availability, units can also be screened based on the
+presence of zeros, or on both - this is specified by the
+<code>unit_screen</code> argument. Use the <code>Force</code><a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;Luke. Sorry.&lt;/p&gt;"><sup>1</sup></a> argument
+to override the screening rules for specified units if required (either
+to force inclusion or force exclusion).</p>
 </div>
 <div class="section level2">
 <h2 id="coins">Coins<a class="anchor" aria-label="anchor" href="#coins"></a>
 </h2>
-<p>Screening on coins is very similar to data frames, because the coin method extracts the relevant data set, passes it to the data frame method, and then then puts the output back as a new data set. This means the arguments are almost the same. The only thing different is to specify which data set to screen, the name to give the new data set, and whether to output a coin or a list.</p>
-<p>We’ll build the example coin, then screen the raw data set with a threshold of 85% data availability and also name the new data set something different rather than “Screened” (the default):</p>
+<p>Screening on coins is very similar to data frames, because the coin
+method extracts the relevant data set, passes it to the data frame
+method, and then then puts the output back as a new data set. This means
+the arguments are almost the same. The only thing different is to
+specify which data set to screen, the name to give the new data set, and
+whether to output a coin or a list.</p>
+<p>We’ll build the example coin, then screen the raw data set with a
+threshold of 85% data availability and also name the new data set
+something different rather than “Screened” (the default):</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># build example coin</span></span>
 <span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_example_coin.html">build_example_coin</a></span><span class="op">(</span>up_to <span class="op">=</span> <span class="st">"new_coin"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -214,16 +243,24 @@
 <span><span class="co">#&gt; Data sets:</span></span>
 <span><span class="co">#&gt;   Raw (51 units)</span></span>
 <span><span class="co">#&gt;   Filtered_85pc (48 units)</span></span></code></pre></div>
-<p>The printed summary shows that the new data set only has 48 units, compared to the raw data set with 51. We can find which units were filtered because this is stored in the coin’s “Analysis” sub-list:</p>
+<p>The printed summary shows that the new data set only has 48 units,
+compared to the raw data set with 51. We can find which units were
+filtered because this is stored in the coin’s “Analysis” sub-list:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">coin</span><span class="op">$</span><span class="va">Analysis</span><span class="op">$</span><span class="va">Filtered_85pc</span><span class="op">$</span><span class="va">RemovedUnits</span></span>
 <span><span class="co">#&gt; [1] "BRN" "LAO" "MMR"</span></span></code></pre></div>
-<p>The Analysis sub-list also contains the data availability table that is output by <code><a href="../reference/Screen.html">Screen()</a></code>. As with the data frame method, we can also choose to screen units by presence of zeroes, or a combination of zeroes and missing values.</p>
+<p>The Analysis sub-list also contains the data availability table that
+is output by <code><a href="../reference/Screen.html">Screen()</a></code>. As with the data frame method, we
+can also choose to screen units by presence of zeroes, or a combination
+of zeroes and missing values.</p>
 </div>
 <div class="section level2">
 <h2 id="purses">Purses<a class="anchor" aria-label="anchor" href="#purses"></a>
 </h2>
-<p>For completion we also demonstrate the purse method. Like most purse methods, this is simply applying the coin method to each coin in the purse, without any special features. Here, we perform the same example as in the coin section, but on a purse of coins:</p>
+<p>For completion we also demonstrate the purse method. Like most purse
+methods, this is simply applying the coin method to each coin in the
+purse, without any special features. Here, we perform the same example
+as in the coin section, but on a purse of coins:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># build example purse</span></span>
 <span><span class="va">purse</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_example_purse.html">build_example_purse</a></span><span class="op">(</span>up_to <span class="op">=</span> <span class="st">"new_coin"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>

@@ -111,32 +111,52 @@
 
     
     
-<p>Normalisation is the operation of bringing indicators onto comparable scales so that they can be aggregated more fairly. To see why this is necessary, consider aggregating GDP values (billions or trillions of dollars) with percentage tertiary graduates (tens of percent). Average values here would make no sense because one is on a completely different scale to the other.</p>
-<p>The normalisation function in COINr is imaginatively named <code><a href="../reference/Normalise.html">Normalise()</a></code>. It has the following main features:</p>
+<p>Normalisation is the operation of bringing indicators onto comparable
+scales so that they can be aggregated more fairly. To see why this is
+necessary, consider aggregating GDP values (billions or trillions of
+dollars) with percentage tertiary graduates (tens of percent). Average
+values here would make no sense because one is on a completely different
+scale to the other.</p>
+<p>The normalisation function in COINr is imaginatively named
+<code><a href="../reference/Normalise.html">Normalise()</a></code>. It has the following main features:</p>
 <ul>
-<li>A wide range of normalisation methods, including the possibility to pass custom functions</li>
+<li>A wide range of normalisation methods, including the possibility to
+pass custom functions</li>
 <li>Customisable parameters for normalisation</li>
-<li>Possibility to specify detailed individual treatment for each indicator</li>
+<li>Possibility to specify detailed individual treatment for each
+indicator</li>
 </ul>
-<p>As of COINr v1.0, <code><a href="../reference/Normalise.html">Normalise()</a></code> is a generic function with methods for different classes. This means that <code><a href="../reference/Normalise.html">Normalise()</a></code> can be called on coins, but also on data frames, numeric vectors and purses (time-indexed collections of coins).</p>
-<p>Since <code><a href="../reference/Normalise.html">Normalise()</a></code> might be a bit over-complicated for some applications, the <code><a href="../reference/qNormalise.html">qNormalise()</a></code> function gives a simpler interface which might be easier to use. See the <a href="#simplified-normalisation">Simplified normalisation</a> section.</p>
+<p>As of COINr v1.0, <code><a href="../reference/Normalise.html">Normalise()</a></code> is a generic function with
+methods for different classes. This means that <code><a href="../reference/Normalise.html">Normalise()</a></code>
+can be called on coins, but also on data frames, numeric vectors and
+purses (time-indexed collections of coins).</p>
+<p>Since <code><a href="../reference/Normalise.html">Normalise()</a></code> might be a bit over-complicated for
+some applications, the <code><a href="../reference/qNormalise.html">qNormalise()</a></code> function gives a
+simpler interface which might be easier to use. See the <a href="#simplified-normalisation">Simplified normalisation</a>
+section.</p>
 <div class="section level2">
 <h2 id="coins">Coins<a class="anchor" aria-label="anchor" href="#coins"></a>
 </h2>
-<p>The <code><a href="../reference/Normalise.html">Normalise()</a></code> method for coins follows the familiar format: you have to specify:</p>
+<p>The <code><a href="../reference/Normalise.html">Normalise()</a></code> method for coins follows the familiar
+format: you have to specify:</p>
 <ul>
 <li>
 <code>x</code> the coin</li>
 <li>
-<code>global_specs</code> default specifications to apply to all indicators</li>
+<code>global_specs</code> default specifications to apply to all
+indicators</li>
 <li>
-<code>indiv_specs</code> individual specifications to override <code>global_specs</code> for specific indicators, if required</li>
+<code>indiv_specs</code> individual specifications to override
+<code>global_specs</code> for specific indicators, if required</li>
 <li>
-<code>directions</code> a data frame specifying directions - this overrides the directions in <code>iMeta</code> if specified</li>
+<code>directions</code> a data frame specifying directions - this
+overrides the directions in <code>iMeta</code> if specified</li>
 <li>
-<code>out2</code> whether to output an updated coin or simply a data frame</li>
+<code>out2</code> whether to output an updated coin or simply a data
+frame</li>
 </ul>
-<p>Let’s begin with a simple example. We build the example coin and normalise the raw data.</p>
+<p>Let’s begin with a simple example. We build the example coin and
+normalise the raw data.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bluefoxr.github.io/COINr/">COINr</a></span><span class="op">)</span></span>
 <span></span>
@@ -149,12 +169,17 @@
 <span><span class="co"># normalise the raw data set</span></span>
 <span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Normalise.html">Normalise</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Raw"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Written data set to .$Data$Normalised</span></span></code></pre></div>
-<p>We can compare one of the raw and un-normalised indicators side by side.</p>
+<p>We can compare one of the raw and un-normalised indicators side by
+side.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_scatter.html">plot_scatter</a></span><span class="op">(</span><span class="va">coin</span>, dsets <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Raw"</span>, <span class="st">"Normalised"</span><span class="op">)</span>, iCodes <span class="op">=</span> <span class="st">"Goods"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="normalise_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
-<p>This plot also illustrates the linear nature of the min-max transformation.</p>
-<p>The default normalisation uses the min-max approach, scaling indicators onto the <span class="math inline">\([0, 100]\)</span> interval. But we can change the normalisation type and its parameters using the <code>global_specs</code> argument.</p>
+<p>This plot also illustrates the linear nature of the min-max
+transformation.</p>
+<p>The default normalisation uses the min-max approach, scaling
+indicators onto the <span class="math inline">\([0, 100]\)</span>
+interval. But we can change the normalisation type and its parameters
+using the <code>global_specs</code> argument.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Normalise.html">Normalise</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Raw"</span>,</span>
 <span>                   global_specs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>f_n <span class="op">=</span> <span class="st">"n_zscore"</span>,</span>
@@ -165,13 +190,30 @@
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_scatter.html">plot_scatter</a></span><span class="op">(</span><span class="va">coin</span>, dsets <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Raw"</span>, <span class="st">"Normalised"</span><span class="op">)</span>, iCodes <span class="op">=</span> <span class="st">"Goods"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="normalise_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
-<p>Again, the z-score transformation is linear. It simply puts the resulting indicator on a different scale.</p>
-<p>Notice the syntax of <code>global_specs</code>. If specified, it takes entries <code>f_n</code> (the name of the function to apply to each column) and <code>f_n_para</code> (any further arguments to <code>f_n</code>, not including <code>x</code>). Importantly, <code>f_n_para</code> <em>must</em> be specified as a list, even if it only contains one parameter.</p>
-<p>Note that <strong>COINr has a number of normalisation functions built in</strong>, all of which are of the form <code>n_*()</code>, such as <code><a href="../reference/n_minmax.html">n_minmax()</a></code>, <code><a href="../reference/n_borda.html">n_borda()</a></code>, etc. Type <code>n_</code> in the R Studio console and press the Tab key to see a list, or else browse the COINr functions alphabetically.</p>
+<p>Again, the z-score transformation is linear. It simply puts the
+resulting indicator on a different scale.</p>
+<p>Notice the syntax of <code>global_specs</code>. If specified, it
+takes entries <code>f_n</code> (the name of the function to apply to
+each column) and <code>f_n_para</code> (any further arguments to
+<code>f_n</code>, not including <code>x</code>). Importantly,
+<code>f_n_para</code> <em>must</em> be specified as a list, even if it
+only contains one parameter.</p>
+<p>Note that <strong>COINr has a number of normalisation functions built
+in</strong>, all of which are of the form <code>n_*()</code>, such as
+<code><a href="../reference/n_minmax.html">n_minmax()</a></code>, <code><a href="../reference/n_borda.html">n_borda()</a></code>, etc. Type
+<code>n_</code> in the R Studio console and press the Tab key to see a
+list, or else browse the COINr functions alphabetically.</p>
 <div class="section level3">
 <h3 id="calling-external-functions">Calling external functions<a class="anchor" aria-label="anchor" href="#calling-external-functions"></a>
 </h3>
-<p>Since <code>f_n</code> points to a function name, any function can be passed to <code><a href="../reference/Normalise.html">Normalise()</a></code> as long as it is available in the namespace. To illustrate, consider an example where we want to categorise into discrete bins. We can use base R’s <code><a href="https://rdrr.io/r/base/cut.html" class="external-link">cut()</a></code> function for this purpose. We simply need to specify the number of bins. We could directly call <code><a href="https://rdrr.io/r/base/cut.html" class="external-link">cut()</a></code>, but for clarity we will create a simple wrapper function around it, then pass that function to <code><a href="../reference/Normalise.html">Normalise()</a></code>.</p>
+<p>Since <code>f_n</code> points to a function name, any function can be
+passed to <code><a href="../reference/Normalise.html">Normalise()</a></code> as long as it is available in the
+namespace. To illustrate, consider an example where we want to
+categorise into discrete bins. We can use base R’s <code><a href="https://rdrr.io/r/base/cut.html" class="external-link">cut()</a></code>
+function for this purpose. We simply need to specify the number of bins.
+We could directly call <code><a href="https://rdrr.io/r/base/cut.html" class="external-link">cut()</a></code>, but for clarity we will
+create a simple wrapper function around it, then pass that function to
+<code><a href="../reference/Normalise.html">Normalise()</a></code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># wrapper function</span></span>
 <span><span class="va">f_bin</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">nbins</span><span class="op">)</span><span class="op">{</span></span>
@@ -184,18 +226,33 @@
 <span>                                        f_n_para <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>nbins <span class="op">=</span> <span class="fl">5</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Written data set to .$Data$Normalised</span></span>
 <span><span class="co">#&gt; (overwritten existing data set)</span></span></code></pre></div>
-<p>To illustrate the difference with the linear transformations above, we again plot the raw against normalised indicator:</p>
+<p>To illustrate the difference with the linear transformations above,
+we again plot the raw against normalised indicator:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_scatter.html">plot_scatter</a></span><span class="op">(</span><span class="va">coin</span>, dsets <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Raw"</span>, <span class="st">"Normalised"</span><span class="op">)</span>, iCodes <span class="op">=</span> <span class="st">"Goods"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="normalise_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
 <p>Obviously this is <em>not</em> linear.</p>
-<p>Generally, the requirements of a function to be passed to <code><a href="../reference/Normalise.html">Normalise()</a></code> are that its first argument should be <code>x</code>, a numeric vector, and it should return a numeric vector of the same length as <code>x</code>. It should also be able to handle <code>NA</code>s. Any further arguments can be passed via the <code>f_n_para</code> entry.</p>
+<p>Generally, the requirements of a function to be passed to
+<code><a href="../reference/Normalise.html">Normalise()</a></code> are that its first argument should be
+<code>x</code>, a numeric vector, and it should return a numeric vector
+of the same length as <code>x</code>. It should also be able to handle
+<code>NA</code>s. Any further arguments can be passed via the
+<code>f_n_para</code> entry.</p>
 </div>
 <div class="section level3">
 <h3 id="directions">Directions<a class="anchor" aria-label="anchor" href="#directions"></a>
 </h3>
-<p>By default, the directions are taken from the coin. These will have been specified as the <code>Direction</code> column of <code>iMeta</code> when constructing a coin with <code><a href="../reference/new_coin.html">new_coin()</a></code>. However, you can specify different directions using the <code>directions</code> argument of <code>normalise()</code>: in this case you need to specify a data frame with two columns: <code>iCode</code> (with an entry for each indicator code found in the target data set) and <code>Direction</code> giving the direction as -1 or 1.</p>
-<p>To show an example, we take the existing directions from the coin, modify them slightly, and then run the normalisation function again:</p>
+<p>By default, the directions are taken from the coin. These will have
+been specified as the <code>Direction</code> column of
+<code>iMeta</code> when constructing a coin with
+<code><a href="../reference/new_coin.html">new_coin()</a></code>. However, you can specify different directions
+using the <code>directions</code> argument of <code>normalise()</code>:
+in this case you need to specify a data frame with two columns:
+<code>iCode</code> (with an entry for each indicator code found in the
+target data set) and <code>Direction</code> giving the direction as -1
+or 1.</p>
+<p>To show an example, we take the existing directions from the coin,
+modify them slightly, and then run the normalisation function again:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># get directions from coin</span></span>
 <span><span class="va">directions</span> <span class="op">&lt;-</span> <span class="va">coin</span><span class="op">$</span><span class="va">Meta</span><span class="op">$</span><span class="va">Ind</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"iCode"</span>, <span class="st">"Direction"</span><span class="op">)</span><span class="op">]</span></span>
@@ -212,7 +269,8 @@
 <span><span class="co">#&gt; 33      CO2        -1</span></span>
 <span><span class="co">#&gt; 34   MatCon        -1</span></span>
 <span><span class="co">#&gt; 35   Forest        -1</span></span></code></pre></div>
-<p>We’ll change the direction of the “Goods” indicator and re-normalise:</p>
+<p>We’ll change the direction of the “Goods” indicator and
+re-normalise:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># change Goods to -1</span></span>
 <span><span class="va">directions</span><span class="op">$</span><span class="va">Direction</span><span class="op">[</span><span class="va">directions</span><span class="op">$</span><span class="va">iCode</span> <span class="op">==</span> <span class="st">"Goods"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="fl">1</span></span>
@@ -225,8 +283,17 @@
 <div class="section level3">
 <h3 id="individual-normalisation">Individual normalisation<a class="anchor" aria-label="anchor" href="#individual-normalisation"></a>
 </h3>
-<p>Finally let’s explore how to specify different normalisation methods for different indicators. The <code>indiv_specs</code> argument takes a named list for each indicator, and will override the specifications in <code>global_specs</code>. If <code>indiv_specs</code> is specified, we only need to include sub-lists for indicators that differ from <code>global_specs</code>.</p>
-<p>To illustrate, we can use a contrived example where we might want to apply min-max to all indicators except two. For those, we apply a rank transformation and distance to maximum approach. Note, that since the default of <code>global_specs</code> is min-max, we don’t need to specify that at all here.</p>
+<p>Finally let’s explore how to specify different normalisation methods
+for different indicators. The <code>indiv_specs</code> argument takes a
+named list for each indicator, and will override the specifications in
+<code>global_specs</code>. If <code>indiv_specs</code> is specified, we
+only need to include sub-lists for indicators that differ from
+<code>global_specs</code>.</p>
+<p>To illustrate, we can use a contrived example where we might want to
+apply min-max to all indicators except two. For those, we apply a rank
+transformation and distance to maximum approach. Note, that since the
+default of <code>global_specs</code> is min-max, we don’t need to
+specify that at all here.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># individual specifications:</span></span>
 <span><span class="co"># LPI - borda scores</span></span>
@@ -256,14 +323,23 @@
 <span><span class="co">#&gt; 8    CHN  30 13.235114 100.00000</span></span>
 <span><span class="co">#&gt; 9    CYP  14  8.721372  55.21211</span></span>
 <span><span class="co">#&gt; 10   CZE  31  9.001961   0.00000</span></span></code></pre></div>
-<p>This example is meant to be illustrative of the functionality of <code><a href="../reference/Normalise.html">Normalise()</a></code>, rather than being a sensible normalisation strategy, because the indicators are now on very different ranges.</p>
-<p>In practice, if different normalisation strategies are selected, it is a good idea to keep the indicators on similar ranges, otherwise the effects will be very unequal in the aggregation step.</p>
+<p>This example is meant to be illustrative of the functionality of
+<code><a href="../reference/Normalise.html">Normalise()</a></code>, rather than being a sensible normalisation
+strategy, because the indicators are now on very different ranges.</p>
+<p>In practice, if different normalisation strategies are selected, it
+is a good idea to keep the indicators on similar ranges, otherwise the
+effects will be very unequal in the aggregation step.</p>
 </div>
 <div class="section level3">
 <h3 id="use-of-targets">Use of targets<a class="anchor" aria-label="anchor" href="#use-of-targets"></a>
 </h3>
-<p>A particular type of normalisation is “distance to target”. This normalises indicators by the distance of each value to a specified target. Targets may often have a political or business meaning, such as e.g. emissions targets or sales targets.</p>
-<p>Targets should be input into a coin using the <code>iMeta</code> argument when building the coin using <code><a href="../reference/new_coin.html">new_coin()</a></code>. In fact, the built-in example data has targets for all indicators:</p>
+<p>A particular type of normalisation is “distance to target”. This
+normalises indicators by the distance of each value to a specified
+target. Targets may often have a political or business meaning, such as
+e.g. emissions targets or sales targets.</p>
+<p>Targets should be input into a coin using the <code>iMeta</code>
+argument when building the coin using <code><a href="../reference/new_coin.html">new_coin()</a></code>. In fact,
+the built-in example data has targets for all indicators:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ASEM_iMeta</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"iCode"</span>, <span class="st">"Target"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     iCode     Target</span></span>
@@ -273,13 +349,28 @@
 <span><span class="co">#&gt; 4    Bord 115.900000</span></span>
 <span><span class="co">#&gt; 5    Elec 104.670585</span></span>
 <span><span class="co">#&gt; 6     Gas  90.060420</span></span></code></pre></div>
-<p><em>(Note that these targets are fabricated just for the purposes of an example)</em></p>
-<p>To use distance-to-target normalisation, we call the <code><a href="../reference/n_dist2targ.html">n_dist2targ()</a></code> function. Like other built in normalisation functions, this normalises a vector using a specified target. We can’t use the <code>f_n_para</code> entry in <code><a href="../reference/Normalise.html">Normalise()</a></code> here because this would only pass a single target value, whereas we need to use a different target for each indicator.</p>
-<p>However, COINr has a special case built in so that targets from <code>iMeta</code> can be used automatically. Simply set <code>global_specs = list(f_n = "n_dist2targ")</code>, and the <code><a href="../reference/Normalise.html">Normalise()</a></code> function will automatically retrieve targets from <code>iMeta$Target</code>. If targets are not present, this will generate an error. Note that the directions of indicators are also passed to <code><a href="../reference/n_dist2targ.html">n_dist2targ()</a></code> - see that function documentation for how the normalisation is performed depending on the direction specified.</p>
+<p><em>(Note that these targets are fabricated just for the purposes of
+an example)</em></p>
+<p>To use distance-to-target normalisation, we call the
+<code><a href="../reference/n_dist2targ.html">n_dist2targ()</a></code> function. Like other built in normalisation
+functions, this normalises a vector using a specified target. We can’t
+use the <code>f_n_para</code> entry in <code><a href="../reference/Normalise.html">Normalise()</a></code> here
+because this would only pass a single target value, whereas we need to
+use a different target for each indicator.</p>
+<p>However, COINr has a special case built in so that targets from
+<code>iMeta</code> can be used automatically. Simply set
+<code>global_specs = list(f_n = "n_dist2targ")</code>, and the
+<code><a href="../reference/Normalise.html">Normalise()</a></code> function will automatically retrieve targets
+from <code>iMeta$Target</code>. If targets are not present, this will
+generate an error. Note that the directions of indicators are also
+passed to <code><a href="../reference/n_dist2targ.html">n_dist2targ()</a></code> - see that function documentation
+for how the normalisation is performed depending on the direction
+specified.</p>
 <p>Our normalisation will then look like this:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Normalise.html">Normalise</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Raw"</span>, global_specs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>f_n <span class="op">=</span> <span class="st">"n_dist2targ"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>It is also possible to specify the <code>cap_max</code> parameter of <code><a href="../reference/n_dist2targ.html">n_dist2targ()</a></code> as follows:</p>
+<p>It is also possible to specify the <code>cap_max</code> parameter of
+<code><a href="../reference/n_dist2targ.html">n_dist2targ()</a></code> as follows:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Normalise.html">Normalise</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Raw"</span>, global_specs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>f_n <span class="op">=</span> <span class="st">"n_dist2targ"</span>, f_n_para <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>cap_max <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -287,7 +378,8 @@
 <div class="section level2">
 <h2 id="data-frames-and-vectors">Data frames and vectors<a class="anchor" aria-label="anchor" href="#data-frames-and-vectors"></a>
 </h2>
-<p>Normalising a data frame is very similar to normalising a coin, except the input is a data frame and output is also a data frame.</p>
+<p>Normalising a data frame is very similar to normalising a coin,
+except the input is a data frame and output is also a data frame.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mtcars_n</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Normalise.html">Normalise</a></span><span class="op">(</span><span class="va">mtcars</span>, global_specs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>f_n <span class="op">=</span> <span class="st">"n_dist2max"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -306,7 +398,10 @@
 <span><span class="co">#&gt; 4 0.0000000</span></span>
 <span><span class="co">#&gt; 5 0.1428571</span></span>
 <span><span class="co">#&gt; 6 0.0000000</span></span></code></pre></div>
-<p>As with coins, columns can be normalised with individual specifications using the <code>indiv_spec</code> argument in exactly the same way as with a coin. Note that non-numeric columns are always ignored:</p>
+<p>As with coins, columns can be normalised with individual
+specifications using the <code>indiv_spec</code> argument in exactly the
+same way as with a coin. Note that non-numeric columns are always
+ignored:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/Normalise.html">Normalise</a></span><span class="op">(</span><span class="va">iris</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -317,7 +412,8 @@
 <span><span class="co">#&gt; 4     8.333333    45.83333     8.474576    4.166667  setosa</span></span>
 <span><span class="co">#&gt; 5    19.444444    66.66667     6.779661    4.166667  setosa</span></span>
 <span><span class="co">#&gt; 6    30.555556    79.16667    11.864407   12.500000  setosa</span></span></code></pre></div>
-<p>There is also a method for numeric vectors, although usually it is just as easy to call the underlying normalisation function directly.</p>
+<p>There is also a method for numeric vectors, although usually it is
+just as easy to call the underlying normalisation function directly.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># example vector</span></span>
 <span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span>
@@ -327,32 +423,57 @@
 <span></span>
 <span><span class="co"># view side by side</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">x_norm</span><span class="op">)</span></span>
-<span><span class="co">#&gt;             x    x_norm</span></span>
-<span><span class="co">#&gt; 1  0.69085550 12.172853</span></span>
-<span><span class="co">#&gt; 2  0.48341678  7.951254</span></span>
-<span><span class="co">#&gt; 3  0.52656462  8.829359</span></span>
-<span><span class="co">#&gt; 4  0.99899616 18.443845</span></span>
-<span><span class="co">#&gt; 5  0.14184973  1.000000</span></span>
-<span><span class="co">#&gt; 6  0.75448858 13.467854</span></span>
-<span><span class="co">#&gt; 7  0.79933134 14.380452</span></span>
-<span><span class="co">#&gt; 8  0.66150327 11.575504</span></span>
-<span><span class="co">#&gt; 9  0.09271226  0.000000</span></span>
-<span><span class="co">#&gt; 10 0.57001675  9.713656</span></span></code></pre></div>
+<span><span class="co">#&gt;             x   x_norm</span></span>
+<span><span class="co">#&gt; 1  0.05735431 0.000000</span></span>
+<span><span class="co">#&gt; 2  0.86197854 4.445963</span></span>
+<span><span class="co">#&gt; 3  0.33347553 1.525712</span></span>
+<span><span class="co">#&gt; 4  0.38403572 1.805083</span></span>
+<span><span class="co">#&gt; 5  0.23833292 1.000000</span></span>
+<span><span class="co">#&gt; 6  0.42898073 2.053427</span></span>
+<span><span class="co">#&gt; 7  0.65504312 3.302538</span></span>
+<span><span class="co">#&gt; 8  0.26155648 1.128322</span></span>
+<span><span class="co">#&gt; 9  0.55653951 2.758255</span></span>
+<span><span class="co">#&gt; 10 0.96047227 4.990192</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="purses">Purses<a class="anchor" aria-label="anchor" href="#purses"></a>
 </h2>
-<p>The purse method for <code>normalise()</code> is especially useful if you are working with multiple coins and panel data. This is because to make scores comparable from one time point to the next, it is usually a good idea to normalise indicators together rather than separately. For example, with the min-max method, indicators are typically normalised using the minimum and maximum over all time points of data, as opposed to having a separate max and min for each.</p>
-<p>If indicators were normalised separately for each time point, then the highest scoring unit would get a score of 100 in time <span class="math inline">\(t\)</span> (assuming min-max between 0 and 100), but the highest scoring unit in time <span class="math inline">\(t+1\)</span> would <em>also</em> be assigned a score of 100. The underlying values of these two scores could be very different, but they would get</p>
-<p>This means that the purse method for <code>normalise()</code> is a bit different from most other purse methods, because it doesn’t independently apply the function to each coin, but takes the coins all together. This has the following implications:</p>
+<p>The purse method for <code>normalise()</code> is especially useful if
+you are working with multiple coins and panel data. This is because to
+make scores comparable from one time point to the next, it is usually a
+good idea to normalise indicators together rather than separately. For
+example, with the min-max method, indicators are typically normalised
+using the minimum and maximum over all time points of data, as opposed
+to having a separate max and min for each.</p>
+<p>If indicators were normalised separately for each time point, then
+the highest scoring unit would get a score of 100 in time <span class="math inline">\(t\)</span> (assuming min-max between 0 and 100),
+but the highest scoring unit in time <span class="math inline">\(t+1\)</span> would <em>also</em> be assigned a
+score of 100. The underlying values of these two scores could be very
+different, but they would get</p>
+<p>This means that the purse method for <code>normalise()</code> is a
+bit different from most other purse methods, because it doesn’t
+independently apply the function to each coin, but takes the coins all
+together. This has the following implications:</p>
 <ol style="list-style-type: decimal">
-<li>Any normalisation function can be applied globally to all coins in a purse, ensuring comparability. BUT:</li>
-<li>If normalisation is done globally, it is no longer possible to automatically regenerate coins in the purse (i.e. using <code>regenerate()</code>), because the coin is no longer self-contained: it needs to know the values of the other coins in the purse. Perhaps at some point I will add a dedicated method for regenerating entire purses, but we are not there yet.</li>
+<li>Any normalisation function can be applied globally to all coins in a
+purse, ensuring comparability. BUT:</li>
+<li>If normalisation is done globally, it is no longer possible to
+automatically regenerate coins in the purse (i.e. using
+<code>regenerate()</code>), because the coin is no longer
+self-contained: it needs to know the values of the other coins in the
+purse. Perhaps at some point I will add a dedicated method for
+regenerating entire purses, but we are not there yet.</li>
 </ol>
-<p>Let’s anyway illustrate with an example. We build the example purse first.</p>
+<p>Let’s anyway illustrate with an example. We build the example purse
+first.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">purse</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_example_purse.html">build_example_purse</a></span><span class="op">(</span>quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p>Normalising a purse works in exactly the same way as normalising a coin, except for the <code>global</code> argument. By default, <code>global = TRUE</code>, which means that the normalisation will be applied over all time points simultaneously, with the aim of making the index comparable. Here, we will apply the default min-max approach to all coins:</p>
+<p>Normalising a purse works in exactly the same way as normalising a
+coin, except for the <code>global</code> argument. By default,
+<code>global = TRUE</code>, which means that the normalisation will be
+applied over all time points simultaneously, with the aim of making the
+index comparable. Here, we will apply the default min-max approach to
+all coins:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">purse</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Normalise.html">Normalise</a></span><span class="op">(</span><span class="va">purse</span>, dset <span class="op">=</span> <span class="st">"Raw"</span>, global <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Written data set to .$Data$Normalised</span></span>
@@ -365,7 +486,8 @@
 <span><span class="co">#&gt; (overwritten existing data set)</span></span>
 <span><span class="co">#&gt; Written data set to .$Data$Normalised</span></span>
 <span><span class="co">#&gt; (overwritten existing data set)</span></span></code></pre></div>
-<p>Now let’s examine the data set of the first coin. We’ll see what the max and min of a few indicators is:</p>
+<p>Now let’s examine the data set of the first coin. We’ll see what the
+max and min of a few indicators is:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># get normalised data of first coin in purse</span></span>
 <span><span class="va">x1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_dset.html">get_dset</a></span><span class="op">(</span><span class="va">purse</span><span class="op">$</span><span class="va">coin</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, dset <span class="op">=</span> <span class="st">"Normalised"</span><span class="op">)</span></span>
@@ -377,7 +499,11 @@
 <span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">x1</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>, <span class="va">max</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      LPI  Flights     Ship     Bord </span></span>
 <span><span class="co">#&gt; 83.98913 88.79325 85.91861 93.62416</span></span></code></pre></div>
-<p>Here we see that the minimum values are zero, but the maximum values are <em>not</em> 100, because in other coins these indicators have higher values. To show that the global maximum is indeed 100, we can extract the whole normalised data set for all years and run the same check.</p>
+<p>Here we see that the minimum values are zero, but the maximum values
+are <em>not</em> 100, because in other coins these indicators have
+higher values. To show that the global maximum is indeed 100, we can
+extract the whole normalised data set for all years and run the same
+check.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># get entire normalised data set for all coins in one df</span></span>
 <span><span class="va">x1_global</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_dset.html">get_dset</a></span><span class="op">(</span><span class="va">purse</span>, dset <span class="op">=</span> <span class="st">"Normalised"</span><span class="op">)</span></span>
@@ -389,15 +515,22 @@
 <span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">x1_global</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span>, <span class="va">max</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     LPI Flights    Ship    Bord </span></span>
 <span><span class="co">#&gt;     100     100     100     100</span></span></code></pre></div>
-<p>And this confirms our expectations: that the global maximum and minimum are 0 and 100 respectively.</p>
-<p>Any type of normalisation can be performed on a purse in this “global” mode. However, keep in mind what is going on. Simply put, when <code>global = TRUE</code> this is what happens:</p>
+<p>And this confirms our expectations: that the global maximum and
+minimum are 0 and 100 respectively.</p>
+<p>Any type of normalisation can be performed on a purse in this
+“global” mode. However, keep in mind what is going on. Simply put, when
+<code>global = TRUE</code> this is what happens:</p>
 <ol style="list-style-type: decimal">
-<li>The data sets from each coin are joined together into one using the <code><a href="../reference/get_dset.html">get_dset()</a></code> function.</li>
+<li>The data sets from each coin are joined together into one using the
+<code><a href="../reference/get_dset.html">get_dset()</a></code> function.</li>
 <li>Normalisation is applied to this global data set.</li>
 <li>The global data set is then split back into the coins.</li>
 </ol>
-<p>So if you specify to normalise by e.g. rank, ranks will be calculated for all time points. Therefore, consider carefully if this fits the intended meaning.</p>
-<p>Normalisation can also be performed independently on each coin, by setting <code>global = FALSE</code>.</p>
+<p>So if you specify to normalise by e.g. rank, ranks will be calculated
+for all time points. Therefore, consider carefully if this fits the
+intended meaning.</p>
+<p>Normalisation can also be performed independently on each coin, by
+setting <code>global = FALSE</code>.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">purse</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Normalise.html">Normalise</a></span><span class="op">(</span><span class="va">purse</span>, dset <span class="op">=</span> <span class="st">"Raw"</span>, global <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Written data set to .$Data$Normalised</span></span>
@@ -421,12 +554,19 @@
 <span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">x1</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>, <span class="va">max</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     LPI Flights    Ship    Bord </span></span>
 <span><span class="co">#&gt;     100     100     100     100</span></span></code></pre></div>
-<p>Now the normalised data set in each coin will have a min and max of 0 and 100 respectively, for each indicator.</p>
+<p>Now the normalised data set in each coin will have a min and max of 0
+and 100 respectively, for each indicator.</p>
 </div>
 <div class="section level2">
 <h2 id="simplified-normalisation">Simplified normalisation<a class="anchor" aria-label="anchor" href="#simplified-normalisation"></a>
 </h2>
-<p>If the syntax of <code><a href="../reference/Normalise.html">Normalise()</a></code> looks a bit over-complicated, you can use the simpler <code><a href="../reference/qNormalise.html">qNormalise()</a></code> function, which has less flexibility but makes the key function arguments more visible (they are not wrapped in lists). This function applies the same normalisation method to all indicators. It is also a generic so can be used on data frames, coins and purses. Let’s demonstrate on a data frame:</p>
+<p>If the syntax of <code><a href="../reference/Normalise.html">Normalise()</a></code> looks a bit
+over-complicated, you can use the simpler <code><a href="../reference/qNormalise.html">qNormalise()</a></code>
+function, which has less flexibility but makes the key function
+arguments more visible (they are not wrapped in lists). This function
+applies the same normalisation method to all indicators. It is also a
+generic so can be used on data frames, coins and purses. Let’s
+demonstrate on a data frame:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># some made up data</span></span>
 <span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>uCode <span class="op">=</span> <span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span>,</span>
@@ -434,46 +574,48 @@
 <span>                b <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span><span class="op">*</span><span class="fl">100</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">X</span></span>
-<span><span class="co">#&gt;    uCode         a         b</span></span>
-<span><span class="co">#&gt; 1      a 0.6327041 22.521471</span></span>
-<span><span class="co">#&gt; 2      b 0.6391408 56.653622</span></span>
-<span><span class="co">#&gt; 3      c 0.8096237  9.249409</span></span>
-<span><span class="co">#&gt; 4      d 0.3676069 28.207283</span></span>
-<span><span class="co">#&gt; 5      e 0.6312519 31.070302</span></span>
-<span><span class="co">#&gt; 6      f 0.3553985 74.480792</span></span>
-<span><span class="co">#&gt; 7      g 0.2754572 55.716828</span></span>
-<span><span class="co">#&gt; 8      h 0.9038722 82.679524</span></span>
-<span><span class="co">#&gt; 9      i 0.4424620 65.202742</span></span>
-<span><span class="co">#&gt; 10     j 0.6995839 59.420950</span></span></code></pre></div>
+<span><span class="co">#&gt;    uCode           a         b</span></span>
+<span><span class="co">#&gt; 1      a 0.107092107 34.144803</span></span>
+<span><span class="co">#&gt; 2      b 0.230154779 18.526634</span></span>
+<span><span class="co">#&gt; 3      c 0.004184689 27.387344</span></span>
+<span><span class="co">#&gt; 4      d 0.901322466 46.581396</span></span>
+<span><span class="co">#&gt; 5      e 0.444017928 61.622061</span></span>
+<span><span class="co">#&gt; 6      f 0.085292768 14.482990</span></span>
+<span><span class="co">#&gt; 7      g 0.151485875  1.394785</span></span>
+<span><span class="co">#&gt; 8      h 0.876317378 50.072316</span></span>
+<span><span class="co">#&gt; 9      i 0.386750991 80.932588</span></span>
+<span><span class="co">#&gt; 10     j 0.265035052 93.380349</span></span></code></pre></div>
 <p>By default, normalisation results in min-max on the <span class="math inline">\([0, 100]\)</span> interval:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/qNormalise.html">qNormalise</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    uCode         a         b</span></span>
-<span><span class="co">#&gt; 1      a  56.84887  18.07441</span></span>
-<span><span class="co">#&gt; 2      b  57.87316  64.55691</span></span>
-<span><span class="co">#&gt; 3      c  85.00219   0.00000</span></span>
-<span><span class="co">#&gt; 4      d  14.66383  25.81757</span></span>
-<span><span class="co">#&gt; 5      e  56.61779  29.71654</span></span>
-<span><span class="co">#&gt; 6      f  12.72110  88.83465</span></span>
-<span><span class="co">#&gt; 7      g   0.00000  63.28115</span></span>
-<span><span class="co">#&gt; 8      h 100.00000 100.00000</span></span>
-<span><span class="co">#&gt; 9      i  26.57556  76.19943</span></span>
-<span><span class="co">#&gt; 10     j  67.49149  68.32556</span></span></code></pre></div>
-<p>We can pass another normalisation function if we like, and the syntax is a bit easier than <code><a href="../reference/Normalise.html">Normalise()</a></code>:</p>
+<span><span class="co">#&gt;    uCode          a         b</span></span>
+<span><span class="co">#&gt; 1      a  11.470637  35.60343</span></span>
+<span><span class="co">#&gt; 2      b  25.187892  18.62450</span></span>
+<span><span class="co">#&gt; 3      c   0.000000  28.25722</span></span>
+<span><span class="co">#&gt; 4      d 100.000000  49.12359</span></span>
+<span><span class="co">#&gt; 5      e  49.026276  65.47470</span></span>
+<span><span class="co">#&gt; 6      f   9.040761  14.22854</span></span>
+<span><span class="co">#&gt; 7      g  16.419015   0.00000</span></span>
+<span><span class="co">#&gt; 8      h  97.212793  52.91866</span></span>
+<span><span class="co">#&gt; 9      i  42.642982  86.46770</span></span>
+<span><span class="co">#&gt; 10     j  29.075842 100.00000</span></span></code></pre></div>
+<p>We can pass another normalisation function if we like, and the syntax
+is a bit easier than <code><a href="../reference/Normalise.html">Normalise()</a></code>:</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/qNormalise.html">qNormalise</a></span><span class="op">(</span><span class="va">X</span>, f_n <span class="op">=</span> <span class="st">"n_dist2ref"</span>, f_n_para <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>iref <span class="op">=</span> <span class="fl">1</span>, cap_max <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    uCode         a b</span></span>
-<span><span class="co">#&gt; 1      a 1.0000000 1</span></span>
-<span><span class="co">#&gt; 2      b 1.0000000 1</span></span>
-<span><span class="co">#&gt; 3      c 1.0000000 0</span></span>
-<span><span class="co">#&gt; 4      d 0.2579440 1</span></span>
-<span><span class="co">#&gt; 5      e 0.9959351 1</span></span>
-<span><span class="co">#&gt; 6      f 0.2237705 1</span></span>
-<span><span class="co">#&gt; 7      g 0.0000000 1</span></span>
-<span><span class="co">#&gt; 8      h 1.0000000 1</span></span>
-<span><span class="co">#&gt; 9      i 0.4674774 1</span></span>
-<span><span class="co">#&gt; 10     j 1.0000000 1</span></span></code></pre></div>
-<p>The <code><a href="../reference/qNormalise.html">qNormalise()</a></code> function works in a similar way for coins and purses.</p>
+<span><span class="co">#&gt;    uCode         a         b</span></span>
+<span><span class="co">#&gt; 1      a 1.0000000 1.0000000</span></span>
+<span><span class="co">#&gt; 2      b 1.0000000 0.5231096</span></span>
+<span><span class="co">#&gt; 3      c 0.0000000 0.7936655</span></span>
+<span><span class="co">#&gt; 4      d 1.0000000 1.0000000</span></span>
+<span><span class="co">#&gt; 5      e 1.0000000 1.0000000</span></span>
+<span><span class="co">#&gt; 6      f 0.7881655 0.3996396</span></span>
+<span><span class="co">#&gt; 7      g 1.0000000 0.0000000</span></span>
+<span><span class="co">#&gt; 8      h 1.0000000 1.0000000</span></span>
+<span><span class="co">#&gt; 9      i 1.0000000 1.0000000</span></span>
+<span><span class="co">#&gt; 10     j 1.0000000 1.0000000</span></span></code></pre></div>
+<p>The <code><a href="../reference/qNormalise.html">qNormalise()</a></code> function works in a similar way for
+coins and purses.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

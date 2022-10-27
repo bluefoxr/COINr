@@ -114,9 +114,18 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>This vignette introduces and gives an overview of the <strong>COINr package</strong>. COINr is a high-level R package which is the first fully-flexible development and analysis environment for composite indicators and scoreboards.</p>
-<p>This vignette is one of quite a few vignettes which document the package. Here, the aim is to give a quick introduction and overview of the package. The other vignettes deal with specific operations.</p>
-<p>As of COINr v1.0.0 some radical changes have been introduced. Most notably for existing users, is the change in syntax. This is an unfortunate one-off necessity and the changes (and how to survive them, or roll back to the old version of COINr) are described in an extra vignette called <a href="v1.html">Changes in v1.0</a>.</p>
+<p>This vignette introduces and gives an overview of the <strong>COINr
+package</strong>. COINr is a high-level R package which is the first
+fully-flexible development and analysis environment for composite
+indicators and scoreboards.</p>
+<p>This vignette is one of quite a few vignettes which document the
+package. Here, the aim is to give a quick introduction and overview of
+the package. The other vignettes deal with specific operations.</p>
+<p>As of COINr v1.0.0 some radical changes have been introduced. Most
+notably for existing users, is the change in syntax. This is an
+unfortunate one-off necessity and the changes (and how to survive them,
+or roll back to the old version of COINr) are described in an extra
+vignette called <a href="v1.html">Changes in v1.0</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -124,10 +133,18 @@
 <p>COINr is on CRAN and can be installed by running:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"COINr"</span><span class="op">)</span></span></code></pre></div>
-<p>Or simply browsing for the package in R Studio. The CRAN version will be updated every 1-2 months or so. If you want the very latest version in the meantime (I am usually adding features and fixing bugs as I find them), you can install the development version from GitHub. First, install the ‘remotes’ package if you don’t already have it, then run:</p>
+<p>Or simply browsing for the package in R Studio. The CRAN version will
+be updated every 1-2 months or so. If you want the very latest version
+in the meantime (I am usually adding features and fixing bugs as I find
+them), you can install the development version from GitHub. First,
+install the ‘remotes’ package if you don’t already have it, then
+run:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"bluefoxr/COINr"</span><span class="op">)</span></span></code></pre></div>
-<p>This should directly install the package from Github, without any other steps. You may be asked to update packages. This might not be strictly necessary, so you can also try skipping this step if you prefer.</p>
+<p>This should directly install the package from Github, without any
+other steps. You may be asked to update packages. This might not be
+strictly necessary, so you can also try skipping this step if you
+prefer.</p>
 <p>Once the package is installed, it can be loaded as follows:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bluefoxr.github.io/COINr/">COINr</a></span><span class="op">)</span></span></code></pre></div>
@@ -135,8 +152,13 @@
 <div class="section level2">
 <h2 id="features">Features<a class="anchor" aria-label="anchor" href="#features"></a>
 </h2>
-<p>The main features of the COINr package are those for building the composite indicator by performing operations on the data, those for analysing/post-processing, and those for visualisation. Here, the main functions are briefly listed (this list is not exhaustive):</p>
-<p><strong>Building</strong> functions begin with a capital letter, except for <code><a href="../reference/new_coin.html">new_coin()</a></code> which is used to initialise a coin object</p>
+<p>The main features of the COINr package are those for building the
+composite indicator by performing operations on the data, those for
+analysing/post-processing, and those for visualisation. Here, the main
+functions are briefly listed (this list is not exhaustive):</p>
+<p><strong>Building</strong> functions begin with a capital letter,
+except for <code><a href="../reference/new_coin.html">new_coin()</a></code> which is used to initialise a coin
+object</p>
 <table class="table">
 <thead><tr class="header">
 <th align="left">Function</th>
@@ -145,7 +167,8 @@
 <tbody>
 <tr class="odd">
 <td align="left"><code><a href="../reference/new_coin.html">new_coin()</a></code></td>
-<td align="left">Initialise a coin object given indicator data and metadata</td>
+<td align="left">Initialise a coin object given indicator data and
+metadata</td>
 </tr>
 <tr class="even">
 <td align="left"><code><a href="../reference/Screen.html">Screen()</a></code></td>
@@ -174,7 +197,8 @@
 </tr>
 <tr class="even">
 <td align="left"><code><a href="../reference/qNormalise.html">qNormalise()</a></code></td>
-<td align="left">Simplified-syntax version of <code><a href="../reference/Normalise.html">Normalise()</a></code>
+<td align="left">Simplified-syntax version of
+<code><a href="../reference/Normalise.html">Normalise()</a></code>
 </td>
 </tr>
 <tr class="odd">
@@ -183,8 +207,14 @@
 </tr>
 </tbody>
 </table>
-<p>Building functions are defined as those that modify the data (by creating an additional data set). They also keep a record of their arguments inside the coin, which allows coins to be <em>regenerated</em>. See <a href="adjustments.html">Adjustments and Comparisons</a>.</p>
-<p><strong>Analysing</strong> functions include those multivariate analysis, weight optimisation and sensitivity analysis, as well as those for reporting results:</p>
+<p>Building functions are defined as those that modify the data (by
+creating an additional data set). They also keep a record of their
+arguments inside the coin, which allows coins to be
+<em>regenerated</em>. See <a href="adjustments.html">Adjustments and
+Comparisons</a>.</p>
+<p><strong>Analysing</strong> functions include those multivariate
+analysis, weight optimisation and sensitivity analysis, as well as those
+for reporting results:</p>
 <table class="table">
 <thead><tr class="header">
 <th align="left">Function</th>
@@ -193,11 +223,13 @@
 <tbody>
 <tr class="odd">
 <td align="left"><code><a href="../reference/get_corr.html">get_corr()</a></code></td>
-<td align="left">Get correlations between any indicator/aggregate sets</td>
+<td align="left">Get correlations between any indicator/aggregate
+sets</td>
 </tr>
 <tr class="even">
 <td align="left"><code><a href="../reference/get_corr_flags.html">get_corr_flags()</a></code></td>
-<td align="left">Find high or low-correlated indicators within groups</td>
+<td align="left">Find high or low-correlated indicators within
+groups</td>
 </tr>
 <tr class="odd">
 <td align="left"><code><a href="../reference/get_cronbach.html">get_cronbach()</a></code></td>
@@ -213,7 +245,8 @@
 </tr>
 <tr class="even">
 <td align="left"><code><a href="../reference/get_denom_corr.html">get_denom_corr()</a></code></td>
-<td align="left">Get high correlations between indicators and denominators</td>
+<td align="left">Get high correlations between indicators and
+denominators</td>
 </tr>
 <tr class="odd">
 <td align="left"><code><a href="../reference/get_eff_weights.html">get_eff_weights()</a></code></td>
@@ -229,7 +262,8 @@
 </tr>
 <tr class="even">
 <td align="left"><code><a href="../reference/get_sensitivity.html">get_sensitivity()</a></code></td>
-<td align="left">Perform a global uncertainty or sensitivity analysis</td>
+<td align="left">Perform a global uncertainty or sensitivity
+analysis</td>
 </tr>
 <tr class="odd">
 <td align="left"><code><a href="../reference/get_stats.html">get_stats()</a></code></td>
@@ -237,7 +271,8 @@
 </tr>
 <tr class="even">
 <td align="left"><code><a href="../reference/get_str_weak.html">get_str_weak()</a></code></td>
-<td align="left">Highest and lowest-ranking indicators for a given unit</td>
+<td align="left">Highest and lowest-ranking indicators for a given
+unit</td>
 </tr>
 <tr class="odd">
 <td align="left"><code><a href="../reference/get_unit_summary.html">get_unit_summary()</a></code></td>
@@ -245,11 +280,13 @@
 </tr>
 <tr class="even">
 <td align="left"><code><a href="../reference/remove_elements.html">remove_elements()</a></code></td>
-<td align="left">Test the effect of removing indicators or aggregates</td>
+<td align="left">Test the effect of removing indicators or
+aggregates</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Plotting</strong> functions generate plots using the ggplot2 package:</p>
+<p><strong>Plotting</strong> functions generate plots using the ggplot2
+package:</p>
 <table class="table">
 <thead><tr class="header">
 <th align="left">Function</th>
@@ -262,15 +299,18 @@
 </tr>
 <tr class="even">
 <td align="left"><code><a href="../reference/plot_corr.html">plot_corr()</a></code></td>
-<td align="left">Heat maps of correlations between indicators/aggregates</td>
+<td align="left">Heat maps of correlations between
+indicators/aggregates</td>
 </tr>
 <tr class="odd">
 <td align="left"><code><a href="../reference/plot_dist.html">plot_dist()</a></code></td>
-<td align="left">Statistical plots of indicator/aggregate distributions</td>
+<td align="left">Statistical plots of indicator/aggregate
+distributions</td>
 </tr>
 <tr class="even">
 <td align="left"><code><a href="../reference/plot_dot.html">plot_dot()</a></code></td>
-<td align="left">Dot plot of an indictaor/aggregate with unit highlighting</td>
+<td align="left">Dot plot of an indictaor/aggregate with unit
+highlighting</td>
 </tr>
 <tr class="odd">
 <td align="left"><code><a href="../reference/plot_framework.html">plot_framework()</a></code></td>
@@ -290,7 +330,9 @@
 </tr>
 </tbody>
 </table>
-<p><strong>Adjustment and comparison</strong> functions allow copies, adjustments and comparisons to be made between alternative versions of the composite indicator:</p>
+<p><strong>Adjustment and comparison</strong> functions allow copies,
+adjustments and comparisons to be made between alternative versions of
+the composite indicator:</p>
 <table class="table">
 <thead><tr class="header">
 <th align="left">Function</th>
@@ -307,15 +349,18 @@
 </tr>
 <tr class="odd">
 <td align="left"><code><a href="../reference/compare_coins.html">compare_coins()</a></code></td>
-<td align="left">Exports all data frames in the COINr object to an Excel workbook</td>
+<td align="left">Exports all data frames in the COINr object to an Excel
+workbook</td>
 </tr>
 <tr class="even">
 <td align="left"><code><a href="../reference/compare_coins_multi.html">compare_coins_multi()</a></code></td>
-<td align="left">Convert a COINr class object to a COIN class object, for use in the ‘COINr’ package</td>
+<td align="left">Convert a COINr class object to a COIN class object,
+for use in the ‘COINr’ package</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Other functions</strong> are useful tools that don’t fit into the other categories</p>
+<p><strong>Other functions</strong> are useful tools that don’t fit into
+the other categories</p>
 <table class="table">
 <thead><tr class="header">
 <th align="left">Function</th>
@@ -328,7 +373,8 @@
 </tr>
 <tr class="even">
 <td align="left"><code><a href="../reference/COIN_to_coin.html">COIN_to_coin()</a></code></td>
-<td align="left">Convert an older “COIN” class object to a newer “coin” class object</td>
+<td align="left">Convert an older “COIN” class object to a newer “coin”
+class object</td>
 </tr>
 <tr class="odd">
 <td align="left"><code><a href="../reference/build_example_coin.html">build_example_coin()</a></code></td>
@@ -336,7 +382,8 @@
 </tr>
 <tr class="even">
 <td align="left"><code><a href="../reference/build_example_purse.html">build_example_purse()</a></code></td>
-<td align="left">Build the example purse using built-in example data</td>
+<td align="left">Build the example purse using built-in example
+data</td>
 </tr>
 <tr class="odd">
 <td align="left"><code><a href="../reference/export_to_excel.html">export_to_excel()</a></code></td>
@@ -344,28 +391,53 @@
 </tr>
 </tbody>
 </table>
-<p>All functions are fully documented and individual function help can be accessed in the usual way by <code>?function_name</code>.</p>
-<p>The COINr package is loosely object oriented, in the sense that the composite indicator is encapsulated in an S3 class object called a “coin”, and a time-indexed collection of coins is called a “purse” (see <a href="coins.html">Building coins</a>) Most of the main functions listed in the previous tables take this “coin” class as the main input (and often also as the output) with other function arguments specifying how to apply the function. E.g. the syntax is typically:</p>
+<p>All functions are fully documented and individual function help can
+be accessed in the usual way by <code>?function_name</code>.</p>
+<p>The COINr package is loosely object oriented, in the sense that the
+composite indicator is encapsulated in an S3 class object called a
+“coin”, and a time-indexed collection of coins is called a “purse” (see
+<a href="coins.html">Building coins</a>) Most of the main functions
+listed in the previous tables take this “coin” class as the main input
+(and often also as the output) with other function arguments specifying
+how to apply the function. E.g. the syntax is typically:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu">COINr_function</span><span class="op">(</span><span class="va">coin</span>, <span class="va">function_arguments</span><span class="op">)</span></span></code></pre></div>
-<p>Many of the main COINr functions are <em>generics</em>: they have methods also for data frames, purses, and in some cases numeric vectors. This means that COINr functions can also be used for ad-hoc operations without needing to build coins.</p>
+<p>Many of the main COINr functions are <em>generics</em>: they have
+methods also for data frames, purses, and in some cases numeric vectors.
+This means that COINr functions can also be used for ad-hoc operations
+without needing to build coins.</p>
 </div>
 <div class="section level2">
 <h2 id="quick-example">Quick example<a class="anchor" aria-label="anchor" href="#quick-example"></a>
 </h2>
-<p>The COINr package contains some example data which is used in most of the vignettes to demonstrate the functions, and this comes from the <a href="https://composite-indicators.jrc.ec.europa.eu/asem-sustainable-connectivity/" class="external-link">ASEM Sustainable Connectivity Portal</a>. It is a data set of 49 indicators covering 51 Asian and European countries, measuring “sustainable connectivity”. Here we work through building a composite indicator, and link to the other vignettes for more details.</p>
-<p>Before proceeding, let’s clearly define a few terms first to avoid confusion later on.</p>
+<p>The COINr package contains some example data which is used in most of
+the vignettes to demonstrate the functions, and this comes from the <a href="https://composite-indicators.jrc.ec.europa.eu/asem-sustainable-connectivity/" class="external-link">ASEM
+Sustainable Connectivity Portal</a>. It is a data set of 49 indicators
+covering 51 Asian and European countries, measuring “sustainable
+connectivity”. Here we work through building a composite indicator, and
+link to the other vignettes for more details.</p>
+<p>Before proceeding, let’s clearly define a few terms first to avoid
+confusion later on.</p>
 <ul>
-<li><p>An <em>indicator</em> is a variable which has an observed value for each unit. Indicators might be things like life expectancy, CO2 emissions, number of tertiary graduates, and so on.</p></li>
-<li><p>A <em>unit</em> is one of the entities that you are comparing using indicators. Often, units are countries, but they could also be regions, universities, individuals or even competing policy options (the latter is the realm of multicriteria decision analysis).</p></li>
+<li><p>An <em>indicator</em> is a variable which has an observed value
+for each unit. Indicators might be things like life expectancy, CO2
+emissions, number of tertiary graduates, and so on.</p></li>
+<li><p>A <em>unit</em> is one of the entities that you are comparing
+using indicators. Often, units are countries, but they could also be
+regions, universities, individuals or even competing policy options (the
+latter is the realm of multicriteria decision analysis).</p></li>
 </ul>
-<p>We begin by building a new “coin”. To build a coin you need two data frames which are inputs to the <code><a href="../reference/new_coin.html">new_coin()</a></code> function. See the vignette on <a href="coins.html">Building coins</a> for more details on this.</p>
+<p>We begin by building a new “coin”. To build a coin you need two data
+frames which are inputs to the <code><a href="../reference/new_coin.html">new_coin()</a></code> function. See the
+vignette on <a href="coins.html">Building coins</a> for more details on
+this.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ASEM</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_coin.html">new_coin</a></span><span class="op">(</span><span class="va">ASEM_iData</span>, <span class="va">ASEM_iMeta</span>, level_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Indicator"</span>, <span class="st">"Pillar"</span>, <span class="st">"Sub-index"</span>, <span class="st">"Index"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; iData checked and OK.</span></span>
 <span><span class="co">#&gt; iMeta checked and OK.</span></span>
 <span><span class="co">#&gt; Written data set to .$Data$Raw</span></span></code></pre></div>
-<p>The output of <code><a href="../reference/new_coin.html">new_coin()</a></code> is a coin class object with a single data set called “Raw”:</p>
+<p>The output of <code><a href="../reference/new_coin.html">new_coin()</a></code> is a coin class object with a
+single data set called “Raw”:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ASEM</span></span>
 <span><span class="co">#&gt; --------------</span></span>
@@ -385,21 +457,40 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Data sets:</span></span>
 <span><span class="co">#&gt;   Raw (51 units)</span></span></code></pre></div>
-<p>Let’s view the structure of the index that we have specified, using the <code><a href="../reference/plot_framework.html">plot_framework()</a></code> function:</p>
+<p>Let’s view the structure of the index that we have specified, using
+the <code><a href="../reference/plot_framework.html">plot_framework()</a></code> function:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_framework.html">plot_framework</a></span><span class="op">(</span><span class="va">ASEM</span><span class="op">)</span></span></code></pre></div>
 <p><img src="overview_files/figure-html/unnamed-chunk-5-1.png" width="480"></p>
-<p>See the <a href="visualisation.html">Visualisation</a> vignette for the full range of plotting options in COINr.</p>
-<p>At the moment the coin contains only our raw data. To build the composite indicator we need to perform operations on the coin. All of these operations are optional and can be performed in any order. We begin by <em>denominating</em> the raw data: that is, we divide some of the indicators by other quantities to make our indicators comparable between small and large countries. See the vignette on <a href="denomination.html">Denomination</a>.</p>
+<p>See the <a href="visualisation.html">Visualisation</a> vignette for
+the full range of plotting options in COINr.</p>
+<p>At the moment the coin contains only our raw data. To build the
+composite indicator we need to perform operations on the coin. All of
+these operations are optional and can be performed in any order. We
+begin by <em>denominating</em> the raw data: that is, we divide some of
+the indicators by other quantities to make our indicators comparable
+between small and large countries. See the vignette on <a href="denomination.html">Denomination</a>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ASEM</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Denominate.html">Denominate</a></span><span class="op">(</span><span class="va">ASEM</span>, dset <span class="op">=</span> <span class="st">"Raw"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Written data set to .$Data$Denominated</span></span></code></pre></div>
-<p>The only thing we specify here is that the denomination should be performed on the “Raw” data set. The other specifications for how to denominate the indicators were already contained in the data frames that we input to <code><a href="../reference/new_coin.html">new_coin()</a></code>. Running <code><a href="../reference/Denominate.html">Denominate()</a></code> has created a new data set called “Denominated” which is reported in the message when we run the function (we can choose another name if we wish). This is <em>additional</em> to the “Raw” data set and does not overwrite it.</p>
-<p>Next we will screen units (countries) based on data availability. We want to ensure that every unit (country) has at least 90% data availability across all indicators. Screening is done by the <code><a href="../reference/Screen.html">Screen()</a></code> function:</p>
+<p>The only thing we specify here is that the denomination should be
+performed on the “Raw” data set. The other specifications for how to
+denominate the indicators were already contained in the data frames that
+we input to <code><a href="../reference/new_coin.html">new_coin()</a></code>. Running <code><a href="../reference/Denominate.html">Denominate()</a></code>
+has created a new data set called “Denominated” which is reported in the
+message when we run the function (we can choose another name if we
+wish). This is <em>additional</em> to the “Raw” data set and does not
+overwrite it.</p>
+<p>Next we will screen units (countries) based on data availability. We
+want to ensure that every unit (country) has at least 90% data
+availability across all indicators. Screening is done by the
+<code><a href="../reference/Screen.html">Screen()</a></code> function:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ASEM</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Screen.html">Screen</a></span><span class="op">(</span><span class="va">ASEM</span>, dset <span class="op">=</span> <span class="st">"Denominated"</span>, dat_thresh <span class="op">=</span> <span class="fl">0.9</span>, unit_screen <span class="op">=</span> <span class="st">"byNA"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Written data set to .$Data$Screened</span></span></code></pre></div>
-<p>The details of this function can be found in the <a href="screening.html">Unit screening</a> vignette. Again, by running this function we have created a new data set. Let’s look again at the contents of the coin using its <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> method:</p>
+<p>The details of this function can be found in the <a href="screening.html">Unit screening</a> vignette. Again, by running
+this function we have created a new data set. Let’s look again at the
+contents of the coin using its <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> method:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ASEM</span></span>
 <span><span class="co">#&gt; --------------</span></span>
@@ -421,28 +512,61 @@
 <span><span class="co">#&gt;   Raw (51 units)</span></span>
 <span><span class="co">#&gt;   Denominated (51 units)</span></span>
 <span><span class="co">#&gt;   Screened (46 units)</span></span></code></pre></div>
-<p>Notice that the “Screened” data set now has 46 units because five have been screened out, having less than 90% data availability.</p>
-<p>Next we will impute any remaining missing data points. This can be done in a variety of ways, but here we choose to impute using the group mean, i.e. if a country is in the “Asia” group, we replace missing points by the Asian mean. If a country is in the “Europe” group, we replace with the European mean.</p>
+<p>Notice that the “Screened” data set now has 46 units because five
+have been screened out, having less than 90% data availability.</p>
+<p>Next we will impute any remaining missing data points. This can be
+done in a variety of ways, but here we choose to impute using the group
+mean, i.e. if a country is in the “Asia” group, we replace missing
+points by the Asian mean. If a country is in the “Europe” group, we
+replace with the European mean.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ASEM</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Impute.html">Impute</a></span><span class="op">(</span><span class="va">ASEM</span>, dset <span class="op">=</span> <span class="st">"Screened"</span>, f_i <span class="op">=</span> <span class="st">"i_mean_grp"</span>, use_group <span class="op">=</span> <span class="st">"EurAsia_group"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Written data set to .$Data$Imputed</span></span></code></pre></div>
-<p>This writes another data set called “Imputed”, which has filled in all the missing data points. Again, we have to specify which data set to impute, and we have chosen the “Screened” data set. Full details of the imputation function can be found in the <a href="imputation.html">Imputation</a> vignette.</p>
-<p>We would next like to treat any outliers. The <code><a href="../reference/Treat.html">Treat()</a></code> function gives a number of options, but by default will identify outliers using skewness and kurtosis thresholds, then Winsorise or log-transform indicators until they are brought within the specified thresholds. This function is slightly complicated and full details can be found in the <a href="treat.html">Outlier treatment</a> vignette.</p>
+<p>This writes another data set called “Imputed”, which has filled in
+all the missing data points. Again, we have to specify which data set to
+impute, and we have chosen the “Screened” data set. Full details of the
+imputation function can be found in the <a href="imputation.html">Imputation</a> vignette.</p>
+<p>We would next like to treat any outliers. The <code><a href="../reference/Treat.html">Treat()</a></code>
+function gives a number of options, but by default will identify
+outliers using skewness and kurtosis thresholds, then Winsorise or
+log-transform indicators until they are brought within the specified
+thresholds. This function is slightly complicated and full details can
+be found in the <a href="treat.html">Outlier treatment</a> vignette.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ASEM</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Treat.html">Treat</a></span><span class="op">(</span><span class="va">ASEM</span>, dset <span class="op">=</span> <span class="st">"Screened"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Written data set to .$Data$Treated</span></span></code></pre></div>
-<p>The details of the data treatment can be found inside the coin. A simplified version of <code><a href="../reference/Treat.html">Treat()</a></code> is also available, called <code><a href="../reference/qTreat.html">qTreat()</a></code>, which may be easier to use in many cases.</p>
-<p>The final step before aggregating is to bring the indicators onto a common scale by normalising them. The <code><a href="../reference/Normalise.html">Normalise()</a></code> function will, by default, scale each indicator onto the <span class="math inline">\([0, 100]\)</span> interval using a “min-max” approach.</p>
+<p>The details of the data treatment can be found inside the coin. A
+simplified version of <code><a href="../reference/Treat.html">Treat()</a></code> is also available, called
+<code><a href="../reference/qTreat.html">qTreat()</a></code>, which may be easier to use in many cases.</p>
+<p>The final step before aggregating is to bring the indicators onto a
+common scale by normalising them. The <code><a href="../reference/Normalise.html">Normalise()</a></code> function
+will, by default, scale each indicator onto the <span class="math inline">\([0, 100]\)</span> interval using a “min-max”
+approach.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ASEM</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Normalise.html">Normalise</a></span><span class="op">(</span><span class="va">ASEM</span>, dset <span class="op">=</span> <span class="st">"Treated"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Written data set to .$Data$Normalised</span></span></code></pre></div>
-<p>Again, because <code><a href="../reference/Normalise.html">Normalise()</a></code> is a slightly complex function (unless it is run at defaults, as above), a simplified version called <code><a href="../reference/qNormalise.html">qNormalise()</a></code> is also available. Details on normalisation can be found in the <a href="normalise.html">Normalisation</a> vignette.</p>
-<p>To conclude the construction of the composite indicator, we must aggregate the normalised indicators up within their aggregation groups. In our example, indicators (level 1) are aggregated into “pillars” (level 2), which are themselves aggregated up into “sub-indexes” (level 3), which are finally aggregated into a single index (level 4). The <code><a href="../reference/Aggregate.html">Aggregate()</a></code> function will aggregate following the structure which was specified in the <code>iMeta</code> argument to <code><a href="../reference/new_coin.html">new_coin()</a></code>. By default, this is done using the arithmetic mean, and using weights which were also specified in <code>iMeta</code>.</p>
+<p>Again, because <code><a href="../reference/Normalise.html">Normalise()</a></code> is a slightly complex
+function (unless it is run at defaults, as above), a simplified version
+called <code><a href="../reference/qNormalise.html">qNormalise()</a></code> is also available. Details on
+normalisation can be found in the <a href="normalise.html">Normalisation</a> vignette.</p>
+<p>To conclude the construction of the composite indicator, we must
+aggregate the normalised indicators up within their aggregation groups.
+In our example, indicators (level 1) are aggregated into “pillars”
+(level 2), which are themselves aggregated up into “sub-indexes” (level
+3), which are finally aggregated into a single index (level 4). The
+<code><a href="../reference/Aggregate.html">Aggregate()</a></code> function will aggregate following the structure
+which was specified in the <code>iMeta</code> argument to
+<code><a href="../reference/new_coin.html">new_coin()</a></code>. By default, this is done using the arithmetic
+mean, and using weights which were also specified in
+<code>iMeta</code>.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ASEM</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Aggregate.html">Aggregate</a></span><span class="op">(</span><span class="va">ASEM</span>, dset <span class="op">=</span> <span class="st">"Normalised"</span>, f_ag <span class="op">=</span> <span class="st">"a_amean"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Written data set to .$Data$Aggregated</span></span></code></pre></div>
 <p>Details on aggregation can be found in the <a href="aggregate.html">Aggregation</a> vignette.</p>
-<p>We now have a fully-constructed coin with index scores for each country. How do we look at the results? One way is the <code><a href="../reference/get_results.html">get_results()</a></code> function which extracts a conveniently-arranged table of results:</p>
+<p>We now have a fully-constructed coin with index scores for each
+country. How do we look at the results? One way is the
+<code><a href="../reference/get_results.html">get_results()</a></code> function which extracts a
+conveniently-arranged table of results:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># get results table</span></span>
 <span><span class="va">df_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_results.html">get_results</a></span><span class="op">(</span><span class="va">ASEM</span>, dset <span class="op">=</span> <span class="st">"Aggregated"</span>, tab_type <span class="op">=</span> <span class="st">"Aggs"</span><span class="op">)</span></span>
@@ -462,13 +586,16 @@
 <span><span class="co">#&gt; 4  87.04    57.20</span></span>
 <span><span class="co">#&gt; 5  85.36    52.22</span></span>
 <span><span class="co">#&gt; 6  86.92    63.04</span></span></code></pre></div>
-<p>This shows at a glance the top-ranking countries and their scores. See the <a href="results.html">Presenting Results</a> vignette for more ways to generate results tables.</p>
+<p>This shows at a glance the top-ranking countries and their scores.
+See the <a href="results.html">Presenting Results</a> vignette for more
+ways to generate results tables.</p>
 <p>We can also generate a bar chart:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_bar.html">plot_bar</a></span><span class="op">(</span><span class="va">ASEM</span>, dset <span class="op">=</span> <span class="st">"Aggregated"</span>, iCode <span class="op">=</span> <span class="st">"Index"</span>, stack_children <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="overview_files/figure-html/unnamed-chunk-14-1.png" width="672"></p>
 <p>This also shows the underlying sub-index scores.</p>
-<p>We will not explore all functions here. As a final useful step, we can export the entire contents of the coin to Excel if needed:</p>
+<p>We will not explore all functions here. As a final useful step, we
+can export the entire contents of the coin to Excel if needed:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># export coin to Excel</span></span>
 <span><span class="fu"><a href="../reference/export_to_excel.html">export_to_excel</a></span><span class="op">(</span><span class="va">coin</span>, fname <span class="op">=</span> <span class="st">"example_coin_results.xlsx"</span><span class="op">)</span></span></code></pre></div>
@@ -476,7 +603,8 @@
 <div class="section level2">
 <h2 id="finally">Finally<a class="anchor" aria-label="anchor" href="#finally"></a>
 </h2>
-<p>The preceding example covered a number of features of COINr. Features that were not mentioned can be found in the following vignettes:</p>
+<p>The preceding example covered a number of features of COINr. Features
+that were not mentioned can be found in the following vignettes:</p>
 <ul>
 <li><a href="weights.html">Weights</a></li>
 <li><a href="analysis.html">Analysis</a></li>
@@ -485,7 +613,8 @@
 <li><a href="data_selection.html">Data selection</a></li>
 <li><a href="other_functions.html">Other functions</a></li>
 <li>
-<a href="panel_data.html">Panel data</a> (placeholder - to complete)</li>
+<a href="panel_data.html">Panel data</a> (placeholder - to
+complete)</li>
 </ul>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
