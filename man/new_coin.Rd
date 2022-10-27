@@ -46,8 +46,7 @@ These data frames need to follow fairly strict requirements regarding their form
 Run \code{\link[=check_iData]{check_iData()}} and \code{\link[=check_iMeta]{check_iMeta()}} to validate your data frames, and these should generate helpful
 error messages when things go wrong.
 
-It is worth reading a little about coins and purses to use COINr. See \code{vignette("coins")} for more details,
-and also \code{vignette("panel_data")} for details on using panel data with COINr.
+It is worth reading a little about coins and purses to use COINr. See \code{vignette("coins")} for more details.
 \subsection{\code{iData}}{
 
 \code{iData} should be a data frame with required column
@@ -131,7 +130,7 @@ of the unique entries in \code{Time}. Alternatively, you can pass a vector of en
 to split to a subset of the entries to \code{Time}.
 
 Splitting panel data results in a so-called "purse" class, which is a data frame of COINs, indexed by \code{Time}.
-See \code{vignette("panel_data")} and \code{vignette("coins")} for more details.
+See \code{vignette("coins")} for more details.
 
 This function replaces the now-defunct \code{assemble()} from COINr < v1.0.
 }

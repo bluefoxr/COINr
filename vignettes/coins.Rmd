@@ -216,7 +216,7 @@ This shows that the example is a fully populated coin with various data sets, ea
 
 A coin offers a very wide methodological flexibility, but some things are kept fixed throughout. One is that the set of indicators does not change once the coin has been created. The other thing is that each coin represents a single point in time.
 
-If you have panel data, i.e. multiple observations for each unit-indicator pair, indexed by time, then `new_coin()` allows you to create multiple coins in one go. Coins are collected into a single object called a "*purse*", and many COINr functions work on purses directly. Some more information on working with panel data in this way can be found in [Working with Panel Data](panel_data.html).
+If you have panel data, i.e. multiple observations for each unit-indicator pair, indexed by time, then `new_coin()` allows you to create multiple coins in one go. Coins are collected into a single object called a "*purse*", and many COINr functions work on purses directly.
 
 Here we simply explore how to create a purse. The procedure is almost the same as creating a coin: you need the `iData` and `iMeta` data frames, and you call `new_coin()`. The difference is that `iData` must now have a `Time` column, which must be a numeric column which records which time point each observation is from. To see an example, we can look at the built-in (artificial) panel data set `ASEM_iData_p`. 
 

@@ -13,8 +13,7 @@
 #' Run [check_iData()] and [check_iMeta()] to validate your data frames, and these should generate helpful
 #' error messages when things go wrong.
 #'
-#' It is worth reading a little about coins and purses to use COINr. See `vignette("coins")` for more details,
-#' and also `vignette("panel_data")` for details on using panel data with COINr.
+#' It is worth reading a little about coins and purses to use COINr. See `vignette("coins")` for more details.
 #'
 #' ## `iData`
 #'
@@ -94,7 +93,7 @@
 #' to split to a subset of the entries to `Time`.
 #'
 #' Splitting panel data results in a so-called "purse" class, which is a data frame of COINs, indexed by `Time`.
-#' See `vignette("panel_data")` and `vignette("coins")` for more details.
+#' See `vignette("coins")` for more details.
 #'
 #' This function replaces the now-defunct `assemble()` from COINr < v1.0.
 #'
