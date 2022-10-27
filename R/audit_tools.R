@@ -36,7 +36,7 @@
 #' coin <- build_example_coin(quietly = TRUE)
 #'
 #' # run function removing elements in level 2
-#' l_res <- remove_elements(coin, Level = 2, dset = "Aggregated", iCode = "Index")
+#' l_res <- remove_elements(coin, Level = 3, dset = "Aggregated", iCode = "Index")
 #'
 #' # get summary of rank changes
 #' l_res$MeanAbsDiff
