@@ -1,10 +1,10 @@
 ## Resubmission
 
-This is a resubmission to update from version 1.0 to version 1.1.
+This is a resubmission to update from version 1.0 to version 1.1. I have fixed some small problems from a submission earlier today: some dead vignette links and a updated licence file format.
 
 ## R CMD check results
 
-There was 1 note regarding possibly invalid URLs. I have checked this on the R package development mailing list and the conclusion was that this is due to the automatic checks run by R. All URLs are valid, but Cloudflare and other content distribution companies block these types of automatic checks, hence the note.
+Otherwise, there was 1 note regarding possibly invalid URLs. I have checked this on the R package development mailing list and the conclusion was that this is due to the automatic checks run by R. All URLs are valid, but Cloudflare and other content distribution companies block these types of automatic checks, hence the note.
 
 NOTE
 
