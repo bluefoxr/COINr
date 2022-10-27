@@ -154,22 +154,14 @@ use any weights, then setting the weight to zero will have no effect.</p>
 <span class="r-in"><span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="build_example_coin.html">build_example_coin</a></span><span class="op">(</span>quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># run function removing elements in level 2</span></span></span>
-<span class="r-in"><span><span class="va">l_res</span> <span class="op">&lt;-</span> <span class="fu">remove_elements</span><span class="op">(</span><span class="va">coin</span>, Level <span class="op">=</span> <span class="fl">2</span>, dset <span class="op">=</span> <span class="st">"Aggregated"</span>, iCode <span class="op">=</span> <span class="st">"Index"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 1 of 8</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 2 of 8</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 3 of 8</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 4 of 8</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 5 of 8</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 6 of 8</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 7 of 8</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 8 of 8</span>
+<span class="r-in"><span><span class="va">l_res</span> <span class="op">&lt;-</span> <span class="fu">remove_elements</span><span class="op">(</span><span class="va">coin</span>, Level <span class="op">=</span> <span class="fl">3</span>, dset <span class="op">=</span> <span class="st">"Aggregated"</span>, iCode <span class="op">=</span> <span class="st">"Index"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 1 of 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Iteration 2 of 2</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># get summary of rank changes</span></span></span>
 <span class="r-in"><span><span class="va">l_res</span><span class="op">$</span><span class="va">MeanAbsDiff</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Nominal  Physical  ConEcFin Political    Instit       P2P   Environ    Social </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  0.000000  1.529412  2.627451  2.901961  1.176471  1.686275  3.098039  3.960784 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  SusEcFin </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2.627451 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Nominal     Conn     Sust </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.000000 5.254902 3.843137 </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
