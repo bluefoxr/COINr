@@ -46,6 +46,7 @@
 #' * `.$Scores` a data frame with a row for each unit, and columns are the scores for each replication.
 #' * `.$Ranks` as `.$Scores` but for unit ranks
 #' * `.$RankStats` summary statistics for ranks of each unit
+#' * `.$Para` a list containing parameter values for each run
 #' * `.$Nominal` the nominal scores and ranks of each unit (i.e. from the original COIN)
 #' * `.$Sensitivity` (only if `SA_type = "SA"`) sensitivity indices for each parameter. Also confidence intervals if `Nboot`
 #' was specified.
@@ -190,7 +191,8 @@ get_sensitivity <- function(coin, SA_specs, N, SA_type = "UA", dset, iCode, Nboo
   SA_out <- list(
     Scores = SA_scores,
     Ranks = SA_ranks,
-    RankStats = RankStats
+    RankStats = RankStats,
+    Para = XX_p
   )
 
   # get sensitivity indices if SA

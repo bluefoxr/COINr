@@ -33,7 +33,7 @@ test_that("sensitivity_works", {
                             dset = "Aggregated", iCode = "Index", Nboot = 100)
 
   # test general format of output
-  expect_setequal(names(SA_res), c("Scores", "Ranks", "RankStats", "Sensitivity", "Nominal"))
+  expect_setequal(names(SA_res), c("Scores", "Ranks", "RankStats", "Para", "Sensitivity", "Nominal"))
   expect_equal(ncol(SA_res$Scores), 20*4+2)
 
   # the Si and STi of the normalisation assumption should be zero

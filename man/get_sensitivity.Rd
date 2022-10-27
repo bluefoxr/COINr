@@ -40,6 +40,7 @@ Sensitivity analysis results as a list, containing:
 \item \code{.$Scores} a data frame with a row for each unit, and columns are the scores for each replication.
 \item \code{.$Ranks} as \code{.$Scores} but for unit ranks
 \item \code{.$RankStats} summary statistics for ranks of each unit
+\item \code{.$Para} a list containing parameter values for each run
 \item \code{.$Nominal} the nominal scores and ranks of each unit (i.e. from the original COIN)
 \item \code{.$Sensitivity} (only if \code{SA_type = "SA"}) sensitivity indices for each parameter. Also confidence intervals if \code{Nboot}
 was specified.
