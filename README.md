@@ -7,7 +7,7 @@
 
 [![CRAN-update](https://www.r-pkg.org/badges/version-ago/COINr)](https://cran.r-project.org/package=COINr)
 [![CRAN_Download_Badge](http://cranlogs.r-pkg.org/badges/COINr)](https://CRAN.R-project.org/package=COINr)
-[![status](https://joss.theoj.org/papers/187b1759658c96177f8d17f3b55b90a0/status.svg)](https://joss.theoj.org/papers/187b1759658c96177f8d17f3b55b90a0)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.04567/status.svg)](https://doi.org/10.21105/joss.04567)
 [![R-CMD-check](https://github.com/bluefoxr/COINr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/bluefoxr/COINr/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/bluefoxr/COINr/branch/master/graph/badge.svg)](https://app.codecov.io/gh/bluefoxr/COINr?branch=master)
@@ -147,8 +147,10 @@ devtools::test()
 
 If you have found COINr helpful, we are grateful if you cite the
 package. COINr is citable by a paper in the Journal of Open Source
-Software which you can find [here](https://doi.org/10.21105/joss.04567)
-(with citation information).
+Software which you can find
+[here](https://joss.theoj.org/papers/10.21105/joss.04567) (with citation
+information).
 
 In R you can also generate the citation info using
-`citation(package = "COINr")`.
+`citation(package = "COINr")`, or see the same info on the [COINr web
+page](https://bluefoxr.github.io/COINr/authors.html#citation).
