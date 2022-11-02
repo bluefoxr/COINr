@@ -327,6 +327,8 @@ new_coin <- function(iData, iMeta, exclude = NULL, split_to = NULL,
 #' * `uName` is an optional column which specifies a longer name for each unit. If this column is not included,
 #' unit codes (`uCode`) will be used as unit names where required.
 #'
+#' No column names should contain blank spaces.
+#'
 #' @param iData A data frame of indicator data.
 #' @param quietly Set `TRUE` to suppress message if input is valid.
 #'
@@ -405,6 +407,23 @@ check_iData <- function(iData, quietly = FALSE){
     stop("uCode and colnames(iData) contain overlapping codes.")
   }
 
+
+  # Spaces and numbers ------------------------------------------------------
+
+  cnames <- names(iData)
+
+  # should not contain spaces
+  spaces <- grepl(" ", cnames)
+  if(any(spaces)){
+    stop("One or more column names has a blank space - this causes problems and is not allowed.")
+  }
+
+  # should not start with a number
+  num_start <- substring(cnames, 1,1) %in% 0:9
+  if(any(num_start)){
+    stop("One or more column names begins with a number - this causes problems and is not allowed.")
+  }
+
   # OUTPUT ------------------------------------------------------------------
 
   if(!quietly){
@@ -424,7 +443,7 @@ check_iData <- function(iData, quietly = FALSE){
 #' * `Level`: Level in aggregation, where 1 is indicator level, 2 is the level resulting from aggregating
 #' indicators, 3 is the result of aggregating level 2, and so on. Set to `NA` for entries that are not included
 #' in the index (groups, denominators, etc).
-#' * `iCode`: Indicator code, alphanumeric. Must not start with a number.
+#' * `iCode`: Indicator code, alphanumeric. Must not start with a number or contain blank spaces.
 #' * `Parent`: Group (`iCode`) to which indicator/aggregate belongs in level immediately above.
 #' Each entry here should also be found in `iCode`. Set to `NA` only
 #' for the highest (Index) level (no parent), or for entries that are not included
@@ -539,6 +558,11 @@ check_iMeta <- function(iMeta, quietly = FALSE){
   # iCode no NAs are allowed
   if(any(is.na(iMeta$iCode))){
     stop("NAs found in iCode - NAs are not allowed.")
+  }
+  # iCode no spaces
+  spaces <- grepl(" ", iMeta$iCode)
+  if(any(spaces)){
+    stop("One or more entries in iCode has a blank space - this causes problems and is not allowed.")
   }
 
   # Direction should only be -1 or 1

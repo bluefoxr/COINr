@@ -29,6 +29,8 @@ each \code{uCode}: one for each \code{Time} value. This can be used to split a s
 \item \code{uName} is an optional column which specifies a longer name for each unit. If this column is not included,
 unit codes (\code{uCode}) will be used as unit names where required.
 }
+
+No column names should contain blank spaces.
 }
 \examples{
 check_iData(ASEM_iData)

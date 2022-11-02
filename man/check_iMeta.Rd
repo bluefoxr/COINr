@@ -25,7 +25,7 @@ Required columns for \code{iMeta} are:
 \item \code{Level}: Level in aggregation, where 1 is indicator level, 2 is the level resulting from aggregating
 indicators, 3 is the result of aggregating level 2, and so on. Set to \code{NA} for entries that are not included
 in the index (groups, denominators, etc).
-\item \code{iCode}: Indicator code, alphanumeric. Must not start with a number.
+\item \code{iCode}: Indicator code, alphanumeric. Must not start with a number or contain blank spaces.
 \item \code{Parent}: Group (\code{iCode}) to which indicator/aggregate belongs in level immediately above.
 Each entry here should also be found in \code{iCode}. Set to \code{NA} only
 for the highest (Index) level (no parent), or for entries that are not included
