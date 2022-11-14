@@ -1,3 +1,10 @@
+# COINr 1.1.1
+
+Dev version not yet on CRAN.
+
+* More robust write to log, can deal with `COINr::func_Name` type calls
+* Catch spaces and numbers in iCodes
+
 # COINr 1.1
 
 Some new functions and bug fixes:
