@@ -14,7 +14,7 @@ sense, there are no duplicates, and other things. iMeta must pass this check to 
     
     <a class="navbar-brand me-2" href="../index.html">COINr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -118,7 +118,7 @@ sense, there are no duplicates, and other things. <code>iMeta</code> must pass t
     <p>Required columns for <code>iMeta</code> are:</p><ul><li><p><code>Level</code>: Level in aggregation, where 1 is indicator level, 2 is the level resulting from aggregating
 indicators, 3 is the result of aggregating level 2, and so on. Set to <code>NA</code> for entries that are not included
 in the index (groups, denominators, etc).</p></li>
-<li><p><code>iCode</code>: Indicator code, alphanumeric. Must not start with a number.</p></li>
+<li><p><code>iCode</code>: Indicator code, alphanumeric. Must not start with a number or contain blank spaces.</p></li>
 <li><p><code>Parent</code>: Group (<code>iCode</code>) to which indicator/aggregate belongs in level immediately above.
 Each entry here should also be found in <code>iCode</code>. Set to <code>NA</code> only
 for the highest (Index) level (no parent), or for entries that are not included
