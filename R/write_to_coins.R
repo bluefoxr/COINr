@@ -13,7 +13,7 @@
 # @examples
 # #
 #
-# @return Updated GII2 object with function arguments written to `.$Log`
+# @return Updated coin object with function arguments written to `.$Log`
 write_log <- function(coin, dont_write = NULL, write2log = TRUE){
 
   if(!write2log){
@@ -23,6 +23,18 @@ write_log <- function(coin, dont_write = NULL, write2log = TRUE){
   # get calling function name and its arguments
   func_args <- as.list(sys.frame(-1))
   func_name <- deparse(as.list(sys.call(-1))[[1]])
+
+  # check whether call is of type COINr::func_name, or just func_name
+  if(grepl("::", func_name)){
+    # split at ::, this returns a list (to deal with character vectors) - we only have one string so take first
+    xx <- strsplit(func_name, "::")[[1]]
+    if(xx[1] != "COINr"){
+      stop("Attempt to write log from non-COINr function!")
+    } else {
+      # take function name excluding COINr:: bit
+      func_name <- xx[2]
+    }
+  }
 
   # tweak list first (exclude args we don't want)
   dont_write <- c(dont_write, "coin", "*tmp*")
@@ -35,6 +47,12 @@ write_log <- function(coin, dont_write = NULL, write2log = TRUE){
 
   # remove method .coin or similar from func_name
   func_name2 <- unlist(strsplit(func_name, "\\.")[[1]])[1]
+
+  # make sure this is a builder function calling
+  builders <- c("Aggregate", "Denominate", "Impute", "new_coin", "Normalise", "qNormalise", "qTreat", "Screen", "Treat")
+  if(func_name2 %nin% builders){
+    stop("The calling function ", func_name2, " is not one of the functions allowed to write to log. Authorised functions are ", builders)
+  }
 
   # write to coin
   coin$Log[[func_name2]] <- func_args
