@@ -64,7 +64,11 @@ plot_bar <- function(coin, dset, iCode, ..., uLabel = "uCode", axes_label = "iCo
     also_get <- NULL
   }
 
-  iData <- get_data(coin, dset = dset, iCodes = iCode, also_get = also_get, ...)
+  # I have to reset Level to NULL in case it is specified, otherwise causes problems
+  dot_paras <- list(...)
+  dot_paras$Level <- NULL
+
+  iData <- get_data(coin, dset = dset, iCodes = iCode, also_get = also_get, ... = dot_paras)
 
   # uLABELS -----------------------------------------------------------------
 
@@ -96,7 +100,7 @@ plot_bar <- function(coin, dset, iCode, ..., uLabel = "uCode", axes_label = "iCo
     }
 
     # get data
-    iData_ch <- get_data(coin, dset = dset, iCodes = iCodes_ch, also_get = also_get, ...)
+    iData_ch <- get_data(coin, dset = dset, iCodes = iCodes_ch, also_get = also_get, ... = dot_paras)
 
     # merge onto iData
     iData <- merge(iData, iData_ch, by = "uCode")
