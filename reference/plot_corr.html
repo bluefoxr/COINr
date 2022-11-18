@@ -117,7 +117,8 @@ plots by higher aggregation levels.</p>
 <span>  insig_colour <span class="op">=</span> <span class="st">"#F0F0F0"</span>,</span>
 <span>  text_colour <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  discrete_colours <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  box_colour <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  box_colour <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  order_as <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -199,6 +200,13 @@ colour map if <code>flagcolours = TRUE</code> (from high to low correlation cate
 
 <dt>box_colour</dt>
 <dd><p>The line colour of grouping boxes, default black.</p></dd>
+
+
+<dt>order_as</dt>
+<dd><p>Optional list for ordering the plotting of variables. If specified, this must be a list of length 2, where each entry of the list is
+a character vector of the iCodes plotted on the x and y axes of the plot. The plot will then follow the order of these character vectors. Note this must
+be used with care because the <code>grouplev</code> and <code>boxlev</code> arguments will not follow the reordering. Hence this argument is probably best used for plots
+with no grouping, or for simply re-ordering within groups.</p></dd>
 
 </dl></div>
     <div class="section level2">
