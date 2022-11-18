@@ -21,7 +21,8 @@ plot_corr(
   insig_colour = "#F0F0F0",
   text_colour = NULL,
   discrete_colours = NULL,
-  box_colour = NULL
+  box_colour = NULL,
+  order_as = NULL
 )
 }
 \arguments{
@@ -68,6 +69,11 @@ otherwise they will be plotted as the colour specified by \code{insig_colour}. S
 colour map if \code{flagcolours = TRUE} (from high to low correlation categories). Defaults to a green/blue/grey/purple.}
 
 \item{box_colour}{The line colour of grouping boxes, default black.}
+
+\item{order_as}{Optional list for ordering the plotting of variables. If specified, this must be a list of length 2, where each entry of the list is
+a character vector of the iCodes plotted on the x and y axes of the plot. The plot will then follow the order of these character vectors. Note this must
+be used with care because the \code{grouplev} and \code{boxlev} arguments will not follow the reordering. Hence this argument is probably best used for plots
+with no grouping, or for simply re-ordering within groups.}
 }
 \value{
 A plot object generated with ggplot2, which can be edited further with ggplot2 commands.
