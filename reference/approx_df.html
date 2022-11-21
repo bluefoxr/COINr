@@ -150,17 +150,17 @@ values are generated at points specified in <code>tt_est</code> but these are ap
 <span class="r-in"><span><span class="co"># interpolate for time = 2012</span></span></span>
 <span class="r-in"><span><span class="va">Y_int</span> <span class="op">&lt;-</span> <span class="fu">approx_df</span><span class="op">(</span><span class="va">Y</span>, <span class="va">tt</span>, <span class="fl">2012</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">Y_int</span><span class="op">$</span><span class="va">Y</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           y1        y2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  0.3379318 0.4882212</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  0.6360806 0.8915422</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0.9342294        NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0.8231597 0.5109307</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5         NA        NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  0.3117952 0.1062345</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  0.1443228 0.5160263</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  0.2390341 0.6585274</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  0.1520184 0.3726800</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 0.1188309 0.6892723</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             y1         y2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  0.383257384 0.47694955</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  0.323767540 0.96811494</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0.264277695         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0.424899648 0.40329148</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5           NA         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  0.014605488 0.05290579</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  0.524645746 0.81396393</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  0.590898043 0.44629024</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  0.080478402 0.64267930</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 0.002170392 0.42525267</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># notice Y_int$y2 is unchanged since at 2012 it did not have NA value</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="va">Y_int</span><span class="op">$</span><span class="va">Y</span><span class="op">$</span><span class="va">y2</span>, <span class="va">y2</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -172,18 +172,18 @@ values are generated at points specified in <code>tt_est</code> but these are ap
 <span class="r-out co"><span class="r-pr">#&gt;</span> [11] 2020.0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $Y</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           y1        y2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  0.3379318 0.4882212</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2         NA 0.8915422</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0.9342294        NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0.8231597 0.5109307</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5         NA        NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  0.4396363 0.2074085</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  0.3117952 0.1062345</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  0.1443228 0.5160263</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  0.2390341 0.6585274</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 0.1520184 0.3726800</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 0.1188309 0.6892723</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             y1         y2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  0.383257384 0.47694955</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2           NA 0.96811494</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0.264277695         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0.424899648 0.40329148</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5           NA         NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  0.117179028 0.14050221</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  0.014605488 0.05290579</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  0.524645746 0.81396393</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  0.590898043 0.44629024</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 0.080478402 0.64267930</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 0.002170392 0.42525267</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
