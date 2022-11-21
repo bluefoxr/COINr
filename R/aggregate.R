@@ -261,8 +261,14 @@ Aggregate.coin <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, dat
       })
     }
 
-    # aggs comes out as a list of vectors, have to make to df
-    as.data.frame(do.call(cbind, aggs))
+    if(is.list(aggs)){
+      # aggs comes out as a list of vectors, have to make to df
+      as.data.frame(do.call(cbind, aggs))
+    } else if (is.numeric(aggs)){
+      # in this case there is only one row, and it comes out as an array which needs to be converted
+      as.data.frame(t(aggs))
+    }
+
   }
 
   indat_ag <- indat
