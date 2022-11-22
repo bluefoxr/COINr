@@ -16,9 +16,10 @@
 #' @param dset The data set to normalise in each coin
 #' @param global_specs Default specifications
 #' @param indiv_specs Individual specifications
-#' @param directions If `NULL`, extracts directions from indicator metadata, i.e. the `iMeta` data frame
-#' that was passed to [new_coin()]. Else `directions` should be a vector with entries either -1 or 1, in
-#' order of the columns of the data set.
+#' @param directions An optional data frame containing the following columns:
+#' * `iCode` The indicator code, corresponding to the column names of the data set
+#' * `Direction` numeric vector with entries either `-1` or `1`
+#' If `directions` is not specified, the directions will be taken from the `iMeta` table in the coin, if available.
 #' @param global Logical: if `TRUE`, normalisation is performed "globally" across all coins, by using e.g. the
 #' max and min of each indicator in any coin. This effectively makes normalised scores comparable between coins
 #' because they are all scaled using the same parameters. Otherwise if `FALSE`, coins are normalised individually.
@@ -52,7 +53,12 @@ Normalise.purse <- function(x, dset, global_specs = NULL, indiv_specs = NULL,
 
   if(global){
 
-    # run global dset through normalise, excluding Time col
+    # get directions first
+    if(is.null(directions)){
+      directions <- x$coin[[1]]$Meta$Ind[c("iCode", "Direction")]
+    }
+
+    # run global dset through normalise (as data frame), excluding Time col
     iDatas_n <- Normalise(iDatas_, global_specs = global_specs,
                            indiv_specs = indiv_specs, directions = directions)
     # split by Time

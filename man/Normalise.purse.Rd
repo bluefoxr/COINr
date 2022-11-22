@@ -24,9 +24,12 @@
 
 \item{indiv_specs}{Individual specifications}
 
-\item{directions}{If \code{NULL}, extracts directions from indicator metadata, i.e. the \code{iMeta} data frame
-that was passed to \code{\link[=new_coin]{new_coin()}}. Else \code{directions} should be a vector with entries either -1 or 1, in
-order of the columns of the data set.}
+\item{directions}{An optional data frame containing the following columns:
+\itemize{
+\item \code{iCode} The indicator code, corresponding to the column names of the data set
+\item \code{Direction} numeric vector with entries either \code{-1} or \code{1}
+If \code{directions} is not specified, the directions will be taken from the \code{iMeta} table in the coin, if available.
+}}
 
 \item{global}{Logical: if \code{TRUE}, normalisation is performed "globally" across all coins, by using e.g. the
 max and min of each indicator in any coin. This effectively makes normalised scores comparable between coins
