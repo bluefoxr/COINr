@@ -138,9 +138,10 @@ across all data at once. In other respects, this function behaves the same as <c
 
 
 <dt>directions</dt>
-<dd><p>If <code>NULL</code>, extracts directions from indicator metadata, i.e. the <code>iMeta</code> data frame
-that was passed to <code><a href="new_coin.html">new_coin()</a></code>. Else <code>directions</code> should be a vector with entries either -1 or 1, in
-order of the columns of the data set.</p></dd>
+<dd><p>An optional data frame containing the following columns:</p><ul><li><p><code>iCode</code> The indicator code, corresponding to the column names of the data set</p></li>
+<li><p><code>Direction</code> numeric vector with entries either <code>-1</code> or <code>1</code>
+If <code>directions</code> is not specified, the directions will be taken from the <code>iMeta</code> table in the coin, if available.</p></li>
+</ul></dd>
 
 
 <dt>global</dt>
