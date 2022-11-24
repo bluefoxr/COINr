@@ -424,6 +424,16 @@ Impute.data.frame <- function(x, f_i = NULL, f_i_para = NULL, impute_by = "colum
 
   if(impute_by == "df"){
 
+    # require that first arg of f_i is "x"
+    f_args <- formals(f_i)
+    if(is.null(f_args)){
+      stop("The function specified by f_i seems to have no input arguments!")
+    } else {
+      if(names(f_args)[1] != "x"){
+        stop("The first argument of f_i must be called 'x'.")
+      }
+    }
+
     # function args
     f_args <- list(x = x_n)
     if(!is.null(f_i_para)){
@@ -439,7 +449,7 @@ Impute.data.frame <- function(x, f_i = NULL, f_i_para = NULL, impute_by = "colum
     if(!is.data.frame(x_imp)){
       stop("Object returned by f_i is not a data frame.")
     }
-    if(dim(x_imp) != dim(x)){
+    if(!identical(dim(x_imp), dim(x))){
       stop("Object returned by f_i has different dimensions from x.")
     }
 
@@ -548,6 +558,16 @@ Impute.numeric <- function(x, f_i = NULL, f_i_para = NULL, ...){
   # DEFAULTS ----------------------------------------------------------------
 
   f_i <- set_default(f_i, "i_mean")
+
+  # require that first arg of f_i is "x"
+  f_args <- formals(f_i)
+  if(is.null(f_args)){
+    stop("The function specified by f_i seems to have no input arguments!")
+  } else {
+    if(names(f_args)[1] != "x"){
+      stop("The first argument of f_i must be called 'x'.")
+    }
+  }
 
   # function args
   f_args <- list(x = x)

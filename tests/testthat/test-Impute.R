@@ -10,6 +10,12 @@ test_that("Impute.numeric", {
   expect_length(xi, length(x))
   expect_equal(xi[-3], x[-3])
 
+  # check for mis-specified function (first arg is not called x)
+  f_test <- function(y){y}
+  expect_error(
+    Impute(x, f_i = "f_test")
+  )
+
 })
 
 # Check data frame method: imputing using mean and median, by row and col
