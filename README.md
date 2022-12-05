@@ -154,3 +154,11 @@ information).
 In R you can also generate the citation info using
 `citation(package = "COINr")`, or see the same info on the [COINr web
 page](https://bluefoxr.github.io/COINr/authors.html#citation).
+
+# Acknowledgements
+
+COINr was initially developed under contract for the European
+Commission’s Joint Research Centre and this enabled the package to get
+off the ground. Since then I have almost completely rewritten the
+package and significantly improved and extended it to meet the needs of
+other projects, and in my own time.
