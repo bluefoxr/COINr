@@ -151,7 +151,7 @@ vector to <code>f_i</code>; if <code>"row"</code>, passes each <em>row</em> sepa
 
 <dt>group_level</dt>
 <dd><p>A level of the framework to use for grouping indicators. This is only
-relevant if <code>impute_by = "row"</code>. In that case, indicators will be split into their groups at the
+relevant if <code>impute_by = "row"</code> or <code>"df"</code>. In that case, indicators will be split into their groups at the
 level specified by <code>group_level</code>, and imputation will be performed across rows of the group, rather
 than the whole data set. This can make more sense because indicators within a group are likely to be
 more similar.</p></dd>
