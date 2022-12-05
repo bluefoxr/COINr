@@ -165,6 +165,29 @@ Here, the `group_level` argument specifies which level-grouping of the indicator
 
 Imputation in this way has an important relationship with aggregation. This is because if we *don't* impute, then in the aggregation step, if we take the mean of a group of indicators, and there is a `NA` present, this value is excluded from the mean calculation. Doing this is mathematically equivalent to assigning the mean to that missing value and then taking the mean of all of the indicators. This is sometimes known as "shadow imputation". Therefore, one reason to use this imputation method is to see which values are being implicitly assigned as a result of excluding missing values from the aggregation step.
 
+Last we can see an example of imputation by data frame, with the option `impute_by = "row"`. Recall that this option requires that the function `f_i` accepts and returns entire data frames. This is suitable for more sophisticated multivariate imputation methods. Here we'll use a basic implementation of the Expectation Maximisation (EM) algorithm from the Amelia package.
+
+Since COINr requires that the first argument of `f_i` is called `x`, and the relevant Amelia function doesn't satisfy this requirement, we have write a simple wrapper function that acts as an intermediary between COINr and Amelia. This also gives us the chance to specify some other function arguments that are necessary.
+
+```{r, eval=FALSE}
+# this function takes a data frame input and returns an imputed data frame using amelia
+i_EM <- function(x){
+  # impute
+  amOut <- Amelia::amelia(x, m = 1, p2s = 0, boot.type = "none")
+  # return imputed data
+  amOut$imputations[[1]]
+}
+```
+
+Now armed with our new function, we just call that from `Impute()`. We don't need to specify `f_i_para` because these arguments are already specified in the intermediary function.
+
+```{r, eval=FALSE}
+# impute raw data set
+coin <- Impute(coin, dset = "Raw", f_i = i_EM, impute_by = "df", group_level = 2)
+```
+
+This has now passed each group of indicators at level 2 as data frames to Amelia, which has imputed each one and passed them back.
+
 # Purses
 
 Purse imputation is very similar to coin imputation, because by default the purse method of `Impute()` imputes each coin separately. There is one exception to this: if `f_i = "impute_panel`, the data sets inside the purse are imputed using the last available data point, using the `impute_panel()`

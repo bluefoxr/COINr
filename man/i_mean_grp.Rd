@@ -4,13 +4,16 @@
 \alias{i_mean_grp}
 \title{Impute by group mean}
 \usage{
-i_mean_grp(x, f)
+i_mean_grp(x, f, skip_f_na = TRUE)
 }
 \arguments{
 \item{x}{A numeric vector}
 
 \item{f}{A grouping variable, of the same length of \code{x}, that specifies the group that each value
 of \code{x} belongs to. This will be coerced to a factor.}
+
+\item{skip_f_na}{If \code{TRUE}, will work around any \code{NA}s in \code{f} (the corresponding values of \code{x} will be excluded from the imputation
+and returned unaltered). Else if \code{FALSE}, will cause an error.}
 }
 \value{
 A numeric vector

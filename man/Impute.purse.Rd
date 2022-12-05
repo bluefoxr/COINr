@@ -32,7 +32,7 @@ vector to \code{f_i}; if \code{"row"}, passes each \emph{row} separately; and if
 \code{f_i}. The function called by \code{f_i} should be compatible with the type of data passed to it.}
 
 \item{group_level}{A level of the framework to use for grouping indicators. This is only
-relevant if \code{impute_by = "row"}. In that case, indicators will be split into their groups at the
+relevant if \code{impute_by = "row"} or \code{"df"}. In that case, indicators will be split into their groups at the
 level specified by \code{group_level}, and imputation will be performed across rows of the group, rather
 than the whole data set. This can make more sense because indicators within a group are likely to be
 more similar.}

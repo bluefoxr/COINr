@@ -20,7 +20,7 @@
 #' vector to `f_i`; if `"row"`, passes each *row* separately; and if `"df"` passes the entire data set (data frame) to
 #' `f_i`. The function called by `f_i` should be compatible with the type of data passed to it.
 #' @param group_level A level of the framework to use for grouping indicators. This is only
-#' relevant if `impute_by = "row"`. In that case, indicators will be split into their groups at the
+#' relevant if `impute_by = "row"` or `"df"`. In that case, indicators will be split into their groups at the
 #' level specified by `group_level`, and imputation will be performed across rows of the group, rather
 #' than the whole data set. This can make more sense because indicators within a group are likely to be
 #' more similar.
@@ -164,7 +164,7 @@ Impute.purse <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "colu
 #' @param use_group Optional grouping variable name to pass to imputation function if this supports group
 #' imputation.
 #' @param group_level A level of the framework to use for grouping indicators. This is only
-#' relevant if `impute_by = "row"`. In that case, indicators will be split into their groups at the
+#' relevant if `impute_by = "row"` or `"df"`. In that case, indicators will be split into their groups at the
 #' level specified by `group_level`, and imputation will be performed across rows of the group, rather
 #' than the whole data set. This can make more sense because indicators within a group are likely to be
 #' more similar.
@@ -602,7 +602,7 @@ Impute.numeric <- function(x, f_i = NULL, f_i_para = NULL, ...){
   if(!is.numeric(xi)){
     stop("imputed vector is not numeric")
   }
-  if(any(xi[!nas] != x[!nas])){
+  if(!identical(xi[!nas], x[!nas])){
     stop("One or more non-NA values of x has changed as a result of imputation. Check the behaviour of the imputation function.")
   }
 
@@ -691,6 +691,8 @@ i_median <- function(x){
 #' @param x A numeric vector
 #' @param f A grouping variable, of the same length of `x`, that specifies the group that each value
 #' of `x` belongs to. This will be coerced to a factor.
+#' @param skip_f_na If `TRUE`, will work around any `NA`s in `f` (the corresponding values of `x` will be excluded from the imputation
+#' and returned unaltered). Else if `FALSE`, will cause an error.
 #'
 #' @return A numeric vector
 #' @export
@@ -700,15 +702,37 @@ i_median <- function(x){
 #' f <- c(rep("a", 6), rep("b", 6))
 #' i_mean_grp(x, f)
 #'
-i_mean_grp <- function(x, f){
+i_mean_grp <- function(x, f, skip_f_na = TRUE){
 
   stopifnot(is.numeric(x),
             length(x)==length(f))
 
+  # get any NAs in f
+  fna <- is.na(f)
+  if(sum(fna) == length(x)){
+    stop("f must have at least one non-NA value")
+  }
+
+  # extract x values with non-NA f values
+  if(skip_f_na){
+    x_use <- x[!fna]
+    f_use <- f[!fna]
+  } else {
+    if(any(fna)){
+      stop("NAs found in f. If skip_f_na = TRUE f cannot contain any NAs.")
+    }
+    x_use <- x
+    f_use <- f[!fna]
+  }
+
   # split by factors, apply func then unsplit
-  x_split <- split(x, f)
+  x_split <- split(x_use, f_use)
   x_split <- lapply(x_split, i_mean)
-  unsplit(x_split, f)
+  x_imp <- unsplit(x_split, f_use)
+
+  # reassemble and output
+  x[!fna] <- x_imp
+  x
 }
 
 #' Impute by group median
