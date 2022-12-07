@@ -1022,7 +1022,7 @@ skew <- function(x, na.rm = FALSE){
 
   # need min 3 points to work
   if(n<3){
-    stop("Insufficient non-NA points to calculate skewness (min 3 required).")
+    return(NA)
   }
 
   # calculate skewness. NOTE this is taken from e1071::skewness() to avoid dependencies.
@@ -1064,7 +1064,7 @@ kurt <- function(x, na.rm = FALSE){
   n <- length(x)
   # need min 4 points to work
   if(n<4){
-    stop("Insufficient non-NA points to calculate kurtosis (min 4 required).")
+    return(NA)
   }
 
   # demean and calculate kurtosis. NOTE this is taken from e1071::kurtosis() to avoid dependencies.
