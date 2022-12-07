@@ -470,8 +470,13 @@ get_pvals = function(X, ...) {
     for (j in (i + 1):n) {
 
       # get p val for pair
-      tmp = stats::cor.test(x = X[, i], y = X[, j], ...)
-      p.X[i, j] = p.X[j, i] = tmp$p.value
+      # catch possibility of all NAs in one or both vectors
+      if(all(is.na(X[,i])) | all(is.na(X[,j]))){
+        p.X[i, j] <- p.X[j, i] <- NA
+      } else {
+        tmp = stats::cor.test(x = X[, i], y = X[, j], ...)
+        p.X[i, j] = p.X[j, i] = tmp$p.value
+      }
 
     }
   }
