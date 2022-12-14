@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{A numeric vector, possibly with \code{NA} values to be imputed.}
 
-\item{f_i}{A function that imputes missing values in a numeric vector. See descriotion and details.}
+\item{f_i}{A function that imputes missing values in a numeric vector. See description and details.}
 
 \item{f_i_para}{Optional further arguments to be passed to \code{f_i()}}
 
