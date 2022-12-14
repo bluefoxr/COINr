@@ -55,7 +55,7 @@ This is a linear version of the weight optimisation proposed in this paper: \doi
 Weights are optimised to agree with a pre-specified vector of "importances". The optimised weights are returned back to the coin.
 
 See \code{vignette("weights")} for more details on the usage of this function and an explanation of the underlying
-method.
+method. Note that this function calculates correlations without considering statistical significance.
 
 This function replaces the now-defunct \code{weightOpt()} from COINr < v1.0.
 }

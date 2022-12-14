@@ -90,7 +90,7 @@ get_eff_weights <-  function(coin, out2 = "df"){
 #' Weights are optimised to agree with a pre-specified vector of "importances". The optimised weights are returned back to the coin.
 #'
 #' See `vignette("weights")` for more details on the usage of this function and an explanation of the underlying
-#' method.
+#' method. Note that this function calculates correlations without considering statistical significance.
 #'
 #' This function replaces the now-defunct `weightOpt()` from COINr < v1.0.
 #'
@@ -314,7 +314,7 @@ weights2corr <- function(coin, w, dset = "Aggregated", Levels = NULL,
 
   # get correlations
   crtable <- get_corr(coin2, dset = dset, Levels = Levels,
-                      cortype = cortype, withparent = withparent)
+                      cortype = cortype, withparent = withparent, pval = 0)
 
   # get results
   dfres <- get_results(coin2, dset = dset, tab_type = "Aggs")
