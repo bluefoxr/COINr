@@ -23,7 +23,8 @@ get_corr(
 \item{dset}{The name of the data set to apply the function to, which should be accessible in \code{.$Data}.}
 
 \item{iCodes}{An optional list of character vectors where the first entry specifies the indicator/aggregate
-codes to correlate against the second entry (also a specification of indicator/aggregate codes).}
+codes to correlate against the second entry (also a specification of indicator/aggregate codes). If this is specified as a character vector
+it will coerced to the first entry of a list, i.e. \code{list(iCodes)}.}
 
 \item{Levels}{The aggregation levels to take the two groups of indicators from. See \code{\link[=get_data]{get_data()}} for details.
 Defaults to indicator level.}

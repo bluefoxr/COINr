@@ -217,7 +217,8 @@ get_corr_flags <- function(coin, dset, cor_thresh = 0.9, thresh_type = "high", c
 #' @param coin A coin class coin object
 #' @param dset  The name of the data set to apply the function to, which should be accessible in `.$Data`.
 #' @param iCodes An optional list of character vectors where the first entry specifies the indicator/aggregate
-#' codes to correlate against the second entry (also a specification of indicator/aggregate codes).
+#' codes to correlate against the second entry (also a specification of indicator/aggregate codes). If this is specified as a character vector
+#' it will coerced to the first entry of a list, i.e. `list(iCodes)`.
 #' @param Levels The aggregation levels to take the two groups of indicators from. See [get_data()] for details.
 #' Defaults to indicator level.
 #' @param ... Further arguments to be passed to [get_data()] (`uCodes` and `use_group`).
@@ -263,7 +264,11 @@ get_corr <- function(coin, dset, iCodes = NULL, Levels = NULL, ...,
   # set Levels, repeat iCodes etc if only one input
   if(is.null(Levels)){Levels <- 1}
   if(is.null(iCodes)){iCodes <- list(NULL)}
-  stopifnot(is.list(iCodes))
+
+  if(!is.list(iCodes)){
+    stopifnot(is.character(iCodes))
+    iCodes <- list(iCodes)
+  }
 
   if (length(iCodes) == 1){
     iCodes = rep(iCodes, 2)
