@@ -174,6 +174,8 @@ Impute.purse <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "colu
 #' frame.
 #' @param write_to Optional character string for naming the data set in the coin. Data will be written to
 #' `.$Data[[write_to]]`. Default is `write_to == "Imputed"`.
+#' @param disable Logical: if `TRUE` will disable imputation completely and write the unaltered data set. This option is mainly useful
+#' in sensitivity and uncertainty analysis (to test the effect of turning imputation on/off).
 #' @param ... arguments passed to or from other methods.
 #'
 #' @return An updated coin with imputed data set at `.$Data[[write_to]]`
@@ -190,11 +192,26 @@ Impute.purse <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "colu
 #'
 Impute.coin <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "column",
                         use_group = NULL, group_level = NULL, normalise_first = NULL, out2 = "coin",
-                        write_to = NULL, ...){
+                        write_to = NULL, disable = FALSE, ...){
 
   # WRITE LOG ---------------------------------------------------------------
 
   coin <- write_log(x, dont_write = "x")
+
+  # potentially skip all imputation
+  stopifnot(is.logical(disable))
+  if(disable){
+    idata <- get_dset(coin, dset = dset)
+    # output list
+    if(out2 == "df"){
+      return(idata)
+    } else {
+      if(is.null(write_to)){
+        write_to <- "Imputed"
+      }
+      return(write_dset(coin, idata, dset = write_to))
+    }
+  }
 
   # GET DSET, DEFAULTS ------------------------------------------------------
 
@@ -239,15 +256,15 @@ Impute.coin <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "colum
 
   } else {
 
-    if(group_level %nin% 1:x$Meta$maxlev){
-      stop("group_level is out of range: must be between 1 and max level.")
+    if(group_level %nin% 2:x$Meta$maxlev){
+      stop("group_level is out of range: must be between 2 and max level.")
     }
 
     # we split the data set based on its grouping at a given level
     # get lineage
     lin <- coin$Meta$Lineage
     # make sure lineage is in the same order as colnames of data
-    lin <- lin[match(colnames(iData_), lin$Indicator), ]
+    lin <- lin[match(colnames(iData_), lin[[1]]), ]
     # this is our factor variable for splitting cols
     f <- lin[[group_level]]
     # now split
@@ -536,7 +553,7 @@ Impute.data.frame <- function(x, f_i = NULL, f_i_para = NULL, impute_by = "colum
 #' there are no `NA`s at all.
 #'
 #' @param x A numeric vector, possibly with `NA` values to be imputed.
-#' @param f_i A function that imputes missing values in a numeric vector. See descriotion and details.
+#' @param f_i A function that imputes missing values in a numeric vector. See description and details.
 #' @param f_i_para Optional further arguments to be passed to `f_i()`
 #' @param ... arguments passed to or from other methods.
 #'

@@ -111,6 +111,10 @@ test_that("impute.coin", {
   # FINALLY the test
   expect_equal(xn$ConSpeed, as.numeric(xref_sc))
 
+  # also test no imputation
+  coin <- Impute(coin, dset = "Raw", f_i = "i_mean_grp", use_group = "Pop_group", write_to = "test1", disable = TRUE)
+  expect_identical(coin$Data$Raw, coin$Data$test1)
+
 
 })
 

@@ -15,6 +15,7 @@
   normalise_first = NULL,
   out2 = "coin",
   write_to = NULL,
+  disable = FALSE,
   ...
 )
 }
@@ -48,6 +49,9 @@ frame.}
 
 \item{write_to}{Optional character string for naming the data set in the coin. Data will be written to
 \code{.$Data[[write_to]]}. Default is \code{write_to == "Imputed"}.}
+
+\item{disable}{Logical: if \code{TRUE} will disable imputation completely and write the unaltered data set. This option is mainly useful
+in sensitivity and uncertainty analysis (to test the effect of turning imputation on/off).}
 
 \item{...}{arguments passed to or from other methods.}
 }
