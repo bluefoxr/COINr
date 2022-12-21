@@ -25,6 +25,9 @@
 #' @export
 rank_df <- function(df, use_group = NULL){
 
+  # store copy of original
+  dfo <- df
+
   if(is.null(use_group)){
     df <- data.frame(
       lapply(df, function(y) if(is.numeric(y)) rank(-1*y, na.last = "keep", ties.method = "min") else y)
@@ -54,6 +57,8 @@ rank_df <- function(df, use_group = NULL){
   }
 
   rownames(df) <- NULL
+  # reset col names because sometimes gets altered...
+  names(df) <- names(dfo)
   df
 
 }
