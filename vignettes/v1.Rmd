@@ -103,6 +103,6 @@ COINr and COINr6 have conversion functions: in COINr there is the `COIN_to_coin(
 
 # Summary
 
-In summary, COINr has changed quite a lot, but that is a Good Thing. If you do want to roll back, or have both old and new syntax side by side, install COINr6. If you are missing interactive stuff in the new package, install COINrX (when it's available).
+In summary, COINr has changed quite a lot, but that is a Good Thing. If you do want to roll back, or have both old and new syntax side by side, install COINr6.
 
 As usual, if you have any feedback, spot any bugs or have any suggestions, email me or [open an issue](https://github.com/bluefoxr/COINr/issues) in the GitHub repo.
