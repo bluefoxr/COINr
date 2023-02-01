@@ -155,6 +155,7 @@ get_stats.data.frame <- function(x, t_skew = 2, t_kurt = 3.5, t_avail = 0.65, t_
     kt <- kurt(xi, na.rm = TRUE)
     nzero <- sum(xi != 0, na.rm = TRUE)
     nunq <- length(unique(xi[!is.na(xi)]))
+    nsame <- max(table(xi)) # the largest number of elements with the same value
 
     data.frame(
       Min = min(xi, na.rm = TRUE),
@@ -167,9 +168,11 @@ get_stats.data.frame <- function(x, t_skew = 2, t_kurt = 3.5, t_avail = 0.65, t_
       N.Avail = n_avail,
       N.NonZero = nzero,
       N.Unique = nunq,
+      N.Same = nsame,
       Frc.Avail = prc_avail,
-      Frc.NonZero = nzero/n,
-      Frc.Unique = nunq/n,
+      Frc.NonZero = nzero/n_avail,
+      Frc.Unique = nunq/n_avail,
+      Frc.Same = nsame/n_avail,
       Flag.Avail = ifelse(prc_avail >= t_avail, "ok", "LOW"),
       Flag.NonZero = ifelse(nzero/n >= t_zero, "ok", "LOW"),
       Flag.Unique = ifelse(nunq/n >= t_unq, "ok", "LOW"),
