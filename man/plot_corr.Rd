@@ -22,7 +22,8 @@ plot_corr(
   text_colour = NULL,
   discrete_colours = NULL,
   box_colour = NULL,
-  order_as = NULL
+  order_as = NULL,
+  use_directions = FALSE
 )
 }
 \arguments{
@@ -74,6 +75,13 @@ colour map if \code{flagcolours = TRUE} (from high to low correlation categories
 a character vector of the iCodes plotted on the x and y axes of the plot. The plot will then follow the order of these character vectors. Note this must
 be used with care because the \code{grouplev} and \code{boxlev} arguments will not follow the reordering. Hence this argument is probably best used for plots
 with no grouping, or for simply re-ordering within groups.}
+
+\item{use_directions}{Logical: if \code{TRUE} the extracted data is adjusted using directions found inside the coin (i.e. the "Direction"
+column input in \code{iMeta}: any indicators with negative direction will have their values multiplied by -1 which will reverse the
+direction of correlation). This should only be set to \code{TRUE} if the data set has \emph{not} yet been normalised. For example, this can be
+useful to set to \code{TRUE} to analyse correlations in the raw data, but would make no sense to analyse correlations in the normalised
+data because that already has the direction adjusted! So you would reverse direction twice. In other words, use this at your
+discretion.}
 }
 \value{
 A plot object generated with ggplot2, which can be edited further with ggplot2 commands.

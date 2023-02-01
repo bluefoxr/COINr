@@ -11,7 +11,8 @@ get_corr_flags(
   thresh_type = "high",
   cortype = "pearson",
   grouplev = NULL,
-  roundto = 3
+  roundto = 3,
+  use_directions = FALSE
 )
 }
 \arguments{
@@ -30,6 +31,9 @@ which will only flag correlations \emph{below} \code{cor_thresh}.}
 belong to the same group in Level 2.}
 
 \item{roundto}{Number of decimal places to round correlations to. Default 3. Set \code{NULL} to disable rounding.}
+
+\item{use_directions}{Logical: if \code{TRUE} the extracted data is adjusted using directions found inside the coin (i.e. the "Direction"
+column input in \code{iMeta}. See comments on this argument in \code{\link[=get_corr]{get_corr()}}.}
 }
 \value{
 A data frame with one entry for every indicator pair that is highly correlated within the same group, at the specified level.

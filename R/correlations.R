@@ -13,6 +13,8 @@
 #' @param cortype The type of correlation: to be passed to the `method` argument of `stats::cor`.
 #' @param nround Optional number of decimal places to round correlation values to. Default 2, set `NULL` to
 #' disable.
+#' @param use_directions Logical: if `TRUE` the extracted data is adjusted using directions found inside the coin (i.e. the "Direction"
+#' column input in `iMeta`. See comments on this argument in [get_corr()].
 #'
 #' @return A data frame of pairwise correlations that exceed the threshold.
 #' @export
@@ -24,11 +26,16 @@
 #' # get correlations >0.7 of any indicator with denominators
 #' get_denom_corr(coin, dset = "Raw", cor_thresh = 0.7)
 #'
-get_denom_corr <- function(coin, dset, cor_thresh = 0.6, cortype = "pearson", nround = 2){
+get_denom_corr <- function(coin, dset, cor_thresh = 0.6, cortype = "pearson",
+                           nround = 2, use_directions = FALSE){
 
   # indicator data
   # get everything at this point to ensure matching rows
   iData <- get_dset(coin, dset = dset, also_get = "all")
+
+  if(use_directions){
+    iData <- directionalise(iData, coin)
+  }
 
   # iMeta
   iMeta <- coin$Meta$Ind
@@ -101,6 +108,8 @@ get_denom_corr <- function(coin, dset, cor_thresh = 0.6, cortype = "pearson", nr
 #' @param roundto Number of decimal places to round correlations to. Default 3. Set `NULL` to disable rounding.
 #' @param thresh_type Either `"high"`, which will only flag correlations *above* `cor_thresh`, or `"low"`,
 #' which will only flag correlations *below* `cor_thresh`.
+#' @param use_directions Logical: if `TRUE` the extracted data is adjusted using directions found inside the coin (i.e. the "Direction"
+#' column input in `iMeta`. See comments on this argument in [get_corr()].
 #'
 #' @examples
 #' # build example coin
@@ -115,7 +124,7 @@ get_denom_corr <- function(coin, dset, cor_thresh = 0.6, cortype = "pearson", nr
 #'
 #' @export
 get_corr_flags <- function(coin, dset, cor_thresh = 0.9, thresh_type = "high", cortype = "pearson",
-                     grouplev = NULL, roundto = 3){
+                     grouplev = NULL, roundto = 3, use_directions = FALSE){
 
 
   # CHECKS AND DEFAULTS -----------------------------------------------------
@@ -132,6 +141,10 @@ get_corr_flags <- function(coin, dset, cor_thresh = 0.9, thresh_type = "high", c
             cor_thresh >= -1)
 
   iData <- get_dset(coin, dset, also_get = "none")
+
+  if(use_directions){
+    iData <- directionalise(iData, coin)
+  }
 
 
   # GET CORRS ---------------------------------------------------------------
@@ -233,6 +246,12 @@ get_corr_flags <- function(coin, dset, cor_thresh = 0.9, thresh_type = "high", c
 #' @param make_long Logical: if `TRUE`, returns correlations in long format (default), else if `FALSE`
 #' returns in wide format. Note that if wide format is requested, features specified by `grouplev`
 #' and `withparent` are not supported.
+#' @param use_directions Logical: if `TRUE` the extracted data is adjusted using directions found inside the coin (i.e. the "Direction"
+#' column input in `iMeta`: any indicators with negative direction will have their values multiplied by -1 which will reverse the
+#' direction of correlation). This should only be set to `TRUE` if the data set has not yet been normalised. For example, this can be
+#' useful to set to `TRUE` to analyse correlations in the raw data, but would make no sense to analyse correlations in the normalised
+#' data because that already has the direction adjusted! So you would reverse direction twice. In other words, use this at your
+#' discretion.
 #'
 #' @importFrom stats cor
 #'
@@ -253,7 +272,7 @@ get_corr_flags <- function(coin, dset, cor_thresh = 0.9, thresh_type = "high", c
 #' @export
 get_corr <- function(coin, dset, iCodes = NULL, Levels = NULL, ...,
                      cortype = "pearson", pval = 0.05, withparent = FALSE,
-                     grouplev = NULL, make_long = TRUE){
+                     grouplev = NULL, make_long = TRUE, use_directions = FALSE){
 
   # CHECKS ------------------------------------------------------------------
 
@@ -319,6 +338,14 @@ get_corr <- function(coin, dset, iCodes = NULL, Levels = NULL, ...,
                      Level = Levels[[1]], ..., also_get = "none")
   iData2 <- get_data(coin, dset = dset, iCodes = iCodes[[2]],
                      Level = Levels[[2]], ..., also_get = "none")
+
+
+  # Adjust directions -------------------------------------------------------
+
+  if(use_directions){
+    iData1 <- directionalise(iData1, coin)
+    iData2 <- directionalise(iData2, coin)
+  }
 
   # GET CORRELATIONS --------------------------------------------------------
 

@@ -46,6 +46,12 @@
 #' a character vector of the iCodes plotted on the x and y axes of the plot. The plot will then follow the order of these character vectors. Note this must
 #' be used with care because the `grouplev` and `boxlev` arguments will not follow the reordering. Hence this argument is probably best used for plots
 #' with no grouping, or for simply re-ordering within groups.
+#' @param use_directions Logical: if `TRUE` the extracted data is adjusted using directions found inside the coin (i.e. the "Direction"
+#' column input in `iMeta`: any indicators with negative direction will have their values multiplied by -1 which will reverse the
+#' direction of correlation). This should only be set to `TRUE` if the data set has *not* yet been normalised. For example, this can be
+#' useful to set to `TRUE` to analyse correlations in the raw data, but would make no sense to analyse correlations in the normalised
+#' data because that already has the direction adjusted! So you would reverse direction twice. In other words, use this at your
+#' discretion.
 #'
 #' @importFrom ggplot2 ggplot aes geom_tile
 #' @importFrom rlang .data
@@ -64,7 +70,7 @@
 plot_corr <- function(coin, dset, iCodes = NULL, Levels = 1, ..., cortype = "pearson",
                      withparent = FALSE, grouplev = NULL, box_level = NULL, showvals = TRUE, flagcolours = FALSE,
                      flagthresh = NULL, pval = 0.05, insig_colour = "#F0F0F0",
-                     text_colour = NULL, discrete_colours = NULL, box_colour = NULL, order_as = NULL){
+                     text_colour = NULL, discrete_colours = NULL, box_colour = NULL, order_as = NULL, use_directions = FALSE){
 
 
   # NOTE SET grouplev default to level + 1
@@ -85,7 +91,7 @@ plot_corr <- function(coin, dset, iCodes = NULL, Levels = 1, ..., cortype = "pea
 
   crtable <- get_corr(coin, dset = dset, iCodes = iCodes, Levels = Levels,
                       ... = ..., cortype = cortype, pval = pval, withparent = withparent,
-                      grouplev = grouplev, make_long = TRUE)
+                      grouplev = grouplev, make_long = TRUE, use_directions = use_directions)
 
   # round values for plotting
   crtable$Correlation <- round(crtable$Correlation,2)

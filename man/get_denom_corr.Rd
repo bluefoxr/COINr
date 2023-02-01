@@ -4,7 +4,14 @@
 \alias{get_denom_corr}
 \title{Correlations between indicators and denominators}
 \usage{
-get_denom_corr(coin, dset, cor_thresh = 0.6, cortype = "pearson", nround = 2)
+get_denom_corr(
+  coin,
+  dset,
+  cor_thresh = 0.6,
+  cortype = "pearson",
+  nround = 2,
+  use_directions = FALSE
+)
 }
 \arguments{
 \item{coin}{A coin class object.}
@@ -18,6 +25,9 @@ threshold will be flagged.}
 
 \item{nround}{Optional number of decimal places to round correlation values to. Default 2, set \code{NULL} to
 disable.}
+
+\item{use_directions}{Logical: if \code{TRUE} the extracted data is adjusted using directions found inside the coin (i.e. the "Direction"
+column input in \code{iMeta}. See comments on this argument in \code{\link[=get_corr]{get_corr()}}.}
 }
 \value{
 A data frame of pairwise correlations that exceed the threshold.
