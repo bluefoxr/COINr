@@ -118,7 +118,8 @@ plots by higher aggregation levels.</p>
 <span>  text_colour <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  discrete_colours <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  box_colour <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  order_as <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  order_as <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  use_directions <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -207,6 +208,15 @@ colour map if <code>flagcolours = TRUE</code> (from high to low correlation cate
 a character vector of the iCodes plotted on the x and y axes of the plot. The plot will then follow the order of these character vectors. Note this must
 be used with care because the <code>grouplev</code> and <code>boxlev</code> arguments will not follow the reordering. Hence this argument is probably best used for plots
 with no grouping, or for simply re-ordering within groups.</p></dd>
+
+
+<dt>use_directions</dt>
+<dd><p>Logical: if <code>TRUE</code> the extracted data is adjusted using directions found inside the coin (i.e. the "Direction"
+column input in <code>iMeta</code>: any indicators with negative direction will have their values multiplied by -1 which will reverse the
+direction of correlation). This should only be set to <code>TRUE</code> if the data set has <em>not</em> yet been normalised. For example, this can be
+useful to set to <code>TRUE</code> to analyse correlations in the raw data, but would make no sense to analyse correlations in the normalised
+data because that already has the direction adjusted! So you would reverse direction twice. In other words, use this at your
+discretion.</p></dd>
 
 </dl></div>
     <div class="section level2">

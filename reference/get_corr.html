@@ -107,7 +107,8 @@ replaced with <code>NA</code>. See <code>pval</code> argument to adjust this.</p
 <span>  pval <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  withparent <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  grouplev <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  make_long <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  make_long <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  use_directions <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -160,6 +161,15 @@ must be aggregated for this to work.</p></dd>
 <dd><p>Logical: if <code>TRUE</code>, returns correlations in long format (default), else if <code>FALSE</code>
 returns in wide format. Note that if wide format is requested, features specified by <code>grouplev</code>
 and <code>withparent</code> are not supported.</p></dd>
+
+
+<dt>use_directions</dt>
+<dd><p>Logical: if <code>TRUE</code> the extracted data is adjusted using directions found inside the coin (i.e. the "Direction"
+column input in <code>iMeta</code>: any indicators with negative direction will have their values multiplied by -1 which will reverse the
+direction of correlation). This should only be set to <code>TRUE</code> if the data set has not yet been normalised. For example, this can be
+useful to set to <code>TRUE</code> to analyse correlations in the raw data, but would make no sense to analyse correlations in the normalised
+data because that already has the direction adjusted! So you would reverse direction twice. In other words, use this at your
+discretion.</p></dd>
 
 </dl></div>
     <div class="section level2">

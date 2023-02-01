@@ -98,7 +98,8 @@ grouping can be controlled by the <code>grouplev</code> argument.</p>
 <span>  thresh_type <span class="op">=</span> <span class="st">"high"</span>,</span>
 <span>  cortype <span class="op">=</span> <span class="st">"pearson"</span>,</span>
 <span>  grouplev <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  roundto <span class="op">=</span> <span class="fl">3</span></span>
+<span>  roundto <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  use_directions <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -132,6 +133,11 @@ belong to the same group in Level 2.</p></dd>
 
 <dt>roundto</dt>
 <dd><p>Number of decimal places to round correlations to. Default 3. Set <code>NULL</code> to disable rounding.</p></dd>
+
+
+<dt>use_directions</dt>
+<dd><p>Logical: if <code>TRUE</code> the extracted data is adjusted using directions found inside the coin (i.e. the "Direction"
+column input in <code>iMeta</code>. See comments on this argument in <code><a href="get_corr.html">get_corr()</a></code>.</p></dd>
 
 </dl></div>
     <div class="section level2">

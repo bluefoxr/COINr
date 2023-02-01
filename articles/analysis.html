@@ -162,12 +162,12 @@ indicators may have a high proportion of zeroes, which can be
 problematic.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">stat_table</span><span class="op">[</span><span class="fl">11</span><span class="op">:</span><span class="fl">15</span><span class="op">]</span>, <span class="fl">5</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   N.Unique Frc.Avail Frc.NonZero Frc.Unique Flag.Avail</span></span>
-<span><span class="co">#&gt; 1       51         1       1.000      1.000         ok</span></span>
-<span><span class="co">#&gt; 2       51         1       1.000      1.000         ok</span></span>
-<span><span class="co">#&gt; 3       43         1       0.824      0.843         ok</span></span>
-<span><span class="co">#&gt; 4       30         1       0.882      0.588         ok</span></span>
-<span><span class="co">#&gt; 5       46         1       0.922      0.902         ok</span></span></code></pre></div>
+<span><span class="co">#&gt;   N.Unique N.Same Frc.Avail Frc.NonZero Frc.Unique</span></span>
+<span><span class="co">#&gt; 1       51      1         1       1.000      1.000</span></span>
+<span><span class="co">#&gt; 2       51      1         1       1.000      1.000</span></span>
+<span><span class="co">#&gt; 3       43      9         1       0.824      0.843</span></span>
+<span><span class="co">#&gt; 4       30      6         1       0.882      0.588</span></span>
+<span><span class="co">#&gt; 5       46      4         1       0.922      0.902</span></span></code></pre></div>
 <p>Here we have “N.Unique”, which is the number of unique data points
 (i.e. excluding duplicate values). The following three columns are
 similar to previous columns, e.g. “Frc.Avail” is the fraction of data
@@ -178,12 +178,12 @@ availability (“Frc.Avail”) is below the limit specified by the
 flagged as “LOW”.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">stat_table</span><span class="op">[</span><span class="fl">16</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">stat_table</span><span class="op">)</span><span class="op">]</span>, <span class="fl">5</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   Flag.NonZero Flag.Unique Flag.SkewKurt</span></span>
-<span><span class="co">#&gt; 1           ok          ok            ok</span></span>
-<span><span class="co">#&gt; 2           ok          ok           OUT</span></span>
-<span><span class="co">#&gt; 3           ok          ok            ok</span></span>
-<span><span class="co">#&gt; 4           ok          ok           OUT</span></span>
-<span><span class="co">#&gt; 5           ok          ok           OUT</span></span></code></pre></div>
+<span><span class="co">#&gt;   Frc.Same Flag.Avail Flag.NonZero Flag.Unique Flag.SkewKurt</span></span>
+<span><span class="co">#&gt; 1   0.0196         ok           ok          ok            ok</span></span>
+<span><span class="co">#&gt; 2   0.0196         ok           ok          ok           OUT</span></span>
+<span><span class="co">#&gt; 3   0.1760         ok           ok          ok            ok</span></span>
+<span><span class="co">#&gt; 4   0.1180         ok           ok          ok           OUT</span></span>
+<span><span class="co">#&gt; 5   0.0784         ok           ok          ok           OUT</span></span></code></pre></div>
 <p>The first two final columns are analogous to “Flag.Avail” and have
 thresholds which are controlled by arguments to
 <code><a href="../reference/get_stats.html">get_stats()</a></code>. The final column is a basic test of outliers

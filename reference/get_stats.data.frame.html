@@ -188,30 +188,30 @@ is a simple test for possible outliers, which may require treatment using <code>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9     am  0.00   1.00   0.406   0.00   0.499  0.401 -1.970      32        13</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10  gear  3.00   5.00   3.690   4.00   0.738  0.582 -0.895      32        32</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11  carb  1.00   8.00   2.810   2.00   1.620  1.160  2.020      32        32</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    N.Unique Frc.Avail Frc.NonZero Frc.Unique Flag.Avail Flag.NonZero</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1        25         1       1.000     0.7810         ok           ok</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2         3         1       1.000     0.0938         ok           ok</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3        27         1       1.000     0.8440         ok           ok</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4        22         1       1.000     0.6880         ok           ok</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5        22         1       1.000     0.6880         ok           ok</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6        29         1       1.000     0.9060         ok           ok</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7        30         1       1.000     0.9380         ok           ok</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8         2         1       0.438     0.0625         ok          LOW</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9         2         1       0.406     0.0625         ok          LOW</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10        3         1       1.000     0.0938         ok           ok</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11        6         1       1.000     0.1880         ok           ok</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    Flag.Unique Flag.SkewKurt</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1           ok            ok</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2          LOW            ok</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3           ok            ok</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4           ok            ok</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5           ok            ok</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6           ok            ok</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7           ok            ok</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8          LOW            ok</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9          LOW            ok</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10         LOW            ok</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11         LOW            ok</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    N.Unique N.Same Frc.Avail Frc.NonZero Frc.Unique Frc.Same Flag.Avail</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1        25      2         1       1.000     0.7810   0.0625         ok</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2         3     14         1       1.000     0.0938   0.4380         ok</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3        27      3         1       1.000     0.8440   0.0938         ok</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4        22      3         1       1.000     0.6880   0.0938         ok</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5        22      3         1       1.000     0.6880   0.0938         ok</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6        29      3         1       1.000     0.9060   0.0938         ok</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7        30      2         1       1.000     0.9380   0.0625         ok</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8         2     18         1       0.438     0.0625   0.5620         ok</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9         2     19         1       0.406     0.0625   0.5940         ok</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10        3     15         1       1.000     0.0938   0.4690         ok</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11        6     10         1       1.000     0.1880   0.3120         ok</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Flag.NonZero Flag.Unique Flag.SkewKurt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1            ok          ok            ok</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2            ok         LOW            ok</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3            ok          ok            ok</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4            ok          ok            ok</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5            ok          ok            ok</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6            ok          ok            ok</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7            ok          ok            ok</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8           LOW         LOW            ok</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9           LOW         LOW            ok</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10           ok         LOW            ok</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11           ok         LOW            ok</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
