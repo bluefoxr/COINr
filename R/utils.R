@@ -220,3 +220,34 @@ split_by_numeric <- function(x){
        numeric = x[numeric_cols])
 
 }
+
+# this function adjusts an iData dataset by directions, this is for use e.g.
+# in correlation plotting.
+# Just works with in-coin directions at the moment.
+# iData can have non-numeric columns like uCode, uName etc, but any numeric
+# cols will be required to have a corresponding direction entry in iMeta.
+directionalise <- function(iData, coin){
+
+  imeta <- coin$Meta$Ind[coin$Meta$Ind$Type == "Indicator", ]
+
+  df_out <- lapply(names(iData), function(iCode){
+
+    x <- iData[[iCode]]
+
+    if(is.numeric(x)){
+      if(iCode %nin% imeta$iCode){
+        stop("Name of numeric column in iData does not have an entry in iMeta found in coin. Column: ", iCode)
+      }
+      iData[iCode]*imeta$Direction[imeta$iCode == iCode]
+    } else {
+      x
+    }
+
+  })
+  df_out <- as.data.frame(df_out)
+
+  stopifnot(identical(names(df_out), names(iData)))
+
+  df_out
+
+}
