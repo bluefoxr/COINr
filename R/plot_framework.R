@@ -91,9 +91,15 @@ plot_framework <- function(coin, type = "sunburst", colour_level = NULL,
 
   # have to make colourcol into a factor column with an ordering of factors
   # that I specify, otherwise ordering is wrong
-  fac_order <- unique(Reduce(c,rev(lin)))
+  fac_order <- unique(Reduce(c,rev(lin[-ncol(lin)])))
   # reorder factors
   iMeta$colourcol <- factor(iMeta$colourcol, fac_order)
+
+  # this is a secondary reordering that is necessary:
+  # Although things are ordered correctly according to colour, the ordering
+  # within colours and below colour_level was incorrect and this seems to fix it
+  # took ages and made my head hurt figuring this out D:
+  iMeta <- iMeta[match(fac_order, iMeta$iCode), ]
 
   # transparency if needed
   trans <- c(0.8,0.6,rep(0.4, 100))
