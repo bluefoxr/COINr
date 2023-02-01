@@ -169,6 +169,13 @@ new_coin <- function(iData, iMeta, exclude = NULL, split_to = NULL,
   "\n This may occur if you have imported data with NAs read as strings.")
   }
 
+  # check for any parents with no children
+  icodes_agg <- iMeta$iCode[iMeta$Type == "Aggregate"]
+  icodes_agg_nokids <- icodes_agg[icodes_agg %nin% iMeta$Parent]
+  if(length(icodes_agg_nokids) > 0){
+    stop("Aggregate iCode(s) found in iMeta that do not have any children (not named in 'Parent' column). Codes: ", icodes_agg_nokids, call. = FALSE)
+  }
+
   # EXCLUDE INDICATORS ------------------------------------------------------
   # Optionally exclude any specified indicators
 
