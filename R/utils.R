@@ -251,3 +251,14 @@ directionalise <- function(iData, coin){
   df_out
 
 }
+
+# X is a df
+# cols specifies the names of TWO columns in X
+# from which to remove duplicate pairs
+remove_duplicate_corrs <- function(X, cols){
+
+  X1 = X[,cols]
+  duplicated_rows <- duplicated(t(apply(X1, 1, sort)))
+  X[!duplicated_rows, ]
+
+}

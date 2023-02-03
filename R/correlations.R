@@ -192,7 +192,8 @@ get_corr_flags <- function(coin, dset, cor_thresh = 0.9, thresh_type = "high", c
     crtable$Corr <- round(crtable$Corr, roundto)
   }
 
-  crtable[c("Group", "Ind1", "Ind2", "Corr")]
+  df_out <- crtable[c("Group", "Ind1", "Ind2", "Corr")]
+  remove_duplicate_corrs(df_out, c("Ind1", "Ind2"))
 
 }
 
