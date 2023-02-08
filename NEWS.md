@@ -1,9 +1,13 @@
 # COINr 1.1.1
 
-Dev version not yet on CRAN.
+Lots of small fixes and feature extensions, including
 
 * More robust write to log, can deal with `COINr::func_Name` type calls
 * Catch spaces and numbers in iCodes
+* Tweaks to correlation tables
+* Reordering for correlation plots
+* Better input checks
+* Extra stats
 
 # COINr 1.1
 
