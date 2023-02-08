@@ -2,6 +2,9 @@ url: https://bluefoxr.github.io/COINr/
 template:
   bootstrap: 5
   bootswatch: flatly
+authors:
+  William Becker:
+    href: "http://www.willbecker.me"
 bslib:
   pkgdown-nav-height: 74px
 navbar:
