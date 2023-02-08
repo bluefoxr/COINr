@@ -97,7 +97,7 @@ remotes::install_github("bluefoxr/COINr6")
 
 And that's it. I will continue to lightly maintain this package for a while (e.g. fixing any critical bugs if any arise) but in general the main focus will be on the new COINr version.
 
-Another way to roll back COINr to an older version is to use `devtools::install_version()`, in which you can specify a version number of any package to install. This might be a bit more fiddly, and personally I would recommend to rather install COINr6. But if you want, check out [this article](https://support.rstudio.com/hc/en-us/articles/219949047-Installing-older-versions-of-packages) for some info on installing older package versions.
+Another way to roll back COINr to an older version is to use `devtools::install_version()`, in which you can specify a version number of any package to install. This might be a bit more fiddly, and personally I would recommend to rather install COINr6. But if you want, check out [this article](https://support.posit.co/hc/en-us/articles/219949047-Installing-older-versions-of-packages) for some info on installing older package versions.
 
 COINr and COINr6 have conversion functions: in COINr there is the `COIN_to_coin()` function which allows conversion from the older "COIN" class to the newer "coin" class. In COINr6 there is also now the reverse function, `coin_to_COIN()`, which allows access to all the old interactive plotting of COINr6 if you liked that, as well as the apps. Note that conversion comes with some limitations in both directions, which are discussed in those functions' documentation.
 
