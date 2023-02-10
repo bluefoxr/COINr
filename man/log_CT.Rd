@@ -12,7 +12,7 @@ log_CT(x, na.rm = FALSE)
 \item{na.rm}{Set \code{TRUE} to remove \code{NA} values, otherwise returns \code{NA}.}
 }
 \value{
-A log-transformed vector of data.
+A log-transformed vector of data, and treatment details wrapped in a list.
 }
 \description{
 Performs a log transform on a numeric vector.

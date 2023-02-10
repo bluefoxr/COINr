@@ -908,7 +908,7 @@ log_GII <- function(x, na.rm = FALSE){
 #' x <- runif(20)
 #' log_CT(x)
 #'
-#' @return A log-transformed vector of data.
+#' @return A log-transformed vector of data, and treatment details wrapped in a list.
 #'
 #' @export
 log_CT <- function(x, na.rm = FALSE){
@@ -919,6 +919,48 @@ log_CT <- function(x, na.rm = FALSE){
 
   list(x = x,
        treated = rep("log_CT", length(x)))
+}
+
+#' Log transform a vector (skew corrected)
+#'
+#' Performs a log transform on a numeric vector, but with consideration for the direction of the skew. The aim
+#' here is to reduce the absolute value of skew, regardless of its direction.
+#'
+#' Specifically:
+#'
+#' If the skew of `x` is positive, this performs a modified "COIN Tool log" transform: `log(x-min(x) + a)`, where
+#' `a <- 0.01*(max(x)-min(x))`.
+#'
+#' If the skew of `x` is negative, it performs an equivalent transformation `-log(xmax + a - x)`.
+#'
+#' @param x A numeric vector
+#' @param na.rm Set `TRUE` to remove `NA` values, otherwise returns `NA`.
+#'
+#' @return A log-transformed vector of data, and treatment details wrapped in a list.
+#' @export
+#'
+#' @examples
+#' x <- runif(20)
+#' log_CT(x)
+#'
+log_CT_plus <- function(x, na.rm = FALSE){
+
+  stopifnot(is.numeric(x))
+
+  xmax <- max(x, na.rm = TRUE)
+  xmin <- min(x, na.rm = TRUE)
+  a <- 0.01 * (xmax - xmin)
+
+  if(skew(x, na.rm = TRUE) > 0){
+
+    list(x = log(x - xmin + a),
+         treated = rep("log_CT", length(x)))
+
+  } else {
+
+    list(x = -log(xmax + a - x),
+         treated = rep("log_CT_neg", length(x)))
+  }
 }
 
 #' Log-transform a vector
@@ -934,7 +976,7 @@ log_CT <- function(x, na.rm = FALSE){
 #' x <- runif(20)
 #' log_CT_orig(x)
 #'
-#' @return A log-transformed vector of data.
+#' @return A log-transformed vector of data, and treatment details wrapped in a list.
 #'
 #' @export
 log_CT_orig <- function(x, na.rm = FALSE){
