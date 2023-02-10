@@ -164,6 +164,7 @@ reference:
   - i_median_grp
   - kurt
   - log_CT
+  - log_CT_plus
   - log_CT_orig
   - log_GII
   - names_to_codes
