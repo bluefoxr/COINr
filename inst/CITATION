@@ -1,7 +1,7 @@
 citHeader("To cite COINr in publications use:")
 
-x <- citEntry(
-  entry    = "Article",
+x <- bibentry(
+  bibtype    = "Article",
   title    = "COINr: An R package for developing composite indicators",
   author   = c(person("William", "Becker"), person("Giulio", "Caperna"), person("Maria", "Del Sorbo"), person("Hedvig", "Norlen"), person("Eleni", "Papadimitriou"), person("Michaela", "Saisana")),
   journal  = "Journal of Open Source Software",
