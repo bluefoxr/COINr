@@ -12,6 +12,7 @@ plot_bar(
   uLabel = "uCode",
   axes_label = "iCode",
   by_group = NULL,
+  filter_to_ends = NULL,
   dset_label = FALSE,
   log_scale = FALSE,
   stack_children = FALSE,
@@ -32,6 +33,10 @@ plot_bar(
 \item{axes_label}{How to label the y axis and group legend: either \code{"iCode"} or \code{"iName"}.}
 
 \item{by_group}{Optional group variable to use to colour bars. Cannot be used if \code{stack_children = TRUE}.}
+
+\item{filter_to_ends}{Optional way to filter the bar chart to only display the top/bottom N units. This is useful in cases
+where the number of units is large. Specify as e.g. \code{list(top = 10)} or \code{list(bottom = 10)} to return only the top or bottom
+ten units respectively (the value 10 can be changed of course).}
 
 \item{dset_label}{Logical: whether to include the data set in the y axis label.}
 

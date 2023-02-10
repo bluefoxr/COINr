@@ -20,6 +20,9 @@
 #' its underlying component values (the underlying indicators/aggregates used to create `iCode`). To use this, you must
 #' have aggregated your data and `dset` must point to a data set where the underlying (child) scores of `iCode` are available.
 #' @param bar_colours Optional vector of colour codes for colouring bars.
+#' @param filter_to_ends Optional way to filter the bar chart to only display the top/bottom N units. This is useful in cases
+#' where the number of units is large. Specify as e.g. `list(top = 10)` or `list(bottom = 10)` to return only the top or bottom
+#' ten units respectively (the value 10 can be changed of course).
 #'
 #' @importFrom stats reorder
 #' @importFrom rlang .data
@@ -35,7 +38,7 @@
 #' plot_bar(coin, dset = "Raw", iCode = "CO2",
 #'          by_group = "GDPpc_group", axes_label = "iName")
 plot_bar <- function(coin, dset, iCode, ..., uLabel = "uCode", axes_label = "iCode",
-                     by_group = NULL, dset_label = FALSE, log_scale = FALSE, stack_children = FALSE,
+                     by_group = NULL, filter_to_ends = NULL, dset_label = FALSE, log_scale = FALSE, stack_children = FALSE,
                      bar_colours = NULL){
 
   # PREP --------------------------------------------------------------------
@@ -69,6 +72,26 @@ plot_bar <- function(coin, dset, iCode, ..., uLabel = "uCode", axes_label = "iCo
   dot_paras$Level <- NULL
 
   iData <- get_data(coin, dset = dset, iCodes = iCode, also_get = also_get, ... = dot_paras)
+
+  # optional filtering to top/bottom N
+  if(!is.null(filter_to_ends)){
+
+    stopifnot(is.list(filter_to_ends),
+              length(filter_to_ends) == 1,
+              names(filter_to_ends) %in% c("top", "bottom"),
+              filter_to_ends[[1]] %in% 1:nrow(iData))
+
+    if(names(filter_to_ends) == "top"){
+
+      iData <- iData[order(-iData[[iCode]]), ]
+
+    } else {
+      iData <- iData[order(iData[[iCode]]), ]
+    }
+
+    iData <- iData[1:filter_to_ends[[1]], ]
+  }
+
 
   # uLABELS -----------------------------------------------------------------
 
