@@ -185,32 +185,32 @@ are compared to 9 significant figures.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># impute using column mean</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="Impute.html">Impute</a></span><span class="op">(</span><span class="va">X</span>, f_i <span class="op">=</span> <span class="st">"i_mean"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            V1        V2          V3        V4         V5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  0.57133670 0.2961069 0.284189306 0.6321200 0.30766005</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  0.24509227 0.2989821 0.024795724 0.9134952 0.39169224</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0.32678555 0.7072670 0.108624892 0.4726987 0.28225533</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0.82668693 0.1568869 0.056716746 0.1350659 0.66114635</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  0.32678555 0.9834620 0.532193511 0.7561282 0.08817668</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  0.44953841 0.9959141 0.732260918 0.7106980 0.30766005</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  0.01298036 0.3349470 0.414533131 0.5977223 0.58908025</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  0.19014884 0.1224922 0.400983583 0.3554643 0.04861818</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  0.14304257 0.2832844 0.003405947 0.7461140 0.07166859</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 0.17545834 0.8946568 0.284189306 0.9221699 0.32864278</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           V1        V2        V3         V4        V5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  0.5168431 0.9203377 0.3595678 0.90331484 0.4289224</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  0.3410208 0.8809990 0.2419925 0.96607799 0.1233683</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0.4897456 0.4492979 0.5469505 0.31862879 0.4738004</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0.5505648 0.3350252 0.3838466 0.45257499 0.4420255</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  0.5569391 0.6368962 0.0360016 0.09296157 0.2668611</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  0.9448786 0.6636325 0.3044119 0.58553561 0.8610444</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  0.5569391 0.3448842 0.1391761 0.24434515 0.4123639</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  0.2169998 0.6659856 0.2015121 0.05683351 0.7383204</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  0.5733159 0.3127907 0.3044119 0.63631696 0.2315233</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 0.8221442 0.8732703 0.5262484 0.26493009 0.4420255</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># impute using row median (no normalisation)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="Impute.html">Impute</a></span><span class="op">(</span><span class="va">X</span>, f_i <span class="op">=</span> <span class="st">"i_median"</span>, impute_by <span class="op">=</span> <span class="st">"row"</span>,</span></span>
 <span class="r-in"><span>       normalise_first <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            V1        V2          V3        V4         V5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  0.57133670 0.2961069 0.571336701 0.6321200 0.57133670</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  0.24509227 0.2989821 0.024795724 0.9134952 0.39169224</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0.37747703 0.7072670 0.108624892 0.4726987 0.28225533</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0.82668693 0.1568869 0.056716746 0.1350659 0.66114635</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  0.64416085 0.9834620 0.532193511 0.7561282 0.08817668</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  0.44953841 0.9959141 0.732260918 0.7106980 0.72147944</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  0.01298036 0.3349470 0.414533131 0.5977223 0.58908025</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  0.19014884 0.1224922 0.400983583 0.3554643 0.04861818</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  0.14304257 0.2832844 0.003405947 0.7461140 0.07166859</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 0.17545834 0.8946568 0.611649806 0.9221699 0.32864278</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           V1        V2        V3         V4        V5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  0.5168431 0.9203377 0.3595678 0.90331484 0.4289224</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  0.3410208 0.8809990 0.2419925 0.96607799 0.1233683</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0.4897456 0.4492979 0.5469505 0.31862879 0.4738004</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0.5505648 0.3350252 0.3838466 0.45257499 0.4182108</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  0.1799113 0.6368962 0.0360016 0.09296157 0.2668611</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  0.9448786 0.6636325 0.7623385 0.58553561 0.8610444</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  0.2946147 0.3448842 0.1391761 0.24434515 0.4123639</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  0.2169998 0.6659856 0.2015121 0.05683351 0.7383204</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  0.5733159 0.3127907 0.4430533 0.63631696 0.2315233</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 0.8221442 0.8732703 0.5262484 0.26493009 0.6741963</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
