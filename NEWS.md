@@ -1,4 +1,4 @@
-# COINr 1.1.1
+# COINr 1.1.2
 
 Lots of small fixes and feature extensions, including
 
@@ -8,6 +8,8 @@ Lots of small fixes and feature extensions, including
 * Reordering for correlation plots
 * Better input checks
 * Extra stats
+* Bi-direction log transformation for negative skewed outlier treatment
+* Subgroups of units for bar charts
 
 # COINr 1.1
 
