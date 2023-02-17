@@ -411,8 +411,14 @@ Treat.data.frame <- function(x, global_specs = NULL, indiv_specs = NULL, combine
       }
     }
 
-    # run function
-    do.call("Treat.numeric", c(list(x = xi, combine_treat = combine_treat), specs))
+    # run function allowing for catching errors
+    tryCatch(
+      expr = do.call("Treat.numeric", c(list(x = xi, combine_treat = combine_treat), specs)),
+      error = function(e){
+        warning("Indicator could not be treated at column '", col_name, "' - returning untreated indicator. May be due to lack of unique values.", call. = FALSE)
+        list(x = xi)
+      }
+    )
   }
 
   # now run function
