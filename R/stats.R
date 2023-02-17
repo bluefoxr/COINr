@@ -1,26 +1,27 @@
 #' Statistics of indicators
 #'
 #' Given a coin and a specified data set (`dset`), returns a table of statistics with entries for each column.
+#'
 #' The statistics (columns in the output table) are as follows (entries correspond to each column):
 #'
-#' *`Min`: the minimum
-#' *`Max`: the maximum
-#' *`Mean`: the (arirthmetic) mean
-#' *`Median`: the median
-#' *`Std`: the standard deviation
-#' *`Skew`: the skew
-#' *`Kurt`: the kurtosis
-#' *`N.Avail`: the number of non-`NA` values
-#' *`N.NonZero`: the number of non-zero values
-#' *`N.Unique`: the number of unique values
-#' *`Frc.Avail`: the fraction of non-`NA` values
-#' *`Frc.NonZero`: the fraction of non-zero values
-#' *`Frc.Unique`: the fraction of unique values
-#' *`Flag.Avail`: a data availability flag - columns with `Frc.Avail < t_avail` will be flagged as `"LOW"`, else `"ok"`.
-#' *`Flag.NonZero`: a flag for columns with a high proportion of zeros. Any columns with `Frc.NonZero < t_zero` are
+#' * `Min`: the minimum
+#' * `Max`: the maximum
+#' * `Mean`: the (arirthmetic) mean
+#' * `Median`: the median
+#' * `Std`: the standard deviation
+#' * `Skew`: the skew
+#' * `Kurt`: the kurtosis
+#' * `N.Avail`: the number of non-`NA` values
+#' * `N.NonZero`: the number of non-zero values
+#' * `N.Unique`: the number of unique values
+#' * `Frc.Avail`: the fraction of non-`NA` values
+#' * `Frc.NonZero`: the fraction of non-zero values
+#' * `Frc.Unique`: the fraction of unique values
+#' * `Flag.Avail`: a data availability flag - columns with `Frc.Avail < t_avail` will be flagged as `"LOW"`, else `"ok"`.
+#' * `Flag.NonZero`: a flag for columns with a high proportion of zeros. Any columns with `Frc.NonZero < t_zero` are
 #' flagged as `"LOW"`, otherwise `"ok"`.
-#' *`Flag.Unique`: a unique value flag - any columns with `Frc.Unique < t_unq` are flagged as `"LOW"`, otherwise `"ok"`.
-#' *`Flag.SkewKurt`: a skew and kurtosis flag which is an indication of possible outliers. Any columns with
+#' * `Flag.Unique`: a unique value flag - any columns with `Frc.Unique < t_unq` are flagged as `"LOW"`, otherwise `"ok"`.
+#' * `Flag.SkewKurt`: a skew and kurtosis flag which is an indication of possible outliers. Any columns with
 #' `abs(Skew) > t_skew` AND `Kurt > t_kurt` are flagged as `"OUT"`, otherwise `"ok"`.
 #'
 #' The aim of this table, among other things, is to check the basic statistics of each column/indicator, and identify
@@ -83,27 +84,29 @@ get_stats.coin <- function(x, dset, t_skew = 2, t_kurt = 3.5, t_avail = 0.65, t_
 
 #' Statistics of columns
 #'
-#' Takes a data frame and returns a table of statistics with entries for each column. The statistics (columns in the
+#' Takes a data frame and returns a table of statistics with entries for each column.
+#'
+#' The statistics (columns in the
 #' output table) are as follows (entries correspond to each column):
 #'
-#' *`Min`: the minimum
-#' *`Max`: the maximum
-#' *`Mean`: the (arithmetic) mean
-#' *`Median`: the median
-#' *`Std`: the standard deviation
-#' *`Skew`: the skew
-#' *`Kurt`: the kurtosis
-#' *`N.Avail`: the number of non-`NA` values
-#' *`N.NonZero`: the number of non-zero values
-#' *`N.Unique`: the number of unique values
-#' *`Frc.Avail`: the fraction of non-`NA` values
-#' *`Frc.NonZero`: the fraction of non-zero values
-#' *`Frc.Unique`: the fraction of unique values
-#' *`Flag.Avail`: a data availability flag - columns with `Frc.Avail < t_avail` will be flagged as `"LOW"`, else `"ok"`.
-#' *`Flag.NonZero`: a flag for columns with a high proportion of zeros. Any columns with `Frc.NonZero < t_zero` are
+#' * `Min`: the minimum
+#' * `Max`: the maximum
+#' * `Mean`: the (arirthmetic) mean
+#' * `Median`: the median
+#' * `Std`: the standard deviation
+#' * `Skew`: the skew
+#' * `Kurt`: the kurtosis
+#' * `N.Avail`: the number of non-`NA` values
+#' * `N.NonZero`: the number of non-zero values
+#' * `N.Unique`: the number of unique values
+#' * `Frc.Avail`: the fraction of non-`NA` values
+#' * `Frc.NonZero`: the fraction of non-zero values
+#' * `Frc.Unique`: the fraction of unique values
+#' * `Flag.Avail`: a data availability flag - columns with `Frc.Avail < t_avail` will be flagged as `"LOW"`, else `"ok"`.
+#' * `Flag.NonZero`: a flag for columns with a high proportion of zeros. Any columns with `Frc.NonZero < t_zero` are
 #' flagged as `"LOW"`, otherwise `"ok"`.
-#' *`Flag.Unique`: a unique value flag - any columns with `Frc.Unique < t_unq` are flagged as `"LOW"`, otherwise `"ok"`.
-#' *`Flag.SkewKurt`: a skew and kurtosis flag which is an indication of possible outliers. Any columns with
+#' * `Flag.Unique`: a unique value flag - any columns with `Frc.Unique < t_unq` are flagged as `"LOW"`, otherwise `"ok"`.
+#' * `Flag.SkewKurt`: a skew and kurtosis flag which is an indication of possible outliers. Any columns with
 #' `abs(Skew) > t_skew` AND `Kurt > t_kurt` are flagged as `"OUT"`, otherwise `"ok"`.
 #'
 #' The aim of this table, among other things, is to check the basic statistics of each column/indicator, and identify
