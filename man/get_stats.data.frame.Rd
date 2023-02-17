@@ -36,29 +36,32 @@
 A data frame of statistics for each column
 }
 \description{
-Takes a data frame and returns a table of statistics with entries for each column. The statistics (columns in the
-output table) are as follows (entries correspond to each column):
+Takes a data frame and returns a table of statistics with entries for each column.
 }
 \details{
-*\code{Min}: the minimum
-*\code{Max}: the maximum
-*\code{Mean}: the (arithmetic) mean
-*\code{Median}: the median
-*\code{Std}: the standard deviation
-*\code{Skew}: the skew
-*\code{Kurt}: the kurtosis
-*\code{N.Avail}: the number of non-\code{NA} values
-*\code{N.NonZero}: the number of non-zero values
-*\code{N.Unique}: the number of unique values
-*\code{Frc.Avail}: the fraction of non-\code{NA} values
-*\code{Frc.NonZero}: the fraction of non-zero values
-*\code{Frc.Unique}: the fraction of unique values
-*\code{Flag.Avail}: a data availability flag - columns with \code{Frc.Avail < t_avail} will be flagged as \code{"LOW"}, else \code{"ok"}.
-*\code{Flag.NonZero}: a flag for columns with a high proportion of zeros. Any columns with \code{Frc.NonZero < t_zero} are
+The statistics (columns in the
+output table) are as follows (entries correspond to each column):
+\itemize{
+\item \code{Min}: the minimum
+\item \code{Max}: the maximum
+\item \code{Mean}: the (arirthmetic) mean
+\item \code{Median}: the median
+\item \code{Std}: the standard deviation
+\item \code{Skew}: the skew
+\item \code{Kurt}: the kurtosis
+\item \code{N.Avail}: the number of non-\code{NA} values
+\item \code{N.NonZero}: the number of non-zero values
+\item \code{N.Unique}: the number of unique values
+\item \code{Frc.Avail}: the fraction of non-\code{NA} values
+\item \code{Frc.NonZero}: the fraction of non-zero values
+\item \code{Frc.Unique}: the fraction of unique values
+\item \code{Flag.Avail}: a data availability flag - columns with \code{Frc.Avail < t_avail} will be flagged as \code{"LOW"}, else \code{"ok"}.
+\item \code{Flag.NonZero}: a flag for columns with a high proportion of zeros. Any columns with \code{Frc.NonZero < t_zero} are
 flagged as \code{"LOW"}, otherwise \code{"ok"}.
-*\code{Flag.Unique}: a unique value flag - any columns with \code{Frc.Unique < t_unq} are flagged as \code{"LOW"}, otherwise \code{"ok"}.
-*\code{Flag.SkewKurt}: a skew and kurtosis flag which is an indication of possible outliers. Any columns with
+\item \code{Flag.Unique}: a unique value flag - any columns with \code{Frc.Unique < t_unq} are flagged as \code{"LOW"}, otherwise \code{"ok"}.
+\item \code{Flag.SkewKurt}: a skew and kurtosis flag which is an indication of possible outliers. Any columns with
 \code{abs(Skew) > t_skew} AND \code{Kurt > t_kurt} are flagged as \code{"OUT"}, otherwise \code{"ok"}.
+}
 
 The aim of this table, among other things, is to check the basic statistics of each column/indicator, and identify
 any possible issues for each indicator. For example, low data availability, having a high proportion of zeros and/or
