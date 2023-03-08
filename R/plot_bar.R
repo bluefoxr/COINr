@@ -98,7 +98,7 @@ plot_bar <- function(coin, dset, iCode, ..., uLabel = "uCode", axes_label = "iCo
   if(is.null(uLabel) || (uLabel == "uCode") ){
     iData$plbs <- iData$uCode
   } else {
-    iData$plbs <- codes2names(coin, iData$uCode)
+    iData$plbs <- icodes_to_inames(coin, iData$uCode)
   }
 
   # GET children -------------------------------------------------------------
@@ -179,7 +179,7 @@ plot_bar <- function(coin, dset, iCode, ..., uLabel = "uCode", axes_label = "iCo
 
   # names
   if(axes_label == "iName"){
-    lbs <- codes2names(coin, c(iCode, by_group))
+    lbs <- icodes_to_inames(coin, c(iCode, by_group))
   } else {
     lbs <- c(iCode, by_group)
   }
