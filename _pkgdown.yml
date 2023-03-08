@@ -162,6 +162,7 @@ reference:
   - i_mean_grp
   - i_median
   - i_median_grp
+  - icodes_to_inames
   - kurt
   - log_CT
   - log_CT_plus
