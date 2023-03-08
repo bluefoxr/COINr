@@ -103,7 +103,7 @@ plot_scatter <- function(coin, dsets, iCodes, ..., by_group = NULL,
   if(is.null(point_label) || (point_label == "uCode") ){
     x12$plbs <- x12$uCode
   } else {
-    x12$plbs <- codes2names(coin, x12$uCode)
+    x12$plbs <- icodes_to_inames(coin, x12$uCode)
   }
 
   # PLOT --------------------------------------------------------------------
@@ -129,7 +129,7 @@ plot_scatter <- function(coin, dsets, iCodes, ..., by_group = NULL,
 
   # names
   if(axes_label == "iName"){
-    lbs <- codes2names(coin, c(iCodes_orig, by_group))
+    lbs <- icodes_to_inames(coin, c(iCodes_orig, by_group))
   } else {
     lbs <- c(iCodes_orig, by_group)
   }
