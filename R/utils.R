@@ -179,13 +179,16 @@ widen <- function(X){
 }
 
 
-# Convert iCodes to iNames
-#
-# @param coin A coin
-# @param iCodes A vector of iCodes
-#
-# @return Vector of iNames
-codes2names <- function(coin, iCodes){
+#' Convert iCodes to iNames
+#'
+#' @param coin A coin
+#' @param iCodes A vector of iCodes
+#'
+#' @return Vector of iNames
+#' @export
+icodes_to_inames <- function(coin, iCodes){
+
+  stopifnot(is.coin(coin))
 
   iMeta <- coin$Meta$Ind
 
