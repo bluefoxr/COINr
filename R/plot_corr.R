@@ -171,10 +171,15 @@ plot_corr <- function(coin, dset, iCodes = NULL, Levels = 1, ..., cortype = "pea
     crtable$Flag[(crtable$Correlation <= weakthresh)] <- "Weak"
     crtable$Flag[(crtable$Correlation <= negthresh)] <- "Negative"
 
+    # make factors
+    # note: moved from inside ggplot call below to hopefully help ggplotly tooltip
+    crtable$Var1 <- factor(crtable$Var1, levels = ord1)
+    crtable$Var2 <- factor(crtable$Var2, levels = ord2)
+
     # heatmap plot
     plt <- ggplot2::ggplot(data = crtable,
-                           ggplot2::aes(x = factor(.data$Var1, levels = ord1),
-                                        y = factor(.data$Var2, levels = ord2),
+                           ggplot2::aes(x = Var1,
+                                        y = Var2,
                                         fill = .data$Flag,
                                         label = .data$Correlation)) +
       ggplot2::geom_tile(colour = "white") +
@@ -200,8 +205,8 @@ plot_corr <- function(coin, dset, iCodes = NULL, Levels = 1, ..., cortype = "pea
 
     # heatmap plot
     plt <- ggplot2::ggplot(data = crtable,
-                           ggplot2::aes(x = factor(.data$Var1, levels = ord1),
-                                        y = factor(.data$Var2, levels = ord2),
+                           ggplot2::aes(x = Var1,
+                                        y = Var2,
                                         fill = .data$Correlation,
                                         label = .data$Correlation)) +
       ggplot2::geom_tile(colour = "white") +
