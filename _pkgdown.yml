@@ -210,6 +210,7 @@ reference:
   - Treat.data.frame
   - Treat.numeric
   - Treat.purse
+  - ucodes_to_unames
   - winsorise
 - title: Data
   desc: Built in data sets used in examples and testing.

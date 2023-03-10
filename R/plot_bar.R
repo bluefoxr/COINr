@@ -98,7 +98,7 @@ plot_bar <- function(coin, dset, iCode, ..., uLabel = "uCode", axes_label = "iCo
   if(is.null(uLabel) || (uLabel == "uCode") ){
     iData$plbs <- iData$uCode
   } else {
-    iData$plbs <- icodes_to_inames(coin, iData$uCode)
+    iData$plbs <- ucodes_to_unames(coin, iData$uCode)
   }
 
   # GET children -------------------------------------------------------------

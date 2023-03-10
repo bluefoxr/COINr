@@ -198,6 +198,25 @@ icodes_to_inames <- function(coin, iCodes){
 
 }
 
+#' Convert uCodes to uNames
+#'
+#' @param coin A coin
+#' @param iCodes A vector of uCodes
+#'
+#' @return Vector of uNames
+#' @export
+ucodes_to_unames <- function(coin, uCodes){
+
+  stopifnot(is.coin(coin))
+
+  uMeta <- coin$Meta$Unit
+
+  stopifnot(all(uCodes %in% uMeta$uCode))
+
+  uMeta$uName[match(uCodes, uMeta$uCode)]
+
+}
+
 
 # Splits data frame into numeric and non-numeric columns
 #
