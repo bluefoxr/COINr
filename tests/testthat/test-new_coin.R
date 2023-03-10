@@ -32,4 +32,9 @@ test_that("check_iMeta", {
   iMeta$iCode[10] <- "1number"
   expect_error(check_iMeta(iMeta))
 
+  # duplicate codes
+  iMeta <- ASEM_iMeta
+  iMeta <- rbind(iMeta[1,], iMeta)
+  expect_error(check_iMeta(iMeta))
+
 })

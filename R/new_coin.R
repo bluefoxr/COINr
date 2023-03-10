@@ -554,8 +554,9 @@ check_iMeta <- function(iMeta, quietly = FALSE){
   }
 
   # iCode should have no duplicates
-  if(anyDuplicated(iMeta$iCode) != 0){
-    stop("Duplicate entries in iCode.")
+  duplicate_codes <- iMeta$iCode[duplicated(iMeta$iCode)]
+  if(length(duplicate_codes) != 0){
+    stop("Duplicate entries in iCode: ", paste0(duplicate_codes, collapse = ", "))
   }
   # iCode should not start with a number
   num_start <- substring(iMeta$iCode, 1,1) %in% 0:9
