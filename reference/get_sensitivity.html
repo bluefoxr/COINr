@@ -99,7 +99,8 @@ parameters of the coin to vary, and the alternatives/distributions for those par
 <span>  <span class="va">dset</span>,</span>
 <span>  <span class="va">iCode</span>,</span>
 <span>  Nboot <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  quietly <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  quietly <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  check_addresses <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -137,6 +138,11 @@ indices.</p></dd>
 
 <dt>quietly</dt>
 <dd><p>Set to <code>TRUE</code> to suppress progress messages.</p></dd>
+
+
+<dt>check_addresses</dt>
+<dd><p>Logical: if <code>FALSE</code> skips the check of the validity of the parameter addresses. Default <code>TRUE</code>,
+but useful to set to <code>FALSE</code> if running this e.g. in a Rmd document (because may require user input).</p></dd>
 
 </dl></div>
     <div class="section level2">
