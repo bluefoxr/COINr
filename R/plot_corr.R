@@ -178,8 +178,8 @@ plot_corr <- function(coin, dset, iCodes = NULL, Levels = 1, ..., cortype = "pea
 
     # heatmap plot
     plt <- ggplot2::ggplot(data = crtable,
-                           ggplot2::aes(x = Var1,
-                                        y = Var2,
+                           ggplot2::aes(x = .data$Var1,
+                                        y = .data$Var2,
                                         fill = .data$Flag,
                                         label = .data$Correlation)) +
       ggplot2::geom_tile(colour = "white") +
@@ -205,8 +205,8 @@ plot_corr <- function(coin, dset, iCodes = NULL, Levels = 1, ..., cortype = "pea
 
     # heatmap plot
     plt <- ggplot2::ggplot(data = crtable,
-                           ggplot2::aes(x = Var1,
-                                        y = Var2,
+                           ggplot2::aes(x = .data$Var1,
+                                        y = .data$Var2,
                                         fill = .data$Correlation,
                                         label = .data$Correlation)) +
       ggplot2::geom_tile(colour = "white") +

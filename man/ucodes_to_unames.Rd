@@ -9,7 +9,7 @@ ucodes_to_unames(coin, uCodes)
 \arguments{
 \item{coin}{A coin}
 
-\item{iCodes}{A vector of uCodes}
+\item{uCodes}{A vector of uCodes}
 }
 \value{
 Vector of uNames

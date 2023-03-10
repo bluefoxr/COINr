@@ -201,7 +201,7 @@ icodes_to_inames <- function(coin, iCodes){
 #' Convert uCodes to uNames
 #'
 #' @param coin A coin
-#' @param iCodes A vector of uCodes
+#' @param uCodes A vector of uCodes
 #'
 #' @return Vector of uNames
 #' @export
