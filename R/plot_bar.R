@@ -23,6 +23,7 @@
 #' @param filter_to_ends Optional way to filter the bar chart to only display the top/bottom N units. This is useful in cases
 #' where the number of units is large. Specify as e.g. `list(top = 10)` or `list(bottom = 10)` to return only the top or bottom
 #' ten units respectively (the value 10 can be changed of course).
+#' @param flip_coords Logical; if `TRUE` flips to horizontal bars.
 #'
 #' @importFrom stats reorder
 #' @importFrom rlang .data
@@ -39,7 +40,7 @@
 #'          by_group = "GDPpc_group", axes_label = "iName")
 plot_bar <- function(coin, dset, iCode, ..., uLabel = "uCode", axes_label = "iCode",
                      by_group = NULL, filter_to_ends = NULL, dset_label = FALSE, log_scale = FALSE, stack_children = FALSE,
-                     bar_colours = NULL){
+                     bar_colours = NULL, flip_coords = FALSE){
 
   # PREP --------------------------------------------------------------------
 
@@ -58,6 +59,9 @@ plot_bar <- function(coin, dset, iCode, ..., uLabel = "uCode", axes_label = "iCo
       stop("uLabel must be either NULL, 'uCode', or 'uName'.")
     }
   }
+
+  # set for plotting order if vertical
+  ord_direction <- if (flip_coords) {1} else {-1}
 
   # GET DATA ----------------------------------------------------------------
 
@@ -144,17 +148,17 @@ plot_bar <- function(coin, dset, iCode, ..., uLabel = "uCode", axes_label = "iCo
 
   # setup: whether to plot by group or not
   if(!is.null(by_group)){
-    plt <- ggplot2::ggplot(iData, ggplot2::aes(x = stats::reorder(.data[["plbs"]], -.data[[iCode]]),
+    plt <- ggplot2::ggplot(iData, ggplot2::aes(x = stats::reorder(.data[["plbs"]], ord_direction*.data[[iCode]]),
                                              y = .data[[iCode]],
                                              label = .data[["plbs"]],
                                              fill = .data[[by_group]]))
   } else if(stack_children){
-    plt <- ggplot2::ggplot(iData, ggplot2::aes(x = stats::reorder(.data[["plbs"]], -.data[[iCode]]),
+    plt <- ggplot2::ggplot(iData, ggplot2::aes(x = stats::reorder(.data[["plbs"]], ord_direction*.data[[iCode]]),
                                                y = .data[[iCode]],
                                                label = .data[["plbs"]],
                                                fill = .data[["Component"]]))
   } else {
-    plt <- ggplot2::ggplot(iData, ggplot2::aes(x = stats::reorder(.data[["plbs"]], -.data[[iCode]]),
+    plt <- ggplot2::ggplot(iData, ggplot2::aes(x = stats::reorder(.data[["plbs"]], ord_direction*.data[[iCode]]),
                                              y = .data[[iCode]],
                                              label = .data[["plbs"]]))
   }
@@ -213,7 +217,13 @@ plot_bar <- function(coin, dset, iCode, ..., uLabel = "uCode", axes_label = "iCo
     plt <- plt + ggplot2::scale_y_log10()
   }
 
-  plt + ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1)) +
-    ggplot2::theme(text=ggplot2::element_text(family="sans"))
+  if(flip_coords){
+    plt <- plt + ggplot2::coord_flip() + ggplot2::theme(text=ggplot2::element_text(family="sans"))
+  } else {
+    plt <- plt + ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1)) +
+      ggplot2::theme(text=ggplot2::element_text(family="sans"))
+  }
+
+  plt
 
 }

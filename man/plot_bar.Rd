@@ -16,7 +16,8 @@ plot_bar(
   dset_label = FALSE,
   log_scale = FALSE,
   stack_children = FALSE,
-  bar_colours = NULL
+  bar_colours = NULL,
+  flip_coords = FALSE
 )
 }
 \arguments{
@@ -47,6 +48,8 @@ its underlying component values (the underlying indicators/aggregates used to cr
 have aggregated your data and \code{dset} must point to a data set where the underlying (child) scores of \code{iCode} are available.}
 
 \item{bar_colours}{Optional vector of colour codes for colouring bars.}
+
+\item{flip_coords}{Logical; if \code{TRUE} flips to horizontal bars.}
 }
 \value{
 A ggplot2 plot object.
