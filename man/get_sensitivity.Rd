@@ -12,7 +12,8 @@ get_sensitivity(
   dset,
   iCode,
   Nboot = NULL,
-  quietly = FALSE
+  quietly = FALSE,
+  check_addresses = TRUE
 )
 }
 \arguments{
@@ -33,6 +34,9 @@ analysis (which anyway includes an uncertainty analysis).}
 indices.}
 
 \item{quietly}{Set to \code{TRUE} to suppress progress messages.}
+
+\item{check_addresses}{Logical: if \code{FALSE} skips the check of the validity of the parameter addresses. Default \code{TRUE},
+but useful to set to \code{FALSE} if running this e.g. in a Rmd document (because may require user input).}
 }
 \value{
 Sensitivity analysis results as a list, containing:

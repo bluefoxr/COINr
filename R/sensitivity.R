@@ -39,6 +39,8 @@
 #' @param quietly Set to `TRUE` to suppress progress messages.
 #' @param Nboot Number of bootstrap samples to take when estimating confidence intervals on sensitivity
 #' indices.
+#' @param check_addresses Logical: if `FALSE` skips the check of the validity of the parameter addresses. Default `TRUE`,
+#' but useful to set to `FALSE` if running this e.g. in a Rmd document (because may require user input).
 #'
 #' @importFrom stats runif
 #'
@@ -60,7 +62,8 @@
 #' # (this is because package examples are run automatically and this function can
 #' # take a few minutes to run at realistic settings)
 #'
-get_sensitivity <- function(coin, SA_specs, N, SA_type = "UA", dset, iCode, Nboot = NULL, quietly = FALSE){
+get_sensitivity <- function(coin, SA_specs, N, SA_type = "UA", dset, iCode, Nboot = NULL, quietly = FALSE,
+                            check_addresses = TRUE){
 
   t0 <- proc.time()
   # CHECKS ------------------------------------------------------------------
@@ -120,7 +123,9 @@ get_sensitivity <- function(coin, SA_specs, N, SA_type = "UA", dset, iCode, Nboo
   addresses <- sapply(SA_specs, `[[`, "Address")
 
   # check addresses for validity
-  a_check <- lapply(addresses, check_address, coin)
+  if(check_addresses){
+    a_check <- lapply(addresses, check_address, coin)
+  }
 
   # RUN COINS ---------------------------------------------------------------
 
