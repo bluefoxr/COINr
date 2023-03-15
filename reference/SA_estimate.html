@@ -153,10 +153,10 @@ each variable, as well as bootstrapped confidence intervals if <code>!is.null(Nb
 <span class="r-in"><span><span class="co"># Estimate sensitivity indices using sample</span></span></span>
 <span class="r-in"><span><span class="va">SAinds</span> <span class="op">&lt;-</span> <span class="fu">SA_estimate</span><span class="op">(</span><span class="va">y</span>, N <span class="op">=</span> <span class="fl">500</span>, d <span class="op">=</span> <span class="fl">3</span>, Nboot <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">SAinds</span><span class="op">$</span><span class="va">SensInd</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Variable         Si       STi       Si_q5    Si_q95     STi_q5    STi_q95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       V1 0.04328639 0.0692686 -0.03533928 0.1178084 0.06337212 0.07506014</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       V2 0.23117152 0.2833029  0.07723766 0.3870064 0.26001639 0.30690308</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3       V3 0.51942628 0.6767774  0.27978783 0.7626997 0.62133653 0.72969273</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Variable        Si        STi      Si_q5    Si_q95     STi_q5    STi_q95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       V1 0.1199638 0.06857521 0.04438698 0.1974185 0.06257405 0.07508275</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       V2 0.3820385 0.27459777 0.22261014 0.5642765 0.25219963 0.29870990</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       V3 0.8210693 0.62631572 0.57579393 1.0659909 0.56898790 0.68207943</span>
 <span class="r-in"><span><span class="co"># Notice that total order indices have narrower confidence intervals than first order.</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
