@@ -879,7 +879,7 @@ n_goalposts <- function(x, gposts, direction = 1, trunc2posts = TRUE){
   # since indicators arrive with directions possibly reversed (*-1), we have to also multiply GPs by -1
   if(direction == -1){
     # here, indicators are multiplied by -1, so need to also multiply goalposts by -1
-    gposts <- -1*gposts
+    gposts[1:2] <- -1*gposts[1:2]
     # then, the goalpost formula is reversed as well
     y <- (x-gposts[2])/(gposts[1] - gposts[2])
   } else {
