@@ -281,6 +281,7 @@ get_unit_summary <- function(coin, usel, Levels, dset = "Aggregated", nround = 2
 #' @param with_units If `TRUE` (default), includes indicator units in output tables.
 #' @param adjust_direction If `TRUE`, will adjust directions of indicators according to the "Direction" column
 #' of `IndMeta`. By default, this is `TRUE` *if* `dset = "Raw"`, and `FALSE` otherwise.
+#' @param sig_figs Number of significant figures to round values to. If `NULL` returns values as they are.
 #'
 #' @examples
 #' # build example coin
@@ -296,7 +297,7 @@ get_unit_summary <- function(coin, usel, Levels, dset = "Aggregated", nround = 2
 
 get_str_weak <- function(coin, dset, usel = NULL, topN = 5, bottomN = 5, withcodes = TRUE,
                              use_group = NULL, unq_discard = NULL, min_discard = TRUE, report_level = NULL,
-                             with_units = TRUE, adjust_direction = NULL){
+                             with_units = TRUE, adjust_direction = NULL, sig_figs = 3){
 
   # PREP --------------------------------------------------------------------
 
@@ -334,7 +335,6 @@ get_str_weak <- function(coin, dset, usel = NULL, topN = 5, bottomN = 5, withcod
     }
   }
   stopifnot(is.logical(adjust_direction))
-
 
   # GET S&W -----------------------------------------------------------------
 
@@ -387,6 +387,16 @@ get_str_weak <- function(coin, dset, usel = NULL, topN = 5, bottomN = 5, withcod
   lin <- coin$Meta$Lineage
   agcolname <- names(lin)[report_level]
 
+  # get values and round if asked
+  sValues <- as.numeric(data_scrs[data_scrs$uCode == usel ,Scodes])
+  wValues <- as.numeric(data_scrs[data_scrs$uCode == usel ,Wcodes])
+
+  if(!is.null(sig_figs)){
+    stopifnot(sig_figs %in% 0:100)
+    sValues <- signif(sValues, sig_figs)
+    wValues <- signif(wValues, sig_figs)
+  }
+
 
   # MAKE TABLES -------------------------------------------------------------
 
@@ -395,7 +405,7 @@ get_str_weak <- function(coin, dset, usel = NULL, topN = 5, bottomN = 5, withcod
     Name = iMeta_$iName[match(Scodes, iMeta_$iCode)],
     Dimension = lin[[agcolname]][match(Scodes, lin[[1]])],
     Rank = as.numeric(rnks_usel[Scodes]),
-    Value = signif(as.numeric(data_scrs[data_scrs$uCode == usel ,Scodes]),3)
+    Value = sValues
   )
   names(strengths)[3] <- agcolname
 
@@ -404,7 +414,7 @@ get_str_weak <- function(coin, dset, usel = NULL, topN = 5, bottomN = 5, withcod
     Name = iMeta_$iName[match(Wcodes, iMeta_$iCode)],
     Dimension = lin[[agcolname]][match(Wcodes, lin[[1]])],
     Rank = as.numeric(rnks_usel[Wcodes]),
-    Value = signif(as.numeric(data_scrs[data_scrs$uCode == usel ,Wcodes]),3)
+    Value = wValues
   )
   names(weaks)[3] <- agcolname
 

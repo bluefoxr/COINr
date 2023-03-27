@@ -16,7 +16,8 @@ get_str_weak(
   min_discard = TRUE,
   report_level = NULL,
   with_units = TRUE,
-  adjust_direction = NULL
+  adjust_direction = NULL,
+  sig_figs = 3
 )
 }
 \arguments{
@@ -55,6 +56,8 @@ group from level 2, to which each reported indicator belongs.}
 
 \item{adjust_direction}{If \code{TRUE}, will adjust directions of indicators according to the "Direction" column
 of \code{IndMeta}. By default, this is \code{TRUE} \emph{if} \code{dset = "Raw"}, and \code{FALSE} otherwise.}
+
+\item{sig_figs}{Number of significant figures to round values to. If \code{NULL} returns values as they are.}
 }
 \value{
 A list containing a data frame \code{.$Strengths}, and a data frame \code{.$Weaknesses}.
