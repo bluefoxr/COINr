@@ -103,7 +103,8 @@ a specified grouping variable.</p>
 <span>  min_discard <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  report_level <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  with_units <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  adjust_direction <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  adjust_direction <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  sig_figs <span class="op">=</span> <span class="fl">3</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -167,6 +168,10 @@ group from level 2, to which each reported indicator belongs.</p></dd>
 <dt>adjust_direction</dt>
 <dd><p>If <code>TRUE</code>, will adjust directions of indicators according to the "Direction" column
 of <code>IndMeta</code>. By default, this is <code>TRUE</code> <em>if</em> <code>dset = "Raw"</code>, and <code>FALSE</code> otherwise.</p></dd>
+
+
+<dt>sig_figs</dt>
+<dd><p>Number of significant figures to round values to. If <code>NULL</code> returns values as they are.</p></dd>
 
 </dl></div>
     <div class="section level2">
