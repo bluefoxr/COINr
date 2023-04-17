@@ -620,9 +620,12 @@ package installed.</p>
 <span>               global_specs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>f_pass <span class="op">=</span> <span class="st">"outlier_pass"</span>,</span>
 <span>                                    f_pass_para <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in proc_passing(passing, f_pass, 0): f_pass has returned NA. Returning</span></span>
+<span><span class="co">#&gt; untreated vector.</span></span>
 <span><span class="co">#&gt; Warning in proc_passing(passing, f_pass, 2): f_pass has returned NA. Returning</span></span>
 <span><span class="co">#&gt; untreated vector.</span></span>
-<span></span>
+<span><span class="co">#&gt; Warning in proc_passing(passing, f_pass, 0): f_pass has returned NA. Returning</span></span>
+<span><span class="co">#&gt; untreated vector.</span></span>
 <span><span class="co">#&gt; Warning in proc_passing(passing, f_pass, 2): f_pass has returned NA. Returning</span></span>
 <span><span class="co">#&gt; untreated vector.</span></span>
 <span></span>
@@ -653,10 +656,10 @@ package installed.</p>
 <span><span class="co">#&gt; 4      Bord         FALSE              1         FALSE          TRUE</span></span>
 <span><span class="co">#&gt; 5      Elec         FALSE              1         FALSE          TRUE</span></span>
 <span><span class="co">#&gt; 6       Gas         FALSE              1         FALSE         FALSE</span></span>
-<span><span class="co">#&gt; 7  ConSpeed         FALSE              0         FALSE         FALSE</span></span>
-<span><span class="co">#&gt; 8     Cov4G         FALSE              0         FALSE         FALSE</span></span>
-<span><span class="co">#&gt; 9     Goods         FALSE              2         FALSE          TRUE</span></span>
-<span><span class="co">#&gt; 10 Services         FALSE              0         FALSE          TRUE</span></span></code></pre></div>
+<span><span class="co">#&gt; 7     Cov4G         FALSE              0         FALSE         FALSE</span></span>
+<span><span class="co">#&gt; 8     Goods         FALSE              2         FALSE          TRUE</span></span>
+<span><span class="co">#&gt; 9  Services         FALSE              0         FALSE          TRUE</span></span>
+<span><span class="co">#&gt; 10      FDI         FALSE              1         FALSE          TRUE</span></span></code></pre></div>
 <p>Here we see that the test for outliers is much stricter and very few
 of the indicators pass the test, even after applying a log
 transformation. Clearly, how an outlier is defined can vary and depend
