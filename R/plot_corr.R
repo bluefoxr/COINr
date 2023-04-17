@@ -203,6 +203,10 @@ plot_corr <- function(coin, dset, iCodes = NULL, Levels = 1, ..., cortype = "pea
     )
   } else {
 
+    # note: moved from inside ggplot call below to hopefully help ggplotly tooltip
+    crtable$Var1 <- factor(crtable$Var1, levels = ord1)
+    crtable$Var2 <- factor(crtable$Var2, levels = ord2)
+
     # heatmap plot
     plt <- ggplot2::ggplot(data = crtable,
                            ggplot2::aes(x = .data$Var1,
