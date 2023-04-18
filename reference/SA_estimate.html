@@ -14,7 +14,7 @@ Then it estimates sensitivity indices using this sample."><!-- mathjax --><scrip
     
     <a class="navbar-brand me-2" href="../index.html">COINr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.2.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.3</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -153,10 +153,10 @@ each variable, as well as bootstrapped confidence intervals if <code>!is.null(Nb
 <span class="r-in"><span><span class="co"># Estimate sensitivity indices using sample</span></span></span>
 <span class="r-in"><span><span class="va">SAinds</span> <span class="op">&lt;-</span> <span class="fu">SA_estimate</span><span class="op">(</span><span class="va">y</span>, N <span class="op">=</span> <span class="fl">500</span>, d <span class="op">=</span> <span class="fl">3</span>, Nboot <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">SAinds</span><span class="op">$</span><span class="va">SensInd</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Variable         Si        STi       Si_q5     Si_q95     STi_q5   STi_q95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       V1 0.01477334 0.06838754 -0.06240937 0.09062638 0.06238965 0.0746632</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       V2 0.34489564 0.28617127  0.17485942 0.50893793 0.26205056 0.3116837</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3       V3 0.79100130 0.62553082  0.54869650 1.04624164 0.57327539 0.6861560</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Variable         Si        STi      Si_q5    Si_q95     STi_q5   STi_q95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       V1 0.09395015 0.07638341 0.01494826 0.1873698 0.07008511 0.0827731</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       V2 0.31101387 0.30152386 0.14514371 0.4837972 0.27524412 0.3276755</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       V3 0.46791681 0.67035716 0.21368024 0.7274418 0.61829587 0.7272018</span>
 <span class="r-in"><span><span class="co"># Notice that total order indices have narrower confidence intervals than first order.</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
