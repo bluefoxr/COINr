@@ -207,12 +207,15 @@ plot_corr <- function(coin, dset, iCodes = NULL, Levels = 1, ..., cortype = "pea
     crtable$Var1 <- factor(crtable$Var1, levels = ord1)
     crtable$Var2 <- factor(crtable$Var2, levels = ord2)
 
+    # create duplicate column to be able to turn off tooltip with ggplotly
+    crtable$Correlation2 <- crtable$Correlation
+
     # heatmap plot
     plt <- ggplot2::ggplot(data = crtable,
                            ggplot2::aes(x = .data$Var1,
                                         y = .data$Var2,
                                         fill = .data$Correlation,
-                                        label = .data$Correlation)) +
+                                        label = .data$Correlation2)) +
       ggplot2::geom_tile(colour = "white") +
       ggplot2::labs(x = NULL, y = NULL, fill = "Correlation") +
       ggplot2::theme_classic() +
