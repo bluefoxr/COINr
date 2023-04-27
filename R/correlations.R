@@ -287,7 +287,7 @@ get_corr <- function(coin, dset, iCodes = NULL, Levels = NULL, ...,
 
   if(!is.list(iCodes)){
     stopifnot(is.character(iCodes))
-    iCodes <- list(iCodes)
+    iCodes <- as.list(iCodes)
   }
 
   if (length(iCodes) == 1){
@@ -301,14 +301,27 @@ get_corr <- function(coin, dset, iCodes = NULL, Levels = NULL, ...,
     iCodes <- rev(iCodes)
   }
 
+  # catch when two different groups in same level: here we can't show groupings
+  if (!setequal(iCodes[[1]], iCodes[[2]])){
+    if (Levels[1] == Levels[2]) {
+      grouplev <- NULL
+    }
+  }
+
   # GET FAM (RECURSIVE) -----------------------------------------------------
 
   if(!is.logical(withparent)){
+
     stopifnot(is.character(withparent),
               length(withparent)==1)
+
     if(withparent != "family"){
       stop("withparent not recognised - should be either logical or 'family'.")
     }
+
+    # ignore second iCode and Level in this case
+    iCodes[[2]] <- iCodes[[1]]
+    Levels[2] <- Levels[1]
 
     lin <- coin$Meta$Lineage
 

@@ -89,6 +89,13 @@ plot_corr <- function(coin, dset, iCodes = NULL, Levels = 1, ..., cortype = "pea
     iCodes <- rev(iCodes)
   }
 
+  if(withparent == "family"){
+    # in this case we don't care about the second entry and copy from 1
+    # to avoid any issues
+    Levels[2] <- Levels[1]
+    iCodes[[2]] <- iCodes[[1]]
+  }
+
   crtable <- get_corr(coin, dset = dset, iCodes = iCodes, Levels = Levels,
                       ... = ..., cortype = cortype, pval = pval, withparent = withparent,
                       grouplev = grouplev, make_long = TRUE, use_directions = use_directions)
