@@ -13,6 +13,7 @@
   out2 = "coin",
   write_to = NULL,
   write2log = TRUE,
+  disable = FALSE,
   ...
 )
 }
@@ -38,6 +39,9 @@ list with treated data and treatment details.}
 
 \item{write2log}{Logical: if \code{FALSE}, the arguments of this function are not written to the coin log, so this
 function will not be invoked when regenerating. Recommend to keep \code{TRUE} unless you have a good reason to do otherwise.}
+
+\item{disable}{Logical: if \code{TRUE} will disable data treatment completely and write the unaltered data set. This option is mainly useful
+in sensitivity and uncertainty analysis (to test the effect of turning imputation on/off).}
 
 \item{...}{arguments passed to or from other methods.}
 }
