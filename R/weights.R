@@ -143,7 +143,7 @@ get_opt_weights <- function(coin, itarg = NULL, dset, Level, cortype = "pearson"
             out2 %in% c("list", "coin"))
 
   # number of weights at specified level
-  n_w <- sum(coin$Meta$Weights$Original == Level)
+  n_w <- sum(coin$Meta$Weights$Original$Level == Level)
 
   if(optype == "infomax"){
     itarg <- NULL
