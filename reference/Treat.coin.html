@@ -107,6 +107,7 @@ methods to be applied for each indicator. See details. For a simpler function fo
 <span>  out2 <span class="op">=</span> <span class="st">"coin"</span>,</span>
 <span>  write_to <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  write2log <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  disable <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -149,6 +150,11 @@ list with treated data and treatment details.</p></dd>
 <dt>write2log</dt>
 <dd><p>Logical: if <code>FALSE</code>, the arguments of this function are not written to the coin log, so this
 function will not be invoked when regenerating. Recommend to keep <code>TRUE</code> unless you have a good reason to do otherwise.</p></dd>
+
+
+<dt>disable</dt>
+<dd><p>Logical: if <code>TRUE</code> will disable data treatment completely and write the unaltered data set. This option is mainly useful
+in sensitivity and uncertainty analysis (to test the effect of turning imputation on/off).</p></dd>
 
 
 <dt>...</dt>
