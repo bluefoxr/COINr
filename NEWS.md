@@ -1,6 +1,6 @@
 # COINr 1.1.2.9000
 
-Dev version of COINr until next CRAN submission.
+Dev version of COINr until next CRAN submission!
 
 * `Treat()` now catches errors - data frame/coin/purse methods 
 

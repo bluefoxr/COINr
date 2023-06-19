@@ -149,10 +149,12 @@ new_coin <- function(iData, iMeta, exclude = NULL, split_to = NULL,
     iMeta <- as.data.frame(iMeta)
   }
 
+  # change any integer to numeric
+  iData_codes <- colnames(iData)[colnames(iData) %nin% c("uCode", "uName", "Time")]
+  iData[iData_codes] <- df_int_2_numeric(iData[iData_codes])
+
   # CROSS CHECKS
   # Make sure iData codes are all in iMeta, excluding special codes
-
-  iData_codes <- colnames(iData)[colnames(iData) %nin% c("uCode", "uName", "Time")]
 
   if(any(iData_codes %nin% iMeta$iCode)){
     stop("Column names from iData not found in iMeta (excluding special columns).")

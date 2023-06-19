@@ -284,3 +284,22 @@ remove_duplicate_corrs <- function(X, cols){
   X[!duplicated_rows, ]
 
 }
+
+# convert integer columns to numeric (intended for iData)
+df_int_2_numeric <- function(X){
+
+  # convert integer cols to numeric (iData)
+  rnames <- row.names(X)
+  col_names <- names(X)
+  X <- lapply(col_names, function(col_name){
+    x <- X[[col_name]]
+    if(is.integer(x)){
+      message("iData column '", col_name, "' converted from integer to numeric.")
+      as.numeric(x)
+    } else x
+  }) |> as.data.frame()
+  row.names(X) <- rnames
+  names(X) <- col_names
+  X
+
+}
