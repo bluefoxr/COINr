@@ -46,6 +46,8 @@ get_results <- function(coin, dset, tab_type = "Summ", also_get = NULL, use = "s
             is.numeric(nround),
             out2 %in% c("df", "coin"))
 
+  check_coin_input(coin)
+
   # GET DATA ----------------------------------------------------------------
 
   # merge also_get with use_group
