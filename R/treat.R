@@ -616,6 +616,7 @@ Treat.numeric <- function(x, f1, f1_para = NULL, f2 = NULL, f2_para = NULL,
     }
     if(is.na(pass1)){
       warning("f_pass has returned NA. Returning untreated vector.")
+      return(NA)
     }
     pass1
   }
@@ -691,6 +692,8 @@ Treat.numeric <- function(x, f1, f1_para = NULL, f2 = NULL, f2_para = NULL,
     # check output
     if(is.na(pass)){
       return(list(x = x,
+                  Dets_Table = l_table,
+                  Treated_Points = rep("", length(x)),
                   Passing = NA))
     }
   } else {
@@ -713,6 +716,8 @@ Treat.numeric <- function(x, f1, f1_para = NULL, f2 = NULL, f2_para = NULL,
     # check output
     if(is.na(pass)){
       return(list(x = x,
+                  Dets_Table = l_table,
+                  Treated_Points = rep("", length(x)),
                   Passing = NA))
     }
   } else {
