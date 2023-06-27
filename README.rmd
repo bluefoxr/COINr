@@ -24,7 +24,9 @@ knitr::opts_chunk$set(
 
 **Full documentation is available at [COINr’s website](https://bluefoxr.github.io/COINr/)**
 
-COINr is a high-level R package which is the first fully-flexible development and analysis environment for composite indicators and scoreboards. The main features can be summarised as features for *building*, features for *analysis* and features for *visualisation and presentation*.
+COINr is a high-level R package which offers a fully-flexible development and analysis environment for composite indicators and scoreboards. It is inspired by, and broadly follows the methodology of the [JRC/OECD Handbook on Composite Indicators](https://publications.jrc.ec.europa.eu/repository/handle/JRC47008) and the [Competence Centre for Composite Indicators and Scoreboards](https://knowledge4policy.ec.europa.eu/composite-indicators_en), which also supported the development of the package (see [Acknowledgements]).
+
+The main features can be summarised as features for *building*, features for *analysis* and features for *visualisation and presentation*.
 
 **Building features**:
 
@@ -110,4 +112,4 @@ In R you can also generate the citation info using `citation(package = "COINr")`
 
 # Acknowledgements
 
-COINr was initially developed under contract for the European Commission's Joint Research Centre and this enabled the package to get off the ground. Since then I have almost completely rewritten the package and significantly improved and extended it to meet the needs of other projects, and in my own time.
+COINr was initially developed under contract for the European Commission's Joint Research Centre until 2021, and this enabled the bulk of the initial development, as well as many helpful discussions with colleagues from the [Competence Centre for Composite Indicators and Scoreboards](https://knowledge4policy.ec.europa.eu/composite-indicators_en), and this is gratefully acknowledged. Since then, the package has been continuously modified and improved while working on other projects and following user feedback.

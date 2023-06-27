@@ -16,48 +16,53 @@ coverage](https://codecov.io/gh/bluefoxr/COINr/branch/master/graph/badge.svg)](h
 **Full documentation is available at [COINr’s
 website](https://bluefoxr.github.io/COINr/)**
 
-COINr is a high-level R package which is the first fully-flexible
+COINr is a high-level R package which offers a fully-flexible
 development and analysis environment for composite indicators and
-scoreboards. The main features can be summarised as features for
-*building*, features for *analysis* and features for *visualisation and
-presentation*.
+scoreboards. It is inspired by, and broadly follows the methodology of
+the [JRC/OECD Handbook on Composite
+Indicators](https://publications.jrc.ec.europa.eu/repository/handle/JRC47008)
+and the [Competence Centre for Composite Indicators and
+Scoreboards](https://knowledge4policy.ec.europa.eu/composite-indicators_en),
+which also supported the development of the package (see
+[Acknowledgements](#acknowledgements)).
+
+The main features can be summarised as features for *building*, features
+for *analysis* and features for *visualisation and presentation*.
 
 **Building features**:
 
--   Flexible and fast development of composite indicators with no limits
-    on aggregation levels, numbers of indicators, highly flexible set of
-    methodological choices.
--   Denomination by other indicators
--   Screening units by data requirements
--   Imputation of missing data, by a variety of methods
--   Data treatment using Winsorisation and nonlinear transformations
--   Normalisation (scaling) using a variety of methods
--   Weighting using either manual weighting, PCA weights or
-    correlation-optimised weights.
--   Aggregation of indicators using a variety of methods which can be
-    different for each aggregation level.
+- Flexible and fast development of composite indicators with no limits
+  on aggregation levels, numbers of indicators, highly flexible set of
+  methodological choices.
+- Denomination by other indicators
+- Screening units by data requirements
+- Imputation of missing data, by a variety of methods
+- Data treatment using Winsorisation and nonlinear transformations
+- Normalisation (scaling) using a variety of methods
+- Weighting using either manual weighting, PCA weights or
+  correlation-optimised weights.
+- Aggregation of indicators using a variety of methods which can be
+  different for each aggregation level.
 
 **Analysis features:**
 
--   Detailed indicator statistics, and data availability within
-    aggregation groups
--   Multivariate analysis, including quick functions for PCA, and a
-    detailed correlation analysis and visualisation
--   Easy “what if” analysis - very quickly checking the effects of
-    adding and removing indicators, changing weights, methodological
-    variations
--   Full global uncertainty and sensitivity analysis which can check the
-    impacts of uncertainties in weighting and many methodological
-    choices
+- Detailed indicator statistics, and data availability within
+  aggregation groups
+- Multivariate analysis, including quick functions for PCA, and a
+  detailed correlation analysis and visualisation
+- Easy “what if” analysis - very quickly checking the effects of adding
+  and removing indicators, changing weights, methodological variations
+- Full global uncertainty and sensitivity analysis which can check the
+  impacts of uncertainties in weighting and many methodological choices
 
 **Visualisation and presentation:**
 
--   Statistical plots of indicators - histograms, violin plots, dot
-    plots, scatter plots and more
--   Bar charts, stacked bar charts and tables for presenting indicator
-    data and making comparisons between units
--   Correlation plots for visualising correlations between indicators
-    and between aggregation levels
+- Statistical plots of indicators - histograms, violin plots, dot plots,
+  scatter plots and more
+- Bar charts, stacked bar charts and tables for presenting indicator
+  data and making comparisons between units
+- Correlation plots for visualising correlations between indicators and
+  between aggregation levels
 
 COINr also allows fast import from the [COIN
 Tool](https://knowledge4policy.ec.europa.eu/composite-indicators/coin-tool_en)
@@ -158,7 +163,10 @@ page](https://bluefoxr.github.io/COINr/authors.html#citation).
 # Acknowledgements
 
 COINr was initially developed under contract for the European
-Commission’s Joint Research Centre and this enabled the package to get
-off the ground. Since then I have almost completely rewritten the
-package and significantly improved and extended it to meet the needs of
-other projects, and in my own time.
+Commission’s Joint Research Centre until 2021, and this enabled the bulk
+of the initial development, as well as many helpful discussions with
+colleagues from the [Competence Centre for Composite Indicators and
+Scoreboards](https://knowledge4policy.ec.europa.eu/composite-indicators_en),
+and this is gratefully acknowledged. Since then, the package has been
+continuously modified and improved while working on other projects and
+following user feedback.
