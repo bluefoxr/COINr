@@ -22,6 +22,9 @@
 #' @param use_group An optional grouping variable. If specified, the results table includes this group column,
 #' and if `use = "groupranks"`, ranks will be returned with respect to the groups in this column.
 #' @param out2 If `"df"`, outputs a data frame (tibble). Else if `"coin"` attaches to `.$Results` in an updated coin.
+#' @param dset_indicators Optional data set from which to take only indicator (level 1) data from. This can be set to `"Raw"`
+#' for example, so that all aggregates come from the aggregated data set, and the indicators come from the raw data set. This
+#' can make more sense in presenting results in many cases, so that the "real" indicator data is visible.
 #'
 #' @examples
 #' # build full example coin
@@ -37,7 +40,7 @@
 #'
 #' @export
 get_results <- function(coin, dset, tab_type = "Summ", also_get = NULL, use = "scores", order_by = NULL,
-                       nround = 2, use_group = NULL, out2 = "df"){
+                       nround = 2, use_group = NULL, dset_indicators = NULL, out2 = "df"){
 
   # CHECKS ------------------------------------------------------------------
 
@@ -55,6 +58,18 @@ get_results <- function(coin, dset, tab_type = "Summ", also_get = NULL, use = "s
 
   # data
   iData <- get_data(coin, dset = dset, also_get = also_get, use_group = use_group)
+
+  # optionally indicator data from another data set (probably raw)
+  if(!is.null(dset_indicators)){
+    iDatai <- get_dset(coin, dset = dset_indicators)
+    # order rows by iData (also filter to only units in iData)
+    iDatai <- iDatai[match(iData$uCode, iDatai$uCode), ]
+    # get all iData cols which are indicators
+    ind_cols <- names(iData)[names(iData) %in% coin$Meta$Ind$iCode[which(coin$Meta$Ind$Type == "Indicator")]]
+    # hot swap
+    stopifnot(all(ind_cols %in% names(iDatai)))
+    iData[ind_cols] <- iDatai[ind_cols]
+  }
 
   # get meta col names
   mcols <- extract_iData(coin, iData, GET = "mCodes")

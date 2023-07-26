@@ -13,6 +13,7 @@ get_results(
   order_by = NULL,
   nround = 2,
   use_group = NULL,
+  dset_indicators = NULL,
   out2 = "df"
 )
 }
@@ -35,6 +36,10 @@ aggregate level, i.e. the index in most cases. If \code{use_group} is specified,
 
 \item{use_group}{An optional grouping variable. If specified, the results table includes this group column,
 and if \code{use = "groupranks"}, ranks will be returned with respect to the groups in this column.}
+
+\item{dset_indicators}{Optional data set from which to take only indicator (level 1) data from. This can be set to \code{"Raw"}
+for example, so that all aggregates come from the aggregated data set, and the indicators come from the raw data set. This
+can make more sense in presenting results in many cases, so that the "real" indicator data is visible.}
 
 \item{out2}{If \code{"df"}, outputs a data frame (tibble). Else if \code{"coin"} attaches to \code{.$Results} in an updated coin.}
 }
