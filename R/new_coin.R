@@ -738,11 +738,19 @@ get_lineage <- function(iMeta, level_names = NULL){
   # find max level
   maxlev <- max(iMeta$Level, na.rm = TRUE)
 
-  # successively add columns by looking up parent codes of last col
-  for(ii in 2:(maxlev-1)){
-    wideS <- cbind(wideS,
-                   longS$Parent[match(wideS[[ii]], longS$iCode)])
+  # catch possibility of only one level (may not make sense to make a coin in that
+  # situation, to be seen)
+  if(maxlev == 1){
+    wideS <- wideS["iCode"]
+    warning("Only one level is defined in iMeta. This is not normally expected in a composite indicator, and some functions may not work as expected.", call. = FALSE)
+  } else {
+    # successively add columns by looking up parent codes of last col
+    for(ii in 2:(maxlev-1)){
+      wideS <- cbind(wideS,
+                     longS$Parent[match(wideS[[ii]], longS$iCode)])
+    }
   }
+
 
   # rename columns
   if(is.null(level_names)){
@@ -754,8 +762,10 @@ get_lineage <- function(iMeta, level_names = NULL){
   }
   colnames(wideS) <- level_names
 
-  # reorder finally starting with highest level and working down
-  wideS[do.call(order, rev(wideS)), ]
-
-
+  if(maxlev == 1){
+    return(wideS)
+  } else {
+    # reorder finally starting with highest level and working down
+    wideS[do.call(order, rev(wideS)), ]
+  }
 }
