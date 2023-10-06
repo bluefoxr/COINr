@@ -268,7 +268,7 @@ plot_dot <- function(coin, dset, iCode, Level = NULL, ..., usel = NULL, marker_t
     plt <- plt + ggplot2::annotate(
       "segment", x = stat_val, y= 1 - vert_adjust/80,
       xend = stat_val, yend = 1 + vert_adjust/80,
-      alpha = 0.5, size = 2, colour = "#3CB371")
+      alpha = 0.5, linewidth = 2, colour = "#3CB371")
 
     if(!is.null(stat_label)){
       # add text labels
