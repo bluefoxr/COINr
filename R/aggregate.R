@@ -79,7 +79,8 @@ Aggregate.purse <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, da
 #' the number of levels in the index structure. In this latter case, a different aggregation function may be used for each level
 #' in the index: the first in the vector will be used to aggregate from Level 1 to Level 2, the second from Level 2 to Level 3, and
 #' so on.
-#' @param w An optional data frame of weights. If `f_ag` does not require accept weights, set to `"none"`.
+#' @param w An optional data frame of weights. If `f_ag` does not require accept weights, set to `"none"`. Alternatively, can be the
+#' name of a weight set found in `.$Meta$Weights`.
 #' @param f_ag_para Optional parameters to pass to `f_ag`, other than `x` and `w`. As with `f_ag`, this can specified to have different
 #' parameters for each aggregation level by specifying as a nested list of length `n-1`.
 #' @param dat_thresh An optional data availability threshold, specified as a number between 0 and 1. If a row

@@ -28,7 +28,8 @@ the number of levels in the index structure. In this latter case, a different ag
 in the index: the first in the vector will be used to aggregate from Level 1 to Level 2, the second from Level 2 to Level 3, and
 so on.}
 
-\item{w}{An optional data frame of weights. If \code{f_ag} does not require accept weights, set to \code{"none"}.}
+\item{w}{An optional data frame of weights. If \code{f_ag} does not require accept weights, set to \code{"none"}. Alternatively, can be the
+name of a weight set found in \code{.$Meta$Weights}.}
 
 \item{f_ag_para}{Optional parameters to pass to \code{f_ag}, other than \code{x} and \code{w}. As with \code{f_ag}, this can specified to have different
 parameters for each aggregation level by specifying as a nested list of length \code{n-1}.}
