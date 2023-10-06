@@ -424,16 +424,16 @@ just as easy to call the underlying normalisation function directly.</p>
 <span><span class="co"># view side by side</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">x_norm</span><span class="op">)</span></span>
 <span><span class="co">#&gt;             x    x_norm</span></span>
-<span><span class="co">#&gt; 1  0.84231877 1.1354011</span></span>
-<span><span class="co">#&gt; 2  0.84465284 1.1386835</span></span>
-<span><span class="co">#&gt; 3  0.57172278 0.7548687</span></span>
-<span><span class="co">#&gt; 4  0.86834245 1.1719976</span></span>
-<span><span class="co">#&gt; 5  0.74603525 1.0000000</span></span>
-<span><span class="co">#&gt; 6  0.43554347 0.5633631</span></span>
-<span><span class="co">#&gt; 7  0.99336355 1.3478116</span></span>
-<span><span class="co">#&gt; 8  0.16050151 0.1765784</span></span>
-<span><span class="co">#&gt; 9  0.59599372 0.7890003</span></span>
-<span><span class="co">#&gt; 10 0.03493687 0.0000000</span></span></code></pre></div>
+<span><span class="co">#&gt; 1  0.58605865 3.3335684</span></span>
+<span><span class="co">#&gt; 2  0.17656660 0.6079851</span></span>
+<span><span class="co">#&gt; 3  0.81092534 4.8302835</span></span>
+<span><span class="co">#&gt; 4  0.08522282 0.0000000</span></span>
+<span><span class="co">#&gt; 5  0.23546297 1.0000000</span></span>
+<span><span class="co">#&gt; 6  0.83865834 5.0148746</span></span>
+<span><span class="co">#&gt; 7  0.25805123 1.1503477</span></span>
+<span><span class="co">#&gt; 8  0.52407173 2.9209829</span></span>
+<span><span class="co">#&gt; 9  0.33173157 1.6407648</span></span>
+<span><span class="co">#&gt; 10 0.58460267 3.3238774</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="purses">Purses<a class="anchor" aria-label="anchor" href="#purses"></a>
@@ -575,45 +575,45 @@ demonstrate on a data frame:</p>
 <span></span>
 <span><span class="va">X</span></span>
 <span><span class="co">#&gt;    uCode          a         b</span></span>
-<span><span class="co">#&gt; 1      a 0.03426465 66.277060</span></span>
-<span><span class="co">#&gt; 2      b 0.53015505  4.005248</span></span>
-<span><span class="co">#&gt; 3      c 0.83170125 77.051143</span></span>
-<span><span class="co">#&gt; 4      d 0.33931421 11.779023</span></span>
-<span><span class="co">#&gt; 5      e 0.76717259 16.556022</span></span>
-<span><span class="co">#&gt; 6      f 0.07315979  1.497429</span></span>
-<span><span class="co">#&gt; 7      g 0.50311114 82.436942</span></span>
-<span><span class="co">#&gt; 8      h 0.08747438 69.907693</span></span>
-<span><span class="co">#&gt; 9      i 0.55240601 96.700097</span></span>
-<span><span class="co">#&gt; 10     j 0.93477383 22.222612</span></span></code></pre></div>
+<span><span class="co">#&gt; 1      a 0.84069552 53.379044</span></span>
+<span><span class="co">#&gt; 2      b 0.26866862 64.538432</span></span>
+<span><span class="co">#&gt; 3      c 0.05581388  6.792498</span></span>
+<span><span class="co">#&gt; 4      d 0.21979192 20.669239</span></span>
+<span><span class="co">#&gt; 5      e 0.41691700 12.131006</span></span>
+<span><span class="co">#&gt; 6      f 0.04753171 25.951191</span></span>
+<span><span class="co">#&gt; 7      g 0.51072396 19.653784</span></span>
+<span><span class="co">#&gt; 8      h 0.41497384 90.818148</span></span>
+<span><span class="co">#&gt; 9      i 0.79647703 27.283762</span></span>
+<span><span class="co">#&gt; 10     j 0.95392494 34.555375</span></span></code></pre></div>
 <p>By default, normalisation results in min-max on the <span class="math inline">\([0, 100]\)</span> interval:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/qNormalise.html">qNormalise</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    uCode          a         b</span></span>
-<span><span class="co">#&gt; 1      a   0.000000  68.04392</span></span>
-<span><span class="co">#&gt; 2      b  55.067779   2.63419</span></span>
-<span><span class="co">#&gt; 3      c  88.553967  79.36092</span></span>
-<span><span class="co">#&gt; 4      d  33.875231  10.79969</span></span>
-<span><span class="co">#&gt; 5      e  81.388169  15.81741</span></span>
-<span><span class="co">#&gt; 6      f   4.319238   0.00000</span></span>
-<span><span class="co">#&gt; 7      g  52.064598  85.01811</span></span>
-<span><span class="co">#&gt; 8      h   5.908850  71.85751</span></span>
-<span><span class="co">#&gt; 9      i  57.538709 100.00000</span></span>
-<span><span class="co">#&gt; 10     j 100.000000  21.76954</span></span></code></pre></div>
+<span><span class="co">#&gt;    uCode           a          b</span></span>
+<span><span class="co">#&gt; 1      a  87.5076932  55.443244</span></span>
+<span><span class="co">#&gt; 2      b  24.3974577  68.724174</span></span>
+<span><span class="co">#&gt; 3      c   0.9137504   0.000000</span></span>
+<span><span class="co">#&gt; 4      d  19.0050194  16.514886</span></span>
+<span><span class="co">#&gt; 5      e  40.7533145   6.353426</span></span>
+<span><span class="co">#&gt; 6      f   0.0000000  22.801006</span></span>
+<span><span class="co">#&gt; 7      g  51.1027921  15.306381</span></span>
+<span><span class="co">#&gt; 8      h  40.5389317 100.000000</span></span>
+<span><span class="co">#&gt; 9      i  82.6291822  24.386915</span></span>
+<span><span class="co">#&gt; 10     j 100.0000000  33.040954</span></span></code></pre></div>
 <p>We can pass another normalisation function if we like, and the syntax
 is a bit easier than <code><a href="../reference/Normalise.html">Normalise()</a></code>:</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/qNormalise.html">qNormalise</a></span><span class="op">(</span><span class="va">X</span>, f_n <span class="op">=</span> <span class="st">"n_dist2ref"</span>, f_n_para <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>iref <span class="op">=</span> <span class="fl">1</span>, cap_max <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    uCode   a          b</span></span>
-<span><span class="co">#&gt; 1      a NaN 1.00000000</span></span>
-<span><span class="co">#&gt; 2      b   1 0.03871308</span></span>
-<span><span class="co">#&gt; 3      c   1 1.00000000</span></span>
-<span><span class="co">#&gt; 4      d   1 0.15871647</span></span>
-<span><span class="co">#&gt; 5      e   1 0.23245876</span></span>
-<span><span class="co">#&gt; 6      f   1 0.00000000</span></span>
-<span><span class="co">#&gt; 7      g   1 1.00000000</span></span>
-<span><span class="co">#&gt; 8      h   1 1.00000000</span></span>
-<span><span class="co">#&gt; 9      i   1 1.00000000</span></span>
-<span><span class="co">#&gt; 10     j   1 0.31993363</span></span></code></pre></div>
+<span><span class="co">#&gt;    uCode          a         b</span></span>
+<span><span class="co">#&gt; 1      a 1.00000000 1.0000000</span></span>
+<span><span class="co">#&gt; 2      b 0.27880358 1.0000000</span></span>
+<span><span class="co">#&gt; 3      c 0.01044194 0.0000000</span></span>
+<span><span class="co">#&gt; 4      d 0.21718113 0.2978701</span></span>
+<span><span class="co">#&gt; 5      e 0.46571122 0.1145933</span></span>
+<span><span class="co">#&gt; 6      f 0.00000000 0.4112495</span></span>
+<span><span class="co">#&gt; 7      g 0.58398057 0.2760730</span></span>
+<span><span class="co">#&gt; 8      h 0.46326135 1.0000000</span></span>
+<span><span class="co">#&gt; 9      i 0.94425049 0.4398537</span></span>
+<span><span class="co">#&gt; 10     j 1.00000000 0.5959419</span></span></code></pre></div>
 <p>The <code><a href="../reference/qNormalise.html">qNormalise()</a></code> function works in a similar way for
 coins and purses.</p>
 </div>
