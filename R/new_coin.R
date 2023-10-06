@@ -555,6 +555,12 @@ check_iMeta <- function(iMeta, quietly = FALSE){
     stop("Level column has missing entries between 1 and max(Level).")
   }
 
+  # where Type is Aggregate, level must be above 1
+  level1_aggs <- iMeta$Level[iMeta$Type == "Aggregate"] == 1
+  if(any(level1_aggs)){
+    stop("One or more entries in iMeta$Level is 1 where iMeta$Type is 'Aggregate'. Aggregates must have level 2 or higher.")
+  }
+
   # iCode should have no duplicates
   duplicate_codes <- iMeta$iCode[duplicated(iMeta$iCode)]
   if(length(duplicate_codes) != 0){
