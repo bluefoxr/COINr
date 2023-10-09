@@ -104,6 +104,22 @@ This contains all package documentation in an easy-to-navigate format.
 All documentation available here is also available by browsing COINr
 vignettes: see `vignette(package = "COINr")`.
 
+## Tutorials
+
+COINr was presented at the European Commission’s [training week on
+composite indicators and
+scoreboards](https://knowledge4policy.ec.europa.eu/composite-indicators/2023-jrc-week-composite-indicators-scoreboards_en#videos)
+in September 2023, including a short one hour tutorial:
+
+- See the presentation video
+  [here](https://webcast.ec.europa.eu/2023-jrc-week-on-composite-indicators-and-scoreboards-2023-09-28)
+  (COINr presentation starts around 16:28 but if you are new to
+  composite indicators it is well worth following the full training)
+- See the tutorial document
+  [here](https://bluefoxr.github.io/COINr-Demo-2023/COINr_demo.html) and
+  the code in the [GitHub repo
+  here](https://github.com/bluefoxr/COINr-Demo-2023).
+
 ## Recent updates
 
 COINr has been recently updated to v1.0, skipping a few version numbers.
