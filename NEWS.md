@@ -1,3 +1,15 @@
+# COINr 1.1.7
+
+I have skipped a number of version number iterations. Here's what's changed since last time:
+
+- Add some helper functions to convert codes to names
+- Add flip axes to bar chart
+- Add option to skip SA address checks
+- Option to use raw data in results tables
+- Small bug fixes
+- Catch more errors on coin construction
+
+
 # COINr 1.1.2.9000
 
 Dev version of COINr until next CRAN submission!
