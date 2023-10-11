@@ -1,3 +1,7 @@
+# COINr 1.1.8
+
+- Fixed bug correlation directions
+
 # COINr 1.1.7
 
 I have skipped a number of version number iterations. Here's what's changed since last time:

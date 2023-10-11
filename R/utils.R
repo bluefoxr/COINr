@@ -267,8 +267,9 @@ directionalise <- function(iData, coin){
 
   })
   df_out <- as.data.frame(df_out)
+  names(df_out) <- names(iData)
 
-  stopifnot(identical(names(df_out), names(iData)))
+  #stopifnot(identical(names(df_out), names(iData)))
 
   df_out
 
