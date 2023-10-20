@@ -206,6 +206,15 @@ Normalise.coin <- function(x, dset, global_specs = NULL, indiv_specs = NULL,
   # NORMALISE DATA ----------------------------------------------------------
 
   if(!is.null(global_specs[["f_n"]])){
+
+    # Special treatment: use iMeta columns if specified
+    if(identical(global_specs[["f_n_para"]], "use_iMeta")){
+
+      # first, get iMeta
+      iMeta <- coin$Meta$Ind
+
+    }
+
     if(global_specs[["f_n"]] == "n_dist2targ"){
 
       # special treatment for dist2targ
@@ -896,4 +905,81 @@ n_goalposts <- function(x, gposts, direction = 1, trunc2posts = TRUE){
 
 }
 
+# This is a convenience function used in Normalise.coin() which returns a f_n_para()
+# list from special columns stored in iMeta. It hard-codes in special cases, which
+# are COINr internal normalisation functions n_*()
+#
+# Note since this deals with normalisation, only extracts indicator-level parameters.
+#
+get_iMeta_norm_paras <- function(coin, func_name){
 
+  iMeta <- coin$Meta$Ind[coin$Meta$Ind$Type == "Indicator",]
+
+  # define iMeta cols required by each normalisation method
+  required_cols <- switch(
+    func_name,
+
+    n_minmax = c("minmax_lower", "minmax_upper"),
+    n_scaled = c("scaled_lower", "scaled_upper"),
+    n_zscore = c("zscore_mean", "zscore_sd"),
+    n_dist2targ = c("dist2targ_target", "dist2targ_capmax", "Direction"),
+    n_goalposts = c("goalpost_lower", "goalpost_upper"),
+
+    stop("Your normalisation function '", func_name, "' does not have support for iMeta parameters. Check the list of supported functions in the Normalise.coin() documentation or manually build a parameter list using the indiv_specs argument.")
+  )
+
+  # check required cols exist in iMeta
+  if(any(required_cols %nin% names(iMeta))){
+    stop("You have specified to use normalisation parameters in the iMeta data frame but one or more required columns cannot be found.
+  Required columns for noramalisation method ", func_name, " are: ", toString(required_cols))
+  }
+
+  # BUILD PARAMETER LISTS
+  # This has to be done "manually" because of the unknown column numbers and name changes
+
+  # Start with data frame
+  df_specs <- iMeta[required_cols]
+
+  # base list
+  l_n <- rep(func_name, nrow(iMeta)) |>
+    as.list()
+  names(l_n) <- iMeta$iCode
+
+  for(ii in 1:nrow(iMeta)){
+    # get list
+    l <- l_n[[ii]]
+
+    # get parameters
+    paras <- iMeta[ii, required_cols]
+
+    # HERE START POPULATING THE LIST!
+  }
+
+  # FROM HERE ON IS JUST BITS OF CODE TO CLEAN UP.  THEN, GO BACK TO THE MAIN FUNCTION
+  # AND INTEGRATE.
+
+  # TO DO!! I need to get these parameters in the right list format:
+  # list(f_n = func_name, f_n_para = list(para_names = ...))
+
+  # # base list
+  # l_n <- rep(func_name, nrow(iMeta)) |>
+  #   as.list()
+  # names(f_n_para) <- iMeta$iCode
+  #
+  # # loop over list elements seems easiest...
+  # l_n <- lapply(names(l_n), function(iCode){
+  #   l_n[[iCode]][["f"]]
+  # })
+  #
+  #
+  # # now we need to apply the n_dist2targ() function to each column, but also respecting the directions.
+  # l_n <- lapply(names(iData_), function(icode){
+  #   n_dist2targ(iData_[[icode]],
+  #               targ = iMeta$Target[iMeta$iCode == icode],
+  #               direction = dirs_c$Direction[dirs_c$iCode == icode],
+  #               cap_max = cap_max)
+  # })
+  # names(l_n) <- names(iData_)
+  # iData_n <- as.data.frame(l_n)
+
+}
