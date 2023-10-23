@@ -135,12 +135,20 @@ Normalise.purse <- function(x, dset, global_specs = NULL, indiv_specs = NULL,
 #'
 #' Note, all COINr normalisation functions (passed to `f_n`) are of the form `n_*()`. Type `n_` in the R Studio console and press the Tab key to see a list.
 #'
-#' This function includes a special case for "distance to target" normalisation. Setting `global_specs = list(f_n = "n_dist2targ")` will apply distance to
-#' target normalisation, automatically passing targets found in the "Target" column of `iMeta`.
+#' ## Individual parameter specification with iMeta
+#'
+#' For some normalisation methods we may use the same function for all indicators but use different parameters - for example, using
+#' distance to target normalisation or goalpost normalisation. COINr now supports specifying these parameters in the `iMeta` table.
+#' To enable this, set `f_n_para = "use_iMeta"` within the `global_specs` list.
+#'
+#' For this to work you will also need to add the correct-named columns in the `iMeta` table. To see which column names to add, check the
+#' function documentation of the normalisation function you wish to use (e.g. [n_goalposts()]). See also examples in the
+#' [normalisation vignette](https://bluefoxr.github.io/COINr/articles/normalise.html). These columns should be added before construction of
+#' the coin.
 #'
 #' ## Individual column specification
 #'
-#' Optionally, indicators can be normalised with different normalisation functions and parameters using the
+#' To give full individual control, indicators can be normalised with different normalisation functions and parameters using the
 #' `indiv_specs` argument. This must be specified as a named list e.g. `list(i1 = specs1, i2 = specs2)` where
 #' `i1` and `i2` are `iCode`s to apply individual normalisation to, and `specs1` and `specs2` are
 #' respectively lists of the same format as `global_specs` (see above). In other words, `indiv_specs` is a big
@@ -205,49 +213,15 @@ Normalise.coin <- function(x, dset, global_specs = NULL, indiv_specs = NULL,
 
   # NORMALISE DATA ----------------------------------------------------------
 
+  # retrieve parameters from iMeta if necessary using dedicated function
   if(!is.null(global_specs[["f_n"]])){
-
-    # Special treatment: use iMeta columns if specified
     if(identical(global_specs[["f_n_para"]], "use_iMeta")){
-
-      # first, get iMeta
-      iMeta <- coin$Meta$Ind
-
+      indiv_specs <- get_iMeta_norm_paras(coin, func_name = global_specs[["f_n"]])
     }
-
-    if(global_specs[["f_n"]] == "n_dist2targ"){
-
-      # special treatment for dist2targ
-      # first, get iMeta
-      iMeta <- coin$Meta$Ind
-      if(is.null(iMeta[["Target"]])){
-        stop("You specified f_para = 'n_dist2targ' but no targets can be found - please attach these as a column 'Target' in iMeta.")
-      }
-      # see if cap_max is specified
-      if(!is.null(global_specs$f_n_para$cap_max)){
-        cap_max <- global_specs$f_n_para$cap_max
-      } else {
-        cap_max <- FALSE
-      }
-
-      # now we need to apply the n_dist2targ() function to each column, but also respecting the directions.
-      l_n <- lapply(names(iData_), function(icode){
-        n_dist2targ(iData_[[icode]],
-                    targ = iMeta$Target[iMeta$iCode == icode],
-                    direction = dirs_c$Direction[dirs_c$iCode == icode],
-                    cap_max = cap_max)
-      })
-      names(l_n) <- names(iData_)
-      iData_n <- as.data.frame(l_n)
-
-    } else {
-      iData_n <- Normalise(iData_, global_specs = global_specs, indiv_specs = indiv_specs,
-                           directions = dirs_c)
-    }
-  } else {
-    iData_n <- Normalise(iData_, global_specs = global_specs, indiv_specs = indiv_specs,
-                         directions = dirs_c)
   }
+
+  iData_n <- Normalise(iData_, global_specs = global_specs, indiv_specs = indiv_specs,
+                       directions = dirs_c)
 
   # reunite with uCode col
   iData_n <- cbind(uCode = iData$uCode, iData_n)
@@ -528,6 +502,11 @@ Normalise <- function(x, ...){
 #'
 #' Scales a vector using min-max method.
 #'
+#' This function also supports parameter specification in `iMeta` for the [Normalise.coin()] method.
+#' To do this, add columns `minmax_lower`, and `minmax_upper` to the `iMeta` table, which specify the
+#' lower and upper bounds to scale each indicator to. Then set `f_n_para = "use_iMeta"` within the
+#' `global_specs` list. See also examples in the [normalisation vignette](https://bluefoxr.github.io/COINr/articles/normalise.html).
+#'
 #' @param x A numeric vector
 #' @param l_u A vector `c(l, u)`, where `l` is the lower bound and `u` is the upper bound. `x` will
 #' be scaled exactly onto this interval.
@@ -561,6 +540,11 @@ n_minmax <- function(x, l_u = c(0,100)){
 #' does `x_scaled <- (x-l)/(u-l) * 100`. Note this is *not* the minmax transformation (see [n_minmax()]).
 #' This is a linear transformation with shift `u` and scaling factor `u-l`.
 #'
+#' This function also supports parameter specification in `iMeta` for the [Normalise.coin()] method.
+#' To do this, add columns `scaled_lower`, and `scaled_upper` to the `iMeta` table, which specify the
+#' first and second elements of `npara`, respectively. Then set `f_n_para = "use_iMeta"` within the
+#' `global_specs` list. See also examples in the [normalisation vignette](https://bluefoxr.github.io/COINr/articles/normalise.html).
+#'
 #' @param x A numeric vector
 #' @param npara Parameters as a vector `c(l, u)`. See description.
 #'
@@ -582,6 +566,11 @@ n_scaled <- function(x, npara = c(0,100)){
 #' Z-score a vector
 #'
 #' Standardises a vector `x` by scaling it to have a mean and standard deviation specified by `m_sd`.
+#'
+#' This function also supports parameter specification in `iMeta` for the [Normalise.coin()] method.
+#' To do this, add columns `zscore_mean`, and `zscore_sd` to the `iMeta` table, which specify the
+#' mean and standard deviation to scale each indicator to, respectively. Then set `f_n_para = "use_iMeta"` within the
+#' `global_specs` list. See also examples in the [normalisation vignette](https://bluefoxr.github.io/COINr/articles/normalise.html).
 #'
 #' @param x A numeric vector
 #' @param m_sd A vector `c(m, sd)`, where `m` is desired mean and `sd` is the target standard deviation.
@@ -703,6 +692,11 @@ n_dist2ref <- function(x, iref, cap_max = FALSE){
 #' \deqn{ \frac{x_{max} - x}{x_{max} - x_{targ}} }
 #'
 #' Values surpassing `x_targ` in either case can be optionally capped at 1 if `cap_max = TRUE`.
+#'
+#' This function also supports parameter specification in `iMeta` for the [Normalise.coin()] method.
+#' To do this, add columns `Target`, and `dist2targ_cap_max` to the `iMeta` table, which correspond
+#' to the `targ` and `cap_max` parameters respectively. Then set `f_n_para = "use_iMeta"` within the
+#' `global_specs` list. See also examples in the [normalisation vignette](https://bluefoxr.github.io/COINr/articles/normalise.html).
 #'
 #' @param x A numeric vector
 #' @param targ An target value
@@ -862,11 +856,30 @@ n_borda <- function(x, ties.method = "min"){
 
 #' Normalise using goalpost method
 #'
-#' The distance of each value of `x` from the lower "goalpost" to the upper one. Goalposts are specified by
+#' The fraction of the distance of each value of `x` from the lower "goalpost" to the upper one. Goalposts are specified by
 #' `gposts = c(l, u, a)`, where `l` is the lower bound, `u` is the upper bound, and `a` is a scaling parameter.
 #'
-#' Specify `direction = -1` to "flip" the goalposts. This may be necessary depending on how the goalposts
-#' were defined.
+#' Specify `direction = -1` to "flip" the goalposts. In this case, the fraction from the upper to the lower goalpost is
+#' measured.
+#'
+#' The goalposts equations are:
+#'
+#' \deqn{ (x - GP_{low})/(GP_{high} - GP_{low}) }
+#'
+#' and for a negative directionality indicator:
+#'
+#' \deqn{ (x - GP_{high})/(GP_{low} - GP_{high}) }
+#'
+#' This function also supports parameter specification in `iMeta` for the [Normalise.coin()] method.
+#' To do this, add columns:
+#'
+#' * `goalpost_lower`: the lower goalpost
+#' * `goalpost_upper`: the upper goalpost
+#' * `goalpost_scale`: the scaling parameter
+#' * `goalpost_trunc2posts`: corresponds to the `trunc2posts` argument
+#'
+#' to the `iMeta` table. Then set `f_n_para = "use_iMeta"` within the
+#' `global_specs` list. See also examples in the [normalisation vignette](https://bluefoxr.github.io/COINr/articles/normalise.html).
 #'
 #' @param x A numeric vector
 #' @param gposts A numeric vector `c(l, u, a)`, where `l` is the lower bound, `u` is the upper bound,
@@ -875,8 +888,10 @@ n_borda <- function(x, ties.method = "min"){
 #' @param trunc2posts If `TRUE` (default) will truncate any values that fall outside of the goalposts.
 #'
 #' @examples
-#' x <- runif(20)
-#' n_goalposts(x, gposts = c(0.2, 0.8, 1))
+#' # positive direction
+#' n_goalposts(1, gposts = c(0, 10, 1))
+#' # negative direction
+#' n_goalposts(1, gposts = c(0, 10, 1), direction = -1)
 #'
 #' @return Numeric vector
 #'
@@ -888,7 +903,8 @@ n_goalposts <- function(x, gposts, direction = 1, trunc2posts = TRUE){
   # since indicators arrive with directions possibly reversed (*-1), we have to also multiply GPs by -1
   if(direction == -1){
     # here, indicators are multiplied by -1, so need to also multiply goalposts by -1
-    gposts[1:2] <- -1*gposts[1:2]
+    # gposts[1:2] <- -1*gposts[1:2] # NOTE COMMENTED OUT FOR CONSISTENCY
+
     # then, the goalpost formula is reversed as well
     y <- (x-gposts[2])/(gposts[1] - gposts[2])
   } else {
@@ -911,6 +927,14 @@ n_goalposts <- function(x, gposts, direction = 1, trunc2posts = TRUE){
 #
 # Note since this deals with normalisation, only extracts indicator-level parameters.
 #
+# Special note on targets: in the body of this function the target passed to the the n_dist2targ()
+# function is actually the target multiplied by the direction. This flips the target to negative
+# if the direction is negative. The reason is that when the data set is normalised, if an indicator
+# direction is negative, COINr muliplies the indicator by -1 before passing it to the normalisation
+# function. This means that to be consistent, we also flip the target. Then for n_dist2targ() the
+# direction is always set as 1 (since the direction is already accounted for before the data arrives
+# to the function).
+#
 get_iMeta_norm_paras <- function(coin, func_name){
 
   iMeta <- coin$Meta$Ind[coin$Meta$Ind$Type == "Indicator",]
@@ -918,68 +942,73 @@ get_iMeta_norm_paras <- function(coin, func_name){
   # define iMeta cols required by each normalisation method
   required_cols <- switch(
     func_name,
-
     n_minmax = c("minmax_lower", "minmax_upper"),
     n_scaled = c("scaled_lower", "scaled_upper"),
     n_zscore = c("zscore_mean", "zscore_sd"),
-    n_dist2targ = c("dist2targ_target", "dist2targ_capmax", "Direction"),
-    n_goalposts = c("goalpost_lower", "goalpost_upper"),
-
+    n_dist2targ = c("Target", "dist2targ_cap_max", "Direction"),
+    n_goalposts = c("goalpost_lower", "goalpost_upper", "goalpost_scale" , "Direction", "goalpost_trunc2posts"),
     stop("Your normalisation function '", func_name, "' does not have support for iMeta parameters. Check the list of supported functions in the Normalise.coin() documentation or manually build a parameter list using the indiv_specs argument.")
   )
 
+  # check special case for backwards comp
+  dist2targ_exception <- (func_name == "n_dist2targ") && ("dist2targ_cap_max" %nin% names(iMeta))
+
   # check required cols exist in iMeta
   if(any(required_cols %nin% names(iMeta))){
-    stop("You have specified to use normalisation parameters in the iMeta data frame but one or more required columns cannot be found.
+    # special case for backward compatibility
+    if(dist2targ_exception){
+      message("Normalisation parameters retrieved from iMeta but 'dist2targ_cap_max' is missing - it is assumed as FALSE. It is recommended to include this parameter as an extra column in iMeta.")
+    } else {
+      stop("You have specified to use normalisation parameters in the iMeta data frame but one or more required columns cannot be found.
   Required columns for noramalisation method ", func_name, " are: ", toString(required_cols))
+    }
   }
 
   # BUILD PARAMETER LISTS
   # This has to be done "manually" because of the unknown column numbers and name changes
 
-  # Start with data frame
-  df_specs <- iMeta[required_cols]
-
   # base list
-  l_n <- rep(func_name, nrow(iMeta)) |>
-    as.list()
+  l_n <- rep(list(list(f_n = func_name)), nrow(iMeta))
   names(l_n) <- iMeta$iCode
 
+  # dirty for loop: maps the iMeta parameters into the list with correct parameter names
+  # If more normalisation functions are added as "automated" through iMeta, this is the
+  # place to add the mapping.
   for(ii in 1:nrow(iMeta)){
     # get list
     l <- l_n[[ii]]
 
-    # get parameters
-    paras <- iMeta[ii, required_cols]
+    # get paras: with special case for backwards comp
+    if(dist2targ_exception){
+      paras <- iMeta[iMeta$iCode == names(l_n)[ii], c("Target", "Direction")]
+      paras$dist2targ_cap_max <- FALSE
+    } else {
+      paras <- iMeta[iMeta$iCode == names(l_n)[ii], required_cols]
+    }
 
-    # HERE START POPULATING THE LIST!
+    # add to list component
+    l$f_n_para <- switch(
+      func_name,
+      n_minmax = list(l_u = c(paras$minmax_lower, paras$minmax_upper)),
+      n_scaled = list(npara = c(paras$scaled_lower, paras$scaled_upper)),
+      n_zscore = list(m_sd = c(paras$zscore_mean, paras$zscore_sd)),
+      n_dist2targ = list(
+        targ = paras$Target * paras$Direction, # See note at top of function
+        cap_max = paras$dist2targ_cap_max
+      ),
+      n_goalposts = list(
+        gposts = if(paras$Direction == -1){
+          c(paras$goalpost_upper*paras$Direction, paras$goalpost_lower*paras$Direction, paras$goalpost_scale)
+        } else {
+          c(paras$goalpost_lower*paras$Direction, paras$goalpost_upper*paras$Direction, paras$goalpost_scale)
+        },
+        trunc2posts = paras$goalpost_trunc2posts
+      )
+    )
+
+    # update big list
+    l_n[[ii]] <- l
   }
 
-  # FROM HERE ON IS JUST BITS OF CODE TO CLEAN UP.  THEN, GO BACK TO THE MAIN FUNCTION
-  # AND INTEGRATE.
-
-  # TO DO!! I need to get these parameters in the right list format:
-  # list(f_n = func_name, f_n_para = list(para_names = ...))
-
-  # # base list
-  # l_n <- rep(func_name, nrow(iMeta)) |>
-  #   as.list()
-  # names(f_n_para) <- iMeta$iCode
-  #
-  # # loop over list elements seems easiest...
-  # l_n <- lapply(names(l_n), function(iCode){
-  #   l_n[[iCode]][["f"]]
-  # })
-  #
-  #
-  # # now we need to apply the n_dist2targ() function to each column, but also respecting the directions.
-  # l_n <- lapply(names(iData_), function(icode){
-  #   n_dist2targ(iData_[[icode]],
-  #               targ = iMeta$Target[iMeta$iCode == icode],
-  #               direction = dirs_c$Direction[dirs_c$iCode == icode],
-  #               cap_max = cap_max)
-  # })
-  # names(l_n) <- names(iData_)
-  # iData_n <- as.data.frame(l_n)
-
+  l_n
 }
