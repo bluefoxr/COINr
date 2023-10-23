@@ -1,5 +1,6 @@
 # COINr 1.1.8
 
+- Added possibility to set normalisation parameters in `iMeta`, added more explanation and examples in the normalisation vignette.
 - Fixed bug correlation directions
 
 # COINr 1.1.7
