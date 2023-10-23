@@ -106,12 +106,21 @@ test_that("n_funcs", {
   xn <- n_fracmax(x)
   expect_equal(xn, x/max(x))
 
+  # goalposts
   xn <- n_goalposts(x, gposts = c(0.2, 0.8, 10))
   xn2 <- (x - 0.2)/0.6
   xn2[xn2 < 0] <- 0
   xn2[xn2 > 1] <- 1
   xn2 <- xn2 * 10
   expect_equal(xn, xn2)
+
+  # zoom in on some goalpost cases
+  expect_equal(n_goalposts(1, c(0, 10, 1)), 0.1) # 1 in range 0-10
+  expect_equal(n_goalposts(11, c(0, 10, 1)), 1) # above max
+  expect_equal(n_goalposts(-1, c(0, 10, 1)), 0) # below min
+  expect_equal(n_goalposts(1, c(0, 10, 1), direction = -1), 0.9) # same but now direction reversed
+  expect_equal(n_goalposts(-1, c(0, 10, 1), direction = -1), 1)
+  expect_equal(n_goalposts(11, c(0, 10, 1), direction = -1), 0)
 
 })
 
@@ -139,7 +148,7 @@ test_that("dist2targ_coin", {
   coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
 
   # normalise using dist2targ
-  coin <- Normalise(coin, dset = "Raw", global_specs = list(f_n = "n_dist2targ"))
+  coin <- Normalise(coin, dset = "Raw", global_specs = list(f_n = "n_dist2targ", f_n_para = "use_iMeta"))
 
   Xr <- get_dset(coin, dset = "Raw")
   Xn <- get_dset(coin, dset = "Normalised")
@@ -157,4 +166,95 @@ test_that("dist2targ_coin", {
   # manual normalisation
   xn <- (max(Xr$CO2, na.rm = TRUE) - Xr$CO2)/(max(Xr$CO2, na.rm = TRUE) - targ)
   expect_equal(Xn$CO2, xn)
+})
+
+# test the new functionality of the normalisation parameters
+test_that("iMeta_norm_paras", {
+
+  iData <- COINr::ASEM_iData
+  iMeta <- COINr::ASEM_iMeta
+
+  # MINMAX #####
+
+  # set two different minmax groups
+  iMeta$minmax_lower <- 1
+  iMeta$minmax_lower[iMeta$iCode %in% c("LPI", "CO2")] <- 5
+  iMeta$minmax_upper <- 100
+  iMeta$minmax_upper[iMeta$iCode %in% c("LPI", "CO2")] <- 50
+
+  # build coin
+  coin <- new_coin(iData, iMeta, quietly = TRUE)
+  # normalise using minmax
+  coin <- Normalise(coin, dset = "Raw", global_specs = list(f_n = "n_minmax", f_n_para = "use_iMeta"))
+
+  # check
+  expect_equal(min(coin$Data$Normalised$LPI, na.rm = TRUE), 5)
+  expect_equal(min(coin$Data$Normalised$CO2, na.rm = TRUE), 5)
+  expect_equal(max(coin$Data$Normalised$LPI, na.rm = TRUE), 50)
+  expect_equal(max(coin$Data$Normalised$CO2, na.rm = TRUE), 50)
+  expect_equal(min(coin$Data$Normalised$Flights, na.rm = TRUE), 1)
+  expect_equal(max(coin$Data$Normalised$Flights, na.rm = TRUE), 100)
+
+  # Z-SCORE #####
+
+  # set two different mean/sd groups
+  iMeta$zscore_mean <- 10
+  iMeta$zscore_mean[iMeta$iCode %in% c("LPI", "CO2")] <- 100
+  iMeta$zscore_sd <- 1
+  iMeta$zscore_sd[iMeta$iCode %in% c("LPI", "CO2")] <- 10
+
+  # build coin
+  coin <- new_coin(iData, iMeta, quietly = TRUE)
+  # normalise using minmax
+  coin <- Normalise(coin, dset = "Raw", global_specs = list(f_n = "n_zscore", f_n_para = "use_iMeta"))
+
+  # check
+  expect_equal(mean(coin$Data$Normalised$LPI, na.rm = TRUE), 100)
+  expect_equal(mean(coin$Data$Normalised$CO2, na.rm = TRUE), 100)
+  expect_equal(sd(coin$Data$Normalised$LPI, na.rm = TRUE), 10)
+  expect_equal(sd(coin$Data$Normalised$CO2, na.rm = TRUE), 10)
+  expect_equal(mean(coin$Data$Normalised$Flights, na.rm = TRUE), 10)
+  expect_equal(sd(coin$Data$Normalised$Flights, na.rm = TRUE), 1)
+
+  # GOALPOSTS #####
+
+  iData_r <- coin$Data$Raw
+  iCodes <- iMeta$iCode[iMeta$Type == "Indicator"]
+
+  iMeta$goalpost_scale <- 1
+  iMeta$goalpost_trunc2posts <- TRUE
+
+  for(iCode in iCodes){
+    maxx <- max(iData_r[[iCode]], na.rm = TRUE)
+    minx <- min(iData_r[[iCode]], na.rm = TRUE)
+    rx <- maxx - minx
+    # fake goalposts in 5% of range
+    iMeta$goalpost_lower[iMeta$iCode == iCode] <- minx + 0.05*rx
+    iMeta$goalpost_upper[iMeta$iCode == iCode] <- maxx - 0.05*rx
+  }
+
+  # set some exceptions
+  iMeta$goalpost_scale[iMeta$iCode == "Flights"] <- 10
+  iMeta$goalpost_trunc2posts[iMeta$iCode == "Goods"] <- FALSE
+
+  # build coin
+  coin <- new_coin(iData, iMeta, quietly = TRUE)
+  # normalise using minmax
+  coin <- Normalise(coin, dset = "Raw", global_specs = list(f_n = "n_goalposts", f_n_para = "use_iMeta"))
+
+  # check
+  iData_n <- coin$Data$Normalised
+
+  # take LPI
+  expect_equal(
+    n_goalposts(iData_r$LPI, c(iMeta$goalpost_lower[iMeta$iCode == "LPI"], iMeta$goalpost_upper[iMeta$iCode == "LPI"], 1), direction = 1, trunc2posts = TRUE),
+    iData_n$LPI
+  )
+
+  # take negative direction indicator
+  expect_equal(
+    n_goalposts(iData_r$Tariff, c(iMeta$goalpost_lower[iMeta$iCode == "Tariff"], iMeta$goalpost_upper[iMeta$iCode == "Tariff"], 1), direction = -1, trunc2posts = TRUE),
+    iData_n$Tariff
+  )
+
 })
