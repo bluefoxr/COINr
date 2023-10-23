@@ -20,15 +20,37 @@ and \code{a} is a scaling parameter.}
 Numeric vector
 }
 \description{
-The distance of each value of \code{x} from the lower "goalpost" to the upper one. Goalposts are specified by
+The fraction of the distance of each value of \code{x} from the lower "goalpost" to the upper one. Goalposts are specified by
 \code{gposts = c(l, u, a)}, where \code{l} is the lower bound, \code{u} is the upper bound, and \code{a} is a scaling parameter.
 }
 \details{
-Specify \code{direction = -1} to "flip" the goalposts. This may be necessary depending on how the goalposts
-were defined.
+Specify \code{direction = -1} to "flip" the goalposts. In this case, the fraction from the upper to the lower goalpost is
+measured.
+
+The goalposts equations are:
+
+\deqn{ (x - GP_{low})/(GP_{high} - GP_{low}) }
+
+and for a negative directionality indicator:
+
+\deqn{ (x - GP_{high})/(GP_{low} - GP_{high}) }
+
+This function also supports parameter specification in \code{iMeta} for the \code{\link[=Normalise.coin]{Normalise.coin()}} method.
+To do this, add columns:
+\itemize{
+\item \code{goalpost_lower}: the lower goalpost
+\item \code{goalpost_upper}: the upper goalpost
+\item \code{goalpost_scale}: the scaling parameter
+\item \code{goalpost_trunc2posts}: corresponds to the \code{trunc2posts} argument
+}
+
+to the \code{iMeta} table. Then set \code{f_n_para = "use_iMeta"} within the
+\code{global_specs} list. See also examples in the \href{https://bluefoxr.github.io/COINr/articles/normalise.html}{normalisation vignette}.
 }
 \examples{
-x <- runif(20)
-n_goalposts(x, gposts = c(0.2, 0.8, 1))
+# positive direction
+n_goalposts(1, gposts = c(0, 10, 1))
+# negative direction
+n_goalposts(1, gposts = c(0, 10, 1), direction = -1)
 
 }

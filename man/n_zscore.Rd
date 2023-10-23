@@ -17,6 +17,12 @@ Numeric vector
 \description{
 Standardises a vector \code{x} by scaling it to have a mean and standard deviation specified by \code{m_sd}.
 }
+\details{
+This function also supports parameter specification in \code{iMeta} for the \code{\link[=Normalise.coin]{Normalise.coin()}} method.
+To do this, add columns \code{zscore_mean}, and \code{zscore_sd} to the \code{iMeta} table, which specify the
+mean and standard deviation to scale each indicator to, respectively. Then set \code{f_n_para = "use_iMeta"} within the
+\code{global_specs} list. See also examples in the \href{https://bluefoxr.github.io/COINr/articles/normalise.html}{normalisation vignette}.
+}
 \examples{
 x <- runif(20)
 n_zscore(x)

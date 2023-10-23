@@ -79,14 +79,23 @@ The default list for \code{global_specs} is: \code{list(f_n = "n_minmax", f_n_pa
 min-max normalisation between 0 and 100.
 
 Note, all COINr normalisation functions (passed to \code{f_n}) are of the form \verb{n_*()}. Type \code{n_} in the R Studio console and press the Tab key to see a list.
+}
 
-This function includes a special case for "distance to target" normalisation. Setting \code{global_specs = list(f_n = "n_dist2targ")} will apply distance to
-target normalisation, automatically passing targets found in the "Target" column of \code{iMeta}.
+\subsection{Individual parameter specification with iMeta}{
+
+For some normalisation methods we may use the same function for all indicators but use different parameters - for example, using
+distance to target normalisation or goalpost normalisation. COINr now supports specifying these parameters in the \code{iMeta} table.
+To enable this, set \code{f_n_para = "use_iMeta"} within the \code{global_specs} list.
+
+For this to work you will also need to add the correct-named columns in the \code{iMeta} table. To see which column names to add, check the
+function documentation of the normalisation function you wish to use (e.g. \code{\link[=n_goalposts]{n_goalposts()}}). See also examples in the
+\href{https://bluefoxr.github.io/COINr/articles/normalise.html}{normalisation vignette}. These columns should be added before construction of
+the coin.
 }
 
 \subsection{Individual column specification}{
 
-Optionally, indicators can be normalised with different normalisation functions and parameters using the
+To give full individual control, indicators can be normalised with different normalisation functions and parameters using the
 \code{indiv_specs} argument. This must be specified as a named list e.g. \code{list(i1 = specs1, i2 = specs2)} where
 \code{i1} and \code{i2} are \code{iCode}s to apply individual normalisation to, and \code{specs1} and \code{specs2} are
 respectively lists of the same format as \code{global_specs} (see above). In other words, \code{indiv_specs} is a big

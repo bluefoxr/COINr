@@ -18,6 +18,12 @@ Normalised vector
 \description{
 Scales a vector using min-max method.
 }
+\details{
+This function also supports parameter specification in \code{iMeta} for the \code{\link[=Normalise.coin]{Normalise.coin()}} method.
+To do this, add columns \code{minmax_lower}, and \code{minmax_upper} to the \code{iMeta} table, which specify the
+lower and upper bounds to scale each indicator to. Then set \code{f_n_para = "use_iMeta"} within the
+\code{global_specs} list. See also examples in the \href{https://bluefoxr.github.io/COINr/articles/normalise.html}{normalisation vignette}.
+}
 \examples{
 x <- runif(20)
 n_minmax(x)

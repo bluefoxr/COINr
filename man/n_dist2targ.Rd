@@ -33,6 +33,11 @@ else if \code{direction = -1}:
 \deqn{ \frac{x_{max} - x}{x_{max} - x_{targ}} }
 
 Values surpassing \code{x_targ} in either case can be optionally capped at 1 if \code{cap_max = TRUE}.
+
+This function also supports parameter specification in \code{iMeta} for the \code{\link[=Normalise.coin]{Normalise.coin()}} method.
+To do this, add columns \code{Target}, and \code{dist2targ_cap_max} to the \code{iMeta} table, which correspond
+to the \code{targ} and \code{cap_max} parameters respectively. Then set \code{f_n_para = "use_iMeta"} within the
+\code{global_specs} list. See also examples in the \href{https://bluefoxr.github.io/COINr/articles/normalise.html}{normalisation vignette}.
 }
 \examples{
 x <- runif(20)

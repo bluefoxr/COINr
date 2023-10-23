@@ -19,6 +19,12 @@ Scales a vector for normalisation using the method applied in the GII2020 for so
 does \code{x_scaled <- (x-l)/(u-l) * 100}. Note this is \emph{not} the minmax transformation (see \code{\link[=n_minmax]{n_minmax()}}).
 This is a linear transformation with shift \code{u} and scaling factor \code{u-l}.
 }
+\details{
+This function also supports parameter specification in \code{iMeta} for the \code{\link[=Normalise.coin]{Normalise.coin()}} method.
+To do this, add columns \code{scaled_lower}, and \code{scaled_upper} to the \code{iMeta} table, which specify the
+first and second elements of \code{npara}, respectively. Then set \code{f_n_para = "use_iMeta"} within the
+\code{global_specs} list. See also examples in the \href{https://bluefoxr.github.io/COINr/articles/normalise.html}{normalisation vignette}.
+}
 \examples{
 x <- runif(20)
 n_scaled(x, npara = c(1,10))
