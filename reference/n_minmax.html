@@ -108,15 +108,22 @@ be scaled exactly onto this interval.</p></dd>
 
 <p>Normalised vector</p>
     </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>This function also supports parameter specification in <code>iMeta</code> for the <code><a href="Normalise.coin.html">Normalise.coin()</a></code> method.
+To do this, add columns <code>minmax_lower</code>, and <code>minmax_upper</code> to the <code>iMeta</code> table, which specify the
+lower and upper bounds to scale each indicator to. Then set <code>f_n_para = "use_iMeta"</code> within the
+<code>global_specs</code> list. See also examples in the <a href="https://bluefoxr.github.io/COINr/articles/normalise.html">normalisation vignette</a>.</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">n_minmax</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  60.042225  98.415556  15.673871  90.052049  59.448373  14.894315</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7]   0.000000  36.459429   1.343748  15.697439 100.000000  70.352285</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [13]   4.859091  65.817457  35.175096  97.496475  10.971742  68.074050</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [19]  29.144718  14.836815</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  70.502348  81.616101  50.801442  10.689393 100.000000  55.262608</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7]  83.838049   0.000000  31.886069  42.319863  20.549855   8.412745</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13]  16.678175  48.906381   4.120192  57.214026  80.678864  59.890016</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [19]  35.771866  26.865198</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

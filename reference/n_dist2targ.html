@@ -124,6 +124,10 @@ will have a score greater than 1.</p></dd>
 <p>else if <code>direction = -1</code>:</p>
 <p>$$ \frac{x_{max} - x}{x_{max} - x_{targ}} $$</p>
 <p>Values surpassing <code>x_targ</code> in either case can be optionally capped at 1 if <code>cap_max = TRUE</code>.</p>
+<p>This function also supports parameter specification in <code>iMeta</code> for the <code><a href="Normalise.coin.html">Normalise.coin()</a></code> method.
+To do this, add columns <code>Target</code>, and <code>dist2targ_cap_max</code> to the <code>iMeta</code> table, which correspond
+to the <code>targ</code> and <code>cap_max</code> parameters respectively. Then set <code>f_n_para = "use_iMeta"</code> within the
+<code>global_specs</code> list. See also examples in the <a href="https://bluefoxr.github.io/COINr/articles/normalise.html">normalisation vignette</a>.</p>
     </div>
 
     <div class="section level2">

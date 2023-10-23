@@ -281,6 +281,145 @@ re-normalise:</p>
 <span><span class="co">#&gt; (overwritten existing data set)</span></span></code></pre></div>
 </div>
 <div class="section level3">
+<h3 id="goalposts-targets-and-imeta-specification">Goalposts, targets and iMeta specification<a class="anchor" aria-label="anchor" href="#goalposts-targets-and-imeta-specification"></a>
+</h3>
+<p>For some normalisation methods we may use the same basic
+normalisation function for all indicators but use different parameters
+for each indicator - for example, using distance to target normalisation
+or goalpost normalisation. COINr now supports specifying these
+parameters in the <code>iMeta</code> table. This is intended to give an
+easier interface to these normalisation methods, as opposed to the
+buildin the full individual specifications list (see the next section on
+that).</p>
+<p>The basic idea is that you specify the parameters as columns in the
+<code>iMeta</code> data frame. COINr currently supports this for a
+selected subset of inbuilt normalisation functions:</p>
+<ul>
+<li><code><a href="../reference/n_minmax.html">n_minmax()</a></code></li>
+<li><code><a href="../reference/n_minmax.html">n_minmax()</a></code></li>
+<li><code><a href="../reference/n_scaled.html">n_scaled()</a></code></li>
+<li><code><a href="../reference/n_zscore.html">n_zscore()</a></code></li>
+<li><code><a href="../reference/n_dist2targ.html">n_dist2targ()</a></code></li>
+<li><code><a href="../reference/n_goalposts.html">n_goalposts()</a></code></li>
+</ul>
+<p>To use this approach, you have to (a) add the relevant columns to
+<code>iMeta</code> <em>before</em> building the coin, and (b) set
+<code>f_n_para = "use_iMeta"</code> within the <code>global_specs</code>
+list when calling <code><a href="../reference/Normalise.html">Normalise()</a></code>.</p>
+<p>Let’s clarify this with an example. We will apply distance to target
+normalisation using individual targets contained within
+<code>iMeta</code>. In fact, the example data with COINr already has a
+“Target” column which can be used for this purpose:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># show first few rows of iCode and Target cols in built-in iMeta</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ASEM_iMeta</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"iCode"</span>, <span class="st">"Target"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="co">#&gt;     iCode     Target</span></span>
+<span><span class="co">#&gt; 1     LPI   4.118031</span></span>
+<span><span class="co">#&gt; 2 Flights 200.332655</span></span>
+<span><span class="co">#&gt; 3    Ship  20.113377</span></span>
+<span><span class="co">#&gt; 4    Bord 115.900000</span></span>
+<span><span class="co">#&gt; 5    Elec 104.670585</span></span>
+<span><span class="co">#&gt; 6     Gas  90.060420</span></span></code></pre></div>
+<p>The <a href="https://bluefoxr.github.io/COINr/reference/n_dist2targ.html?q=n_dist#null">documentation</a>
+for the <code><a href="../reference/n_dist2targ.html">n_dist2targ()</a></code> function explains that the required
+<code>iMeta</code> columns for this function are <code>Target</code>,
+and <code>dist2targ_cap_max</code>. This latter parameter (which
+specifies whether to cap values that surpass the target) is included for
+completeness, even though it is unlikely you would want to vary it from
+one indicator to another. Since the Target column is already present, we
+will just add the missing column:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># copy built in data</span></span>
+<span><span class="va">iMeta</span> <span class="op">&lt;-</span> <span class="va">ASEM_iMeta</span></span>
+<span><span class="co"># set cap_max</span></span>
+<span><span class="va">iMeta</span><span class="op">$</span><span class="va">dist2targ_cap_max</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span></span></code></pre></div>
+<p>Now we build the coin and normalise.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># build coin</span></span>
+<span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_coin.html">new_coin</a></span><span class="op">(</span><span class="va">ASEM_iData</span>, <span class="va">iMeta</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># normalise, referencing iMeta columns</span></span>
+<span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Normalise.html">Normalise</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Raw"</span>, global_specs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>f_n <span class="op">=</span> <span class="st">"n_dist2targ"</span>, f_n_para <span class="op">=</span> <span class="st">"use_iMeta"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Written data set to .$Data$Normalised</span></span></code></pre></div>
+<p>Note that the <code>global_specs$f_n_para</code> is set to
+<code>"use_iMeta"</code>, telling the function to use the
+<code>iMeta</code> columns. Let us visualise the result for a selected
+indicator:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_scatter.html">plot_scatter</a></span><span class="op">(</span><span class="va">coin</span>, dsets <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Raw"</span>, <span class="st">"Normalised"</span><span class="op">)</span>, iCodes <span class="op">=</span> <span class="st">"LPI"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="normalise_files/figure-html/unnamed-chunk-13-1.png" width="700"></p>
+<p>This simply shows that (a) the indicator is now scaled between 0 and
+1, and any raw values of LPI above the target of 4.1 are capped at a
+value of 1.</p>
+<p>We now take another example using the “goalposts” approach, also
+known as “distance to frontier”. In this method, each indicator is
+scaled as a distance between an upper and lower bound. The following
+equation is for a positive direction indicator.</p>
+<p><span class="math display">\[ x_n = \frac{x - G_{low}}{G_{high} -
+G_{low}} \]</span></p>
+<p>where <span class="math inline">\(x_n\)</span> is the normalised
+indicator value and <span class="math inline">\(G_{low}\)</span> and
+<span class="math inline">\(G_{high}\)</span> are respectively the lower
+and upper goalpost values. The negative direction formula is
+analogous.</p>
+<p>To use this approach we again need to define the necessary columns in
+<code>iMeta</code>. Referencing again the documentation of the relevant
+function <code><a href="../reference/n_goalposts.html">n_goalposts()</a></code>, we need to add columns
+<code>goalpost_lower</code>, <code>goalpost_upper</code>,
+<code>goalpost_scale</code> and <code>goalpost_trunc2posts</code>, which
+correspond to arguments to the <code><a href="../reference/n_goalposts.html">n_goalposts()</a></code> function.</p>
+<p>For the sake of this example, we just define goalposts as 5% of the
+range from the maximum and minimum of each indicator. We set the scaling
+to 1 and truncation to <code>TRUE</code>.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># get iCodes and raw data</span></span>
+<span><span class="va">iCodes</span> <span class="op">&lt;-</span> <span class="va">iMeta</span><span class="op">$</span><span class="va">iCode</span><span class="op">[</span><span class="va">iMeta</span><span class="op">$</span><span class="va">Type</span> <span class="op">==</span> <span class="st">"Indicator"</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># set general parameters</span></span>
+<span><span class="va">iMeta</span><span class="op">$</span><span class="va">goalpost_scale</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
+<span><span class="va">iMeta</span><span class="op">$</span><span class="va">goalpost_trunc2posts</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span></span>
+<span></span>
+<span><span class="co"># set goalposts for each indicator</span></span>
+<span><span class="kw">for</span><span class="op">(</span><span class="va">iCode</span> <span class="kw">in</span> <span class="va">iCodes</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="va">maxx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">ASEM_iData</span><span class="op">[[</span><span class="va">iCode</span><span class="op">]</span><span class="op">]</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="va">minx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">ASEM_iData</span><span class="op">[[</span><span class="va">iCode</span><span class="op">]</span><span class="op">]</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="va">rx</span> <span class="op">&lt;-</span> <span class="va">maxx</span> <span class="op">-</span> <span class="va">minx</span></span>
+<span>  <span class="co"># fake goalposts in 5% of range</span></span>
+<span>  <span class="va">iMeta</span><span class="op">$</span><span class="va">goalpost_lower</span><span class="op">[</span><span class="va">iMeta</span><span class="op">$</span><span class="va">iCode</span> <span class="op">==</span> <span class="va">iCode</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">minx</span> <span class="op">+</span> <span class="fl">0.05</span><span class="op">*</span><span class="va">rx</span></span>
+<span>  <span class="va">iMeta</span><span class="op">$</span><span class="va">goalpost_upper</span><span class="op">[</span><span class="va">iMeta</span><span class="op">$</span><span class="va">iCode</span> <span class="op">==</span> <span class="va">iCode</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">maxx</span> <span class="op">-</span> <span class="fl">0.05</span><span class="op">*</span><span class="va">rx</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># build coin</span></span>
+<span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_coin.html">new_coin</a></span><span class="op">(</span><span class="va">ASEM_iData</span>, <span class="va">iMeta</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># normalise using minmax</span></span>
+<span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Normalise.html">Normalise</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Raw"</span>, </span>
+<span>                  global_specs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>f_n <span class="op">=</span> <span class="st">"n_goalposts"</span>, f_n_para <span class="op">=</span> <span class="st">"use_iMeta"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Written data set to .$Data$Normalised</span></span></code></pre></div>
+<p>Again, let’s plot an indicator before and after normalisation:</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_scatter.html">plot_scatter</a></span><span class="op">(</span><span class="va">coin</span>, dsets <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Raw"</span>, <span class="st">"Normalised"</span><span class="op">)</span>, iCodes <span class="op">=</span> <span class="st">"Cov4G"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="normalise_files/figure-html/unnamed-chunk-15-1.png" width="700"></p>
+<p>Here we see that goalposts act like distance to target, but also cap
+at both ends.</p>
+<p>For both the distance to target method and the goalposts method,
+<em>directionality is automatically accounted for</em>. That is, if an
+indicator has Direction -1 in <code>iMeta</code>, the distance to target
+function will assume that values higher than the target are worse and
+will give lower scores. , and values below the target will get a full
+score. Similarly, the goalposts function will measure the progress from
+the higher goalpost to the lower one for negative directionality
+indicators. This means that in defining the goalposts in
+<code>iMeta</code>, always assign the goalpost with the higher value to
+“goalpost_upper” - COINr will account for the directionality.</p>
+<p>Importantly, all of the functions mentioned in this section can also
+be used without the special columns in <code>iMeta</code>, either by
+specifying a single set of parameters to apply to all indicators using
+<code>global_specs</code>, OR by providing detailed individual
+specifications via the <code>indiv_specs</code> argument (see the next
+section).</p>
+</div>
+<div class="section level3">
 <h3 id="individual-normalisation">Individual normalisation<a class="anchor" aria-label="anchor" href="#individual-normalisation"></a>
 </h3>
 <p>Finally let’s explore how to specify different normalisation methods
@@ -294,7 +433,7 @@ apply min-max to all indicators except two. For those, we apply a rank
 transformation and distance to maximum approach. Note, that since the
 default of <code>global_specs</code> is min-max, we don’t need to
 specify that at all here.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># individual specifications:</span></span>
 <span><span class="co"># LPI - borda scores</span></span>
 <span><span class="co"># Flights - z-scores with mean 10 and sd 2</span></span>
@@ -330,57 +469,13 @@ strategy, because the indicators are now on very different ranges.</p>
 is a good idea to keep the indicators on similar ranges, otherwise the
 effects will be very unequal in the aggregation step.</p>
 </div>
-<div class="section level3">
-<h3 id="use-of-targets">Use of targets<a class="anchor" aria-label="anchor" href="#use-of-targets"></a>
-</h3>
-<p>A particular type of normalisation is “distance to target”. This
-normalises indicators by the distance of each value to a specified
-target. Targets may often have a political or business meaning, such as
-e.g. emissions targets or sales targets.</p>
-<p>Targets should be input into a coin using the <code>iMeta</code>
-argument when building the coin using <code><a href="../reference/new_coin.html">new_coin()</a></code>. In fact,
-the built-in example data has targets for all indicators:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ASEM_iMeta</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"iCode"</span>, <span class="st">"Target"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     iCode     Target</span></span>
-<span><span class="co">#&gt; 1     LPI   4.118031</span></span>
-<span><span class="co">#&gt; 2 Flights 200.332655</span></span>
-<span><span class="co">#&gt; 3    Ship  20.113377</span></span>
-<span><span class="co">#&gt; 4    Bord 115.900000</span></span>
-<span><span class="co">#&gt; 5    Elec 104.670585</span></span>
-<span><span class="co">#&gt; 6     Gas  90.060420</span></span></code></pre></div>
-<p><em>(Note that these targets are fabricated just for the purposes of
-an example)</em></p>
-<p>To use distance-to-target normalisation, we call the
-<code><a href="../reference/n_dist2targ.html">n_dist2targ()</a></code> function. Like other built in normalisation
-functions, this normalises a vector using a specified target. We can’t
-use the <code>f_n_para</code> entry in <code><a href="../reference/Normalise.html">Normalise()</a></code> here
-because this would only pass a single target value, whereas we need to
-use a different target for each indicator.</p>
-<p>However, COINr has a special case built in so that targets from
-<code>iMeta</code> can be used automatically. Simply set
-<code>global_specs = list(f_n = "n_dist2targ")</code>, and the
-<code><a href="../reference/Normalise.html">Normalise()</a></code> function will automatically retrieve targets
-from <code>iMeta$Target</code>. If targets are not present, this will
-generate an error. Note that the directions of indicators are also
-passed to <code><a href="../reference/n_dist2targ.html">n_dist2targ()</a></code> - see that function documentation
-for how the normalisation is performed depending on the direction
-specified.</p>
-<p>Our normalisation will then look like this:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Normalise.html">Normalise</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Raw"</span>, global_specs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>f_n <span class="op">=</span> <span class="st">"n_dist2targ"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>It is also possible to specify the <code>cap_max</code> parameter of
-<code><a href="../reference/n_dist2targ.html">n_dist2targ()</a></code> as follows:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Normalise.html">Normalise</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Raw"</span>, global_specs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>f_n <span class="op">=</span> <span class="st">"n_dist2targ"</span>, f_n_para <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>cap_max <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-</div>
 </div>
 <div class="section level2">
 <h2 id="data-frames-and-vectors">Data frames and vectors<a class="anchor" aria-label="anchor" href="#data-frames-and-vectors"></a>
 </h2>
 <p>Normalising a data frame is very similar to normalising a coin,
 except the input is a data frame and output is also a data frame.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mtcars_n</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Normalise.html">Normalise</a></span><span class="op">(</span><span class="va">mtcars</span>, global_specs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>f_n <span class="op">=</span> <span class="st">"n_dist2max"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mtcars_n</span><span class="op">)</span></span>
@@ -402,7 +497,7 @@ except the input is a data frame and output is also a data frame.</p>
 specifications using the <code>indiv_spec</code> argument in exactly the
 same way as with a coin. Note that non-numeric columns are always
 ignored:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/Normalise.html">Normalise</a></span><span class="op">(</span><span class="va">iris</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   Sepal.Length Sepal.Width Petal.Length Petal.Width Species</span></span>
@@ -414,7 +509,7 @@ ignored:</p>
 <span><span class="co">#&gt; 6    30.555556    79.16667    11.864407   12.500000  setosa</span></span></code></pre></div>
 <p>There is also a method for numeric vectors, although usually it is
 just as easy to call the underlying normalisation function directly.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># example vector</span></span>
 <span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span>
 <span></span>
@@ -424,16 +519,16 @@ just as easy to call the underlying normalisation function directly.</p>
 <span><span class="co"># view side by side</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">x_norm</span><span class="op">)</span></span>
 <span><span class="co">#&gt;             x    x_norm</span></span>
-<span><span class="co">#&gt; 1  0.83555103 1.1547930</span></span>
-<span><span class="co">#&gt; 2  0.07198523 0.0218143</span></span>
-<span><span class="co">#&gt; 3  0.89290095 1.2398888</span></span>
-<span><span class="co">#&gt; 4  0.47160439 0.6147691</span></span>
-<span><span class="co">#&gt; 5  0.73122899 1.0000000</span></span>
-<span><span class="co">#&gt; 6  0.70887286 0.9668280</span></span>
-<span><span class="co">#&gt; 7  0.92892352 1.2933391</span></span>
-<span><span class="co">#&gt; 8  0.28895386 0.3437523</span></span>
-<span><span class="co">#&gt; 9  0.79483377 1.0943768</span></span>
-<span><span class="co">#&gt; 10 0.05728359 0.0000000</span></span></code></pre></div>
+<span><span class="co">#&gt; 1  0.71086709 3.1053673</span></span>
+<span><span class="co">#&gt; 2  0.02256578 0.0000000</span></span>
+<span><span class="co">#&gt; 3  0.27173999 1.1241842</span></span>
+<span><span class="co">#&gt; 4  0.58569424 2.5406325</span></span>
+<span><span class="co">#&gt; 5  0.24421470 1.0000000</span></span>
+<span><span class="co">#&gt; 6  0.91452194 4.0241845</span></span>
+<span><span class="co">#&gt; 7  0.76635578 3.3557122</span></span>
+<span><span class="co">#&gt; 8  0.23768783 0.9705531</span></span>
+<span><span class="co">#&gt; 9  0.24822019 1.0180713</span></span>
+<span><span class="co">#&gt; 10 0.41562195 1.7733277</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="purses">Purses<a class="anchor" aria-label="anchor" href="#purses"></a>
@@ -466,7 +561,7 @@ regenerating entire purses, but we are not there yet.</li>
 </ol>
 <p>Let’s anyway illustrate with an example. We build the example purse
 first.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">purse</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_example_purse.html">build_example_purse</a></span><span class="op">(</span>quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>Normalising a purse works in exactly the same way as normalising a
 coin, except for the <code>global</code> argument. By default,
@@ -474,7 +569,7 @@ coin, except for the <code>global</code> argument. By default,
 applied over all time points simultaneously, with the aim of making the
 index comparable. Here, we will apply the default min-max approach to
 all coins:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">purse</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Normalise.html">Normalise</a></span><span class="op">(</span><span class="va">purse</span>, dset <span class="op">=</span> <span class="st">"Raw"</span>, global <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Written data set to .$Data$Normalised</span></span>
 <span><span class="co">#&gt; (overwritten existing data set)</span></span>
@@ -488,7 +583,7 @@ all coins:</p>
 <span><span class="co">#&gt; (overwritten existing data set)</span></span></code></pre></div>
 <p>Now let’s examine the data set of the first coin. We’ll see what the
 max and min of a few indicators is:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># get normalised data of first coin in purse</span></span>
 <span><span class="va">x1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_dset.html">get_dset</a></span><span class="op">(</span><span class="va">purse</span><span class="op">$</span><span class="va">coin</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, dset <span class="op">=</span> <span class="st">"Normalised"</span><span class="op">)</span></span>
 <span></span>
@@ -504,7 +599,7 @@ are <em>not</em> 100, because in other coins these indicators have
 higher values. To show that the global maximum is indeed 100, we can
 extract the whole normalised data set for all years and run the same
 check.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># get entire normalised data set for all coins in one df</span></span>
 <span><span class="va">x1_global</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_dset.html">get_dset</a></span><span class="op">(</span><span class="va">purse</span>, dset <span class="op">=</span> <span class="st">"Normalised"</span><span class="op">)</span></span>
 <span></span>
@@ -531,7 +626,7 @@ for all time points. Therefore, consider carefully if this fits the
 intended meaning.</p>
 <p>Normalisation can also be performed independently on each coin, by
 setting <code>global = FALSE</code>.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">purse</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Normalise.html">Normalise</a></span><span class="op">(</span><span class="va">purse</span>, dset <span class="op">=</span> <span class="st">"Raw"</span>, global <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Written data set to .$Data$Normalised</span></span>
 <span><span class="co">#&gt; (overwritten existing data set)</span></span>
@@ -567,53 +662,53 @@ arguments more visible (they are not wrapped in lists). This function
 applies the same normalisation method to all indicators. It is also a
 generic so can be used on data frames, coins and purses. Let’s
 demonstrate on a data frame:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># some made up data</span></span>
 <span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>uCode <span class="op">=</span> <span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span>,</span>
 <span>                a <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>,</span>
 <span>                b <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span><span class="op">*</span><span class="fl">100</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">X</span></span>
-<span><span class="co">#&gt;    uCode          a          b</span></span>
-<span><span class="co">#&gt; 1      a 0.77731289 85.0103087</span></span>
-<span><span class="co">#&gt; 2      b 0.28745448  0.7041915</span></span>
-<span><span class="co">#&gt; 3      c 0.68474416 79.9257272</span></span>
-<span><span class="co">#&gt; 4      d 0.34295952 41.3787157</span></span>
-<span><span class="co">#&gt; 5      e 0.88939801 42.1795177</span></span>
-<span><span class="co">#&gt; 6      f 0.34959834 78.7133155</span></span>
-<span><span class="co">#&gt; 7      g 0.08110026 77.7891308</span></span>
-<span><span class="co">#&gt; 8      h 0.77127958 10.3994108</span></span>
-<span><span class="co">#&gt; 9      i 0.26780337 94.3505959</span></span>
-<span><span class="co">#&gt; 10     j 0.02962130 34.0610011</span></span></code></pre></div>
+<span><span class="co">#&gt;    uCode         a          b</span></span>
+<span><span class="co">#&gt; 1      a 0.7068399 17.2633654</span></span>
+<span><span class="co">#&gt; 2      b 0.5932665 70.7888624</span></span>
+<span><span class="co">#&gt; 3      c 0.9732884 80.2450850</span></span>
+<span><span class="co">#&gt; 4      d 0.4664923 90.8555757</span></span>
+<span><span class="co">#&gt; 5      e 0.4712752 61.5556396</span></span>
+<span><span class="co">#&gt; 6      f 0.4850840 34.4818610</span></span>
+<span><span class="co">#&gt; 7      g 0.3712628  1.0806009</span></span>
+<span><span class="co">#&gt; 8      h 0.6824530  7.8066636</span></span>
+<span><span class="co">#&gt; 9      i 0.8842500 84.7289519</span></span>
+<span><span class="co">#&gt; 10     j 0.2385563  0.4435993</span></span></code></pre></div>
 <p>By default, normalisation results in min-max on the <span class="math inline">\([0, 100]\)</span> interval:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/qNormalise.html">qNormalise</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    uCode         a         b</span></span>
-<span><span class="co">#&gt; 1      a  86.96346  90.02601</span></span>
-<span><span class="co">#&gt; 2      b  29.98839   0.00000</span></span>
-<span><span class="co">#&gt; 3      c  76.19686  84.59645</span></span>
-<span><span class="co">#&gt; 4      d  36.44414  43.43415</span></span>
-<span><span class="co">#&gt; 5      e 100.00000  44.28929</span></span>
-<span><span class="co">#&gt; 6      f  37.21630  83.30178</span></span>
-<span><span class="co">#&gt; 7      g   5.98748  82.31489</span></span>
-<span><span class="co">#&gt; 8      h  86.26173  10.35301</span></span>
-<span><span class="co">#&gt; 9      i  27.70278 100.00000</span></span>
-<span><span class="co">#&gt; 10     j   0.00000  35.61996</span></span></code></pre></div>
+<span><span class="co">#&gt;    uCode         a           b</span></span>
+<span><span class="co">#&gt; 1      a  63.73529  18.6034713</span></span>
+<span><span class="co">#&gt; 2      b  48.27749  77.8052487</span></span>
+<span><span class="co">#&gt; 3      c 100.00000  88.2642862</span></span>
+<span><span class="co">#&gt; 4      d  31.02301 100.0000000</span></span>
+<span><span class="co">#&gt; 5      e  31.67398  67.5928596</span></span>
+<span><span class="co">#&gt; 6      f  33.55341  37.6479566</span></span>
+<span><span class="co">#&gt; 7      g  18.06190   0.7045545</span></span>
+<span><span class="co">#&gt; 8      h  60.41613   8.1439037</span></span>
+<span><span class="co">#&gt; 9      i  87.88150  93.2236590</span></span>
+<span><span class="co">#&gt; 10     j   0.00000   0.0000000</span></span></code></pre></div>
 <p>We can pass another normalisation function if we like, and the syntax
 is a bit easier than <code><a href="../reference/Normalise.html">Normalise()</a></code>:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/qNormalise.html">qNormalise</a></span><span class="op">(</span><span class="va">X</span>, f_n <span class="op">=</span> <span class="st">"n_dist2ref"</span>, f_n_para <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>iref <span class="op">=</span> <span class="fl">1</span>, cap_max <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    uCode          a         b</span></span>
-<span><span class="co">#&gt; 1      a 1.00000000 1.0000000</span></span>
-<span><span class="co">#&gt; 2      b 0.34483894 0.0000000</span></span>
-<span><span class="co">#&gt; 3      c 0.87619396 0.9396891</span></span>
-<span><span class="co">#&gt; 4      d 0.41907415 0.4824623</span></span>
-<span><span class="co">#&gt; 5      e 1.00000000 0.4919611</span></span>
-<span><span class="co">#&gt; 6      f 0.42795324 0.9253080</span></span>
-<span><span class="co">#&gt; 7      g 0.06885052 0.9143457</span></span>
-<span><span class="co">#&gt; 8      h 0.99193074 0.1150002</span></span>
-<span><span class="co">#&gt; 9      i 0.31855657 1.0000000</span></span>
-<span><span class="co">#&gt; 10     j 0.00000000 0.3956630</span></span></code></pre></div>
+<span><span class="co">#&gt;    uCode         a          b</span></span>
+<span><span class="co">#&gt; 1      a 1.0000000 1.00000000</span></span>
+<span><span class="co">#&gt; 2      b 0.7574688 1.00000000</span></span>
+<span><span class="co">#&gt; 3      c 1.0000000 1.00000000</span></span>
+<span><span class="co">#&gt; 4      d 0.4867478 1.00000000</span></span>
+<span><span class="co">#&gt; 5      e 0.4969614 1.00000000</span></span>
+<span><span class="co">#&gt; 6      f 0.5264495 1.00000000</span></span>
+<span><span class="co">#&gt; 7      g 0.2833893 0.03787221</span></span>
+<span><span class="co">#&gt; 8      h 0.9479228 0.43776258</span></span>
+<span><span class="co">#&gt; 9      i 1.0000000 1.00000000</span></span>
+<span><span class="co">#&gt; 10     j 0.0000000 0.00000000</span></span></code></pre></div>
 <p>The <code><a href="../reference/qNormalise.html">qNormalise()</a></code> function works in a similar way for
 coins and purses.</p>
 </div>

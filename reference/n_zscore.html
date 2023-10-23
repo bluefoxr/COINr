@@ -107,15 +107,22 @@
 
 <p>Numeric vector</p>
     </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>This function also supports parameter specification in <code>iMeta</code> for the <code><a href="Normalise.coin.html">Normalise.coin()</a></code> method.
+To do this, add columns <code>zscore_mean</code>, and <code>zscore_sd</code> to the <code>iMeta</code> table, which specify the
+mean and standard deviation to scale each indicator to, respectively. Then set <code>f_n_para = "use_iMeta"</code> within the
+<code>global_specs</code> list. See also examples in the <a href="https://bluefoxr.github.io/COINr/articles/normalise.html">normalisation vignette</a>.</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">n_zscore</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] -0.71528894 -0.36267770  1.24935035 -1.00205795 -0.04833463  0.92720139</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7]  1.29845629  1.65875215 -1.05090987 -0.83855147  0.42469840 -0.06553602</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [13] -0.85233001 -0.80248528 -1.36978425  0.11052067  1.15352241 -1.51367578</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [19]  0.87877544  0.92035478</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  0.64036049 -0.38159445 -0.42493602  0.95744369 -0.07100715  1.56024413</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7]  1.18698061 -0.47583721  0.83766773  0.35357759  1.26002616 -0.16788279</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] -1.92275696  0.78902480 -1.62701141  0.18359300  0.23014442 -1.69837809</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [19] -0.35421387 -0.87544467</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

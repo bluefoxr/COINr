@@ -187,15 +187,26 @@ values assigned to the arguments <code>arg1</code> and <code>arg2</code> respect
 <p>The default list for <code>global_specs</code> is: <code>list(f_n = "n_minmax", f_n_para = list(l_u = c(0,100)))</code>, i.e.
 min-max normalisation between 0 and 100.</p>
 <p>Note, all COINr normalisation functions (passed to <code>f_n</code>) are of the form <code>n_*()</code>. Type <code>n_</code> in the R Studio console and press the Tab key to see a list.</p>
-<p>This function includes a special case for "distance to target" normalisation. Setting <code>global_specs = list(f_n = "n_dist2targ")</code> will apply distance to
-target normalisation, automatically passing targets found in the "Target" column of <code>iMeta</code>.</p>
+</div>
+
+<div class="section">
+<h3 id="individual-parameter-specification-with-imeta">Individual parameter specification with iMeta<a class="anchor" aria-label="anchor" href="#individual-parameter-specification-with-imeta"></a></h3>
+
+
+<p>For some normalisation methods we may use the same function for all indicators but use different parameters - for example, using
+distance to target normalisation or goalpost normalisation. COINr now supports specifying these parameters in the <code>iMeta</code> table.
+To enable this, set <code>f_n_para = "use_iMeta"</code> within the <code>global_specs</code> list.</p>
+<p>For this to work you will also need to add the correct-named columns in the <code>iMeta</code> table. To see which column names to add, check the
+function documentation of the normalisation function you wish to use (e.g. <code><a href="n_goalposts.html">n_goalposts()</a></code>). See also examples in the
+<a href="https://bluefoxr.github.io/COINr/articles/normalise.html">normalisation vignette</a>. These columns should be added before construction of
+the coin.</p>
 </div>
 
 <div class="section">
 <h3 id="individual-column-specification">Individual column specification<a class="anchor" aria-label="anchor" href="#individual-column-specification"></a></h3>
 
 
-<p>Optionally, indicators can be normalised with different normalisation functions and parameters using the
+<p>To give full individual control, indicators can be normalised with different normalisation functions and parameters using the
 <code>indiv_specs</code> argument. This must be specified as a named list e.g. <code>list(i1 = specs1, i2 = specs2)</code> where
 <code>i1</code> and <code>i2</code> are <code>iCode</code>s to apply individual normalisation to, and <code>specs1</code> and <code>specs2</code> are
 respectively lists of the same format as <code>global_specs</code> (see above). In other words, <code>indiv_specs</code> is a big

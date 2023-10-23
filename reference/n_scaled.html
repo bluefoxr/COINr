@@ -113,14 +113,22 @@ This is a linear transformation with shift <code>u</code> and scaling factor <co
 
 <p>Scaled vector</p>
     </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>This function also supports parameter specification in <code>iMeta</code> for the <code><a href="Normalise.coin.html">Normalise.coin()</a></code> method.
+To do this, add columns <code>scaled_lower</code>, and <code>scaled_upper</code> to the <code>iMeta</code> table, which specify the
+first and second elements of <code>npara</code>, respectively. Then set <code>f_n_para = "use_iMeta"</code> within the
+<code>global_specs</code> list. See also examples in the <a href="https://bluefoxr.github.io/COINr/articles/normalise.html">normalisation vignette</a>.</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">n_scaled</span><span class="op">(</span><span class="va">x</span>, npara <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] -2.812936 -5.678007 -5.799516 -1.923987 -4.807270 -0.234024 -1.280476</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [8] -5.942219 -2.259781 -3.616938 -1.075691 -5.078862 -9.998687 -2.396153</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [15] -9.169559 -4.093493 -3.962985 -9.369637 -5.601245 -7.062526</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  -7.822166  -3.966640  -2.253772  -1.934779  -4.014307  -1.806447</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7]  -3.618005  -8.035937  -2.106239  -7.789435  -6.035125  -7.541234</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] -11.029090  -1.003151  -2.566811 -11.043756 -10.322312  -2.220223</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [19]  -3.922382  -6.243021</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
