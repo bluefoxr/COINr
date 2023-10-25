@@ -216,7 +216,14 @@ Normalise.coin <- function(x, dset, global_specs = NULL, indiv_specs = NULL,
   # retrieve parameters from iMeta if necessary using dedicated function
   if(!is.null(global_specs[["f_n"]])){
     if(identical(global_specs[["f_n_para"]], "use_iMeta")){
-      indiv_specs <- get_iMeta_norm_paras(coin, func_name = global_specs[["f_n"]])
+      indiv_specs_iMeta <- get_iMeta_norm_paras(coin, func_name = global_specs[["f_n"]])
+      # join on any individual specs, if they exist
+      if(!is.null(indiv_specs)){
+        stopifnot(all(names(indiv_specs) %in% names(indiv_specs_iMeta)))
+        indiv_specs_iMeta[names(indiv_specs)] <- indiv_specs
+      }
+      indiv_specs <- indiv_specs_iMeta
+      stopifnot(all(names(iData_) %in% names(indiv_specs)))
     }
   }
 
