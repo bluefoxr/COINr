@@ -127,11 +127,10 @@ coin <- Normalise(coin, dset = "Raw", directions = directions)
 
 ## Goalposts, targets and iMeta specification
 
-For some normalisation methods we may use the same basic normalisation function for all indicators but use different parameters for each indicator - for example, using distance to target normalisation or goalpost normalisation. COINr now supports specifying these parameters in the `iMeta` table. This is intended to give an easier interface to these normalisation methods, as opposed to the buildin the full individual specifications list (see the next section on that).
+For some normalisation methods we may use the same basic normalisation function for all indicators but use different parameters for each indicator - for example, using distance to target normalisation or goalpost normalisation. COINr now supports specifying these parameters in the `iMeta` table. This is intended to give an easier interface to these normalisation methods, as opposed to using the full individual specifications list (see the next section on that).
 
 The basic idea is that you specify the parameters as columns in the `iMeta` data frame. COINr currently supports this for a selected subset of inbuilt normalisation functions:
 
-* `n_minmax()`
 * `n_minmax()`
 * `n_scaled()`
 * `n_zscore()`
