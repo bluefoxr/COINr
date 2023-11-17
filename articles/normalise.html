@@ -202,7 +202,35 @@ only contains one parameter.</p>
 in</strong>, all of which are of the form <code>n_*()</code>, such as
 <code><a href="../reference/n_minmax.html">n_minmax()</a></code>, <code><a href="../reference/n_borda.html">n_borda()</a></code>, etc. Type
 <code>n_</code> in the R Studio console and press the Tab key to see a
-list, or else browse the COINr functions alphabetically.</p>
+list, or else browse the COINr functions alphabetically. These are also
+listed explicitly in <a href="#built-in-normalisation-functions">Built-in normalisation
+functions</a>.</p>
+<ul>
+<li>
+<code><a href="../reference/n_borda.html">n_borda()</a></code>: Calculates <a href="https://en.wikipedia.org/wiki/Borda_count" class="external-link">Borda scores</a> scaled
+on<br>
+</li>
+<li>
+<code><a href="../reference/n_dist2max.html">n_dist2max()</a></code>:</li>
+<li>
+<code><a href="../reference/n_dist2ref.html">n_dist2ref()</a></code>:</li>
+<li>
+<code><a href="../reference/n_dist2targ.html">n_dist2targ()</a></code>:</li>
+<li>
+<code><a href="../reference/n_fracmax.html">n_fracmax()</a></code>:</li>
+<li>
+<code><a href="../reference/n_goalposts.html">n_goalposts()</a></code>:</li>
+<li>
+<code><a href="../reference/n_minmax.html">n_minmax()</a></code>:</li>
+<li>
+<code><a href="../reference/n_prank.html">n_prank()</a></code>:</li>
+<li>
+<code><a href="../reference/n_rank.html">n_rank()</a></code>:</li>
+<li>
+<code><a href="../reference/n_scaled.html">n_scaled()</a></code>:</li>
+<li>
+<code><a href="../reference/n_zscore.html">n_zscore()</a></code>:</li>
+</ul>
 <div class="section level3">
 <h3 id="calling-external-functions">Calling external functions<a class="anchor" aria-label="anchor" href="#calling-external-functions"></a>
 </h3>
@@ -516,17 +544,17 @@ just as easy to call the underlying normalisation function directly.</p>
 <span></span>
 <span><span class="co"># view side by side</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">x_norm</span><span class="op">)</span></span>
-<span><span class="co">#&gt;            x     x_norm</span></span>
-<span><span class="co">#&gt; 1  0.5424216 0.48759942</span></span>
-<span><span class="co">#&gt; 2  0.8509060 0.94013580</span></span>
-<span><span class="co">#&gt; 3  0.8069298 0.87562417</span></span>
-<span><span class="co">#&gt; 4  0.2779194 0.09958362</span></span>
-<span><span class="co">#&gt; 5  0.8917142 1.00000000</span></span>
-<span><span class="co">#&gt; 6  0.6767462 0.68464908</span></span>
-<span><span class="co">#&gt; 7  0.7044070 0.72522655</span></span>
-<span><span class="co">#&gt; 8  0.2100354 0.00000000</span></span>
-<span><span class="co">#&gt; 9  0.3735887 0.23992724</span></span>
-<span><span class="co">#&gt; 10 0.7288656 0.76110660</span></span></code></pre></div>
+<span><span class="co">#&gt;            x    x_norm</span></span>
+<span><span class="co">#&gt; 1  0.4920225 0.6148637</span></span>
+<span><span class="co">#&gt; 2  0.8607540 1.5627327</span></span>
+<span><span class="co">#&gt; 3  0.8623109 1.5667348</span></span>
+<span><span class="co">#&gt; 4  0.4409481 0.4835709</span></span>
+<span><span class="co">#&gt; 5  0.6418448 1.0000000</span></span>
+<span><span class="co">#&gt; 6  0.5023257 0.6413494</span></span>
+<span><span class="co">#&gt; 7  0.6087695 0.9149762</span></span>
+<span><span class="co">#&gt; 8  0.8861441 1.6280009</span></span>
+<span><span class="co">#&gt; 9  0.8598574 1.5604278</span></span>
+<span><span class="co">#&gt; 10 0.2528336 0.0000000</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="purses">Purses<a class="anchor" aria-label="anchor" href="#purses"></a>
@@ -667,48 +695,315 @@ demonstrate on a data frame:</p>
 <span>                b <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span><span class="op">*</span><span class="fl">100</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">X</span></span>
-<span><span class="co">#&gt;    uCode           a        b</span></span>
-<span><span class="co">#&gt; 1      a 0.601675422 75.61842</span></span>
-<span><span class="co">#&gt; 2      b 0.756647690 60.56757</span></span>
-<span><span class="co">#&gt; 3      c 0.920676523 83.42908</span></span>
-<span><span class="co">#&gt; 4      d 0.070854609 37.55354</span></span>
-<span><span class="co">#&gt; 5      e 0.472474351 92.81503</span></span>
-<span><span class="co">#&gt; 6      f 0.819326204 45.94501</span></span>
-<span><span class="co">#&gt; 7      g 0.037832452 18.53503</span></span>
-<span><span class="co">#&gt; 8      h 0.867635176 23.79073</span></span>
-<span><span class="co">#&gt; 9      i 0.007973902 85.94753</span></span>
-<span><span class="co">#&gt; 10     j 0.776699123 35.29326</span></span></code></pre></div>
+<span><span class="co">#&gt;    uCode          a         b</span></span>
+<span><span class="co">#&gt; 1      a 0.93864024 13.908270</span></span>
+<span><span class="co">#&gt; 2      b 0.41405619 68.932948</span></span>
+<span><span class="co">#&gt; 3      c 0.74253426 27.750387</span></span>
+<span><span class="co">#&gt; 4      d 0.62606297 91.712525</span></span>
+<span><span class="co">#&gt; 5      e 0.40844932 26.901623</span></span>
+<span><span class="co">#&gt; 6      f 0.01098761 25.112670</span></span>
+<span><span class="co">#&gt; 7      g 0.98914910 66.203203</span></span>
+<span><span class="co">#&gt; 8      h 0.90382940 81.045330</span></span>
+<span><span class="co">#&gt; 9      i 0.56207481  9.700409</span></span>
+<span><span class="co">#&gt; 10     j 0.73615829  2.127873</span></span></code></pre></div>
 <p>By default, normalisation results in min-max on the <span class="math inline">\([0, 100]\)</span> interval:</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/qNormalise.html">qNormalise</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    uCode          a          b</span></span>
-<span><span class="co">#&gt; 1      a  65.048736  76.848942</span></span>
-<span><span class="co">#&gt; 2      b  82.028228  56.586626</span></span>
-<span><span class="co">#&gt; 3      c 100.000000  87.364102</span></span>
-<span><span class="co">#&gt; 4      d   6.889507  25.603813</span></span>
-<span><span class="co">#&gt; 5      e  50.892858 100.000000</span></span>
-<span><span class="co">#&gt; 6      f  88.895581  36.900890</span></span>
-<span><span class="co">#&gt; 7      g   3.271443   0.000000</span></span>
-<span><span class="co">#&gt; 8      h  94.188540   7.075533</span></span>
-<span><span class="co">#&gt; 9      i   0.000000  90.754577</span></span>
-<span><span class="co">#&gt; 10     j  84.225158  22.560890</span></span></code></pre></div>
+<span><span class="co">#&gt;    uCode         a          b</span></span>
+<span><span class="co">#&gt; 1      a  94.83635  13.150017</span></span>
+<span><span class="co">#&gt; 2      b  41.20675  74.572010</span></span>
+<span><span class="co">#&gt; 3      c  74.78792  28.601455</span></span>
+<span><span class="co">#&gt; 4      d  62.88076 100.000000</span></span>
+<span><span class="co">#&gt; 5      e  40.63355  27.654012</span></span>
+<span><span class="co">#&gt; 6      f   0.00000  25.657071</span></span>
+<span><span class="co">#&gt; 7      g 100.00000  71.524897</span></span>
+<span><span class="co">#&gt; 8      h  91.27755  88.092609</span></span>
+<span><span class="co">#&gt; 9      i  56.33908   8.452939</span></span>
+<span><span class="co">#&gt; 10     j  74.13609   0.000000</span></span></code></pre></div>
 <p>We can pass another normalisation function if we like, and the syntax
 is a bit easier than <code><a href="../reference/Normalise.html">Normalise()</a></code>:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/qNormalise.html">qNormalise</a></span><span class="op">(</span><span class="va">X</span>, f_n <span class="op">=</span> <span class="st">"n_dist2ref"</span>, f_n_para <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>iref <span class="op">=</span> <span class="fl">1</span>, cap_max <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    uCode          a          b</span></span>
-<span><span class="co">#&gt; 1      a 1.00000000 1.00000000</span></span>
-<span><span class="co">#&gt; 2      b 1.00000000 0.73633578</span></span>
-<span><span class="co">#&gt; 3      c 1.00000000 1.00000000</span></span>
-<span><span class="co">#&gt; 4      d 0.10591300 0.33317067</span></span>
-<span><span class="co">#&gt; 5      e 0.78238043 1.00000000</span></span>
-<span><span class="co">#&gt; 6      f 1.00000000 0.48017434</span></span>
-<span><span class="co">#&gt; 7      g 0.05029219 0.00000000</span></span>
-<span><span class="co">#&gt; 8      h 1.00000000 0.09207066</span></span>
-<span><span class="co">#&gt; 9      i 0.00000000 1.00000000</span></span>
-<span><span class="co">#&gt; 10     j 1.00000000 0.29357451</span></span></code></pre></div>
+<span><span class="co">#&gt;    uCode         a         b</span></span>
+<span><span class="co">#&gt; 1      a 1.0000000 1.0000000</span></span>
+<span><span class="co">#&gt; 2      b 0.4345038 1.0000000</span></span>
+<span><span class="co">#&gt; 3      c 0.7885998 1.0000000</span></span>
+<span><span class="co">#&gt; 4      d 0.6630449 1.0000000</span></span>
+<span><span class="co">#&gt; 5      e 0.4284596 1.0000000</span></span>
+<span><span class="co">#&gt; 6      f 0.0000000 1.0000000</span></span>
+<span><span class="co">#&gt; 7      g 1.0000000 1.0000000</span></span>
+<span><span class="co">#&gt; 8      h 0.9624743 1.0000000</span></span>
+<span><span class="co">#&gt; 9      i 0.5940663 0.6428083</span></span>
+<span><span class="co">#&gt; 10     j 0.7817265 0.0000000</span></span></code></pre></div>
 <p>The <code><a href="../reference/qNormalise.html">qNormalise()</a></code> function works in a similar way for
 coins and purses.</p>
+</div>
+<div class="section level2">
+<h2 id="built-in-normalisation-functions">Built-in normalisation functions<a class="anchor" aria-label="anchor" href="#built-in-normalisation-functions"></a>
+</h2>
+<p>COINr has a number of normalisation functions built in (that can be
+used with <code><a href="../reference/Normalise.html">Normalise()</a></code> and friends), all of which are of the
+form <code>n_*()</code>, such as <code><a href="../reference/n_minmax.html">n_minmax()</a></code>,
+<code><a href="../reference/n_borda.html">n_borda()</a></code>, etc. Type <code>n_</code> in the R Studio
+console and press the Tab key to see a list. Here these functions are
+also explained in a little more detail. In the following, <span class="math inline">\(x\)</span> is a vector of un-normalised indicator
+values, and <span class="math inline">\(x'\)</span> is the
+corresponding normalised vector, using one of the methods below.</p>
+<div class="section level3">
+<h3 id="linear-methods">Linear methods<a class="anchor" aria-label="anchor" href="#linear-methods"></a>
+</h3>
+<div class="section level4">
+<h4 id="min-max">Min-max<a class="anchor" aria-label="anchor" href="#min-max"></a>
+</h4>
+<p>The <code><a href="../reference/n_minmax.html">n_minmax()</a></code> function implements the min-max method,
+which is probably the most commonly-used normalisation approach in
+composite indicator construction. The indicator is simply rescaled to
+lie on an interval specified by upper and lower bounds <span class="math inline">\(u\)</span> and <span class="math inline">\(l\)</span>:</p>
+<p><span class="math display">\[
+x' = \frac{x - x_{\text{min}} }{ x_{\text{max}} - x_{\text{min}} }
+\times (u - l) + l
+\]</span></p>
+<p>This results in a linear transformation with minimum value <span class="math inline">\(l\)</span> and maximum value <span class="math inline">\(u\)</span>:</p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># example data</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">69</span><span class="op">)</span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span></span>
+<span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="co"># generic plot function to use in the other examples</span></span>
+<span><span class="va">nplot</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">plot_title</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="cn">NULL</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"x"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ylab</a></span><span class="op">(</span><span class="st">"x (normalised)"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="va">plot_title</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># rescale onto [50, 100] interval</span></span>
+<span><span class="va">xdash</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/n_minmax.html">n_minmax</a></span><span class="op">(</span><span class="va">x</span>, l_u <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">100</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu">nplot</span><span class="op">(</span><span class="va">x</span>, <span class="va">xdash</span>, <span class="st">"Min-max onto [50, 100]"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="normalise_files/figure-html/unnamed-chunk-28-1.png" width="700"></p>
+<p>The transformation is analogous for negative-direction
+indicators.</p>
+</div>
+<div class="section level4">
+<h4 id="z-score">Z-score<a class="anchor" aria-label="anchor" href="#z-score"></a>
+</h4>
+<p>The z-score function <code><a href="../reference/n_zscore.html">n_zscore()</a></code> calculates z-scores
+which rescales <span class="math inline">\(x\)</span> to have a
+specified mean <span class="math inline">\(\mu\)</span> and standard
+deviation <span class="math inline">\(\sigma\)</span> (by default 0 and
+1 respectively).</p>
+<p><span class="math display">\[
+x' = \frac{x - \text{mean}(x)}{\text{std}(x)} \times \sigma + \mu
+\]</span></p>
+<p>where <span class="math inline">\(\text{mean}(x)}{\text{std}(x)\)</span> and (x) are
+the sample mean and standard deviation of <span class="math inline">\(x\)</span> respectively.</p>
+<p>For example, specifying to have mean 10 and standard deviation 2:</p>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">nplot</span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="../reference/n_zscore.html">n_zscore</a></span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="normalise_files/figure-html/unnamed-chunk-29-1.png" width="700"></p>
+</div>
+<div class="section level4">
+<h4 id="scaling">Scaling<a class="anchor" aria-label="anchor" href="#scaling"></a>
+</h4>
+<p>The <code><a href="../reference/n_scaled.html">n_scaled()</a></code> function is a generic linear scaling
+function with parameters <span class="math inline">\(u\)</span> and
+<span class="math inline">\(l\)</span> of the form:</p>
+<p><span class="math display">\[
+x' = \frac{x-l}{u-l} \times 100
+\]</span></p>
+<p>Note this is <em>not</em> the min-max transformation and <span class="math inline">\(l\)</span> and <span class="math inline">\(u\)</span> do not generally represent the upper
+and lower bounds. This is a linear transformation with shift
+<code>u</code> and scaling factor <code>u-l</code>. The result looks as
+follows:</p>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">nplot</span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="../reference/n_scaled.html">n_scaled</a></span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">10</span><span class="op">)</span><span class="op">)</span>, <span class="st">"Linear scaling using c(1,10)"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="normalise_files/figure-html/unnamed-chunk-30-1.png" width="700"></p>
+</div>
+<div class="section level4">
+<h4 id="distance-to-maximum">Distance to maximum<a class="anchor" aria-label="anchor" href="#distance-to-maximum"></a>
+</h4>
+<p>Normalises as a measure of the distance to the maximum value, where
+the maximum value is the highest-scoring value. The formula used is:</p>
+<p><span class="math display">\[
+x' = 1 - \frac{x_{max} - x}{x_{max} - x_{min}}
+\]</span></p>
+<p>This means that the closer a value is to the maximum, the higher its
+score will be. Scores will be in the range of 0 to 1.</p>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">nplot</span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="../reference/n_dist2max.html">n_dist2max</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, <span class="st">"Distance to maximum"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="normalise_files/figure-html/unnamed-chunk-31-1.png" width="700"></p>
+</div>
+<div class="section level4">
+<h4 id="fraction-of-maximum">Fraction of maximum<a class="anchor" aria-label="anchor" href="#fraction-of-maximum"></a>
+</h4>
+<p>The <code><a href="../reference/n_fracmax.html">n_fracmax()</a></code> function simply measures each point as a
+fraction of the maximum observed value in <span class="math inline">\(x\)</span>.</p>
+<p><span class="math display">\[
+x' = \frac{x}{x_{max}}
+\]</span></p>
+<p>This looks as follows (not very exciting since <span class="math inline">\(x\)</span> is already on a <span class="math inline">\([0,1]\)</span> scale):</p>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">nplot</span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="../reference/n_fracmax.html">n_fracmax</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, <span class="st">"Fraction of max value"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="normalise_files/figure-html/unnamed-chunk-32-1.png" width="700"></p>
+</div>
+</div>
+<div class="section level3">
+<h3 id="rank-methods">Rank methods<a class="anchor" aria-label="anchor" href="#rank-methods"></a>
+</h3>
+<div class="section level4">
+<h4 id="ranks">Ranks<a class="anchor" aria-label="anchor" href="#ranks"></a>
+</h4>
+<p>The most simple rank-based approach is to directly take the rank.
+This can be done using base R functions, or using the wrapper
+<code><a href="../reference/n_rank.html">n_rank()</a></code>, set for the purposes of normalisation so that
+higher scores will give higher rank values, and sets ties to the minimum
+value by default.</p>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">nplot</span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="../reference/n_rank.html">n_rank</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, <span class="st">"Rank"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="normalise_files/figure-html/unnamed-chunk-33-1.png" width="700"></p>
+</div>
+<div class="section level4">
+<h4 id="borda">Borda<a class="anchor" aria-label="anchor" href="#borda"></a>
+</h4>
+<p>The <code><a href="../reference/n_borda.html">n_borda()</a></code> function calculates <a href="https://en.wikipedia.org/wiki/Borda_count" class="external-link">Borda scores</a>
+as:</p>
+<p><span class="math display">\[
+x' = \text{rank}(x) - 1
+\]</span></p>
+<p>where the rank is calculated by default as
+<code>rank(x, ties.method = "min", na.last = "keep")</code>. Borda
+ranking is a nonlinear transformation and may be useful for
+highly-skewed indicators as an alternative to :</p>
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># normalise</span></span>
+<span><span class="va">xdash</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/n_borda.html">n_borda</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span><span class="fu">nplot</span><span class="op">(</span><span class="va">x</span>, <span class="va">xdash</span>, <span class="st">"Borda"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="normalise_files/figure-html/unnamed-chunk-34-1.png" width="700"></p>
+<p>Caution may be necessary with Borda scores when comparing indicators
+with different numbers of missing values. See the following discussion
+in <a href="#percentile-ranks">Percentile ranks</a>.</p>
+</div>
+<div class="section level4">
+<h4 id="percentile-ranks">Percentile ranks<a class="anchor" aria-label="anchor" href="#percentile-ranks"></a>
+</h4>
+<p>The percentile rank function <code><a href="../reference/n_prank.html">n_prank()</a></code> converts an
+indicator to <a href="https://en.wikipedia.org/wiki/Percentile_rank" class="external-link">percentile
+ranks</a>, which are <em>the percentage of scores in its frequency
+distribution that are less than that score</em>.</p>
+<p>Percentile ranks act like ranks, but have the added nice property
+that they don’t depend on the number of observations. For example: if we
+convert an indicator with 100 observed values using <a href="#borda">Borda</a> scores we will end up with scores in the range
+<span class="math inline">\([0, 99]\)</span>. Another indicator in the
+same data set with only 75 observed values (the rest are
+<code>NA</code>) would on the other hand get scores in the range <span class="math inline">\([0,74]\)</span>! On the other hand, percentile
+ranks always scale onto the <span class="math inline">\([0, 1]\)</span>
+interval.</p>
+<p>An indicator normalised by percentile ranks looks as follows:</p>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">nplot</span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="../reference/n_prank.html">n_prank</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, <span class="st">"Percentile ranks"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="normalise_files/figure-html/unnamed-chunk-35-1.png" width="700"></p>
+</div>
+</div>
+<div class="section level3">
+<h3 id="targets-and-references">Targets and references<a class="anchor" aria-label="anchor" href="#targets-and-references"></a>
+</h3>
+<div class="section level4">
+<h4 id="distance-to-a-reference">Distance to a reference<a class="anchor" aria-label="anchor" href="#distance-to-a-reference"></a>
+</h4>
+<p>The <code><a href="../reference/n_dist2ref.html">n_dist2ref()</a></code> function gives a measure of the
+distance to a specific value <span class="math inline">\(x_{\text{ref}}\)</span> found in <code>x</code>.
+The formula is:</p>
+<p><span class="math display">\[
+x' = 1 - \frac{x_{\text{ref}} - x}{x_{\text{ref}} - x_{min}}
+\]</span></p>
+<p>In composite indicators, this is often used in the context of
+benchmarking scores against the scores of a specific country. The
+function therefore allows you to specify the index of the reference
+value as opposed to the value itself. Values exceeding
+x_ref<code>can be optionally capped at 1 if</code>cap_max = TRUE`.</p>
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">xdash</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/n_dist2ref.html">n_dist2ref</a></span><span class="op">(</span><span class="va">x</span>, iref <span class="op">=</span> <span class="fl">3</span>, cap_max <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu">nplot</span><span class="op">(</span><span class="va">x</span>, <span class="va">xdash</span>, <span class="st">"Distance to reference (no cap)"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="normalise_files/figure-html/unnamed-chunk-36-1.png" width="700"></p>
+<p>With the cap, the result changes:</p>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">xdash</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/n_dist2ref.html">n_dist2ref</a></span><span class="op">(</span><span class="va">x</span>, iref <span class="op">=</span> <span class="fl">3</span>, cap_max <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu">nplot</span><span class="op">(</span><span class="va">x</span>, <span class="va">xdash</span>, <span class="st">"Distance to reference (no cap)"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="normalise_files/figure-html/unnamed-chunk-37-1.png" width="700"></p>
+<p><em>Important note: at the time of writing, <code><a href="../reference/n_dist2ref.html">n_dist2ref()</a></code>
+does not allow for direction adjustment. This will hopefully be included
+in a future update.</em></p>
+</div>
+<div class="section level4">
+<h4 id="distance-to-target">Distance to target<a class="anchor" aria-label="anchor" href="#distance-to-target"></a>
+</h4>
+<p>The <code><a href="../reference/n_dist2targ.html">n_dist2targ()</a></code> function gives the distance of each
+point in <span class="math inline">\(x\)</span> to a specified numerical
+target. This is different from the previous <code><a href="../reference/n_dist2ref.html">n_dist2ref()</a></code> in
+that the target is specified as a fixed value, rather than the index of
+a point in <span class="math inline">\(x\)</span>. Additionally, this
+function allows for adjustment by the direction of the indicator. For
+positive-direction indicators:</p>
+<p><span class="math display">\[
+x' = \frac{x - x_{min}}{x_{targ} - x_{min}}
+\]</span></p>
+<p>else for negative direction indicators:</p>
+<p><span class="math display">\[
+x' = \frac{x_{max} - x}{x_{max} - x_{targ}}
+\]</span></p>
+<p>The function also features the possibility to cap values that exceed
+the target, as <code><a href="../reference/n_dist2ref.html">n_dist2ref()</a></code>. To see how this looks for a
+positive indicator (with cap):</p>
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">xdash</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/n_dist2targ.html">n_dist2targ</a></span><span class="op">(</span><span class="va">x</span>, targ <span class="op">=</span> <span class="fl">0.75</span>, direction <span class="op">=</span> <span class="fl">1</span>, cap_max <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu">nplot</span><span class="op">(</span><span class="va">x</span>, <span class="va">xdash</span>, <span class="st">"Distance to 0.75 target (positive direction: with cap)"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="normalise_files/figure-html/unnamed-chunk-38-1.png" width="700"></p>
+<p>Similarly, with a negative direction and low target:</p>
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">xdash</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/n_dist2targ.html">n_dist2targ</a></span><span class="op">(</span><span class="va">x</span>, targ <span class="op">=</span> <span class="fl">0.2</span>, direction <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>, cap_max <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu">nplot</span><span class="op">(</span><span class="va">x</span>, <span class="va">xdash</span>, <span class="st">"Distance to 0.2 target (negative direction: with cap)"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="normalise_files/figure-html/unnamed-chunk-39-1.png" width="700"></p>
+<p>As explained in <a href="#goalposts-targets-and-imeta-specification">Goalposts, targets and
+iMeta specification</a>, when applying this function to a coin you can
+specify the targets in the <code>iMeta</code> data frame.</p>
+</div>
+<div class="section level4">
+<h4 id="goalposts">Goalposts<a class="anchor" aria-label="anchor" href="#goalposts"></a>
+</h4>
+<p>The goalposts function <code><a href="../reference/n_goalposts.html">n_goalposts()</a></code> normalises as the
+fraction of the distance of each value of <span class="math inline">\(x\)</span> from the lower “goalpost” to the upper
+one (these values are specified as function inputs). The direction of
+the function can be specified to measure positive or negative progress.
+Goalpost normalisation (sometimes known as “distance to frontier”) is
+often used when there is a logical lower and upper bound to the
+indicator.</p>
+<p>For a positive indicator with goalposts <span class="math inline">\(GP_{low}\)</span> and <span class="math inline">\(GP_{high}\)</span>:</p>
+<p><span class="math display">\[
+x' = \frac{x - GP_{low}}{GP_{high} - GP_{low}}
+\]</span></p>
+<p>and for a negative directionality indicator:</p>
+<p><span class="math display">\[
+x' = \frac{x - GP_{high}}{GP_{low} - GP_{high}}
+\]</span></p>
+<p>To see how this looks:</p>
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">xdash</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/n_goalposts.html">n_goalposts</a></span><span class="op">(</span><span class="va">x</span>, gposts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">0.75</span>, <span class="fl">1</span><span class="op">)</span>, direction <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu">nplot</span><span class="op">(</span><span class="va">x</span>, <span class="va">xdash</span>, <span class="st">"Goalposts with positive indicator"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="normalise_files/figure-html/unnamed-chunk-40-1.png" width="700"></p>
+<p>This is effectively a distance to target, but with upper and lower
+“targets”. The effect is analogous if the directionality is
+reversed:</p>
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">xdash</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/n_goalposts.html">n_goalposts</a></span><span class="op">(</span><span class="va">x</span>, gposts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">0.75</span>, <span class="fl">1</span><span class="op">)</span>, direction <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu">nplot</span><span class="op">(</span><span class="va">x</span>, <span class="va">xdash</span>, <span class="st">"Goalposts with negative indicator"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="normalise_files/figure-html/unnamed-chunk-41-1.png" width="700"></p>
+<p>This normalisation function is also supported such that goalposts can
+be directly entered in <code>iMeta</code>. See <a href="#goalposts-targets-and-imeta-specification">Goalposts, targets and
+iMeta specification</a>.</p>
+</div>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
