@@ -461,7 +461,15 @@ Impute.data.frame <- function(x, f_i = NULL, f_i_para = NULL, impute_by = "colum
       f_args <- c(f_args, f_i_para)
     }
 
-    x_imp <- do.call(what = f_i, args = f_args)
+    # impute or give informative error
+    x_imp <- tryCatch(
+      expr = do.call(what = f_i, args = f_args),
+      error = function(e){
+        message("IMPUTATION ERORR: Tried to pass data frame to imputation function '", f_i, "' but received error:")
+        message(as.character(e))
+        stop("Imputation failed due to call to f_i. Please check the function is capable of handling and returning a data frame.", call. = FALSE)
+      }
+    )
 
     # Checks
     if(!is.data.frame(x_imp)){
@@ -606,11 +614,19 @@ Impute.numeric <- function(x, f_i = NULL, f_i_para = NULL, ...){
 
   # call imputation function
   # if "none" or there are no NAs we skip entirely
-  if((f_i == "none") | (length(nas) == 0)){
-    return(x)
-  } else {
-    xi <- do.call(what = f_i, args = f_args)
-  }
+  if((f_i == "none") | (length(nas) == 0)) return(x)
+
+  # impute or give informative error
+  xi <- tryCatch(
+    expr = do.call(what = f_i, args = f_args),
+    error = function(e){
+      message("IMPUTATION ERORR: Tried to pass vector to imputation function '", f_i, "' but received error:")
+      message(as.character(e))
+      stop("Imputation failed due to call to f_i. Please check the function is capable of handling and returning a numeric vector.", call. = FALSE)
+    }
+  )
+
+  #xi <- do.call(what = f_i, args = f_args)
 
   # CHECK and OUTPUT --------------------------------------------------------
 
