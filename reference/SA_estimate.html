@@ -153,10 +153,10 @@ each variable, as well as bootstrapped confidence intervals if <code>!is.null(Nb
 <span class="r-in"><span><span class="co"># Estimate sensitivity indices using sample</span></span></span>
 <span class="r-in"><span><span class="va">SAinds</span> <span class="op">&lt;-</span> <span class="fu">SA_estimate</span><span class="op">(</span><span class="va">y</span>, N <span class="op">=</span> <span class="fl">500</span>, d <span class="op">=</span> <span class="fl">3</span>, Nboot <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">SAinds</span><span class="op">$</span><span class="va">SensInd</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Variable         Si        STi       Si_q5    Si_q95     STi_q5    STi_q95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       V1 0.03831692 0.06443652 -0.03570229 0.1127973 0.05893417 0.07019748</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       V2 0.35618153 0.28387535  0.19433424 0.5195176 0.25963705 0.30991933</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3       V3 0.75135412 0.61483553  0.50373538 0.9950004 0.56266296 0.67904802</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Variable         Si        STi        Si_q5    Si_q95     STi_q5    STi_q95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       V1 0.09067505 0.06789164  0.006764677 0.1694657 0.06170222 0.07415752</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       V2 0.10336500 0.28798188 -0.043481464 0.2779260 0.26375087 0.31219224</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       V3 0.63592955 0.65536484  0.394062162 0.8585579 0.59591127 0.71800073</span>
 <span class="r-in"><span><span class="co"># Notice that total order indices have narrower confidence intervals than first order.</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
