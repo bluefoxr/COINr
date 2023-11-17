@@ -74,7 +74,19 @@ Again, the z-score transformation is linear. It simply puts the resulting indica
 
 Notice the syntax of `global_specs`. If specified, it takes entries `f_n` (the name of the function to apply to each column) and `f_n_para` (any further arguments to `f_n`, not including `x`). Importantly, `f_n_para` *must* be specified as a list, even if it only contains one parameter.
 
-Note that **COINr has a number of normalisation functions built in**, all of which are of the form `n_*()`, such as `n_minmax()`, `n_borda()`, etc. Type `n_` in the R Studio console and press the Tab key to see a list, or else browse the COINr functions alphabetically.
+Note that **COINr has a number of normalisation functions built in**, all of which are of the form `n_*()`, such as `n_minmax()`, `n_borda()`, etc. Type `n_` in the R Studio console and press the Tab key to see a list, or else browse the COINr functions alphabetically. These are also listed explicitly in [Built-in normalisation functions].
+
+* `n_borda()`: Calculates [Borda scores](https://en.wikipedia.org/wiki/Borda_count) scaled on  
+* `n_dist2max()`: 
+* `n_dist2ref()`: 
+* `n_dist2targ()`: 
+* `n_fracmax()`: 
+* `n_goalposts()`: 
+* `n_minmax()`: 
+* `n_prank()`: 
+* `n_rank()`: 
+* `n_scaled()`: 
+* `n_zscore()`: 
 
 ## Calling external functions
 
@@ -376,3 +388,231 @@ qNormalise(X, f_n = "n_dist2ref", f_n_para = list(iref = 1, cap_max = TRUE))
 ```
 
 The `qNormalise()` function works in a similar way for coins and purses.
+
+# Built-in normalisation functions
+
+COINr has a number of normalisation functions built in (that can be used with `Normalise()` and friends), all of which are of the form `n_*()`, such as `n_minmax()`, `n_borda()`, etc. Type `n_` in the R Studio console and press the Tab key to see a list. Here these functions are also explained in a little more detail. In the following, $x$ is a vector of un-normalised indicator values, and $x'$ is the corresponding normalised vector, using one of the methods below.
+
+## Linear methods
+
+### Min-max
+
+The `n_minmax()` function implements the min-max method, which is probably the most commonly-used normalisation approach in composite indicator construction. The indicator is simply rescaled to lie on an interval specified by upper and lower bounds $u$ and $l$:
+
+$$
+x' = \frac{x - x_{\text{min}} }{ x_{\text{max}} - x_{\text{min}} } \times (u - l) + l
+$$
+
+This results in a linear transformation with minimum value $l$ and maximum value $u$:
+
+```{r}
+# example data
+set.seed(69)
+x <- runif(20)
+
+library(ggplot2)
+# generic plot function to use in the other examples
+nplot <- function(x, y, plot_title = NULL){
+  ggplot(data = NULL, aes(x = x, y = y)) +
+    geom_point() +
+    xlab("x") +
+    ylab("x (normalised)") +
+    ggtitle(plot_title)
+}
+
+# rescale onto [50, 100] interval
+xdash <- n_minmax(x, l_u = c(50, 100))
+nplot(x, xdash, "Min-max onto [50, 100]")
+```
+
+The transformation is analogous for negative-direction indicators.
+
+### Z-score
+
+The z-score function `n_zscore()` calculates z-scores which rescales $x$ to have a specified mean $\mu$ and standard deviation $\sigma$ (by default 0 and 1 respectively).
+
+$$
+x' = \frac{x - \text{mean}(x)}{\text{std}(x)} \times \sigma + \mu
+$$
+
+where $\text{mean}(x)}{\text{std}(x)$ and \text{std}(x) are the sample mean and standard deviation of $x$ respectively.
+
+For example, specifying to have mean 10 and standard deviation 2:
+
+```{r}
+nplot(x, n_zscore(x, c(10, 2)))
+```
+
+### Scaling
+
+The `n_scaled()` function is a generic linear scaling function with parameters $u$ and $l$ of the form:
+
+$$
+x' = \frac{x-l}{u-l} \times 100 
+$$
+
+Note this is *not* the min-max transformation and $l$ and $u$ do not generally represent the upper and lower bounds.  This is a linear transformation with shift `u` and scaling factor `u-l`. The result looks as follows:
+
+```{r}
+nplot(x, n_scaled(x, c(1,10)), "Linear scaling using c(1,10)")
+```
+
+### Distance to maximum
+
+Normalises as a measure of the distance to the maximum value, where the maximum value is the highest-scoring value. The formula used is:
+
+$$
+x' = 1 - \frac{x_{max} - x}{x_{max} - x_{min}}
+$$
+
+This means that the closer a value is to the maximum, the higher its score will be. Scores will be in the range of 0 to 1.
+
+```{r}
+nplot(x, n_dist2max(x), "Distance to maximum")
+```
+
+### Fraction of maximum
+
+The `n_fracmax()` function simply measures each point as a fraction of the maximum observed value in $x$.
+
+$$
+x' = \frac{x}{x_{max}}
+$$
+
+This looks as follows (not very exciting since $x$ is already on a $[0,1]$ scale):
+
+```{r}
+nplot(x, n_fracmax(x), "Fraction of max value")
+```
+
+## Rank methods
+
+### Ranks
+
+The most simple rank-based approach is to directly take the rank. This can be done using base R functions, or using the wrapper `n_rank()`, set for the purposes of normalisation so that higher scores will give higher rank values, and sets ties to the minimum value by default.
+
+```{r}
+nplot(x, n_rank(x), "Rank")
+```
+
+
+### Borda
+
+The  `n_borda()` function calculates [Borda scores](https://en.wikipedia.org/wiki/Borda_count) as:
+
+$$
+x' = \text{rank}(x) - 1
+$$
+
+where the rank is calculated by default as `rank(x, ties.method = "min", na.last = "keep")`. Borda ranking is a nonlinear transformation and may be useful for highly-skewed indicators as an alternative to :
+
+```{r}
+# normalise
+xdash <- n_borda(x)
+nplot(x, xdash, "Borda")
+```
+
+Caution may be necessary with Borda scores when comparing indicators with different numbers of missing values. See the following discussion in [Percentile ranks].
+
+### Percentile ranks
+
+The percentile rank function `n_prank()` converts an indicator to [percentile ranks](https://en.wikipedia.org/wiki/Percentile_rank), which are *the percentage of scores in its frequency distribution that are less than that score*. 
+
+Percentile ranks act like ranks, but have the added nice property that they don't depend on the number of observations. For example: if we convert an indicator with 100 observed values using [Borda] scores we will end up with scores in the range $[0, 99]$. Another indicator in the same data set with only 75 observed values (the rest are `NA`) would on the other hand get scores in the range $[0,74]$! On the other hand, percentile ranks always scale onto the $[0, 1]$ interval.
+
+An indicator normalised by percentile ranks looks as follows:
+
+```{r}
+nplot(x, n_prank(x), "Percentile ranks")
+```
+
+## Targets and references
+
+
+### Distance to a reference
+
+The `n_dist2ref()` function gives a measure of the distance to a specific value $x_{\text{ref}}$ found in `x`. The formula is:
+
+$$
+x' = 1 - \frac{x_{\text{ref}} - x}{x_{\text{ref}} - x_{min}}
+$$
+
+In composite indicators, this is often used in the context of benchmarking scores against the scores of a specific country. The function therefore allows you to specify the index of the reference value as opposed to the value itself. Values exceeding x_ref` can be optionally capped at 1 if `cap_max = TRUE`.
+
+```{r}
+xdash <- n_dist2ref(x, iref = 3, cap_max = FALSE)
+nplot(x, xdash, "Distance to reference (no cap)")
+```
+
+With the cap, the result changes:
+
+```{r}
+xdash <- n_dist2ref(x, iref = 3, cap_max = TRUE)
+nplot(x, xdash, "Distance to reference (no cap)")
+```
+
+*Important note: at the time of writing, `n_dist2ref()` does not allow for direction adjustment. This will hopefully be included in a future update.*
+
+### Distance to target
+
+The `n_dist2targ()` function gives the distance of each point in $x$ to a specified numerical target. This is different from the previous `n_dist2ref()` in that the target is specified as a fixed value, rather than the index of a point in $x$. Additionally, this function allows for adjustment by the direction of the indicator. For positive-direction indicators:
+
+$$
+x' = \frac{x - x_{min}}{x_{targ} - x_{min}}
+$$
+
+else for negative direction indicators:
+
+$$
+x' = \frac{x_{max} - x}{x_{max} - x_{targ}}
+$$
+
+The function also features the possibility to cap values that exceed the target, as `n_dist2ref()`. To see how this looks for a positive indicator (with cap):
+
+```{r}
+xdash <- n_dist2targ(x, targ = 0.75, direction = 1, cap_max = TRUE)
+nplot(x, xdash, "Distance to 0.75 target (positive direction: with cap)")
+```
+
+Similarly, with a negative direction and low target:
+
+```{r}
+xdash <- n_dist2targ(x, targ = 0.2, direction = -1, cap_max = TRUE)
+nplot(x, xdash, "Distance to 0.2 target (negative direction: with cap)")
+```
+
+As explained in [Goalposts, targets and iMeta specification], when applying this function to a coin you can specify the targets in the `iMeta` data frame.
+
+
+
+### Goalposts
+
+The goalposts function `n_goalposts()` normalises as the fraction of the distance of each value of $x$ from the lower "goalpost" to the upper one (these values are specified as function inputs). The direction of the function can be specified to measure positive or negative progress. Goalpost normalisation (sometimes known as "distance to frontier") is often used when there is a logical lower and upper bound to the indicator.
+
+For a positive indicator with goalposts $GP_{low}$ and $GP_{high}$:
+
+$$
+x' = \frac{x - GP_{low}}{GP_{high} - GP_{low}}
+$$
+
+and for a negative directionality indicator:
+
+$$
+x' = \frac{x - GP_{high}}{GP_{low} - GP_{high}}
+$$
+
+To see how this looks:
+
+```{r}
+xdash <- n_goalposts(x, gposts = c(0.2, 0.75, 1), direction = 1)
+nplot(x, xdash, "Goalposts with positive indicator")
+```
+
+This is effectively a distance to target, but with upper and lower "targets". The effect is analogous if the directionality is reversed:
+
+```{r}
+xdash <- n_goalposts(x, gposts = c(0.2, 0.75, 1), direction = -1)
+nplot(x, xdash, "Goalposts with negative indicator")
+```
+
+This normalisation function is also supported such that goalposts can be directly entered in `iMeta`. See [Goalposts, targets and iMeta specification].

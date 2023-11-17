@@ -807,7 +807,7 @@ n_prank <- function(x, ties.method = "min"){
   stopifnot(is.numeric(x))
 
   # ranks
-  rx <- rank(x, ties.method = "min", na.last = "keep")
+  rx <- rank(x, ties.method = ties.method, na.last = "keep")
   # perc ranks
   (rx - 1) / (sum(!is.na(x)) - 1)
 
@@ -833,7 +833,7 @@ n_rank <- function(x, ties.method = "min"){
   stopifnot(is.numeric(x))
 
   # ranks
-  rank(x, ties.method = "min", na.last = "keep")
+  rank(x, ties.method = ties.method, na.last = "keep")
 
 }
 
@@ -856,7 +856,7 @@ n_borda <- function(x, ties.method = "min"){
   stopifnot(is.numeric(x))
 
   # ranks
-  rank(x, ties.method = "min", na.last = "keep") - 1
+  rank(x, ties.method = ties.method, na.last = "keep") - 1
 
 }
 
