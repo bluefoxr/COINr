@@ -120,6 +120,7 @@ details. See also <code><a href="Impute.coin.html">Impute.coin()</a></code> docu
 <span>  use_group <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  normalise_first <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  write_to <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  warn_on_NAs <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -170,6 +171,11 @@ imputation. By default this is <code>FALSE</code> unless <code>impute_by = "row"
 <dt>write_to</dt>
 <dd><p>Optional character string for naming the resulting data set in each coin. Data will be written to
 <code>.$Data[[write_to]]</code>. Default is <code>write_to == "Imputed"</code>.</p></dd>
+
+
+<dt>warn_on_NAs</dt>
+<dd><p>Logical: if <code>TRUE</code> will issue a warning if there are any <code>NA</code>s detected in the data frame
+after imputation has been applied. Set <code>FALSE</code> to suppress these warnings.</p></dd>
 
 
 <dt>...</dt>

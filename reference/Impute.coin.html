@@ -110,6 +110,7 @@ data frame to <code>f_i</code> if <code>impute_by = "df"</code>.</p>
 <span>  out2 <span class="op">=</span> <span class="st">"coin"</span>,</span>
 <span>  write_to <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  disable <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  warn_on_NAs <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -169,6 +170,11 @@ frame.</p></dd>
 <dt>disable</dt>
 <dd><p>Logical: if <code>TRUE</code> will disable imputation completely and write the unaltered data set. This option is mainly useful
 in sensitivity and uncertainty analysis (to test the effect of turning imputation on/off).</p></dd>
+
+
+<dt>warn_on_NAs</dt>
+<dd><p>Logical: if <code>TRUE</code> will issue a warning if there are any <code>NA</code>s detected in the data frame
+after imputation has been applied. Set <code>FALSE</code> to suppress these warnings.</p></dd>
 
 
 <dt>...</dt>
