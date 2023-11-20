@@ -11,6 +11,7 @@
   impute_by = "column",
   normalise_first = NULL,
   directions = NULL,
+  warn_on_NAs = TRUE,
   ...
 )
 }
@@ -31,6 +32,9 @@ imputation. By default this is \code{FALSE} unless \code{impute_by = "row"}. See
 
 \item{directions}{A vector of directions: either -1 or 1 to indicate the direction of each column
 of \code{x} - this is only used if \code{normalise_first = TRUE}. See details.}
+
+\item{warn_on_NAs}{Logical: if \code{TRUE} will issue a warning if there are any \code{NA}s detected in the data frame
+after imputation has been applied. Set \code{FALSE} to suppress these warnings.}
 
 \item{...}{arguments passed to or from other methods.}
 }

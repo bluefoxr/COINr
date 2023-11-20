@@ -16,6 +16,7 @@
   out2 = "coin",
   write_to = NULL,
   disable = FALSE,
+  warn_on_NAs = TRUE,
   ...
 )
 }
@@ -52,6 +53,9 @@ frame.}
 
 \item{disable}{Logical: if \code{TRUE} will disable imputation completely and write the unaltered data set. This option is mainly useful
 in sensitivity and uncertainty analysis (to test the effect of turning imputation on/off).}
+
+\item{warn_on_NAs}{Logical: if \code{TRUE} will issue a warning if there are any \code{NA}s detected in the data frame
+after imputation has been applied. Set \code{FALSE} to suppress these warnings.}
 
 \item{...}{arguments passed to or from other methods.}
 }

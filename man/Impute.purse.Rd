@@ -14,6 +14,7 @@
   use_group = NULL,
   normalise_first = NULL,
   write_to = NULL,
+  warn_on_NAs = TRUE,
   ...
 )
 }
@@ -45,6 +46,9 @@ imputation. By default this is \code{FALSE} unless \code{impute_by = "row"}. See
 
 \item{write_to}{Optional character string for naming the resulting data set in each coin. Data will be written to
 \code{.$Data[[write_to]]}. Default is \code{write_to == "Imputed"}.}
+
+\item{warn_on_NAs}{Logical: if \code{TRUE} will issue a warning if there are any \code{NA}s detected in the data frame
+after imputation has been applied. Set \code{FALSE} to suppress these warnings.}
 
 \item{...}{arguments passed to or from other methods.}
 }
