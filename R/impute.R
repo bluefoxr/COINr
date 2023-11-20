@@ -30,6 +30,8 @@
 #' imputation. By default this is `FALSE` unless `impute_by = "row"`. See details.
 #' @param write_to Optional character string for naming the resulting data set in each coin. Data will be written to
 #' `.$Data[[write_to]]`. Default is `write_to == "Imputed"`.
+#' @param warn_on_NAs Logical: if `TRUE` will issue a warning if there are any `NA`s detected in the data frame
+#' after imputation has been applied. Set `FALSE` to suppress these warnings.
 #' @param ... arguments passed to or from other methods.
 #'
 #' @return An updated purse with imputed data sets added to each coin.
@@ -39,7 +41,7 @@
 #' # see vignette("imputation")
 Impute.purse <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "column",
                          group_level = NULL, use_group = NULL, normalise_first = NULL,
-                         write_to = NULL, ...){
+                         write_to = NULL, warn_on_NAs = TRUE, ...){
 
   # input check
   check_purse(x)
@@ -90,12 +92,12 @@ Impute.purse <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "colu
 
     } else {
 
-      # apply unit screening to each coin
+      # apply imputation to each coin
       x$coin <- lapply(x$coin, function(coin){
         Impute.coin(coin, dset = dset, f_i = f_i, f_i_para = f_i_para, impute_by = impute_by,
                     group_level = group_level, use_group = use_group,
                     normalise_first = normalise_first, out2 = "coin",
-                    write_to = write_to)})
+                    write_to = write_to, warn_on_NAs = warn_on_NAs)})
 
     }
 
@@ -176,6 +178,8 @@ Impute.purse <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "colu
 #' `.$Data[[write_to]]`. Default is `write_to == "Imputed"`.
 #' @param disable Logical: if `TRUE` will disable imputation completely and write the unaltered data set. This option is mainly useful
 #' in sensitivity and uncertainty analysis (to test the effect of turning imputation on/off).
+#' @param warn_on_NAs Logical: if `TRUE` will issue a warning if there are any `NA`s detected in the data frame
+#' after imputation has been applied. Set `FALSE` to suppress these warnings.
 #' @param ... arguments passed to or from other methods.
 #'
 #' @return An updated coin with imputed data set at `.$Data[[write_to]]`
@@ -192,7 +196,7 @@ Impute.purse <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "colu
 #'
 Impute.coin <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "column",
                         use_group = NULL, group_level = NULL, normalise_first = NULL, out2 = "coin",
-                        write_to = NULL, disable = FALSE, ...){
+                        write_to = NULL, disable = FALSE, warn_on_NAs = TRUE, ...){
 
   # WRITE LOG ---------------------------------------------------------------
 
@@ -252,7 +256,7 @@ Impute.coin <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "colum
     iData_i <- Impute.data.frame(iData_, f_i = f_i, f_i_para = f_i_para,
                                   impute_by = impute_by,
                                   normalise_first = normalise_first,
-                                  directions = directions)
+                                  directions = directions, warn_on_NAs = warn_on_NAs)
 
   } else {
 
@@ -275,7 +279,7 @@ Impute.coin <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "colum
       directions <- directions$Direction[match(colnames(dfi), directions$iCode)]
       Impute.data.frame(dfi, f_i = f_i, f_i_para = f_i_para,
                          impute_by = impute_by, normalise_first = normalise_first,
-                         directions = directions)
+                         directions = directions, warn_on_NAs = warn_on_NAs)
     })
 
     # reassemble
@@ -358,6 +362,8 @@ Impute.coin <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "colum
 #' imputation. By default this is `FALSE` unless `impute_by = "row"`. See details.
 #' @param directions A vector of directions: either -1 or 1 to indicate the direction of each column
 #' of `x` - this is only used if `normalise_first = TRUE`. See details.
+#' @param warn_on_NAs Logical: if `TRUE` will issue a warning if there are any `NA`s detected in the data frame
+#' after imputation has been applied. Set `FALSE` to suppress these warnings.
 #' @param ... arguments passed to or from other methods.
 #'
 #' @return An imputed data frame
@@ -381,7 +387,7 @@ Impute.coin <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "colum
 #'
 #'
 Impute.data.frame <- function(x, f_i = NULL, f_i_para = NULL, impute_by = "column",
-                               normalise_first = NULL, directions = NULL, ...){
+                               normalise_first = NULL, directions = NULL, warn_on_NAs = TRUE, ...){
 
   # CHECKS ------------------------------------------------------------------
 
@@ -541,6 +547,10 @@ Impute.data.frame <- function(x, f_i = NULL, f_i_para = NULL, impute_by = "colum
   # replace non-NA values with original values to avoid any numerical precision issues
   x_imp[!x_NAs] <- x[!x_NAs]
 
+  if(warn_on_NAs){
+    check_remaining_NAs(x_imp)
+  }
+
   x_imp
 
 }
@@ -637,7 +647,7 @@ Impute.numeric <- function(x, f_i = NULL, f_i_para = NULL, ...){
     stop("imputed vector is not numeric")
   }
   if(!identical(xi[!nas], x[!nas])){
-    stop("One or more non-NA values of x has changed as a result of imputation. Check the behaviour of the imputation function.")
+    stop("One or more non-NA values of x has changed as a result of imputation. Check the behaviour of the imputation function.", call. = FALSE)
   }
 
   xi
@@ -989,4 +999,14 @@ impute_panel <- function(iData, time_col = NULL, unit_col = NULL, cols = NULL, m
   list(iData_imp = iData_imp_full,
        DataT = DataT)
 
+}
+
+# Helper to send warning if any NAs still present - to be used at the end of
+# imputation functions.
+# x_imp can be a vector or a data frame.
+check_remaining_NAs <- function(x_imp){
+  remaining_NAs <- sum(is.na(x_imp))
+  if(remaining_NAs > 0){
+    warning("After imputation there are still ", remaining_NAs, " NAs (missing values) present.", call. = FALSE)
+  }
 }
