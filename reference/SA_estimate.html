@@ -153,10 +153,10 @@ each variable, as well as bootstrapped confidence intervals if <code>!is.null(Nb
 <span class="r-in"><span><span class="co"># Estimate sensitivity indices using sample</span></span></span>
 <span class="r-in"><span><span class="va">SAinds</span> <span class="op">&lt;-</span> <span class="fu">SA_estimate</span><span class="op">(</span><span class="va">y</span>, N <span class="op">=</span> <span class="fl">500</span>, d <span class="op">=</span> <span class="fl">3</span>, Nboot <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">SAinds</span><span class="op">$</span><span class="va">SensInd</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Variable         Si        STi       Si_q5    Si_q95     STi_q5    STi_q95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       V1 0.01276424 0.07067053 -0.07476063 0.0919599 0.06420087 0.07712896</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       V2 0.35983148 0.30193939  0.18440316 0.5404320 0.27632901 0.32812886</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3       V3 1.03643057 0.63665455  0.77372566 1.3194453 0.57869514 0.69548408</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Variable        Si       STi       Si_q5     Si_q95     STi_q5    STi_q95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       V1 0.0106536 0.0674838 -0.07161443 0.08871654 0.06177895 0.07326728</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       V2 0.2529015 0.2799351  0.09443753 0.42096636 0.25711694 0.30588581</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       V3 0.9482312 0.6650140  0.70520637 1.20044611 0.61478246 0.71972930</span>
 <span class="r-in"><span><span class="co"># Notice that total order indices have narrower confidence intervals than first order.</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
