@@ -304,3 +304,16 @@ df_int_2_numeric <- function(X){
   X
 
 }
+
+# function that imputes using mean, but then adds an NA - used in imputation testing
+NA_imputer <- function(x){
+
+  NA_location <- which(is.na(x))
+  x_imp <- i_mean(x)
+
+  if(length(NA_location) > 0){
+    insert_NA_at <- NA_location[1]
+    x_imp[insert_NA_at] <- NA
+  }
+  x_imp
+}

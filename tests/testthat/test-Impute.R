@@ -176,19 +176,6 @@ test_that("group_mean", {
 
 test_that("Warning when NAs found after imputation", {
 
-  # function that imputes using mean, but then adds an NA
-  NA_imputer <- function(x){
-
-    NA_location <- which(is.na(x))
-    x_imp <- i_mean(x)
-
-    if(length(NA_location) > 0){
-      insert_NA_at <- NA_location[1]
-      x_imp[insert_NA_at] <- NA
-    }
-    x_imp
-  }
-
   # build coin
   coin <- build_example_coin(up_to = "new_coin")
 
