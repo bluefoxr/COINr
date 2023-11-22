@@ -1,3 +1,7 @@
+# COINr 1.1.9
+
+- Fixed results tables which rounded before converting to ranks, resulting in precision errors
+
 # COINr 1.1.8
 
 - Added possibility to set normalisation parameters in `iMeta`, added more explanation and examples in the normalisation vignette.

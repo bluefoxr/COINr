@@ -129,9 +129,6 @@ get_results <- function(coin, dset, tab_type = "Summ", also_get = NULL, use = "s
   # Sorting
   tabout <- tabout[order(-tabout[[sortcode]]),]
 
-  # Rounding
-  tabout <- round_df(tabout, nround)
-
   # Ranks
   if(use == "ranks"){
     tabout <- tabout[colnames(tabout) != "Rank"]
@@ -144,6 +141,9 @@ get_results <- function(coin, dset, tab_type = "Summ", also_get = NULL, use = "s
     tabout <- rank_df(tabout, use_group = use_group)
     # sort by group
     tabout <- tabout[order(tabout[[use_group]]),]
+  } else {
+    # Rounding only if using scores (avoid rounding errors on ranks)
+    tabout <- round_df(tabout, nround)
   }
 
   # FINISH AND OUTPUT -------------------------------------------------
