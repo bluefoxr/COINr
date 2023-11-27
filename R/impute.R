@@ -135,6 +135,9 @@ Impute.purse <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "colu
 #' it except for `NA` values, which can be replaced. The function `f_i` is not required to replace *all* `NA`
 #' values.
 #'
+#' COINr has several built-in imputation functions of the form `i_*()` for vectors which can be called by [Impute()]. See the
+#' [online documentation](https://bluefoxr.github.io/COINr/articles/imputation.html#data-frames) for more details.
+#'
 #' When imputing row-wise, prior normalisation of the data is recommended. This is because imputation
 #' will use e.g. the mean of the unit values over all indicators (columns). If the indicators are on
 #' very different scales, the result will likely make no sense. If the indicators are normalised first,
@@ -331,6 +334,9 @@ Impute.coin <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "colum
 #' frame. Moreover, this function should return a vector or data frame identical to the vector/data frame passed to
 #' it except for `NA` values, which can be replaced. The function `f_i` is not required to replace *all* `NA`
 #' values.
+#'
+#' COINr has several built-in imputation functions of the form `i_*()` for vectors which can be called by [Impute()]. See the
+#' [online documentation](https://bluefoxr.github.io/COINr/articles/imputation.html#data-frames) for more details.
 #'
 #' When imputing row-wise, prior normalisation of the data is recommended. This is because imputation
 #' will use e.g. the mean of the unit values over all indicators (columns). If the indicators are on
@@ -565,6 +571,9 @@ Impute.data.frame <- function(x, f_i = NULL, f_i_para = NULL, impute_by = "colum
 #' This calls the function `f_i()`, with optionally further arguments `f_i_para`, to impute any missing
 #' values found in `x`. By default, `f_i = "i_mean()"`, which simply imputes `NA`s with the mean of the
 #' non-`NA` values in `x`.
+#'
+#' COINr has several built-in imputation functions of the form `i_*()` for vectors which can be called by [Impute()]. See the
+#' [online documentation](https://bluefoxr.github.io/COINr/articles/imputation.html#data-frames) for more details.
 #'
 #' You could also use one of the imputation functions directly (such as [i_mean()]). However, this
 #' function offers a few extra advantages, such as checking the input and output formats, and making

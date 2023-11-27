@@ -109,7 +109,8 @@ Normalise.purse <- function(x, dset, global_specs = NULL, indiv_specs = NULL,
 #' normalised with individual specifications using the `indiv_specs` argument. If indicators should have their
 #' directions reversed, this can be specified using the `directions` argument. Non-numeric columns are ignored
 #' automatically by this function. By default, this function normalises each indicator using the "min-max" method, scaling indicators to lie between
-#' 0 and 100. This calls the [n_minmax()] function. Note, all COINr normalisation functions are of the form `n_*()`.
+#' 0 and 100. This calls the [n_minmax()] function. COINr has a number of built-in normalisation functions of the form `n_*()`. See [online documentation](https://bluefoxr.github.io/COINr/articles/normalise.html#built-in-normalisation-functions)
+#' for details.
 #'
 #' ## Global specification
 #'
@@ -251,7 +252,8 @@ Normalise.coin <- function(x, dset, global_specs = NULL, indiv_specs = NULL,
 #' normalised with individual specifications using the `indiv_specs` argument. If variables should have their
 #' directions reversed, this can be specified using the `directions` argument. Non-numeric columns are ignored
 #' automatically by this function. By default, this function normalises each indicator using the "min-max" method, scaling indicators to lie between
-#' 0 and 100. This calls the [n_minmax()] function. Note, all COINr normalisation functions are of the form `n_*()`.
+#' 0 and 100. This calls the [n_minmax()] function. COINr has a number of built-in normalisation functions of the form `n_*()`. See [online documentation](https://bluefoxr.github.io/COINr/articles/normalise.html#built-in-normalisation-functions)
+#' for details.
 #'
 #' ## Global specification
 #'
@@ -400,6 +402,9 @@ Normalise.data.frame <- function(x, global_specs = NULL, indiv_specs = NULL,
 #' further arguments to `f_n`. This means that any function can be passed to [Normalise()], as long as its
 #' first argument is `x`, a numeric vector, and it returns a numeric vector of the same length. See [n_minmax()]
 #' for an example.
+#'
+#' COINr has a number of built-in normalisation functions of the form `n_*()`. See [online documentation](https://bluefoxr.github.io/COINr/articles/normalise.html#built-in-normalisation-functions)
+#' for details.
 #'
 #' `f_n_para` is *required* to be a named list. So e.g. if we define a function `f1(x, arg1, arg2)` then we should
 #' specify `f_n = "f1"`, and `f_n_para = list(arg1 = val1, arg2 = val2)`, where `val1` and `val2` are the

@@ -34,6 +34,9 @@ further arguments to \code{f_n}. This means that any function can be passed to \
 first argument is \code{x}, a numeric vector, and it returns a numeric vector of the same length. See \code{\link[=n_minmax]{n_minmax()}}
 for an example.
 
+COINr has a number of built-in normalisation functions of the form \verb{n_*()}. See \href{https://bluefoxr.github.io/COINr/articles/normalise.html#built-in-normalisation-functions}{online documentation}
+for details.
+
 \code{f_n_para} is \emph{required} to be a named list. So e.g. if we define a function \code{f1(x, arg1, arg2)} then we should
 specify \code{f_n = "f1"}, and \code{f_n_para = list(arg1 = val1, arg2 = val2)}, where \code{val1} and \code{val2} are the
 values assigned to the arguments \code{arg1} and \code{arg2} respectively.

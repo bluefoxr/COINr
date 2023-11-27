@@ -75,6 +75,9 @@ frame. Moreover, this function should return a vector or data frame identical to
 it except for \code{NA} values, which can be replaced. The function \code{f_i} is not required to replace \emph{all} \code{NA}
 values.
 
+COINr has several built-in imputation functions of the form \verb{i_*()} for vectors which can be called by \code{\link[=Impute]{Impute()}}. See the
+\href{https://bluefoxr.github.io/COINr/articles/imputation.html#data-frames}{online documentation} for more details.
+
 When imputing row-wise, prior normalisation of the data is recommended. This is because imputation
 will use e.g. the mean of the unit values over all indicators (columns). If the indicators are on
 very different scales, the result will likely make no sense. If the indicators are normalised first,

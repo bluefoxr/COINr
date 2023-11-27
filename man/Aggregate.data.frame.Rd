@@ -51,7 +51,7 @@ a numeric vector (the result of aggregating the whole data frame in one go).
 
 Note that COINr has a number of aggregation functions built in,
 all of which are of the form \verb{a_*()}, e.g. \code{\link[=a_amean]{a_amean()}}, \code{\link[=a_gmean]{a_gmean()}} and friends. To see a list browse COINr functions alphabetically or
-type \code{a_} in the R Studio console and press the tab key (after loading COINr).
+type \code{a_} in the R Studio console and press the tab key (after loading COINr), or see the \href{https://bluefoxr.github.io/COINr/articles/aggregate.html#coinr-aggregation-functions}{online documentation}.
 
 Optionally, a data availability threshold can be assigned below which the aggregated value will return
 \code{NA} (see \code{dat_thresh} argument). If \code{by_df = TRUE}, this will however be ignored because aggregation is not

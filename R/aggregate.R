@@ -66,7 +66,7 @@ Aggregate.purse <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, da
 #'
 #' Note that COINr has a number of aggregation functions built in,
 #' all of which are of the form `a_*()`, e.g. [a_amean()], [a_gmean()] and friends. To see a list browse COINr functions alphabetically or
-#' type `a_` in the R Studio console and press the tab key (after loading COINr).
+#' type `a_` in the R Studio console and press the tab key (after loading COINr), or see the [online documentation](https://bluefoxr.github.io/COINr/articles/aggregate.html#coinr-aggregation-functions).
 #'
 #' Optionally, a data availability threshold can be assigned below which the aggregated value will return
 #' `NA` (see `dat_thresh` argument). If `by_df = TRUE`, this will however be ignored because aggregation is not
@@ -313,7 +313,7 @@ Aggregate.coin <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, dat
 #'
 #' Note that COINr has a number of aggregation functions built in,
 #' all of which are of the form `a_*()`, e.g. [a_amean()], [a_gmean()] and friends. To see a list browse COINr functions alphabetically or
-#' type `a_` in the R Studio console and press the tab key (after loading COINr).
+#' type `a_` in the R Studio console and press the tab key (after loading COINr), or see the [online documentation](https://bluefoxr.github.io/COINr/articles/aggregate.html#coinr-aggregation-functions).
 #'
 #' Optionally, a data availability threshold can be assigned below which the aggregated value will return
 #' `NA` (see `dat_thresh` argument). If `by_df = TRUE`, this will however be ignored because aggregation is not

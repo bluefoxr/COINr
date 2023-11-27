@@ -28,6 +28,9 @@ This calls the function \code{f_i()}, with optionally further arguments \code{f_
 values found in \code{x}. By default, \code{f_i = "i_mean()"}, which simply imputes \code{NA}s with the mean of the
 non-\code{NA} values in \code{x}.
 
+COINr has several built-in imputation functions of the form \verb{i_*()} for vectors which can be called by \code{\link[=Impute]{Impute()}}. See the
+\href{https://bluefoxr.github.io/COINr/articles/imputation.html#data-frames}{online documentation} for more details.
+
 You could also use one of the imputation functions directly (such as \code{\link[=i_mean]{i_mean()}}). However, this
 function offers a few extra advantages, such as checking the input and output formats, and making
 sure the resulting imputed vector agrees with the input. It will also skip imputation entirely if

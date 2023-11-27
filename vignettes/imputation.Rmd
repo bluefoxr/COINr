@@ -94,6 +94,15 @@ i_mean(x)
 
 The key concept here is that the simple function `i_mean()` is applied by `Impute()` to each column. This idea of passing simpler functions is used in several key COINr functions, and allows great flexibility because more sophisticated imputation methods can be used from other packages, for example.
 
+In COINr there are currently four basic imputation functions which impute a numeric vector:
+
+* `i_mean()`: substitutes missing values with the mean of the remaining values
+* `i_median()`: substitutes missing values with the median of the remaining values (this will be more robust to outliers)
+* `i_mean_grp()`: substitutes missing values with the mean of a subset of the remaining values, defined by a separate grouping vector
+* `i_median_grp()`: substitutes missing values with the mean of a subset of the remaining values, defined by a separate grouping vector
+
+These are very simple imputation methods, but more sophisticated options can be used by calling functions from other packages. The group imputation functions above are useful in an indicator context: for example in country-level indicator analysis we can substitute missing values by the mean/median within the same GDP/capita group, which is often a better approach than a flat mean across all countries. Obviously this is context-dependent however.
+
 For now let's explore the options native to COINr. We can also apply the `i_median()` function in the same way to substitute with the indicator median. Adding a little complexity, we can also impute by mean or median, but within unit (row) groups. Let's assume that the first five rows in our data frame belong to a group "a", and the remaining five to a different group "b". In practice, these could be e.g. GDP, population or wealth groups for countries - we might hypothesise that it is better to replace `NA` values with the median inside a group, rather than the overall median, because countries within groups are more similar.
 
 To do this on a data frame we can use the `i_median_grp()` function, which requires an additional argument `f`: a grouping variable. This is passed through `Impute()` using the `f_i_para` argument which takes any additional parameters top `f_i` apart from the data to be imputed.

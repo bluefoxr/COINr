@@ -136,6 +136,8 @@ Let's now explore some of the options of the `Aggregate()` function. Like other 
 * `a_hmean()`: the weighted harmonic mean
 * `a_copeland()`: the Copeland method (note: requires `by_df = TRUE`)
 
+For details of these methods, see [Approaches] above and the function documentation of each of the functions listed.
+
 By default, the arithmetic mean is called but we can easily change this to the geometric mean, for example. However here we run into a problem: the geometric mean will fail if any values to aggregate are less than or equal to zero. So to use the geometric mean we have to re-do the normalisation step to avoid this. Luckily this is straightforward in COINr:
 
 ```{r}

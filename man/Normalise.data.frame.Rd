@@ -31,7 +31,8 @@ Normalises a data frame using specifications specified in \code{global_specs}. C
 normalised with individual specifications using the \code{indiv_specs} argument. If variables should have their
 directions reversed, this can be specified using the \code{directions} argument. Non-numeric columns are ignored
 automatically by this function. By default, this function normalises each indicator using the "min-max" method, scaling indicators to lie between
-0 and 100. This calls the \code{\link[=n_minmax]{n_minmax()}} function. Note, all COINr normalisation functions are of the form \verb{n_*()}.
+0 and 100. This calls the \code{\link[=n_minmax]{n_minmax()}} function. COINr has a number of built-in normalisation functions of the form \verb{n_*()}. See \href{https://bluefoxr.github.io/COINr/articles/normalise.html#built-in-normalisation-functions}{online documentation}
+for details.
 }
 \details{
 \subsection{Global specification}{
