@@ -4,9 +4,10 @@
 #'
 #' This function imputes the target data set `dset` in each coin using the imputation function `f_i`. This is performed
 #' in the same way as the coin method [Impute.coin()], but with one "special case" for panel data. If `f_i = "impute_panel`,
-#' the data sets inside the purse are imputed using the last available data point, using the [impute_panel()]
+#' the data sets inside the purse are imputed using the [impute_panel()]
 #' function. In this case, coins are not imputed individually, but treated as a single data set. In this
-#' case, optionally set `f_i_para = list(max_time = .)` where `.` should be substituted with the maximum
+#' case, optionally set the imputation method as `f_i_para = list(imp_type = .)`
+#' and `f_i_para = list(max_time = .)` where `.` should be substituted with the maximum
 #' number of time points to search backwards for a non-`NA` value. See [impute_panel()] for more details.
 #' No further arguments need to be passed to [impute_panel()]. See `vignette("imputation")` for more
 #' details. See also [Impute.coin()] documentation.
@@ -54,7 +55,7 @@ Impute.purse <- function(x, dset, f_i = NULL, f_i_para = NULL, impute_by = "colu
       iDatas <- get_dset(x, dset)
 
       # impute
-      l_imp <- impute_panel(iDatas, max_time = f_i_para$max_time)
+      l_imp <- impute_panel(iDatas, max_time = f_i_para$max_time, imp_type = f_i_para$imp_type)
 
       # extract imputed data
       iDatas_i <- l_imp$iData_imp
@@ -822,7 +823,7 @@ i_median_grp <- function(x, f){
 #' columns using the entry from the latest available time point.
 #'
 #' This presumes that there are multiple observations for each unit code, i.e. one per time point. It then searches for any missing values in the target year, and replaces them with the equivalent points
-#' from previous time points. It will replace using the most recently available point.
+#' from previous time points. It will replace using the most recently available point or using linear interpolation: see `imp_type` argument.
 #'
 #' @param iData A data frame of indicator data, containing a time index column `time_col`, a unit code column `unit_col`,
 #' and other numerical columns to be imputed.
@@ -833,6 +834,9 @@ i_median_grp <- function(x, f){
 #' @param max_time The maximum number of time points to look backwards to impute from. E.g. if `max_time = 1`, if an
 #' `NA` is found at time \eqn{t}, it will only look for a replacement value at \eqn{t-1} but not in any time points before that.
 #' By default, searches all time points available.
+#' @param imp_type One of `"latest"` or `"linear"`. In the former case, missing points are imputed with the last non-`NA` observation for each
+#' time series, up to `max_time`. In the latter, missing points are imputed using linear interpolation, and the nearest non-`NA` point for missing
+#' points outside of the range of observed values. This is equivalent to `rule = 2` in [stats::approx()] for eac time series.
 #'
 #' @examples
 #' # Copy example panel data
@@ -861,7 +865,7 @@ i_median_grp <- function(x, f){
 #' came from.
 #'
 #' @export
-impute_panel <- function(iData, time_col = NULL, unit_col = NULL, cols = NULL, max_time = NULL){
+impute_panel <- function(iData, time_col = NULL, unit_col = NULL, cols = NULL, imp_type = NULL, max_time = NULL){
 
 
   # DEFAULTS ----------------------------------------------------------------
@@ -871,6 +875,9 @@ impute_panel <- function(iData, time_col = NULL, unit_col = NULL, cols = NULL, m
   }
   if(is.null(unit_col)){
     unit_col <- "uCode"
+  }
+  if(is.null(imp_type)){
+    imp_type <- "latest"
   }
 
   # CHECKS ------------------------------------------------------------------
@@ -986,19 +993,76 @@ impute_panel <- function(iData, time_col = NULL, unit_col = NULL, cols = NULL, m
 
   }
 
-  # apply function to all years of data
-  l_imp <- lapply(yrs, impute_year)
+  # IMPUTE ACCORDING TO METHOD SPECIFIED
 
-  # reassemble data frame
-  iData_imp <- lapply(rev(l_imp),  `[[`, "iData")
-  iData_imp <- Reduce(rbind, iData_imp)
+  if(imp_type == "latest"){
 
-  stopifnot(nrow(iData_imp) == nrow(iData),
-            ncol(iData_imp) == ncol(iData))
+    # apply function to all years of data
+    l_imp <- lapply(yrs, impute_year)
 
-  # get data times
-  DataT <- lapply(l_imp,  `[[`, "DataT")
-  DataT <- Reduce(rbind, DataT)
+    # reassemble data frame
+    iData_imp <- lapply(rev(l_imp),  `[[`, "iData")
+    iData_imp <- Reduce(rbind, iData_imp)
+
+    stopifnot(nrow(iData_imp) == nrow(iData),
+              ncol(iData_imp) == ncol(iData))
+
+    # get data times
+    DataT <- lapply(l_imp,  `[[`, "DataT")
+    DataT <- Reduce(rbind, DataT)
+
+  } else if (imp_type == "linear"){
+
+    # linear imputation: work by col
+    iCodes <- names(iData)[names(iData) %nin% c(unit_col, time_col)]
+    uCodes <- unique(iData[[unit_col]])
+
+    # copy of data
+    iData_imp <- iData
+
+    for (uCode in uCodes){
+
+      # filter to uCode
+      iData_u <- iData_imp[iData_imp[[unit_col]] == uCode, ]
+      iData_u <- iData_u[order(iData_u[[time_col]]), ]
+
+      x <- iData_u[[time_col]]
+
+      for (iCode in iCodes){
+
+        y <- iData_u[[iCode]]
+
+        na_positions <- is.na(y)
+
+        if(length(na_positions) == 0){
+          # no missing values so skip
+          next
+        }
+        if(all(is.na(y))){
+          message("NOTE: cannot impute for unit ", uCode, " and iCode ", iCode, " because all NA values.")
+          next
+        }
+
+        # impute with linear, and extremes are imputed with the closest value
+        y_imp <- stats::approx(x, y, xout = x, rule = 2)$y
+        # check nothing changed in non-NA
+        stopifnot(identical(y_imp[!na_positions], y[!na_positions]))
+
+        # subst vector back in
+        iData_u[[iCode]] <- y_imp
+
+      }
+
+      # subst df back in
+      iData_imp[iData_imp[[unit_col]] == uCode, ] <- iData_u
+
+    }
+    DataT <- NULL
+
+  } else {
+    stop("imp_type must be either 'latest' or 'linear'")
+  }
+
 
   # return iData to its full form if cols was specified
   iData_imp_full <- iData_orig

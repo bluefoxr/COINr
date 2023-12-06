@@ -9,6 +9,7 @@ impute_panel(
   time_col = NULL,
   unit_col = NULL,
   cols = NULL,
+  imp_type = NULL,
   max_time = NULL
 )
 }
@@ -22,6 +23,10 @@ and other numerical columns to be imputed.}
 
 \item{cols}{Optionally, a character vector of names of columns to impute. If \code{NULL} (default), all columns apart from \code{time_col} and
 \code{unit_col} will be imputed where possible.}
+
+\item{imp_type}{One of \code{"latest"} or \code{"linear"}. In the former case, missing points are imputed with the last non-\code{NA} observation for each
+time series, up to \code{max_time}. In the latter, missing points are imputed using linear interpolation, and the nearest non-\code{NA} point for missing
+points outside of the range of observed values. This is equivalent to \code{rule = 2} in \code{\link[stats:approxfun]{stats::approx()}} for eac time series.}
 
 \item{max_time}{The maximum number of time points to look backwards to impute from. E.g. if \code{max_time = 1}, if an
 \code{NA} is found at time \eqn{t}, it will only look for a replacement value at \eqn{t-1} but not in any time points before that.
@@ -41,7 +46,7 @@ columns using the entry from the latest available time point.
 }
 \details{
 This presumes that there are multiple observations for each unit code, i.e. one per time point. It then searches for any missing values in the target year, and replaces them with the equivalent points
-from previous time points. It will replace using the most recently available point.
+from previous time points. It will replace using the most recently available point or using linear interpolation: see \code{imp_type} argument.
 }
 \examples{
 # Copy example panel data
