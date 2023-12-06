@@ -96,6 +96,7 @@ columns using the entry from the latest available time point.</p>
 <span>  time_col <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  unit_col <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  cols <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  imp_type <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  max_time <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -120,6 +121,12 @@ and other numerical columns to be imputed.</p></dd>
 <code>unit_col</code> will be imputed where possible.</p></dd>
 
 
+<dt>imp_type</dt>
+<dd><p>One of <code>"latest"</code> or <code>"linear"</code>. In the former case, missing points are imputed with the last non-<code>NA</code> observation for each
+time series, up to <code>max_time</code>. In the latter, missing points are imputed using linear interpolation, and the nearest non-<code>NA</code> point for missing
+points outside of the range of observed values. This is equivalent to <code>rule = 2</code> in <code><a href="https://rdrr.io/r/stats/approxfun.html" class="external-link">stats::approx()</a></code> for eac time series.</p></dd>
+
+
 <dt>max_time</dt>
 <dd><p>The maximum number of time points to look backwards to impute from. E.g. if <code>max_time = 1</code>, if an
 <code>NA</code> is found at time \(t\), it will only look for a replacement value at \(t-1\) but not in any time points before that.
@@ -137,7 +144,7 @@ came from.</p></li>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>This presumes that there are multiple observations for each unit code, i.e. one per time point. It then searches for any missing values in the target year, and replaces them with the equivalent points
-from previous time points. It will replace using the most recently available point.</p>
+from previous time points. It will replace using the most recently available point or using linear interpolation: see <code>imp_type</code> argument.</p>
     </div>
 
     <div class="section level2">
