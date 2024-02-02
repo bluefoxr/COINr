@@ -12,7 +12,7 @@ Groups are defined by the f argument."><!-- mathjax --><script src="https://cdnj
     
     <a class="navbar-brand me-2" href="../index.html">COINr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.10</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -91,7 +91,7 @@ Groups are defined by the <code>f</code> argument.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">i_median_grp</span><span class="op">(</span><span class="va">x</span>, <span class="va">f</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">i_median_grp</span><span class="op">(</span><span class="va">x</span>, <span class="va">f</span>, skip_f_na <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -103,6 +103,11 @@ Groups are defined by the <code>f</code> argument.</p>
 <dt>f</dt>
 <dd><p>A grouping variable, of the same length of <code>x</code>, that specifies the group that each value
 of <code>x</code> belongs to. This will be coerced to a factor.</p></dd>
+
+
+<dt>skip_f_na</dt>
+<dd><p>If <code>TRUE</code>, will work around any <code>NA</code>s in <code>f</code> (the corresponding values of <code>x</code> will be excluded from the imputation
+and returned unaltered). Else if <code>FALSE</code>, will cause an error.</p></dd>
 
 </dl></div>
     <div class="section level2">

@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">COINr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.10</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -544,17 +544,17 @@ just as easy to call the underlying normalisation function directly.</p>
 <span></span>
 <span><span class="co"># view side by side</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">x_norm</span><span class="op">)</span></span>
-<span><span class="co">#&gt;            x x_norm</span></span>
-<span><span class="co">#&gt; 1  0.9138987    Inf</span></span>
-<span><span class="co">#&gt; 2  0.9659322    Inf</span></span>
-<span><span class="co">#&gt; 3  0.7903024    Inf</span></span>
-<span><span class="co">#&gt; 4  0.6275429    Inf</span></span>
-<span><span class="co">#&gt; 5  0.0543027    NaN</span></span>
-<span><span class="co">#&gt; 6  0.9779588    Inf</span></span>
-<span><span class="co">#&gt; 7  0.7260703    Inf</span></span>
-<span><span class="co">#&gt; 8  0.6146934    Inf</span></span>
-<span><span class="co">#&gt; 9  0.7811733    Inf</span></span>
-<span><span class="co">#&gt; 10 0.7248344    Inf</span></span></code></pre></div>
+<span><span class="co">#&gt;               x    x_norm</span></span>
+<span><span class="co">#&gt; 1  0.0991375223 0.3708033</span></span>
+<span><span class="co">#&gt; 2  0.0458480543 0.1711996</span></span>
+<span><span class="co">#&gt; 3  0.6593146885 2.4690310</span></span>
+<span><span class="co">#&gt; 4  0.0701879228 0.2623683</span></span>
+<span><span class="co">#&gt; 5  0.2671181543 1.0000000</span></span>
+<span><span class="co">#&gt; 6  0.0001417964 0.0000000</span></span>
+<span><span class="co">#&gt; 7  0.1825106610 0.6830899</span></span>
+<span><span class="co">#&gt; 8  0.4588810620 1.7182767</span></span>
+<span><span class="co">#&gt; 9  0.6477904934 2.4258654</span></span>
+<span><span class="co">#&gt; 10 0.7092027736 2.6558943</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="purses">Purses<a class="anchor" aria-label="anchor" href="#purses"></a>
@@ -695,46 +695,46 @@ demonstrate on a data frame:</p>
 <span>                b <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span><span class="op">*</span><span class="fl">100</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">X</span></span>
-<span><span class="co">#&gt;    uCode         a        b</span></span>
-<span><span class="co">#&gt; 1      a 0.2825216 54.88323</span></span>
-<span><span class="co">#&gt; 2      b 0.5814554 65.32200</span></span>
-<span><span class="co">#&gt; 3      c 0.4345018 67.83736</span></span>
-<span><span class="co">#&gt; 4      d 0.2279782 69.33434</span></span>
-<span><span class="co">#&gt; 5      e 0.6476010 69.80472</span></span>
-<span><span class="co">#&gt; 6      f 0.5320520 23.01200</span></span>
-<span><span class="co">#&gt; 7      g 0.3740141 79.36834</span></span>
-<span><span class="co">#&gt; 8      h 0.7583467 17.87751</span></span>
-<span><span class="co">#&gt; 9      i 0.5118239 65.94654</span></span>
-<span><span class="co">#&gt; 10     j 0.2637886 66.21843</span></span></code></pre></div>
+<span><span class="co">#&gt;    uCode         a         b</span></span>
+<span><span class="co">#&gt; 1      a 0.8911857 48.022586</span></span>
+<span><span class="co">#&gt; 2      b 0.9922297 93.224049</span></span>
+<span><span class="co">#&gt; 3      c 0.2050194 72.145440</span></span>
+<span><span class="co">#&gt; 4      d 0.7808640 76.051760</span></span>
+<span><span class="co">#&gt; 5      e 0.7415685 85.038659</span></span>
+<span><span class="co">#&gt; 6      f 0.8060034 45.543234</span></span>
+<span><span class="co">#&gt; 7      g 0.3593985 85.242801</span></span>
+<span><span class="co">#&gt; 8      h 0.5634669 18.557218</span></span>
+<span><span class="co">#&gt; 9      i 0.2574726 56.927309</span></span>
+<span><span class="co">#&gt; 10     j 0.8286851  1.898522</span></span></code></pre></div>
 <p>By default, normalisation results in min-max on the <span class="math inline">\([0, 100]\)</span> interval:</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/qNormalise.html">qNormalise</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    uCode          a          b</span></span>
-<span><span class="co">#&gt; 1      a  10.284063  60.180880</span></span>
-<span><span class="co">#&gt; 2      b  66.647477  77.157024</span></span>
-<span><span class="co">#&gt; 3      c  38.939652  81.247635</span></span>
-<span><span class="co">#&gt; 4      d   0.000000  83.682121</span></span>
-<span><span class="co">#&gt; 5      e  79.119114  84.447072</span></span>
-<span><span class="co">#&gt; 6      f  57.332556   8.350017</span></span>
-<span><span class="co">#&gt; 7      g  27.534795 100.000000</span></span>
-<span><span class="co">#&gt; 8      h 100.000000   0.000000</span></span>
-<span><span class="co">#&gt; 9      i  53.518583  78.172680</span></span>
-<span><span class="co">#&gt; 10     j   6.751994  78.614840</span></span></code></pre></div>
+<span><span class="co">#&gt;    uCode          a         b</span></span>
+<span><span class="co">#&gt; 1      a  87.164291  50.50512</span></span>
+<span><span class="co">#&gt; 2      b 100.000000 100.00000</span></span>
+<span><span class="co">#&gt; 3      c   0.000000  76.91926</span></span>
+<span><span class="co">#&gt; 4      d  73.150036  81.19662</span></span>
+<span><span class="co">#&gt; 5      e  68.158296  91.03713</span></span>
+<span><span class="co">#&gt; 6      f  76.343505  47.79027</span></span>
+<span><span class="co">#&gt; 7      g  19.610904  91.26066</span></span>
+<span><span class="co">#&gt; 8      h  45.533891  18.24101</span></span>
+<span><span class="co">#&gt; 9      i   6.663172  60.25565</span></span>
+<span><span class="co">#&gt; 10     j  79.224781   0.00000</span></span></code></pre></div>
 <p>We can pass another normalisation function if we like, and the syntax
 is a bit easier than <code><a href="../reference/Normalise.html">Normalise()</a></code>:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/qNormalise.html">qNormalise</a></span><span class="op">(</span><span class="va">X</span>, f_n <span class="op">=</span> <span class="st">"n_dist2ref"</span>, f_n_para <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>iref <span class="op">=</span> <span class="fl">1</span>, cap_max <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    uCode         a         b</span></span>
-<span><span class="co">#&gt; 1      a 1.0000000 1.0000000</span></span>
-<span><span class="co">#&gt; 2      b 1.0000000 1.0000000</span></span>
-<span><span class="co">#&gt; 3      c 1.0000000 1.0000000</span></span>
-<span><span class="co">#&gt; 4      d 0.0000000 1.0000000</span></span>
-<span><span class="co">#&gt; 5      e 1.0000000 1.0000000</span></span>
-<span><span class="co">#&gt; 6      f 1.0000000 0.1387487</span></span>
-<span><span class="co">#&gt; 7      g 1.0000000 1.0000000</span></span>
-<span><span class="co">#&gt; 8      h 1.0000000 0.0000000</span></span>
-<span><span class="co">#&gt; 9      i 1.0000000 1.0000000</span></span>
-<span><span class="co">#&gt; 10     j 0.6565492 1.0000000</span></span></code></pre></div>
+<span><span class="co">#&gt;    uCode          a         b</span></span>
+<span><span class="co">#&gt; 1      a 1.00000000 1.0000000</span></span>
+<span><span class="co">#&gt; 2      b 1.00000000 1.0000000</span></span>
+<span><span class="co">#&gt; 3      c 0.00000000 1.0000000</span></span>
+<span><span class="co">#&gt; 4      d 0.83922023 1.0000000</span></span>
+<span><span class="co">#&gt; 5      e 0.78195204 1.0000000</span></span>
+<span><span class="co">#&gt; 6      f 0.87585758 0.9462460</span></span>
+<span><span class="co">#&gt; 7      g 0.22498782 1.0000000</span></span>
+<span><span class="co">#&gt; 8      h 0.52239157 0.3611715</span></span>
+<span><span class="co">#&gt; 9      i 0.07644383 1.0000000</span></span>
+<span><span class="co">#&gt; 10     j 0.90891328 0.0000000</span></span></code></pre></div>
 <p>The <code><a href="../reference/qNormalise.html">qNormalise()</a></code> function works in a similar way for
 coins and purses.</p>
 </div>
