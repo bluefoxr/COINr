@@ -797,6 +797,8 @@ i_mean_grp <- function(x, f, skip_f_na = TRUE){
 #' @param x A numeric vector
 #' @param f A grouping variable, of the same length of `x`, that specifies the group that each value
 #' of `x` belongs to. This will be coerced to a factor.
+#' @param skip_f_na If `TRUE`, will work around any `NA`s in `f` (the corresponding values of `x` will be excluded from the imputation
+#' and returned unaltered). Else if `FALSE`, will cause an error.
 #'
 #' @return A numeric vector
 #' @export
@@ -806,15 +808,37 @@ i_mean_grp <- function(x, f, skip_f_na = TRUE){
 #' f <- c(rep("a", 6), rep("b", 6))
 #' i_median_grp(x, f)
 #'
-i_median_grp <- function(x, f){
+i_median_grp <- function(x, f, skip_f_na = TRUE){
 
   stopifnot(is.numeric(x),
             length(x)==length(f))
 
+  # get any NAs in f
+  fna <- is.na(f)
+  if(sum(fna) == length(x)){
+    stop("f must have at least one non-NA value")
+  }
+
+  # extract x values with non-NA f values
+  if(skip_f_na){
+    x_use <- x[!fna]
+    f_use <- f[!fna]
+  } else {
+    if(any(fna)){
+      stop("NAs found in f. If skip_f_na = TRUE f cannot contain any NAs.")
+    }
+    x_use <- x
+    f_use <- f[!fna]
+  }
+
   # split by factors, apply func then unsplit
-  x_split <- split(x, f)
+  x_split <- split(x_use, f_use)
   x_split <- lapply(x_split, i_median)
-  unsplit(x_split, f)
+  x_imp <- unsplit(x_split, f_use)
+
+  # reassemble and output
+  x[!fna] <- x_imp
+  x
 }
 
 #' Impute panel data

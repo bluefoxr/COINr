@@ -174,6 +174,39 @@ test_that("group_mean", {
 
 })
 
+test_that("group_median", {
+
+  # data plus groupings
+  x <- runif(20)
+  f <- sample(c("a","b"), 20, replace = TRUE)
+
+  # make some missing data
+  x[c(1, 5, 10)] <- NA
+
+  # impute
+  xi <- i_median_grp(x, f)
+
+  # check
+  expect_equal(xi[1], median(x[f==f[1]], na.rm = TRUE))
+  expect_equal(xi[5], median(x[f==f[5]], na.rm = TRUE))
+  expect_equal(xi[10], median(x[f==f[10]], na.rm = TRUE))
+
+  # now check case with missing groups
+  f[c(2,5)] <- NA
+  # impute
+  xi <- i_median_grp(x, f)
+
+  # check - I exclude the NA group rows completely
+  x2 <- x[-c(2,5)]
+  f2 <- f[-c(2,5)]
+
+  # expect the first NA value to be equal to the mean of the group in the vector excluding NAs
+  expect_equal(xi[1], median(x2[f2==f2[1]], na.rm = TRUE))
+  # expect second NA to be equal to NA still, because has NA group
+  expect_equal(xi[5], as.numeric(NA))
+
+})
+
 test_that("Warning when NAs found after imputation", {
 
   # build coin
