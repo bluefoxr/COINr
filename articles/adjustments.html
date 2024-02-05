@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">COINr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.10</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.11</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -191,12 +191,13 @@ list:</p>
 <span><span class="co"># look in log</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">coin</span><span class="op">$</span><span class="va">Log</span>, max.level <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 2</span></span>
-<span><span class="co">#&gt;  $ new_coin :List of 5</span></span>
-<span><span class="co">#&gt;   ..$ iData      :'data.frame':  51 obs. of  60 variables:</span></span>
-<span><span class="co">#&gt;   ..$ iMeta      :'data.frame':  68 obs. of  10 variables:</span></span>
-<span><span class="co">#&gt;   ..$ exclude    : NULL</span></span>
-<span><span class="co">#&gt;   ..$ level_names: chr [1:4] "Indicator" "Pillar" "Sub-index" "Index"</span></span>
-<span><span class="co">#&gt;   ..$ quietly    : logi FALSE</span></span>
+<span><span class="co">#&gt;  $ new_coin :List of 6</span></span>
+<span><span class="co">#&gt;   ..$ iData                     :'data.frame':   51 obs. of  60 variables:</span></span>
+<span><span class="co">#&gt;   ..$ iMeta                     :'data.frame':   68 obs. of  10 variables:</span></span>
+<span><span class="co">#&gt;   ..$ exclude                   : NULL</span></span>
+<span><span class="co">#&gt;   ..$ level_names               : chr [1:4] "Indicator" "Pillar" "Sub-index" "Index"</span></span>
+<span><span class="co">#&gt;   ..$ retain_all_uCodes_on_split: logi FALSE</span></span>
+<span><span class="co">#&gt;   ..$ quietly                   : logi FALSE</span></span>
 <span><span class="co">#&gt;  $ can_regen: logi TRUE</span></span></code></pre></div>
 <p>Looking in the log, we can see that it is a list with an entry
 “new_coin”, which contains exactly the arguments that we passed to
@@ -215,12 +216,13 @@ the <code><a href="../reference/Normalise.html">Normalise()</a></code> function:
 <span><span class="co"># view log</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">coin</span><span class="op">$</span><span class="va">Log</span>, max.level <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 3</span></span>
-<span><span class="co">#&gt;  $ new_coin :List of 5</span></span>
-<span><span class="co">#&gt;   ..$ iData      :'data.frame':  51 obs. of  60 variables:</span></span>
-<span><span class="co">#&gt;   ..$ iMeta      :'data.frame':  68 obs. of  10 variables:</span></span>
-<span><span class="co">#&gt;   ..$ exclude    : NULL</span></span>
-<span><span class="co">#&gt;   ..$ level_names: chr [1:4] "Indicator" "Pillar" "Sub-index" "Index"</span></span>
-<span><span class="co">#&gt;   ..$ quietly    : logi FALSE</span></span>
+<span><span class="co">#&gt;  $ new_coin :List of 6</span></span>
+<span><span class="co">#&gt;   ..$ iData                     :'data.frame':   51 obs. of  60 variables:</span></span>
+<span><span class="co">#&gt;   ..$ iMeta                     :'data.frame':   68 obs. of  10 variables:</span></span>
+<span><span class="co">#&gt;   ..$ exclude                   : NULL</span></span>
+<span><span class="co">#&gt;   ..$ level_names               : chr [1:4] "Indicator" "Pillar" "Sub-index" "Index"</span></span>
+<span><span class="co">#&gt;   ..$ retain_all_uCodes_on_split: logi FALSE</span></span>
+<span><span class="co">#&gt;   ..$ quietly                   : logi FALSE</span></span>
 <span><span class="co">#&gt;  $ can_regen: logi TRUE</span></span>
 <span><span class="co">#&gt;  $ Normalise:List of 7</span></span>
 <span><span class="co">#&gt;   ..$ dset        : chr "Raw"</span></span>
