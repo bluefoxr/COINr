@@ -1,3 +1,10 @@
+# COINr 1.1.11
+
+- Allow retention of units with no data in split to purse
+- Allow NAs in group vector for `i_median_grp()`
+- Enable linear interpolation in panel data with `impute_panel()`
+- Updated documentation on aggregation and imputation functions
+
 # COINr 1.1.9
 
 - Fixed results tables which rounded before converting to ranks, resulting in precision errors

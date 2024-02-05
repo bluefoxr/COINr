@@ -10,6 +10,7 @@ new_coin(
   exclude = NULL,
   split_to = NULL,
   level_names = NULL,
+  retain_all_uCodes_on_split = FALSE,
   quietly = FALSE
 )
 }
@@ -25,6 +26,11 @@ new_coin(
 
 \item{level_names}{Optional character vector of names of levels. Must have length equal to the number of
 levels in the hierarchy (\code{max(iMeta$Level, na.rm = TRUE)}).}
+
+\item{retain_all_uCodes_on_split}{Logical: if panel data is input and split to a purse using \code{split_to}, this controls how
+units with no data at certain time points are handled. If set \code{FALSE}, then unit at time t with no data in any indicators
+will be removed completely from the coin for that time point. If \code{TRUE}, all units will be included in every time point. The latter option
+may be useful if you impute over time.}
 
 \item{quietly}{If \code{TRUE}, suppresses all messages}
 }

@@ -105,6 +105,10 @@
 #' @param level_names Optional character vector of names of levels. Must have length equal to the number of
 #' levels in the hierarchy (`max(iMeta$Level, na.rm = TRUE)`).
 #' @param quietly If `TRUE`, suppresses all messages
+#' @param retain_all_uCodes_on_split Logical: if panel data is input and split to a purse using `split_to`, this controls how
+#' units with no data at certain time points are handled. If set `FALSE`, then unit at time t with no data in any indicators
+#' will be removed completely from the coin for that time point. If `TRUE`, all units will be included in every time point. The latter option
+#' may be useful if you impute over time.
 #'
 #' @examples
 #' # build a coin using example data frames
@@ -128,7 +132,7 @@
 #'
 #' @export
 new_coin <- function(iData, iMeta, exclude = NULL, split_to = NULL,
-                     level_names = NULL, quietly = FALSE){
+                     level_names = NULL, retain_all_uCodes_on_split = FALSE, quietly = FALSE){
 
   # WRITE TO LOG ------------------------------------------------------------
 
@@ -244,7 +248,7 @@ new_coin <- function(iData, iMeta, exclude = NULL, split_to = NULL,
     }
 
     # now split
-    iData_list <- split_iData(iData, split_to = split_to)
+    iData_list <- split_iData(iData, split_to = split_to, retain_all_uCodes = retain_all_uCodes_on_split)
     # check
     suppressMessages(lapply(iData_list, check_iData))
   } else {
@@ -707,7 +711,7 @@ check_iMeta <- function(iMeta, quietly = FALSE){
 # vector.
 #
 # @return List of `iData` data frames
-split_iData <- function(iData, split_to){
+split_iData <- function(iData, split_to, retain_all_uCodes = FALSE){
 
   # this function is only called from new_coin(), so if we are here, then the iData should be valid,
   # and there should be more than one unique entry in iData$Year.
@@ -721,7 +725,29 @@ split_iData <- function(iData, split_to){
   }
 
   # return list of dfs
-  split(iData, iData$Time)
+  l_iData <- split(iData, iData$Time)
+
+  if(retain_all_uCodes){
+    # full set of ucodes
+    uCodes <- unique(iData$uCode)
+    # filler df of NAs to use to fill gaps
+    iDataNA <- iData[match(uCodes, iData$uCode), ]
+    iDataNA[names(iDataNA) %nin% c("uCode", "uName", "Time")] <- NA
+
+
+    # check each time point one at a time
+    l_iData <- lapply(l_iData, function(X){
+      missing_ucodes <- uCodes[uCodes %nin% X$uCode]
+      # exit if no uCodes missing
+      if(length(missing_ucodes) == 0) return(X)
+      # else add NA rows from the df above
+      rows_to_add <- iDataNA[iDataNA$uCode %in% missing_ucodes, ]
+      rows_to_add$Time <- unique(X$Time)
+      rbind(X, rows_to_add)
+    })
+  }
+
+  l_iData
 
 }
 
