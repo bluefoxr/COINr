@@ -16,7 +16,7 @@ methods to be applied for each column. See details. For a simpler function for d
     
     <a class="navbar-brand me-2" href="../index.html">COINr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.11</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.12</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -137,30 +137,30 @@ of <code>f1</code>, so the two treatments will be combined.</p></dd>
     <h2 id="global-specifications">Global specifications<a class="anchor" aria-label="anchor" href="#global-specifications"></a></h2>
     <p>If the same method of data treatment should be applied to all the columns, use the <code>global_specs</code> argument. This argument takes a structured
 list which looks like this:</p>
-<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>global_specs <span class="ot">=</span> <span class="fu">list</span>(<span class="at">f1 =</span> .,</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">f1_para =</span> <span class="fu">list</span>(.),</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">f2 =</span> .,</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">f2_para =</span> <span class="fu">list</span>(.),</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">f_pass =</span> .,</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">f_pass_para =</span> <span class="fu">list</span>()</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>                    )</span></code></pre><p></p></div>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>global_specs <span class="ot">=</span> <span class="fu">list</span>(<span class="at">f1 =</span> .,</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>                    <span class="at">f1_para =</span> <span class="fu">list</span>(.),</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>                    <span class="at">f2 =</span> .,</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>                    <span class="at">f2_para =</span> <span class="fu">list</span>(.),</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>                    <span class="at">f_pass =</span> .,</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>                    <span class="at">f_pass_para =</span> <span class="fu">list</span>()</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>                    )</span></code></pre><p></p></div>
 <p>The entries in this list correspond to arguments in <code><a href="Treat.numeric.html">Treat.numeric()</a></code>, and the meanings of each are also described in more detail here
 below. In brief, <code>f1</code> is the name of a function to apply at the first round of data treatment, <code>f1_para</code> is a list of any additional
 parameters to pass to <code>f1</code>, <code>f2</code> and <code>f2_para</code> are equivalently the function name and parameters of the second round of data treatment, and
 <code>f_pass</code> and <code>f_pass_para</code> are the function and additional arguments to check for the existence of outliers.</p>
 <p>The default values for <code>global_specs</code> are as follows:</p>
-<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>global_specs <span class="ot">=</span> <span class="fu">list</span>(<span class="at">f1 =</span> <span class="st">"winsorise"</span>,</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">f1_para =</span> <span class="fu">list</span>(<span class="at">na.rm =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">winmax =</span> <span class="dv">5</span>,</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">skew_thresh =</span> <span class="dv">2</span>,</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">kurt_thresh =</span> <span class="fl">3.5</span>,</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">force_win =</span> <span class="cn">FALSE</span>),</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>                     <span class="at">f2 =</span> <span class="st">"log_CT"</span>,</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>                     <span class="at">f2_para =</span> <span class="fu">list</span>(<span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>                     <span class="at">f_pass =</span> <span class="st">"check_SkewKurt"</span>,</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>                     <span class="at">f_pass_para =</span> <span class="fu">list</span>(<span class="at">na.rm =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">skew_thresh =</span> <span class="dv">2</span>,</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">kurt_thresh =</span> <span class="fl">3.5</span>))</span></code></pre><p></p></div>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>global_specs <span class="ot">=</span> <span class="fu">list</span>(<span class="at">f1 =</span> <span class="st">"winsorise"</span>,</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>                     <span class="at">f1_para =</span> <span class="fu">list</span>(<span class="at">na.rm =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>                                    <span class="at">winmax =</span> <span class="dv">5</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>                                    <span class="at">skew_thresh =</span> <span class="dv">2</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>                                    <span class="at">kurt_thresh =</span> <span class="fl">3.5</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>                                    <span class="at">force_win =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>                     <span class="at">f2 =</span> <span class="st">"log_CT"</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>                     <span class="at">f2_para =</span> <span class="fu">list</span>(<span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>                     <span class="at">f_pass =</span> <span class="st">"check_SkewKurt"</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>                     <span class="at">f_pass_para =</span> <span class="fu">list</span>(<span class="at">na.rm =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>                                        <span class="at">skew_thresh =</span> <span class="dv">2</span>,</span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a>                                        <span class="at">kurt_thresh =</span> <span class="fl">3.5</span>))</span></code></pre><p></p></div>
 <p>This shows that by default (i.e. if <code>global_specs</code> is not specified), each column is checked for outliers by the <code><a href="check_SkewKurt.html">check_SkewKurt()</a></code> function, which
 uses skew and kurtosis thresholds as its parameters. Then, if outliers exist, the first function <code><a href="winsorise.html">winsorise()</a></code> is applied, which also
 uses skew and kurtosis parameters, as well as a maximum number of winsorised points. If the Winsorisation function does not satisfy
@@ -174,9 +174,9 @@ In other words, a subset of the list can be specified, as long as the structure 
     <p>The <code>indiv_specs</code> argument allows different specifications for each column in <code>x</code>. This is done by wrapping multiple lists of the format of the
 list described in <code>global_specs</code> into one single list, named according to the column names of <code>x</code>. For example, if <code>x</code> has column names
 "x1", "x2" and "x3", we could specify individual treatment as follows:</p>
-<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>indiv_specs <span class="ot">=</span> <span class="fu">list</span>(<span class="at">x1 =</span> <span class="fu">list</span>(.),</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">x2 =</span> <span class="fu">list</span>(.)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">x3 =</span> <span class="fu">list</span>(.))</span></code></pre><p></p></div>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>indiv_specs <span class="ot">=</span> <span class="fu">list</span>(<span class="at">x1 =</span> <span class="fu">list</span>(.),</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>                   <span class="at">x2 =</span> <span class="fu">list</span>(.)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>                   <span class="at">x3 =</span> <span class="fu">list</span>(.))</span></code></pre><p></p></div>
 <p>where each <code>list(.)</code> is a specifications list of the same format as <code>global_specs</code>. Any columns that are not named in <code>indiv_specs</code> are
 treated using the specifications from <code>global_specs</code> (which will be the defaults if it is not specified). As with <code>global_specs</code>,
 a subset of the <code>global_specs</code> list may be specified for

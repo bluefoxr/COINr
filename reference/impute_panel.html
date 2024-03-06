@@ -12,7 +12,7 @@ columns using the entry from the latest available time point."><!-- mathjax --><
     
     <a class="navbar-brand me-2" href="../index.html">COINr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.11</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.12</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -122,9 +122,12 @@ and other numerical columns to be imputed.</p></dd>
 
 
 <dt>imp_type</dt>
-<dd><p>One of <code>"latest"</code> or <code>"linear"</code>. In the former case, missing points are imputed with the last non-<code>NA</code> observation for each
-time series, up to <code>max_time</code>. In the latter, missing points are imputed using linear interpolation, and the nearest non-<code>NA</code> point for missing
-points outside of the range of observed values. This is equivalent to <code>rule = 2</code> in <code><a href="https://rdrr.io/r/stats/approxfun.html" class="external-link">stats::approx()</a></code> for eac time series.</p></dd>
+<dd><p>One of <code>"latest"</code> <code>"constant"</code> or <code>"linear"</code>. In the first case, missing points are imputed with the last non-<code>NA</code> observation for each
+time series, up to <code>max_time</code>. For <code>"constant"</code> or <code>"linear"</code>, missing points are imputed using <code><a href="https://rdrr.io/r/stats/approxfun.html" class="external-link">stats::approx()</a></code>, passing  <code>"constant"</code> or <code>"linear"</code> to the
+<code>method</code> argument, and points outside of the range of observed values are replaced with the nearest non-<code>NA</code> point.
+This is equivalent to <code>rule = 2</code> in <code><a href="https://rdrr.io/r/stats/approxfun.html" class="external-link">stats::approx()</a></code> for each time series. The difference between <code>"latest"</code> and <code>"constant"</code> is that
+the latter allows control over the maximum number of time points to impute backwards (using <code>max_time</code>) whereas the former
+doesn't. Additionally, <code>"constant"</code> will impute outside of the observed range of values at the beginning of the time series, whereas <code>"latest"</code> won't.</p></dd>
 
 
 <dt>max_time</dt>
