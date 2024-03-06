@@ -1,3 +1,7 @@
+# COINr 1.1.12
+
+- Add possibility to impute panel data using "constant" method from `stats::aprox()`.
+
 # COINr 1.1.11
 
 - Allow retention of units with no data in split to purse

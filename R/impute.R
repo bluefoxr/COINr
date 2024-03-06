@@ -858,9 +858,12 @@ i_median_grp <- function(x, f, skip_f_na = TRUE){
 #' @param max_time The maximum number of time points to look backwards to impute from. E.g. if `max_time = 1`, if an
 #' `NA` is found at time \eqn{t}, it will only look for a replacement value at \eqn{t-1} but not in any time points before that.
 #' By default, searches all time points available.
-#' @param imp_type One of `"latest"` or `"linear"`. In the former case, missing points are imputed with the last non-`NA` observation for each
-#' time series, up to `max_time`. In the latter, missing points are imputed using linear interpolation, and the nearest non-`NA` point for missing
-#' points outside of the range of observed values. This is equivalent to `rule = 2` in [stats::approx()] for eac time series.
+#' @param imp_type One of `"latest"` `"constant"` or `"linear"`. In the first case, missing points are imputed with the last non-`NA` observation for each
+#' time series, up to `max_time`. For `"constant"` or `"linear"`, missing points are imputed using [stats::approx()], passing  `"constant"` or `"linear"` to the
+#' `method` argument, and points outside of the range of observed values are replaced with the nearest non-`NA` point.
+#' This is equivalent to `rule = 2` in [stats::approx()] for each time series. The difference between `"latest"` and `"constant"` is that
+#' the latter allows control over the maximum number of time points to impute backwards (using `max_time`) whereas the former
+#' doesn't. Additionally, `"constant"` will impute outside of the observed range of values at the beginning of the time series, whereas `"latest"` won't.
 #'
 #' @examples
 #' # Copy example panel data
@@ -1035,7 +1038,7 @@ impute_panel <- function(iData, time_col = NULL, unit_col = NULL, cols = NULL, i
     DataT <- lapply(l_imp,  `[[`, "DataT")
     DataT <- Reduce(rbind, DataT)
 
-  } else if (imp_type == "linear"){
+  } else if (imp_type %in% c("constant", "linear")){
 
     # linear imputation: work by col
     iCodes <- names(iData)[names(iData) %nin% c(unit_col, time_col)]
@@ -1068,7 +1071,7 @@ impute_panel <- function(iData, time_col = NULL, unit_col = NULL, cols = NULL, i
         }
 
         # impute with linear, and extremes are imputed with the closest value
-        y_imp <- stats::approx(x, y, xout = x, rule = 2)$y
+        y_imp <- stats::approx(x, y, xout = x, rule = 2, method = imp_type)$y
         # check nothing changed in non-NA
         stopifnot(identical(y_imp[!na_positions], y[!na_positions]))
 
@@ -1084,7 +1087,7 @@ impute_panel <- function(iData, time_col = NULL, unit_col = NULL, cols = NULL, i
     DataT <- NULL
 
   } else {
-    stop("imp_type must be either 'latest' or 'linear'")
+    stop("imp_type must be either 'latest', 'constant' or 'linear'")
   }
 
 

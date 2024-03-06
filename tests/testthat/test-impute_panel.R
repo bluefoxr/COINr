@@ -49,3 +49,24 @@ test_that("linear_imp_works", {
   expect_equal(X_imp$i4, c(7, 8, 8)) # closest observed value
 
 })
+
+test_that("constant_imp_works", {
+
+  # Data frame with only one unit
+  X <- data.frame(
+    uCode = "A",
+    Time = 2020:2022,
+    i1 = c(1, 2, 3),
+    i2 = c(3, NA, 5),
+    i3 = c(NA, 5, 6),
+    i4 = c(7, 8, NA)
+  )
+
+  X_imp <- impute_panel(X, imp_type = "constant")$iData_imp
+
+  expect_equal(X_imp$i1, c(1,2,3)) # unchanged
+  expect_equal(X_imp$i2, c(3, 3, 5)) # linear interp
+  expect_equal(X_imp$i3, c(5, 5, 6)) # closest observed value
+  expect_equal(X_imp$i4, c(7, 8, 8)) # closest observed value
+
+})
