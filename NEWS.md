@@ -1,5 +1,7 @@
 # COINr 1.1.12
 
+- Enable custom operations on coins and purses: new generic `Custom()` with methods
+for coins and purses.
 - Add possibility to impute panel data using "constant" method from `stats::aprox()`.
 
 # COINr 1.1.11
