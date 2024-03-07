@@ -73,6 +73,7 @@ reference:
   - Normalise
   - qNormalise
   - Aggregate
+  - Custom
 - title: Analyse
   desc: Analyse data sets, summarise results and check sensitivity
   contents:
@@ -137,6 +138,8 @@ reference:
   - check_iMeta
   - check_SkewKurt
   - compare_df
+  - Custom.coin
+  - Custom.purse
   - Denominate.coin
   - Denominate.data.frame
   - Denominate.purse
