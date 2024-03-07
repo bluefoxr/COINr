@@ -49,9 +49,9 @@ write_log <- function(coin, dont_write = NULL, write2log = TRUE){
   func_name2 <- unlist(strsplit(func_name, "\\.")[[1]])[1]
 
   # make sure this is a builder function calling
-  builders <- c("Aggregate", "Denominate", "Impute", "new_coin", "Normalise", "qNormalise", "qTreat", "Screen", "Treat")
+  builders <- c("Aggregate", "Denominate", "Impute", "new_coin", "Normalise", "qNormalise", "qTreat", "Screen", "Treat", "Custom")
   if(func_name2 %nin% builders){
-    stop("The calling function ", func_name2, " is not one of the functions allowed to write to log. Authorised functions are ", builders)
+    stop("The calling function ", func_name2, " is not one of the functions allowed to write to log. Authorised functions are: ", toString(builders))
   }
 
   # write to coin

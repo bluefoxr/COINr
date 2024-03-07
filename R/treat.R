@@ -25,11 +25,50 @@ Treat.purse <- function(x, dset, global_specs = NULL, indiv_specs = NULL,
   # input check
   check_purse(x)
 
+  # if(global){
+  #
+  #   iDatas <- get_dset(x, dset)
+  #   iDatas_ <- iDatas[names(iDatas) != "Time"]
+  #
+  #   # run global dset through Treat (as data frame), excluding Time col
+  #   iDatas_t <- Treat(iDatas_, global_specs = global_specs,
+  #                         indiv_specs = indiv_specs, combine_treat = combine_treat)
+  #   # split by Time
+  #   iDatas_t_l <- split(iDatas_n, iDatas$Time)
+  #
+  #   # now write dsets to coins
+  #   x$coin <- lapply(x$coin, function(coin){
+  #
+  #     # get Time
+  #     tt <- coin$Meta$Unit$Time[[1]]
+  #     if(is.null(tt)){
+  #       stop("Time index is NULL or not found in writing treated data set to coin.")
+  #     }
+  #
+  #     if(is.null(write_to)){
+  #       write_to <- "Treated"
+  #     }
+  #
+  #     # write dset first
+  #     coin <- write_dset(coin, iDatas_t_l[[which(names(iDatas_t_l) == tt)]], dset = write_to)
+  #
+  #     # also write to log - we signal that coin can't be regenerated any more
+  #     coin$Log$can_regen <- FALSE
+  #     coin$Log$message <- "Coin was treated inside a purse with global = TRUE. Cannot be regenerated."
+  #
+  #     coin
+  #   })
+  #
+  # } else {
+
   # apply treatment to each coin
   x$coin <- lapply(x$coin, function(coin){
     Treat.coin(coin, dset = dset, global_specs = global_specs,
-                indiv_specs = indiv_specs, combine_treat = combine_treat, write_to = write_to)
+               indiv_specs = indiv_specs, combine_treat = combine_treat, write_to = write_to)
   })
+
+  #}
+
   # make sure still purse class
   class(x) <- c("purse", "data.frame")
   x
