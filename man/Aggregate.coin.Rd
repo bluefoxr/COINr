@@ -2,7 +2,7 @@
 % Please edit documentation in R/aggregate.R
 \name{Aggregate.coin}
 \alias{Aggregate.coin}
-\title{Aggregate indicators}
+\title{Aggregate indicators in a coin}
 \usage{
 \method{Aggregate}{coin}(
   x,
@@ -29,18 +29,21 @@ in the index: the first in the vector will be used to aggregate from Level 1 to 
 so on.}
 
 \item{w}{An optional data frame of weights. If \code{f_ag} does not require accept weights, set to \code{"none"}. Alternatively, can be the
-name of a weight set found in \code{.$Meta$Weights}.}
+name of a weight set found in \code{.$Meta$Weights}. This can also be specified as a list specifying the aggregation weights for each
+level, in the same way as the previous parameters.}
 
 \item{f_ag_para}{Optional parameters to pass to \code{f_ag}, other than \code{x} and \code{w}. As with \code{f_ag}, this can specified to have different
-parameters for each aggregation level by specifying as a nested list of length \code{n-1}.}
+parameters for each aggregation level by specifying as a nested list of length \code{n-1}. See details.}
 
 \item{dat_thresh}{An optional data availability threshold, specified as a number between 0 and 1. If a row
 within an aggregation group has data availability lower than this threshold, the aggregated value for that row will be
 \code{NA}. Data availability, for a row \code{x_row} is defined as \code{sum(!is.na(x_row))/length(x_row)}, i.e. the
-fraction of non-\code{NA} values.}
+fraction of non-\code{NA} values. Can also be specified as a vector of length \code{n-1}, where \code{n} is
+the number of levels in the index structure, to specify different data availability thresholds by level.}
 
 \item{by_df}{Controls whether to send a numeric vector to \code{f_ag} (if \code{FALSE}, default) or a data frame (if \code{TRUE}) - see
-details.}
+details. Can also be specified as a logical vector of length \code{n-1}, where \code{n} is
+the number of levels in the index structure.}
 
 \item{out2}{Either \code{"coin"} (default) to return updated coin or \code{"df"} to output the aggregated data set.}
 
@@ -53,21 +56,37 @@ An updated coin with aggregated data set added at \code{.$Data[[write_to]]} if \
 else if \code{out2 = "df"} outputs the aggregated data set as a data frame.
 }
 \description{
-Aggregates a named data set specified by \code{dset} using aggregation function \code{f_ag}, weights \code{w}, and optional
+Aggregates a named data set specified by \code{dset} using aggregation function(s) \code{f_ag}, weights \code{w}, and optional
 function parameters \code{f_ag_para}. Note that COINr has a number of aggregation functions built in,
 all of which are of the form \verb{a_*()}, e.g. \code{\link[=a_amean]{a_amean()}}, \code{\link[=a_gmean]{a_gmean()}} and friends.
 }
 \details{
-Aggregation is performed row-wise using the function \code{f_ag}, such that for each row \code{x_row}, the output is
-\code{f_ag(x_row, f_ag_para)}, and for the whole data frame, it outputs a numeric vector. The data frame \code{x} must
-only contain numeric columns.
+When \code{by_df = FALSE}, aggregation is performed row-wise using the function \code{f_ag}, such that for each row \code{x_row}, the output is
+\code{f_ag(x_row, f_ag_para)}, and for the whole data frame, it outputs a numeric vector. Otherwise if \code{by_df = TRUE},
+the entire data frame of each indicator group is passed to \code{f_ag}.
 
 The function \code{f_ag} must be supplied as a string, e.g. \code{"a_amean"}, and it must take as a minimum an input
 \code{x} which is either a numeric vector (if \code{by_df = FALSE}), or a data frame (if \code{by_df = TRUE}). In the former
 case \code{f_ag} should return a single numeric value (i.e. the result of aggregating \code{x}), or in the latter case
 a numeric vector (the result of aggregating the whole data frame in one go).
 
-\code{f_ag} can optionally have other parameters, e.g. weights, specified as a list in \code{f_ag_para}.
+Weights are passed to the function \code{f_ag} as an argument named \code{w}. This means that the function should have
+arguments that look like \code{f_ag(x, w, ...)}, where \code{...} are possibly other input arguments to the function. If the
+aggregation function doesn't use weights, you can set \code{w = "none"}, and no weights will be passed to it.
+
+\code{f_ag} can optionally have other parameters, apart from \code{x} and \code{w}, specified as a list in \code{f_ag_para}.
+
+The aggregation specifications can be set to be different for each level of aggregation: the arguments \code{f_ag},
+\code{f_ag_para}, \code{dat_thresh}, \code{w} and \code{by_df} can all be optionally specified as vectors or lists of length n-1, where
+n is the number of levels in the index. In this case, the first value in each vector/list will be used for the first
+round of aggregation, i.e. from indicators to the aggregates at level 2. The next will be used to aggregate from
+level 2 to level 3, and so on.
+
+When different functions are used for different levels, it is important to get the list syntax correct. For example, in a case with
+three aggregations using different functions, say we want to use \code{a_amean()} for the first two levels, then a custom
+function \code{f_cust()} for the last. \code{f_cust()} has some additional parameters \code{a} and \code{b}. In this case, we would specify e.g.
+\code{f_ag_para = list(NULL, NULL, list(a = 2, b = 3))} - this is becauase \code{a_amean()} requires no additional parameters, so
+we pass \code{NULL}.
 
 Note that COINr has a number of aggregation functions built in,
 all of which are of the form \verb{a_*()}, e.g. \code{\link[=a_amean]{a_amean()}}, \code{\link[=a_gmean]{a_gmean()}} and friends. To see a list browse COINr functions alphabetically or

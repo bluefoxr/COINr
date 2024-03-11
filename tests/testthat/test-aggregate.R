@@ -185,3 +185,59 @@ test_that("copeland", {
   expect_equal(y, rowSums(orm))
 
 })
+
+test_that("aggregation by level", {
+
+  coin <- build_example_coin(up_to = "new_coin")
+
+  # Testing:
+  # - different aggregation functions by level
+  # - different parameter sets by level
+  # - passing vectors or data frames to functions at different levels
+  # note: silly_aggregate is a function in utils.R
+  coin <- Aggregate(coin, dset = "Raw", f_ag = c("a_amean", "a_gmean", "silly_aggregate"),
+                    f_ag_para = list(NULL, NULL, list(start_at = 10)), by_df = c(FALSE, FALSE, TRUE)
+                    )
+
+  # check results
+  X <- get_dset(coin, dset = "Aggregated")
+
+  imeta <- coin$Meta$Ind
+
+  # test lev 1 to 2
+  imeta_grp <- imeta[which(imeta$Parent == "Physical"), ]
+  x <- X[1, imeta_grp$iCode] |> as.numeric()
+  y <- a_amean(x, w = imeta_grp$Weight)
+  expect_equal(X[1, "Physical"], y)
+
+  # test lev 2 to 3
+  imeta_grp <- imeta[which(imeta$Parent == "Conn"), ]
+  x <- X[1, imeta_grp$iCode] |> as.numeric()
+  y <- a_gmean(x, w = imeta_grp$Weight)
+  expect_equal(X[1, "Conn"], y)
+
+  # test lev 3 to 4
+  expect_equal(X[["Index"]], 10:(nrow(X) + 9))
+
+
+  # Now test using different weight specs at different levels
+  coin <- Aggregate(coin, dset = "Raw", f_ag = c("a_amean", "silly_aggregate_no_wts", "silly_aggregate"),
+                    f_ag_para = list(NULL, NULL, list(start_at = 10)), by_df = c(FALSE, TRUE, TRUE), w = list(NULL, "none", NULL))
+
+  # check results
+  X <- get_dset(coin, dset = "Aggregated")
+
+  # test lev 1 to 2
+  imeta_grp <- imeta[which(imeta$Parent == "Physical"), ]
+  x <- X[1, imeta_grp$iCode] |> as.numeric()
+  y <- a_amean(x, w = imeta_grp$Weight)
+  expect_equal(X[1, "Physical"], y)
+
+  # test lev 2 to 3: expect the Conn group to be aggregated as simply the first indicator
+  imeta_grp <- imeta[which(imeta$Parent == "Conn"), ]
+  expect_equal(X[["Conn"]], X[[imeta_grp$iCode[1]]])
+
+  # test lev 3 to 4
+  expect_equal(X[["Index"]], 10:(nrow(X) + 9))
+
+})

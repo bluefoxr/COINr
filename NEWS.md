@@ -2,6 +2,7 @@
 
 - Enable custom operations on coins and purses: new generic `Custom()` with methods
 for coins and purses.
+- Enable different `by_df` and `w` by aggregation level in `Aggregate.coin()`
 - Add possibility to impute panel data using "constant" method from `stats::aprox()`.
 
 # COINr 1.1.11

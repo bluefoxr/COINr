@@ -305,6 +305,9 @@ df_int_2_numeric <- function(X){
 
 }
 
+
+# FOR TESTS ---------------------------------------------------------------
+
 # function that imputes using mean, but then adds an NA - used in imputation testing
 NA_imputer <- function(x){
 
@@ -316,4 +319,18 @@ NA_imputer <- function(x){
     x_imp[insert_NA_at] <- NA
   }
   x_imp
+}
+
+
+# A silly aggregation function used only for unit tests - takes weights and chucks
+# them away, then makes up some numbers for the aggregation
+# Takes a data frame as input.
+silly_aggregate <- function(x, w, start_at = 1){
+  message("Weights received and thrown away: ", toString(w))
+  1:nrow(x) + (start_at - 1)
+}
+
+# same but with no weights... here just takes first column
+silly_aggregate_no_wts <- function(x){
+  as.numeric(x[,1])
 }

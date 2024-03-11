@@ -10,13 +10,19 @@
 #' the number of levels in the index structure. In this latter case, a different aggregation function may be used for each level
 #' in the index: the first in the vector will be used to aggregate from Level 1 to Level 2, the second from Level 2 to Level 3, and
 #' so on.
-#' @param w An optional data frame of weights. If `f_ag` does not require or accept weights, set to `"none"`.
+#' @param w An optional data frame of weights. If `f_ag` does not require accept weights, set to `"none"`. Alternatively, can be the
+#' name of a weight set found in `.$Meta$Weights`. This can also be specified as a list specifying the aggregation weights for each
+#' level, in the same way as the previous parameters.
 #' @param f_ag_para Optional parameters to pass to `f_ag`, other than `x` and `w`. As with `f_ag`, this can specified to have different
-#' parameters for each aggregation level by specifying as a nested list of length `n-1`.
+#' parameters for each aggregation level by specifying as a nested list of length `n-1`. See details.
 #' @param dat_thresh An optional data availability threshold, specified as a number between 0 and 1. If a row
 #' within an aggregation group has data availability lower than this threshold, the aggregated value for that row will be
 #' `NA`. Data availability, for a row `x_row` is defined as `sum(!is.na(x_row))/length(x_row)`, i.e. the
-#' fraction of non-`NA` values.
+#' fraction of non-`NA` values. Can also be specified as a vector of length `n-1`, where `n` is
+#' the number of levels in the index structure, to specify different data availability thresholds by level.
+#' @param by_df Controls whether to send a numeric vector to `f_ag` (if `FALSE`, default) or a data frame (if `TRUE`) - see
+#' details. Can also be specified as a logical vector of length `n-1`, where `n` is
+#' the number of levels in the index structure.
 #' @param write_to If specified, writes the aggregated data to `.$Data[[write_to]]`. Default `write_to = "Aggregated"`.
 #' @param ... arguments passed to or from other methods.
 #'
@@ -31,7 +37,7 @@
 #' purse <- Aggregate(purse, dset = "Normalised")
 #'
 Aggregate.purse <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, dat_thresh = NULL,
-                             write_to = NULL, ...){
+                             write_to = NULL, by_df = FALSE, ...){
 
   # input check
   check_purse(x)
@@ -39,7 +45,7 @@ Aggregate.purse <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, da
   # apply unit screening to each coin
   x$coin <- lapply(x$coin, function(coin){
     Aggregate.coin(coin, dset, f_ag = f_ag, w = w, f_ag_para = f_ag_para, dat_thresh = dat_thresh,
-                    out2 = "coin", write_to = write_to)
+                    out2 = "coin", write_to = write_to, by_df = by_df)
   })
   # make sure still purse class
   class(x) <- c("purse", "data.frame")
@@ -47,22 +53,38 @@ Aggregate.purse <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, da
 }
 
 
-#' Aggregate indicators
+#' Aggregate indicators in a coin
 #'
-#' Aggregates a named data set specified by `dset` using aggregation function `f_ag`, weights `w`, and optional
+#' Aggregates a named data set specified by `dset` using aggregation function(s) `f_ag`, weights `w`, and optional
 #' function parameters `f_ag_para`. Note that COINr has a number of aggregation functions built in,
 #' all of which are of the form `a_*()`, e.g. [a_amean()], [a_gmean()] and friends.
 #'
-#' Aggregation is performed row-wise using the function `f_ag`, such that for each row `x_row`, the output is
-#' `f_ag(x_row, f_ag_para)`, and for the whole data frame, it outputs a numeric vector. The data frame `x` must
-#' only contain numeric columns.
+#' When `by_df = FALSE`, aggregation is performed row-wise using the function `f_ag`, such that for each row `x_row`, the output is
+#' `f_ag(x_row, f_ag_para)`, and for the whole data frame, it outputs a numeric vector. Otherwise if `by_df = TRUE`,
+#' the entire data frame of each indicator group is passed to `f_ag`.
 #'
 #' The function `f_ag` must be supplied as a string, e.g. `"a_amean"`, and it must take as a minimum an input
 #' `x` which is either a numeric vector (if `by_df = FALSE`), or a data frame (if `by_df = TRUE`). In the former
 #' case `f_ag` should return a single numeric value (i.e. the result of aggregating `x`), or in the latter case
 #' a numeric vector (the result of aggregating the whole data frame in one go).
 #'
-#' `f_ag` can optionally have other parameters, e.g. weights, specified as a list in `f_ag_para`.
+#' Weights are passed to the function `f_ag` as an argument named `w`. This means that the function should have
+#' arguments that look like `f_ag(x, w, ...)`, where `...` are possibly other input arguments to the function. If the
+#' aggregation function doesn't use weights, you can set `w = "none"`, and no weights will be passed to it.
+#'
+#' `f_ag` can optionally have other parameters, apart from `x` and `w`, specified as a list in `f_ag_para`.
+#'
+#' The aggregation specifications can be set to be different for each level of aggregation: the arguments `f_ag`,
+#' `f_ag_para`, `dat_thresh`, `w` and `by_df` can all be optionally specified as vectors or lists of length n-1, where
+#' n is the number of levels in the index. In this case, the first value in each vector/list will be used for the first
+#' round of aggregation, i.e. from indicators to the aggregates at level 2. The next will be used to aggregate from
+#' level 2 to level 3, and so on.
+#'
+#' When different functions are used for different levels, it is important to get the list syntax correct. For example, in a case with
+#' three aggregations using different functions, say we want to use `a_amean()` for the first two levels, then a custom
+#' function `f_cust()` for the last. `f_cust()` has some additional parameters `a` and `b`. In this case, we would specify e.g.
+#' `f_ag_para = list(NULL, NULL, list(a = 2, b = 3))` - this is becauase `a_amean()` requires no additional parameters, so
+#' we pass `NULL`.
 #'
 #' Note that COINr has a number of aggregation functions built in,
 #' all of which are of the form `a_*()`, e.g. [a_amean()], [a_gmean()] and friends. To see a list browse COINr functions alphabetically or
@@ -80,15 +102,18 @@ Aggregate.purse <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, da
 #' in the index: the first in the vector will be used to aggregate from Level 1 to Level 2, the second from Level 2 to Level 3, and
 #' so on.
 #' @param w An optional data frame of weights. If `f_ag` does not require accept weights, set to `"none"`. Alternatively, can be the
-#' name of a weight set found in `.$Meta$Weights`.
+#' name of a weight set found in `.$Meta$Weights`. This can also be specified as a list specifying the aggregation weights for each
+#' level, in the same way as the previous parameters.
 #' @param f_ag_para Optional parameters to pass to `f_ag`, other than `x` and `w`. As with `f_ag`, this can specified to have different
-#' parameters for each aggregation level by specifying as a nested list of length `n-1`.
+#' parameters for each aggregation level by specifying as a nested list of length `n-1`. See details.
 #' @param dat_thresh An optional data availability threshold, specified as a number between 0 and 1. If a row
 #' within an aggregation group has data availability lower than this threshold, the aggregated value for that row will be
 #' `NA`. Data availability, for a row `x_row` is defined as `sum(!is.na(x_row))/length(x_row)`, i.e. the
-#' fraction of non-`NA` values.
+#' fraction of non-`NA` values. Can also be specified as a vector of length `n-1`, where `n` is
+#' the number of levels in the index structure, to specify different data availability thresholds by level.
 #' @param by_df Controls whether to send a numeric vector to `f_ag` (if `FALSE`, default) or a data frame (if `TRUE`) - see
-#' details.
+#' details. Can also be specified as a logical vector of length `n-1`, where `n` is
+#' the number of levels in the index structure.
 #' @param out2 Either `"coin"` (default) to return updated coin or `"df"` to output the aggregated data set.
 #' @param write_to If specified, writes the aggregated data to `.$Data[[write_to]]`. Default `write_to = "Aggregated"`.
 #' @param ... arguments passed to or from other methods.
@@ -111,9 +136,23 @@ Aggregate.coin <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, dat
 
   coin <- write_log(x, dont_write = "x")
 
-  # CHECK AND SET f_ag ------------------------------------------------------
+
+  # Check and set by_df -----------------------------------------------------
 
   nlev <- max(coin$Meta$Ind$Level, na.rm = TRUE)
+
+  stopifnot(is.logical(by_df))
+
+  if(length(by_df) == 1){
+    by_dfs <- rep(by_df, nlev-1)
+  } else if (length(by_df) != (nlev -1)) {
+    stop("by_df must have either length 1 (same for all levels) or length equal to (number of levels - 1), in your case: ", nlev-1)
+  } else {
+    by_dfs <- by_df
+  }
+
+
+  # CHECK AND SET f_ag ------------------------------------------------------
 
   # default and check
   if(is.null(f_ag)){
@@ -131,54 +170,108 @@ Aggregate.coin <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, dat
     f_ags <- rep(f_ag, nlev - 1)
   } else {
     if(length(f_ag) != (nlev - 1)){
-      stop("f_ag must have either length 1 (same function for all levels) or length equal to number of levels - in your case: ", nlev)
+      stop("f_ag must have either length 1 (same function for all levels) or length equal to (number of levels - 1), in your case: ", nlev-1)
     }
     f_ags <- f_ag
   }
 
   # CHECK AND SET w ---------------------------------------------------------
 
-  # if weights is supplied we have to see what kind of thing it is
+  # If weights are supplied we have to see what kind of thing it is. This gets
+  # a bit messy due to the number of different input types that w can take, including
+  # varying by level.
+
   # NULL indicates that we should use metadata weights
   if(!is.null(w)){
 
-    if(is.data.frame(w)){
+    # case where weights is invariant at all levels
+    if(length(w) == 1 || is.data.frame(w)){
 
-      stopifnot(exists("iCode", w),
-                exists("Weight", w))
-      w1 <- w
+      if(is.data.frame(w)){
 
-    } else if(is.character(w)){
+        stopifnot(exists("iCode", w),
+                  exists("Weight", w))
+        w1 <- rep(list(w), nlev - 1)
 
-      if(length(w) != 1){
+      } else if(is.character(w)){
+
+        if(w != "none"){
+
+          # we look for a named weight set
+          w1 <- coin$Meta$Weights[[w]]
+          if(is.null(w1)){
+            stop("Weight set with name '", w, "' not found in .$Meta$Weights.")
+          }
+          stopifnot(is.data.frame(w1),
+                    exists("iCode", w1),
+                    exists("Weight", w1))
+          # copy for all levels
+          w1 <- rep(list(w1), nlev - 1)
+
+        } else {
+          # convert w1 to NULL - means no weights will be passed to function
+          w1 <- NULL
+        }
+      } else {
         stop("w must be either a string indicating a name of a weight set, or a data frame of weights, or 'none', or NULL (to use weights from metadata).")
       }
 
-      if(w != "none"){
-
-        # we look for a named weight set
-        w1 <- coin$Meta$Weights[[w]]
-        if(is.null(w1)){
-          stop("Weight set with name '", w, "' not found in .$Meta$Weights.")
-        }
-        stopifnot(is.data.frame(w1),
-                  exists("iCode", w1),
-                  exists("Weight", w1))
-
-      } else {
-        # convert w1 to NULL
-        w1 <- NULL
-      }
     } else {
-      stop("w must be either a string indicating a name of a weight set, or a data frame of weights, or 'none', or NULL (to use weights from metadata).")
+
+      # w has been specified as a list of length > 1
+      if(!is.list(w)){
+        stop("If length(w) > 1, it must be specified as a list.")
+      }
+      if(length(w) != nlev - 1){
+        stop("If w is specified as a list with length > 1, it must have length equal to the number of aggregation levels minus one.")
+      }
+
+      # Process each entry in the list separately
+      w1 <- lapply(w, function(wi){
+
+        if(is.data.frame(wi)){
+
+          stopifnot(exists("iCode", wi),
+                    exists("Weight", wi))
+
+        } else if (is.character(wi)){
+
+          if(wi != "none"){
+
+            # we look for a named weight set
+            wi <- coin$Meta$Weights[[wi]]
+            if(is.null(wi)){
+              stop("Weight set with name '", wi, "' not found in .$Meta$Weights.")
+            }
+            stopifnot(is.data.frame(wi),
+                      exists("iCode", wi),
+                      exists("Weight", wi))
+
+          } else {
+            # convert w1 to NULL - means no weights will be passed to function
+            wi <- NULL
+          }
+        } else if (is.null(wi)){
+
+          wi <- coin$Meta$Ind[c("iCode", "Weight")]
+
+        } else {
+          stop("Entries in w must be either a data frame of weights, name of weight set, 'none' or NULL.")
+        }
+        wi
+      })
+
     }
 
   } else{
     # if w was NULL, get from metadata
-    w1 <- coin$Meta$Ind[c("iCode", "Weight")]
+    w1 <- rep(list(coin$Meta$Ind[c("iCode", "Weight")]), nlev - 1)
   }
 
-  # from this point, w1 is either a data frame of weights, or NULL (don't pass weights to f_ag)
+  # from this point, w1 should be a list of either data frames or NULLs
+  stopifnot(
+    all(sapply(w1, is.data.frame) | sapply(w1, is.null))
+  )
 
   # CHECK AND SET f_ag_para -------------------------------------------------
 
@@ -199,13 +292,13 @@ Aggregate.coin <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, dat
       f_ag_paras <- f_ag_para
     }
   } else {
-    f_ag_paras <- rep(list(NULL), 4)
+    f_ag_paras <- rep(list(NULL), nlev - 1)
   }
 
   # Other Prep --------------------------------------------------------------------
 
   if(is.null(dat_thresh)){
-    dat_threshs <- rep(list(NULL), 4)
+    dat_threshs <- rep(list(NULL), nlev - 1)
   } else {
     if(!is.numeric(dat_thresh)){
       stop("dat_thresh must be a numeric value or vector of length (number of levels - 1) - in your case: ", nlev)
@@ -238,27 +331,27 @@ Aggregate.coin <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, dat
     # filter metadata to level
     imeta_l <- imeta[imeta$Level == (lev-1), ]
 
-    if(is.null(w1)){
+    if(is.null(w1[[lev-1]])){
       aggs <- tapply(imeta_l$iCode, imeta_l$Parent, function(codes){
         # call func
         do.call("Aggregate",
                 list(x = indat_ag[codes],
                      f_ag = f_ags[lev-1],
                      f_ag_para = f_ag_paras[[lev-1]],
-                     dat_thresh = dat_threshs[lev-1],
-                     by_df = by_df))
+                     dat_thresh = dat_threshs[[lev-1]],
+                     by_df = by_dfs[lev-1]))
       })
     } else {
       aggs <- tapply(imeta_l$iCode, imeta_l$Parent, function(codes){
         # get weights
-        wts <- w1$Weight[match(codes, w1$iCode)]
+        wts <- w1[[lev-1]]$Weight[match(codes, w1[[lev-1]]$iCode)]
         # call func
         do.call("Aggregate",
                 list(x = indat_ag[codes],
                      f_ag = f_ags[lev-1],
                      f_ag_para = c(list(w = wts), f_ag_paras[[lev-1]]),
                      dat_thresh = dat_threshs[[lev-1]],
-                     by_df = by_df))
+                     by_df = by_dfs[lev-1]))
       })
     }
 
