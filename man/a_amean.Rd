@@ -18,7 +18,7 @@ The weighted mean as a scalar value
 The vector of weights \code{w} is relative since the formula is:
 }
 \details{
-\deqn{ y = 1(\sum w) \sum wx }
+\deqn{ y = \frac{1}{\sum w_i} \sum w_i x_i }
 
 If \code{x} contains \code{NA}s, these \code{x} values and the corresponding \code{w} values are removed before applying the
 formula above.

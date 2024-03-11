@@ -125,19 +125,25 @@ test_that("agg_functions", {
 
   # geometric
   x <- c(1, 2, 3)
-  y1 <- a_gmean(x)
+  yg <- a_gmean(x)
 
-  expect_equal(y1, (1*2*3)^(1/3))
+  expect_equal(yg, (1*2*3)^(1/3))
   expect_error(a_gmean(c(1, 2, -1)))
   expect_error(a_gmean(c(1, 2, 0)))
 
-  y1 <- a_gmean(x, c(1,1,2))
-  expect_equal(y1, (1*2*3^2)^(1/4))
+  yg2 <- a_gmean(x, c(1,1,2))
+  expect_equal(yg2, (1*2*3^2)^(1/4))
 
   # harmonic
   x <- c(1, 2, 3)
-  y1 <- a_hmean(x, c(2, 1, 1))
-  expect_equal(y1, 4/(2/1 + 1/2 + 1/3))
+  yh <- a_hmean(x, c(2, 1, 1))
+  expect_equal(yh, 4/(2/1 + 1/2 + 1/3))
+
+  # generalised
+  ygen <- a_genmean(x, c(2,1,1), p = -1)
+  expect_equal(ygen, yh)
+  ygen <- a_genmean(x, p = 1)
+  expect_equal(ygen, 2) # simple arithmetic av.
 
 })
 

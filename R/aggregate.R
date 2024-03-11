@@ -547,7 +547,7 @@ Aggregate <- function(x, ...){
 #'
 #' The vector of weights `w` is relative since the formula is:
 #'
-#' \deqn{ y = 1(\sum w) \sum wx }
+#' \deqn{ y = \frac{1}{\sum w_i} \sum w_i x_i }
 #'
 #' If `x` contains `NA`s, these `x` values and the corresponding `w` values are removed before applying the
 #' formula above.
@@ -687,6 +687,69 @@ a_hmean <- function(x, w = NULL){
   hm
 
 }
+
+
+#' Weighted generalised mean
+#'
+#' Weighted generalised mean of a vector. `NA` are skipped by default.
+#'
+#' The generalised mean is as follows:
+#'
+#' \deqn{ y = \left( \frac{1}{\sum w_i} \sum w_i x_i^p  \right)^{1/p} }
+#'
+#' where `p` is a coefficient specified in the function argument here. Note that:
+#'
+#' - For negative `p`, all `x` values must be positive
+#' - Setting `p = 0` will result in an error due to the negative exponent. This case
+#' is equivalent to the geometric mean in the limit, so use [a_gmean()] instead.
+#'
+#' @param x A numeric vector of positive values.
+#' @param w A vector of weights, which should have length equal to `length(x)`. Weights are relative
+#' and will be re-scaled to sum to 1. If `w` is not specified, defaults to equal weights.
+#' @param p Coefficient - see details.
+#'
+#' @examples
+#' # a vector of values
+#' x <- 1:10
+#' # a vector of weights
+#' w <- runif(10)
+#' # weighted harmonic mean
+#' a_genmean(x,w)
+#'
+#' @return Weighted harmonic mean, as a numeric value.
+#'
+#' @export
+a_genmean <- function(x, w = NULL, p){
+
+  if(is.null(w)){
+    # default equal weights
+    w <- rep(1,length(x))
+    message("No weights specified, using equal weights.")
+  }
+
+  if(p==0){
+    stop("Setting p = 0 results in an infinite exponent. In the limit, this case is equal to the geometric mean: use a_gmean() instead.")
+  }
+
+  if(any(!is.na(x))){
+
+    if(any(x <= 0, na.rm = TRUE) && p < 0){
+      stop("Zero or negative values found when applying generalised mean with negative p: cannot be calculated.")
+    }
+
+    # have to set any weights to NA to correspond to NAs in x
+    w[is.na(x)] <- NA
+
+    gm <- (sum(w*x^p)/sum(w))^(1/p)
+
+  } else {
+    gm <- NA
+  }
+
+  gm
+
+}
+
 
 
 #' Outranking matrix
