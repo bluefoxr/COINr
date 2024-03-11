@@ -267,3 +267,75 @@ compare_coins_multi <- function(coins, dset, iCode, also_get = NULL, tabtype = "
   df_CODE
 
 }
+
+
+#' Compare two coins by correlation
+#'
+#' Given two coins, this function returns the correlation between the two coins,
+#' for target datset `dset` and target indicator code(s) `iCodes`. Correlation
+#' is calculated as the Pearson correlation coefficient, but if `compare_by = "Ranks"`
+#' then this is the correlation coefficient of the ranks, which amounts to the
+#' Spearman rank correlation. Set `compare_by = "Scores"` to return the Pearson
+#' correlation between scores.
+#'
+#' @param coin1 A coin
+#' @param coin2 A coin, with possibly alternative methodology. This should share at
+#' least two units in common with `coin1`.
+#' @param dset Target data set, must be present in both `coin1` and `coin2`
+#' @param iCodes Character vector of indicator codes to correlate between the two
+#' coins.
+#' @param compare_by Either `"Ranks"` or `"Scores"`.
+#'
+#' @return A list containing a correlation table and a list of comparison data frames.
+#' @export
+#'
+#' @examples
+#' # build example
+#' coin <- build_example_coin()
+#'
+#' # copy coin
+#' coin2 <- coin
+#'
+#' # change to prank function (percentile ranks)
+#' # we don't need to specify any additional parameters (f_n_para) here
+#' coin2$Log$Normalise$global_specs <- list(f_n = "n_prank")
+#'
+#' # regenerate
+#' coin2 <- Regen(coin2)
+#'
+#' # iCodes to compare: all at level 3 and 4
+#' iCodes <- coin$Meta$Ind$iCode[which(coin$Meta$Ind$Level > 2)]
+#'
+#' # compare index, sort by absolute rank difference
+#' l_comp <- compare_coins_corr(coin, coin2, dset = "Aggregated", iCodes = iCodes)
+#'
+#' # see df
+#' l_comp$df_corr
+#'
+compare_coins_corr <- function(coin1, coin2, dset, iCodes, compare_by = "ranks"){
+
+  # note most checks are performed inside compare_coins()
+  stopifnot(is.character(iCodes))
+
+  # send each iCode individually for comparison
+  l_compare <- lapply(iCodes, function(iCode){
+    df_compare <- compare_coins(coin1 = coin1, coin2 = coin2, dset = dset,
+                                iCode = iCode, also_get = "uName", compare_by = compare_by)
+    list(
+      df_compare = df_compare,
+      corr = stats::cor(df_compare$coin.1, df_compare$coin.2)
+    )
+  })
+  names(l_compare) <- iCodes
+
+  # assemble df of correlations
+  df_corr <- data.frame(
+    iCode = iCodes,
+    Correlation = sapply(l_compare, `[[`, "corr")
+  )
+
+  # output
+  list(df_corr = df_corr, details = l_compare)
+
+}
+

@@ -113,6 +113,7 @@ reference:
   - change_ind
   - compare_coins
   - compare_coins_multi
+  - compare_coins_corr
 - title: Helpers
   desc: Helper functions to take care of common tasks
   contents:
