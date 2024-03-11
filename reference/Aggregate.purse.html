@@ -100,6 +100,7 @@ See <code><a href="Aggregate.coin.html">Aggregate.coin()</a></code>, which is ap
 <span>  f_ag_para <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  dat_thresh <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  write_to <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  by_df <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -123,23 +124,32 @@ so on.</p></dd>
 
 
 <dt>w</dt>
-<dd><p>An optional data frame of weights. If <code>f_ag</code> does not require or accept weights, set to <code>"none"</code>.</p></dd>
+<dd><p>An optional data frame of weights. If <code>f_ag</code> does not require accept weights, set to <code>"none"</code>. Alternatively, can be the
+name of a weight set found in <code>.$Meta$Weights</code>. This can also be specified as a list specifying the aggregation weights for each
+level, in the same way as the previous parameters.</p></dd>
 
 
 <dt>f_ag_para</dt>
 <dd><p>Optional parameters to pass to <code>f_ag</code>, other than <code>x</code> and <code>w</code>. As with <code>f_ag</code>, this can specified to have different
-parameters for each aggregation level by specifying as a nested list of length <code>n-1</code>.</p></dd>
+parameters for each aggregation level by specifying as a nested list of length <code>n-1</code>. See details.</p></dd>
 
 
 <dt>dat_thresh</dt>
 <dd><p>An optional data availability threshold, specified as a number between 0 and 1. If a row
 within an aggregation group has data availability lower than this threshold, the aggregated value for that row will be
 <code>NA</code>. Data availability, for a row <code>x_row</code> is defined as <code>sum(!is.na(x_row))/length(x_row)</code>, i.e. the
-fraction of non-<code>NA</code> values.</p></dd>
+fraction of non-<code>NA</code> values. Can also be specified as a vector of length <code>n-1</code>, where <code>n</code> is
+the number of levels in the index structure, to specify different data availability thresholds by level.</p></dd>
 
 
 <dt>write_to</dt>
 <dd><p>If specified, writes the aggregated data to <code>.$Data[[write_to]]</code>. Default <code>write_to = "Aggregated"</code>.</p></dd>
+
+
+<dt>by_df</dt>
+<dd><p>Controls whether to send a numeric vector to <code>f_ag</code> (if <code>FALSE</code>, default) or a data frame (if <code>TRUE</code>) - see
+details. Can also be specified as a logical vector of length <code>n-1</code>, where <code>n</code> is
+the number of levels in the index structure.</p></dd>
 
 
 <dt>...</dt>
