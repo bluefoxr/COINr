@@ -713,8 +713,8 @@ a_hmean <- function(x, w = NULL){
 #' x <- 1:10
 #' # a vector of weights
 #' w <- runif(10)
-#' # weighted harmonic mean
-#' a_genmean(x,w)
+#' # cubic mean
+#' a_genmean(x,w, p = 2)
 #'
 #' @return Weighted harmonic mean, as a numeric value.
 #'

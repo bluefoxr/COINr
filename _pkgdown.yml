@@ -133,6 +133,7 @@ reference:
   - a_copeland
   - a_gmean
   - a_hmean
+  - a_genmean
   - boxcox
   - CAGR
   - check_iData
