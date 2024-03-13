@@ -37,7 +37,7 @@ is equivalent to the geometric mean in the limit, so use \code{\link[=a_gmean]{a
 x <- 1:10
 # a vector of weights
 w <- runif(10)
-# weighted harmonic mean
-a_genmean(x,w)
+# cubic mean
+a_genmean(x,w, p = 2)
 
 }
