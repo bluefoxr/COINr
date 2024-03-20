@@ -55,6 +55,12 @@ that was passed to it, it must contain have the same column names (meaning you c
 remove indicators), but otherwise is flexible - this means some caution is necessary
 to ensure that subsequent operations don't fail. Be careful, for example, to ensure
 that there are no duplicates in \code{uCode}, and that indicator columns are numeric.
+
+The function assigned to \code{f_cust} is passed to \code{\link[base:do.call]{base::do.call()}}, therefore it can
+be passed either as a string naming the function, or as the function itself. Depending
+on the context, the latter option may be preferable because this stores the function
+within the coin, which makes it portable. Otherwise, if the function is simply
+named as a string, you must make sure it is available to access in the environment.
 }
 \examples{
 # build example coin
@@ -64,7 +70,7 @@ coin <- build_example_coin(up_to = "new_coin")
 f_NA <- function(x){ x[3, 10] <- NA; return(x)}
 
 # call function from Custom()
-coin <- Custom(coin, dset = "Raw", f_cust = "f_NA")
+coin <- Custom(coin, dset = "Raw", f_cust = f_NA)
 stopifnot(is.na(coin$Data$Custom[3,10]))
 
 }
