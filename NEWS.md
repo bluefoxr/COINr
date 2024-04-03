@@ -1,3 +1,7 @@
+# COINr 1.1.13
+
+- Minor bug fixes: spaces in uCodes, issue exporting 2-level composite indicators to Excel
+
 # COINr 1.1.12
 
 - Enable custom operations on coins and purses: new generic `Custom()` with methods

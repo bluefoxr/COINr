@@ -373,6 +373,11 @@ check_iData <- function(iData, quietly = FALSE){
   if(!is.character(iData$uCode)){
     stop("uCode is required to be a character vector.")
   }
+  # should not contain spaces
+  spaces <- grepl(" ", iData$uCode)
+  if(any(spaces)){
+    stop("uCode contains entries with spaces - this is not allowed.")
+  }
 
   # SPECIAL COLS ------------------------------------------------------------
   # Special cols are those that are not REQUIRED but defined in iMeta
@@ -775,14 +780,14 @@ get_lineage <- function(iMeta, level_names = NULL){
   if(maxlev == 1){
     wideS <- wideS["iCode"]
     warning("Only one level is defined in iMeta. This is not normally expected in a composite indicator, and some functions may not work as expected.", call. = FALSE)
-  } else {
+  } else if (maxlev > 2) {
     # successively add columns by looking up parent codes of last col
     for(ii in 2:(maxlev-1)){
       wideS <- cbind(wideS,
                      longS$Parent[match(wideS[[ii]], longS$iCode)])
     }
   }
-
+  # NOTE: if maxlev == 2, nothing needs to be done
 
   # rename columns
   if(is.null(level_names)){
