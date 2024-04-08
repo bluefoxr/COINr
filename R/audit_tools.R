@@ -153,7 +153,7 @@ remove_elements <- function(coin, Level, dset, iCode, quietly = FALSE){
   rankchgabs <- rankchg
   rankchgabs[-1] <- apply(rankchgabs[-1], 2, abs)
   # mean absolute rank changes
-  MeanAbsDiff <- colMeans(rankchgabs[-1])
+  MeanAbsDiff <- colMeans(rankchgabs[-1], na.rm = TRUE)
 
   # Output
   list(Scores = Scores,
