@@ -210,7 +210,8 @@ Aggregate.coin <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, dat
 
         } else {
           # convert w1 to NULL - means no weights will be passed to function
-          w1 <- NULL
+          w1 <- rep(list(NULL), nlev - 1)
+          #w1 <- NULL
         }
       } else {
         stop("w must be either a string indicating a name of a weight set, or a data frame of weights, or 'none', or NULL (to use weights from metadata).")
@@ -284,7 +285,7 @@ Aggregate.coin <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, dat
 
     # if same for all levels, repeat
     if(length(f_ag_para) == 1){
-      f_ag_paras <- rep(f_ag_para, nlev - 1)
+      f_ag_paras <- rep(list(f_ag_para), nlev - 1)
     } else {
       if(length(f_ag_para) != (nlev - 1)){
         stop("f_ag_para must have either length 1 (same parameters for all levels) or length equal to number of levels - in your case: ", nlev)
