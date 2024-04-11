@@ -193,7 +193,7 @@ The general requirements for `f_ag` functions passed to `Aggregate()` are that:
 3. If the function accepts a vector of weights, this vector (of the same length of `x`) is passed as function argument `w`. If the function doesn't accept a vector of weights, we can set `w = "none"` in the arguments to `Aggregate()`, and it will not try to pass `w`.
 4. Any other arguments to `f_ag`, apart from `x` and `w`, should be included in the named list `f_ag_para`.
 
-Sometimes this may mean that we have to create a wrapper function to satisfy these requirements. For example, the 'Compind' package has a number of sophisticated aggregation approaches. The "benefit of the doubt" uses data envelopment analysis to aggregate indicators, however the function `Compind::ci_bod()` outputs a list. We can make a wrapper function to use this inside COINr:
+Sometimes this may mean that we have to create a wrapper function to satisfy these requirements. For example, the 'Compind' package has a number of sophisticated aggregation approaches. The "benefit of the doubt" uses data envelopment analysis to aggregate indicators, however the function Compind::ci_bod() outputs a list. We can make a wrapper function to use this inside COINr:
 
 ```{r, eval= F}
 # RESTORE ABOVE eval= ci_installed
