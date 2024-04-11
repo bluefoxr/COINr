@@ -247,3 +247,35 @@ test_that("aggregation by level", {
   expect_equal(X[["Index"]], 10:(nrow(X) + 9))
 
 })
+
+# test passing no weights to aggregation function...
+test_that("sum_by_level", {
+
+  coin <- build_example_coin(up_to = "new_coin")
+
+  # test as sum of indicators in each group (weights NOT passed)
+  coin <- Aggregate(coin, dset = "Raw", f_ag = "sum",
+                    f_ag_para = list(na.rm = TRUE), w = "none"
+  )
+
+  # checks - pick a selected value
+  CHN_phys <- get_data(coin, dset = "Aggregated", iCodes = "Physical", Level = 2, uCodes = "CHN", also_get = "none") |>
+    as.numeric()
+
+  CHN_phys_man <- get_data(coin, dset = "Raw", iCodes = "Physical", Level = 1, uCodes = "CHN", also_get = "none") |>
+    as.numeric() |>
+    sum(na.rm = TRUE)
+
+  expect_equal(CHN_phys, CHN_phys_man)
+
+  # another
+  IND_conn <- get_data(coin, dset = "Aggregated", iCodes = "Conn", Level = 3, uCodes = "IND", also_get = "none") |>
+    as.numeric()
+
+  IND_conn_man <- get_data(coin, dset = "Aggregated", iCodes = "Conn", Level = 2, uCodes = "IND", also_get = "none") |>
+    as.numeric() |>
+    sum(na.rm = TRUE)
+
+  expect_equal(IND_conn, IND_conn_man)
+
+})

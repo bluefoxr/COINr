@@ -151,7 +151,6 @@ Aggregate.coin <- function(x, dset, f_ag = NULL, w = NULL, f_ag_para = NULL, dat
     by_dfs <- by_df
   }
 
-
   # CHECK AND SET f_ag ------------------------------------------------------
 
   # default and check

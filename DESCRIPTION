@@ -29,7 +29,6 @@ Suggests:
     spelling,
     knitr,
     testthat (>= 3.0.0),
-    Compind,
     matrixStats,
     performance,
     covr
