@@ -390,24 +390,27 @@ mean.</p>
 format (try e.g. <code><a href="../reference/a_gmean.html">?a_gmean</a></code>), and are built into the COINr
 package. But what if we want to use another type of aggregation
 function? The process is exactly the same.</p>
+<p><em>NOTE: the compind package has been disabled here from running the
+commands in this vignette because of changes to a dependent package
+which are causing problems with the R CMD check. The commands should
+still work if you run them, but the results will not be shown
+here.</em></p>
 <p>In this section we use some functions from other packages: the
 matrixStats package and the Compind package. These are not imported by
 COINr, so the code here will only work if you have these installed. If
 this vignette was built on your computer, we have to check whether these
 packages are installed:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ms_installed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"matrixStats"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">ms_installed</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span>
+<code class="sourceCode R"><span><span class="co"># ms_installed &lt;- requireNamespace("matrixStats", quietly = TRUE)</span></span>
+<span><span class="co"># ms_installed</span></span>
 <span></span>
-<span><span class="va">ci_installed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"Compind"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">ci_installed</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<span><span class="co"># ci_installed &lt;- requireNamespace("Compind", quietly = TRUE)</span></span>
+<span><span class="co"># ci_installed</span></span></code></pre></div>
 <p>If either of these have returned <code>FALSE</code>, in the following
 code chunks you will see some blanks. See the online version of this
 vignette to see the results, or install the above packages and rebuild
 the vignettes.</p>
-<p>Now for an example, we can use the <code><a href="https://rdrr.io/pkg/matrixStats/man/weightedMedian.html" class="external-link">weightedMedian()</a></code>
+<p>Now for an example, we can use the <code>weightedMedian()</code>
 function from the matrixStats package. This has a number of arguments,
 but the ones we will use are <code>x</code> and <code>w</code> (with the
 same meanings as COINr functions), and <code>na.rm</code> which we need
@@ -415,12 +418,12 @@ to set to <code>TRUE</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># RESTORE above eval=ms_installed</span></span>
 <span><span class="co"># load matrixStats package</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/HenrikBengtsson/matrixStats" class="external-link">matrixStats</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># aggregate using weightedMedian()</span></span>
-<span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Aggregate.html">Aggregate</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Normalised"</span>,</span>
-<span>                   f_ag <span class="op">=</span> <span class="st">"weightedMedian"</span>,</span>
-<span>                   f_ag_para <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co"># library(matrixStats)</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># # aggregate using weightedMedian()</span></span>
+<span><span class="co"># coin &lt;- Aggregate(coin, dset = "Normalised",</span></span>
+<span><span class="co">#                    f_ag = "weightedMedian",</span></span>
+<span><span class="co">#                    f_ag_para = list(na.rm = TRUE))</span></span></code></pre></div>
 <p>The weights <code>w</code> do not need to be specified in
 <code>f_ag_para</code> because they are automatically passed to
 <code>f_ag</code> unless specified otherwise.</p>
@@ -444,22 +447,25 @@ and <code>w</code>, should be included in the named list
 satisfy these requirements. For example, the ‘Compind’ package has a
 number of sophisticated aggregation approaches. The “benefit of the
 doubt” uses data envelopment analysis to aggregate indicators, however
-the function <code><a href="https://rdrr.io/pkg/Compind/man/ci_bod.html" class="external-link">Compind::ci_bod()</a></code> outputs a list. We can make
-a wrapper function to use this inside COINr:</p>
+the function Compind::ci_bod() outputs a list. We can make a wrapper
+function to use this inside COINr:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># RESTORE ABOVE eval= ci_installed</span></span>
+<span></span>
+<span><span class="co"># NOTE: this chunk disabled - see comments above.</span></span>
+<span></span>
 <span><span class="co"># load Compind</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">Compind</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># wrapper to get output of interest from ci_bod</span></span>
-<span><span class="co"># also suppress messages about missing values</span></span>
-<span><span class="va">ci_bod2</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages</a></span><span class="op">(</span><span class="fu">Compind</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Compind/man/ci_bod.html" class="external-link">ci_bod</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">$</span><span class="va">ci_bod_est</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="co"># aggregate</span></span>
-<span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Aggregate.html">Aggregate</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Normalised"</span>,</span>
-<span>                   f_ag <span class="op">=</span> <span class="st">"ci_bod2"</span>, by_df <span class="op">=</span> <span class="cn">TRUE</span>, w <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co"># suppressPackageStartupMessages(library(Compind))</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># # wrapper to get output of interest from ci_bod</span></span>
+<span><span class="co"># # also suppress messages about missing values</span></span>
+<span><span class="co"># ci_bod2 &lt;- function(x){</span></span>
+<span><span class="co">#   suppressMessages(Compind::ci_bod(x)$ci_bod_est)</span></span>
+<span><span class="co"># }</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># # aggregate</span></span>
+<span><span class="co"># coin &lt;- Aggregate(coin, dset = "Normalised",</span></span>
+<span><span class="co">#                    f_ag = "ci_bod2", by_df = TRUE, w = "none")</span></span></code></pre></div>
 <p>The benefit of the doubt approach automatically assigns individual
 weights to each unit, so we need to specify <code>w = "none"</code> to
 stop <code><a href="../reference/Aggregate.html">Aggregate()</a></code> from attempting to pass weights to the
