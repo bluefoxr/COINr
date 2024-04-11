@@ -162,8 +162,8 @@ All of the four aggregation functions mentioned above have the same format (try 
 In this section we use some functions from other packages: the matrixStats package and the Compind package. These are not imported by COINr, so the code here will only work if you have these installed. If this vignette was built on your computer, we have to check whether these packages are installed:
 
 ```{r}
-ms_installed <- requireNamespace("matrixStats", quietly = TRUE)
-ms_installed
+# ms_installed <- requireNamespace("matrixStats", quietly = TRUE)
+# ms_installed
 
 # ci_installed <- requireNamespace("Compind", quietly = TRUE)
 # ci_installed
@@ -176,12 +176,12 @@ Now for an example, we can use the `weightedMedian()` function from the matrixSt
 ```{r, eval=F}
 # RESTORE above eval=ms_installed
 # load matrixStats package
-library(matrixStats)
-
-# aggregate using weightedMedian()
-coin <- Aggregate(coin, dset = "Normalised",
-                   f_ag = "weightedMedian",
-                   f_ag_para = list(na.rm = TRUE))
+# library(matrixStats)
+# 
+# # aggregate using weightedMedian()
+# coin <- Aggregate(coin, dset = "Normalised",
+#                    f_ag = "weightedMedian",
+#                    f_ag_para = list(na.rm = TRUE))
 ```
 
 The weights `w` do not need to be specified in `f_ag_para` because they are automatically passed to `f_ag` unless specified otherwise.
