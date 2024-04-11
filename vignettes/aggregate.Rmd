@@ -157,14 +157,16 @@ coin <- Aggregate(coin, dset = "Normalised",
 
 All of the four aggregation functions mentioned above have the same format (try e.g. `?a_gmean`), and are built into the COINr package. But what if we want to use another type of aggregation function? The process is exactly the same.
 
+*NOTE: the compind package has been disabled here from running the commands in this vignette because of changes to a dependent package which are causing problems with the R CMD check. The commands should still work if you run them, but the results will not be shown here.*
+
 In this section we use some functions from other packages: the matrixStats package and the Compind package. These are not imported by COINr, so the code here will only work if you have these installed. If this vignette was built on your computer, we have to check whether these packages are installed:
 
 ```{r}
 ms_installed <- requireNamespace("matrixStats", quietly = TRUE)
 ms_installed
 
-ci_installed <- requireNamespace("Compind", quietly = TRUE)
-ci_installed
+# ci_installed <- requireNamespace("Compind", quietly = TRUE)
+# ci_installed
 ```
 
 If either of these have returned `FALSE`, in the following code chunks you will see some blanks. See the online version of this vignette to see the results, or install the above packages and rebuild the vignettes.
@@ -195,18 +197,21 @@ Sometimes this may mean that we have to create a wrapper function to satisfy the
 
 ```{r, eval= F}
 # RESTORE ABOVE eval= ci_installed
+
+# NOTE: this chunk disabled - see comments above.
+
 # load Compind
-suppressPackageStartupMessages(library(Compind))
-
-# wrapper to get output of interest from ci_bod
-# also suppress messages about missing values
-ci_bod2 <- function(x){
-  suppressMessages(Compind::ci_bod(x)$ci_bod_est)
-}
-
-# aggregate
-coin <- Aggregate(coin, dset = "Normalised",
-                   f_ag = "ci_bod2", by_df = TRUE, w = "none")
+# suppressPackageStartupMessages(library(Compind))
+# 
+# # wrapper to get output of interest from ci_bod
+# # also suppress messages about missing values
+# ci_bod2 <- function(x){
+#   suppressMessages(Compind::ci_bod(x)$ci_bod_est)
+# }
+# 
+# # aggregate
+# coin <- Aggregate(coin, dset = "Normalised",
+#                    f_ag = "ci_bod2", by_df = TRUE, w = "none")
 ```
 
 The benefit of the doubt approach automatically assigns individual weights to each unit, so we need to specify `w = "none"` to stop `Aggregate()` from attempting to pass weights to the function. Importantly, we also need to specify `by_df = TRUE` which tells `Aggregate()` to pass a data frame to `f_ag` rather than a vector.
