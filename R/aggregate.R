@@ -876,8 +876,8 @@ a_copeland <- function(X, w = NULL){
   orm <- outrankMatrix(X, w)$OutRankMatrix
 
   orm[orm > 0.5] <- 1
-  orm[orm == 0.5] <- 0
   orm[orm < 0.5] <- -1
+  orm[orm == 0.5] <- 0
   diag(orm) <- 0
 
   # get scores by summing across rows
