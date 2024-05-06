@@ -184,11 +184,24 @@ test_that("copeland", {
 
   orm <- outrankMatrix(X)$OutRankMatrix
   orm[orm > 0.5] <- 1
-  orm[orm == 0.5] <- 0
   orm[orm < 0.5] <- -1
+  orm[orm == 0.5] <- 0
   diag(orm) <- 0
 
   expect_equal(y, rowSums(orm))
+
+  # test equal units correctly assigned
+  X <- data.frame(
+    x1 = c(1,2),
+    x2 = c(2,1)
+  )
+
+  orm <- outrankMatrix(X)$OutRankMatrix
+  expect_equal(orm[1,2], 0.5)
+  expect_equal(orm[2,1], 0.5)
+
+  y <- a_copeland(X)
+  expect_equal(y, c(0,0))
 
 })
 
