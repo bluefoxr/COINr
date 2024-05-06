@@ -454,7 +454,8 @@ Treat.data.frame <- function(x, global_specs = NULL, indiv_specs = NULL, combine
           }
         }
         # merge with defaults (overwrites any differences)
-        specs <- utils::modifyList(specs_def, indiv_specs_col)
+        #specs <- utils::modifyList(specs_def, indiv_specs_col)
+        specs <- modify_treat_specs(specs_def, indiv_specs_col)
       } else {
         # otherwise, use defaults
         specs <- specs_def
@@ -1221,4 +1222,32 @@ check_SkewKurt <- function(x, na.rm = FALSE, skew_thresh = 2, kurt_thresh = 3.5)
 
   # output
   list(Pass = ans, Skew = sk, Kurt = kt)
+}
+
+
+modify_treat_specs <- function(l_def, l_mod){
+
+  if(is.null(l_mod)){
+    return(l_def)
+  }
+
+  l_out <- l_def
+
+  # if any functions have changed we completely delete the function parameters
+  # to avoid passing unused arguments
+  if(!identical(l_def$f1, l_mod$f1)){
+    l_out$f1_para <- NULL
+  }
+  if(!identical(l_def$f2, l_mod$f2)){
+    l_out$f2_para <- NULL
+  }
+  if(!identical(l_def$f_pass, l_mod$f_pass)){
+    l_out$f_pass_para <- NULL
+  }
+
+  # now, merge lists
+  l_out <- utils::modifyList(l_out, l_mod)
+
+  l_out
+
 }
