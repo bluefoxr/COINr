@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">COINr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.13</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.14</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -484,8 +484,9 @@ example, R’s <code><a href="https://rdrr.io/r/base/mean.html" class="external-
 <span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="fl">1</span>, <span class="cn">NA</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] NA</span></span>
-<span></span>
+<span><span class="co">#&gt; [1] NA</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 1</span></span></code></pre></div>
 <p>Depending on how we set <code>na.rm</code>, we either get an answer
@@ -501,7 +502,7 @@ aggregation group, any unit that has a data availability lower than
 <code>dat_thresh</code> will get a <code>NA</code> value instead of an
 aggregated score. This is most easily illustrated on a data frame (see
 next section for more details on aggregating in data frames):</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  i1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>,</span>
 <span>  i2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>,</span>
@@ -514,7 +515,7 @@ next section for more details on aggregating in data frames):</p>
 <span><span class="co">#&gt; 3  3 NA  1</span></span></code></pre></div>
 <p>We will require that at least 2/3 of the indicators should be
 non-<code>NA</code> to give an aggregated value.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># aggregate with arithmetic mean, equal weight and data avail limit of 2/3</span></span>
 <span><span class="fu"><a href="../reference/Aggregate.html">Aggregate</a></span><span class="op">(</span><span class="va">df1</span>, f_ag <span class="op">=</span> <span class="st">"a_amean"</span>,</span>
 <span>           f_ag_para <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>w <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -529,7 +530,7 @@ because it only has 1/3 data availability.</p>
 <p>We can also use a different aggregation function for each aggregation
 level by specifying <code>f_ag</code> as a vector of function names
 rather than a single function.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Aggregate.html">Aggregate</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Normalised"</span>, f_ag <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a_amean"</span>, <span class="st">"a_gmean"</span>, <span class="st">"a_amean"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Written data set to .$Data$Aggregated</span></span>
 <span><span class="co">#&gt; (overwritten existing data set)</span></span></code></pre></div>
@@ -554,7 +555,7 @@ take vectors as inputs, rather than data frames, since it would
 otherwise be easier to go directly to the underlying function. In any
 case, here are a couple of examples. First, using a built in COINr
 function to compute the weighted harmonic mean of a data frame.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># get some indicator data - take a few columns from built in data set</span></span>
 <span><span class="va">X</span> <span class="op">&lt;-</span> <span class="va">ASEM_iData</span><span class="op">[</span><span class="fl">12</span><span class="op">:</span><span class="fl">15</span><span class="op">]</span></span>
 <span></span>
@@ -582,7 +583,7 @@ function to compute the weighted harmonic mean of a data frame.</p>
 <p>The purse method for <code><a href="../reference/Aggregate.html">Aggregate()</a></code> is straightforward and
 simply applies the same aggregation specifications to each of the coins
 within. It has exactly the same parameters as the coin method.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># build example purse up to normalised data set</span></span>
 <span><span class="va">purse</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_example_purse.html">build_example_purse</a></span><span class="op">(</span>up_to <span class="op">=</span> <span class="st">"Normalise"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>

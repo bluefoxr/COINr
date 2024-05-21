@@ -12,7 +12,7 @@ details. See also vignette("treat").'><!-- mathjax --><script src="https://cdnjs
     
     <a class="navbar-brand me-2" href="../index.html">COINr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.13</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.14</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -99,6 +99,7 @@ details. See also <code><a href="../articles/treat.html">vignette("treat")</a></
 <span>  indiv_specs <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  combine_treat <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  write_to <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  disable <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -129,6 +130,11 @@ of <code>f1</code>, so the two treatments will be combined.</p></dd>
 
 <dt>write_to</dt>
 <dd><p>If specified, writes the aggregated data to <code>.$Data[[write_to]]</code>. Default <code>write_to = "Treated"</code>.</p></dd>
+
+
+<dt>disable</dt>
+<dd><p>Logical: if <code>TRUE</code> will disable data treatment completely and write the unaltered data set. This option is mainly useful
+in sensitivity and uncertainty analysis (to test the effect of turning imputation on/off).</p></dd>
 
 
 <dt>...</dt>

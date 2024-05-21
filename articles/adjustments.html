@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">COINr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.13</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.14</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -186,8 +186,9 @@ list:</p>
 <span>                 level_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Indicator"</span>, <span class="st">"Pillar"</span>, <span class="st">"Sub-index"</span>, <span class="st">"Index"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; iData checked and OK.</span></span>
 <span><span class="co">#&gt; iMeta checked and OK.</span></span>
-<span><span class="co">#&gt; Written data set to .$Data$Raw</span></span>
-<span></span>
+<span><span class="co">#&gt; Written data set to .$Data$Raw</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="co"># look in log</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">coin</span><span class="op">$</span><span class="va">Log</span>, max.level <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 2</span></span>
@@ -208,11 +209,12 @@ function. There is also another logical variable called
 <p>This demonstrates that when we call a building function, its
 arguments are stored in the coin. To show another example, if we apply
 the <code><a href="../reference/Normalise.html">Normalise()</a></code> function:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># normalise</span></span>
 <span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Normalise.html">Normalise</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Raw"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Written data set to .$Data$Normalised</span></span>
-<span></span>
+<span><span class="co">#&gt; Written data set to .$Data$Normalised</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="co"># view log</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">coin</span><span class="op">$</span><span class="va">Log</span>, max.level <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 3</span></span>
@@ -239,7 +241,7 @@ allows coins to be <em>regenerated</em>, which means automatically
 re-running the building functions that were used to create the coin and
 its data sets. This is done with a function called
 <code><a href="../reference/Regen.html">Regen()</a></code>:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># regenerate the coin</span></span>
 <span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Regen.html">Regen</a></span><span class="op">(</span><span class="va">coin</span>, quietly <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; iData checked and OK.</span></span>
@@ -257,7 +259,7 @@ in a regeneration.</p>
 unless you modify something first. And this brings us to the copying and
 modifying points. Let us take an example: first, we’ll build the full
 example coin, then we’ll make a copy of our existing coin:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># build full example coin</span></span>
 <span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_example_coin.html">build_example_coin</a></span><span class="op">(</span>quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
@@ -270,7 +272,7 @@ Here, we will change the normalisation method to percentile ranks, and
 regenerate. To make this change it is necessary to target the right
 argument. Let’s first see what is already in the Log for
 <code><a href="../reference/Normalise.html">Normalise()</a></code>:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">coin2</span><span class="op">$</span><span class="va">Log</span><span class="op">$</span><span class="va">Normalise</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 7</span></span>
 <span><span class="co">#&gt;  $ dset        : chr "Treated"</span></span>
@@ -285,7 +287,7 @@ argument. Let’s first see what is already in the Log for
 <span><span class="co">#&gt;  $ write2log   : logi TRUE</span></span></code></pre></div>
 <p>At the moment, the normalisation is min-max onto the interval of 0 to
 100. We will change this to the new function <code><a href="../reference/n_prank.html">n_prank()</a></code>:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># change to prank function (percentile ranks)</span></span>
 <span><span class="co"># we don't need to specify any additional parameters (f_n_para) here</span></span>
 <span><span class="va">coin2</span><span class="op">$</span><span class="va">Log</span><span class="op">$</span><span class="va">Normalise</span><span class="op">$</span><span class="va">global_specs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>f_n <span class="op">=</span> <span class="st">"n_prank"</span><span class="op">)</span></span>
@@ -326,14 +328,15 @@ argument of <code><a href="../reference/new_coin.html">new_coin()</a></code>.</p
 <p>A short cut function, <code><a href="../reference/change_ind.html">change_ind()</a></code> can be also used to
 quickly add or remove indicators from the framework, and regenerate the
 coin, all in one command.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># copy base coin</span></span>
 <span><span class="va">coin_remove</span> <span class="op">&lt;-</span> <span class="va">coin</span></span>
 <span></span>
 <span><span class="co"># remove two indicators and regenerate the coin</span></span>
 <span><span class="va">coin_remove</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/change_ind.html">change_ind</a></span><span class="op">(</span><span class="va">coin</span>, drop <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LPI"</span>, <span class="st">"Forest"</span><span class="op">)</span>, regen <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; coin has been regenerated using new specs.</span></span>
-<span></span>
+<span><span class="co">#&gt; coin has been regenerated using new specs.</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="va">coin_remove</span></span>
 <span><span class="co">#&gt; --------------</span></span>
 <span><span class="co">#&gt; A coin with...</span></span>
@@ -394,7 +397,7 @@ former is for comparing two coins only, whereas the latter allows to
 compare more than two coins. Let’s start by comparing the two coins we
 have: the default example coin, and the same coin but with a percentile
 rank normalisation method:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># compare index, sort by absolute rank difference</span></span>
 <span><span class="fu"><a href="../reference/compare_coins.html">compare_coins</a></span><span class="op">(</span><span class="va">coin</span>, <span class="va">coin2</span>, dset <span class="op">=</span> <span class="st">"Aggregated"</span>, iCode <span class="op">=</span> <span class="st">"Index"</span>,</span>
 <span>              sort_by <span class="op">=</span> <span class="st">"Abs.diff"</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -456,7 +459,7 @@ or aggregate in the index. This also works if the number of units
 changes. At the moment, the coin has an imputation step which fills in
 all <code>NA</code>s. We could alternatively filter out any units with
 less than 90% data availability and remove the imputation step.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># copy original coin</span></span>
 <span><span class="va">coin90</span> <span class="op">&lt;-</span> <span class="va">coin</span></span>
 <span></span>
@@ -498,7 +501,7 @@ less than 90% data availability and remove the imputation step.</p>
 <span><span class="co">#&gt;   Aggregated (46 units)</span></span></code></pre></div>
 <p>We can see that we are down to 46 units after the screening step. Now
 let’s compare with the original coin:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># compare index, sort by absolute rank difference</span></span>
 <span><span class="fu"><a href="../reference/compare_coins.html">compare_coins</a></span><span class="op">(</span><span class="va">coin</span>, <span class="va">coin90</span>, dset <span class="op">=</span> <span class="st">"Aggregated"</span>, iCode <span class="op">=</span> <span class="st">"Index"</span>,</span>
 <span>              sort_by <span class="op">=</span> <span class="st">"Abs.diff"</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -558,7 +561,7 @@ let’s compare with the original coin:</p>
 coin.</p>
 <p>Finally, to demonstrate comparing multiple coins, we can call the
 <code><a href="../reference/compare_coins_multi.html">compare_coins_multi()</a></code> function:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/compare_coins_multi.html">compare_coins_multi</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Nominal <span class="op">=</span> <span class="va">coin</span>, Prank <span class="op">=</span> <span class="va">coin2</span>, NoLPIFor <span class="op">=</span> <span class="va">coin_remove</span>,</span>
 <span>                         Screen90 <span class="op">=</span> <span class="va">coin90</span><span class="op">)</span>, dset <span class="op">=</span> <span class="st">"Aggregated"</span>, iCode <span class="op">=</span> <span class="st">"Index"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    uCode Nominal Prank NoLPIFor Screen90</span></span>

@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">COINr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.13</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.14</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -221,8 +221,9 @@ something different rather than “Screened” (the default):</p>
 <span></span>
 <span><span class="co"># screen units from raw dset</span></span>
 <span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Screen.html">Screen</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Raw"</span>, unit_screen <span class="op">=</span> <span class="st">"byNA"</span>, dat_thresh <span class="op">=</span> <span class="fl">0.85</span>, write_to <span class="op">=</span> <span class="st">"Filtered_85pc"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Written data set to .$Data$Filtered_85pc</span></span>
-<span></span>
+<span><span class="co">#&gt; Written data set to .$Data$Filtered_85pc</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="co"># some details about the coin by calling its print method</span></span>
 <span><span class="va">coin</span></span>
 <span><span class="co">#&gt; --------------</span></span>
@@ -246,7 +247,7 @@ something different rather than “Screened” (the default):</p>
 <p>The printed summary shows that the new data set only has 48 units,
 compared to the raw data set with 51. We can find which units were
 filtered because this is stored in the coin’s “Analysis” sub-list:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">coin</span><span class="op">$</span><span class="va">Analysis</span><span class="op">$</span><span class="va">Filtered_85pc</span><span class="op">$</span><span class="va">RemovedUnits</span></span>
 <span><span class="co">#&gt; [1] "BRN" "LAO" "MMR"</span></span></code></pre></div>
 <p>The Analysis sub-list also contains the data availability table that
@@ -261,7 +262,7 @@ of zeroes and missing values.</p>
 methods, this is simply applying the coin method to each coin in the
 purse, without any special features. Here, we perform the same example
 as in the coin section, but on a purse of coins:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># build example purse</span></span>
 <span><span class="va">purse</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_example_purse.html">build_example_purse</a></span><span class="op">(</span>up_to <span class="op">=</span> <span class="st">"new_coin"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
