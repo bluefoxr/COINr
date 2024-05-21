@@ -11,6 +11,7 @@
   indiv_specs = NULL,
   combine_treat = FALSE,
   write_to = NULL,
+  disable = FALSE,
   ...
 )
 }
@@ -28,6 +29,9 @@ rather than the treated output of \code{f1}. If \code{combine_treat = TRUE}, \co
 of \code{f1}, so the two treatments will be combined.}
 
 \item{write_to}{If specified, writes the aggregated data to \code{.$Data[[write_to]]}. Default \code{write_to = "Treated"}.}
+
+\item{disable}{Logical: if \code{TRUE} will disable data treatment completely and write the unaltered data set. This option is mainly useful
+in sensitivity and uncertainty analysis (to test the effect of turning imputation on/off).}
 
 \item{...}{arguments passed to or from other methods.}
 }

@@ -78,3 +78,16 @@ test_that("treat_coin", {
   expect_identical(dset_t, dset_t2$x_treat)
 
 })
+
+test_that("disable_treat", {
+
+  purse <- build_example_purse(up_to = "Screen", quietly = T)
+
+  purse <- Treat(purse, dset = "Screened", disable = T)
+
+  d1 <- get_dset(purse, dset = "Treated")
+  d2 <- get_dset(purse, dset = "Screened")
+
+  expect_equal(d1, d2)
+
+})
