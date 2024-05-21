@@ -629,7 +629,8 @@ Impute.numeric <- function(x, f_i = NULL, f_i_para = NULL, ...){
   nas <- is.na(x)
 
   if(sum(nas) == length(x)){
-    stop("Input is all NAs - cannot impute.")
+    warning("Input is all NAs - cannot impute. Returning vector of NAs.")
+    return(x)
   }
 
   # call imputation function

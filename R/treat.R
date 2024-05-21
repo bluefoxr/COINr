@@ -11,6 +11,8 @@
 #' rather than the treated output of `f1`. If `combine_treat = TRUE`, `f2` will instead be applied to the output
 #' of `f1`, so the two treatments will be combined.
 #' @param write_to If specified, writes the aggregated data to `.$Data[[write_to]]`. Default `write_to = "Treated"`.
+#' @param disable Logical: if `TRUE` will disable data treatment completely and write the unaltered data set. This option is mainly useful
+#' in sensitivity and uncertainty analysis (to test the effect of turning imputation on/off).
 #' @param ... arguments passed to or from other methods.
 #'
 #' @return An updated purse with new treated data sets added at `.$Data$Treated` in each coin, plus
@@ -20,7 +22,7 @@
 #' @examples
 #' # See `vignette("treat")`.
 Treat.purse <- function(x, dset, global_specs = NULL, indiv_specs = NULL,
-                         combine_treat = FALSE, write_to = NULL, ...){
+                         combine_treat = FALSE, write_to = NULL, disable = FALSE, ...){
 
   # input check
   check_purse(x)
@@ -64,7 +66,8 @@ Treat.purse <- function(x, dset, global_specs = NULL, indiv_specs = NULL,
   # apply treatment to each coin
   x$coin <- lapply(x$coin, function(coin){
     Treat.coin(coin, dset = dset, global_specs = global_specs,
-               indiv_specs = indiv_specs, combine_treat = combine_treat, write_to = write_to)
+               indiv_specs = indiv_specs, combine_treat = combine_treat,
+               write_to = write_to, disable = disable)
   })
 
   #}

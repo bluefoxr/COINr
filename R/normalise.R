@@ -549,16 +549,17 @@ n_minmax <- function(x, l_u = c(0,100)){
 #' Scale a vector
 #'
 #' Scales a vector for normalisation using the method applied in the GII2020 for some indicators. This
-#' does `x_scaled <- (x-l)/(u-l) * 100`. Note this is *not* the minmax transformation (see [n_minmax()]).
+#' does `x_scaled <- (x-l)/(u-l) * scale_factor`. Note this is *not* the minmax transformation (see [n_minmax()]).
 #' This is a linear transformation with shift `u` and scaling factor `u-l`.
 #'
 #' This function also supports parameter specification in `iMeta` for the [Normalise.coin()] method.
-#' To do this, add columns `scaled_lower`, and `scaled_upper` to the `iMeta` table, which specify the
+#' To do this, add columns `scaled_lower`, `scaled_upper` and `scale_factor` to the `iMeta` table, which specify the
 #' first and second elements of `npara`, respectively. Then set `f_n_para = "use_iMeta"` within the
 #' `global_specs` list. See also examples in the [normalisation vignette](https://bluefoxr.github.io/COINr/articles/normalise.html).
 #'
 #' @param x A numeric vector
 #' @param npara Parameters as a vector `c(l, u)`. See description.
+#' @param scale_factor Optional scaling factor to apply to the result. Default 100.
 #'
 #' @examples
 #' x <- runif(20)
@@ -567,11 +568,14 @@ n_minmax <- function(x, l_u = c(0,100)){
 #' @return Scaled vector
 #'
 #' @export
-n_scaled <- function(x, npara = c(0,100)){
+n_scaled <- function(x, npara = c(0,100), scale_factor = 100){
 
   stopifnot(is.numeric(x),
-            is.vector(x))
-  (x-npara[1])/(npara[2] - npara[1])*100
+            is.vector(x),
+            is.numeric(scale_factor),
+            length(scale_factor) == 1)
+
+  (x-npara[1])/(npara[2] - npara[1])*scale_factor
 }
 
 
@@ -955,7 +959,7 @@ get_iMeta_norm_paras <- function(coin, func_name){
   required_cols <- switch(
     func_name,
     n_minmax = c("minmax_lower", "minmax_upper"),
-    n_scaled = c("scaled_lower", "scaled_upper"),
+    n_scaled = c("scaled_lower", "scaled_upper", "scale_factor", "Direction"),
     n_zscore = c("zscore_mean", "zscore_sd"),
     n_dist2targ = c("Target", "dist2targ_cap_max", "Direction"),
     n_goalposts = c("goalpost_lower", "goalpost_upper", "goalpost_scale" , "Direction", "goalpost_trunc2posts"),
@@ -1002,7 +1006,14 @@ get_iMeta_norm_paras <- function(coin, func_name){
     l$f_n_para <- switch(
       func_name,
       n_minmax = list(l_u = c(paras$minmax_lower, paras$minmax_upper)),
-      n_scaled = list(npara = c(paras$scaled_lower, paras$scaled_upper)),
+      n_scaled = list(
+        npara = if(paras$Direction == -1){
+          c(paras$scaled_upper*paras$Direction, paras$scaled_lower*paras$Direction)
+        } else {
+          c(paras$scaled_lower, paras$scaled_upper)
+        },
+        scale_factor = paras$scale_factor
+      ),
       n_zscore = list(m_sd = c(paras$zscore_mean, paras$zscore_sd)),
       n_dist2targ = list(
         targ = paras$Target * paras$Direction, # See note at top of function

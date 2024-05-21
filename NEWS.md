@@ -1,6 +1,8 @@
-# COINr 1.1.13
+# COINr 1.1.14
 
 - Minor bug fixes: spaces in uCodes, issue exporting 2-level composite indicators to Excel
+- Add scaling parameter to `n_scaled()`
+- Option to disable outlier treatment for purses
 
 # COINr 1.1.12
 
