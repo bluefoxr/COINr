@@ -100,7 +100,8 @@ parameters of the coin to vary, and the alternatives/distributions for those par
 <span>  <span class="va">iCode</span>,</span>
 <span>  Nboot <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  quietly <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  check_addresses <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  check_addresses <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  diagnostic_mode <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -144,6 +145,11 @@ indices.</p></dd>
 <dd><p>Logical: if <code>FALSE</code> skips the check of the validity of the parameter addresses. Default <code>TRUE</code>,
 but useful to set to <code>FALSE</code> if running this e.g. in a Rmd document (because may require user input).</p></dd>
 
+
+<dt>diagnostic_mode</dt>
+<dd><p>Logical: if <code>TRUE</code>, this will additionally attach all coins generated as part of the sensitivity
+analysis to the output list. This is intended to be used to check what is going on within the sensitivity analysis.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -154,8 +160,8 @@ but useful to set to <code>FALSE</code> if running this e.g. in a Rmd document (
 <li><p><code>.$RankStats</code> summary statistics for ranks of each unit</p></li>
 <li><p><code>.$Para</code> a list containing parameter values for each run</p></li>
 <li><p><code>.$Nominal</code> the nominal scores and ranks of each unit (i.e. from the original COIN)</p></li>
-<li><p><code>.$Sensitivity</code> (only if <code>SA_type = "SA"</code>) sensitivity indices for each parameter. Also confidence intervals if <code>Nboot</code>
-was specified.</p></li>
+<li><p><code>.$Sensitivity</code> (only if <code>SA_type = "SA"</code>) sensitivity indices for each parameter. Also confidence intervals if <code>Nboot</code></p></li>
+<li><p><code>.$coins</code> (only if <code>diagnostic_mode = TRUE</code>) a list of all coins generated during the sensitivity analysis</p></li>
 <li><p>Some information on the time elapsed, average time, and the parameters perturbed.</p></li>
 <li><p>Depending on the setting of <code>store_results</code>, may also contain a list of Methods or a list of COINs for each replication.</p></li>
 </ul></div>
@@ -176,9 +182,13 @@ design used.</p>
 This is done using <code>SA_specs</code>, a structured list. See <code><a href="../articles/sensitivity.html">vignette("sensitivity")</a></code> for details and examples.</p>
 <p>You also need to specify the target of the sensitivity analysis. This should be an indicator or aggregate that can be
 found in one of the data sets of the coin, and is specified using the <code>dset</code> and <code>iCode</code> arguments.</p>
-<p>Finally, if <code>SA_type = "SA"</code>, it is advisable to set <code>Nboot</code> to e.g. 100 or more, which is the number of bootstrap samples
+<p>If <code>SA_type = "SA"</code>, it is advisable to set <code>Nboot</code> to e.g. 100 or more, which is the number of bootstrap samples
 to take when estimating confidence intervals on sensitivity indices. This does <em>not</em> perform extra regenerations of the
 coin, so setting this to a higher number shouldn't have much impact on computational time.</p>
+<p>If you want to understand what is going on more deeply in the regenerated coins in the sensitivity analysis, set
+<code>diagnostic_mode = TRUE</code> in <code>get_sensitivity()</code>. This will additionally output a list containing every coin that was generated
+as part of the sensitivity analysis, and allows you to check in detail whether the coins are generated as you expect.
+Clearly it is better to run this on a low sample size as the output can potentially become quite large.</p>
 <p>This function replaces the now-defunct <code>sensitivity()</code> from COINr &lt; v1.0.</p>
     </div>
 
