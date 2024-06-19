@@ -220,7 +220,11 @@ Some particular points to consider:
 * It is also your responsibility to make sure that there are no conflicts caused by methodological variations, such as negative values being fed into a geometric mean.
 * You can't target the same parameter twice in the same sensitivity analysis - one specification will just overwrite the other.
 
+One thing to be particularly careful of is specifying parameters in the sensitivity analysis relating to operations that don't yet exist in the coin. For example, if you build a coin with no imputation step, but then in the sensitivity analysis include specifications for imputation. This can cause all kinds of problems (for example, operations run in an unexpected order, and conflicts) and is *not recommended* unless you are absolutely sure you know what you are doing. COINr will issue a user message with a warning if it sees this.
+
 In general it is better to start simple: start with one or two assumptions to vary and gradually expand the level of complexity as needed. You can also do a test run with a low `N` to see if the results are vaguely sensible.
+
+If you want to understand what is going on more deeply in the regenerated coins in the sensitivity analysis, set `diagnostic_mode = TRUE` in `get_sensitivity()`. This will additionally output a list containing every coin that was generated as part of the sensitivity analysis, and allows you to check in detail whether the coins are generated as you expect. Clearly it is better to run this on a low sample size as the output can potentially become quite large.
 
 Variance based sensitivity analysis is complicated, especially here because the assumptions to vary are often not just a single value, but could be strings, data frames or lists. Again, an understanding of COINr and a basic understanding of sensitivity analysis can help a lot.
 

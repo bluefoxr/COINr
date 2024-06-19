@@ -23,9 +23,14 @@
 #' You also need to specify the target of the sensitivity analysis. This should be an indicator or aggregate that can be
 #' found in one of the data sets of the coin, and is specified using the `dset` and `iCode` arguments.
 #'
-#' Finally, if `SA_type = "SA"`, it is advisable to set `Nboot` to e.g. 100 or more, which is the number of bootstrap samples
+#' If `SA_type = "SA"`, it is advisable to set `Nboot` to e.g. 100 or more, which is the number of bootstrap samples
 #' to take when estimating confidence intervals on sensitivity indices. This does *not* perform extra regenerations of the
 #' coin, so setting this to a higher number shouldn't have much impact on computational time.
+#'
+#' If you want to understand what is going on more deeply in the regenerated coins in the sensitivity analysis, set
+#' `diagnostic_mode = TRUE` in `get_sensitivity()`. This will additionally output a list containing every coin that was generated
+#' as part of the sensitivity analysis, and allows you to check in detail whether the coins are generated as you expect.
+#' Clearly it is better to run this on a low sample size as the output can potentially become quite large.
 #'
 #' This function replaces the now-defunct `sensitivity()` from COINr < v1.0.
 #'
@@ -41,6 +46,8 @@
 #' indices.
 #' @param check_addresses Logical: if `FALSE` skips the check of the validity of the parameter addresses. Default `TRUE`,
 #' but useful to set to `FALSE` if running this e.g. in a Rmd document (because may require user input).
+#' @param diagnostic_mode Logical: if `TRUE`, this will additionally attach all coins generated as part of the sensitivity
+#' analysis to the output list. This is intended to be used to check what is going on within the sensitivity analysis.
 #'
 #' @importFrom stats runif
 #'
@@ -51,7 +58,7 @@
 #' * `.$Para` a list containing parameter values for each run
 #' * `.$Nominal` the nominal scores and ranks of each unit (i.e. from the original COIN)
 #' * `.$Sensitivity` (only if `SA_type = "SA"`) sensitivity indices for each parameter. Also confidence intervals if `Nboot`
-#' was specified.
+#' * `.$coins` (only if `diagnostic_mode = TRUE`) a list of all coins generated during the sensitivity analysis
 #' * Some information on the time elapsed, average time, and the parameters perturbed.
 #' * Depending on the setting of `store_results`, may also contain a list of Methods or a list of COINs for each replication.
 #'
@@ -63,7 +70,7 @@
 #' # take a few minutes to run at realistic settings)
 #'
 get_sensitivity <- function(coin, SA_specs, N, SA_type = "UA", dset, iCode, Nboot = NULL, quietly = FALSE,
-                            check_addresses = TRUE){
+                            check_addresses = TRUE, diagnostic_mode = FALSE){
 
   t0 <- proc.time()
   # CHECKS ------------------------------------------------------------------
@@ -141,6 +148,11 @@ get_sensitivity <- function(coin, SA_specs, N, SA_type = "UA", dset, iCode, Nboo
 
   names(SA_scores)[names(SA_scores) == iCode] <- "Nominal"
 
+  # optionally save coins to list
+  if(diagnostic_mode){
+    coin_list <- vector(mode = "list", length = NT)
+  }
+
   # looping over each replication in the SA
   for(irep in 1:NT){
 
@@ -153,6 +165,11 @@ get_sensitivity <- function(coin, SA_specs, N, SA_type = "UA", dset, iCode, Nboo
 
     # regenerate coin using parameter list
     coin_rep <- regen_edit(l_para_rep, addresses, coin)
+
+    # optionally save coin
+    if(diagnostic_mode){
+      coin_list[[irep]] <- coin_rep
+    }
 
     # extract variable of interest
     if(is.coin(coin_rep)){
@@ -218,6 +235,11 @@ get_sensitivity <- function(coin, SA_specs, N, SA_type = "UA", dset, iCode, Nboo
   SA_out$Nominal <- data.frame(uCode = SA_scores$uCode,
                                Score = SA_scores$Nominal,
                                Rank = SA_ranks$Nominal)
+
+  # optionally add coin list
+  if(diagnostic_mode){
+    SA_out$coins <- coin_list
+  }
 
   # timing
   tf <- proc.time()
@@ -392,21 +414,65 @@ check_address <- function(address, coin){
     stop("Address must begin with '$'! Your address: ", address, call. = FALSE)
   }
 
-  # this is the call to evaluate, as a string
-  expr_str <- paste0("coin", address)
-  # evaluate the call
-  address_value <- eval(str2lang(expr_str))
+  # Check if points to a Log operation that doesn't exist at all
+  is_log_address <- substr(address, 1, 5) == "$Log$"
 
-  if(is.null(address_value)){
-    xx <- readline(paste0("Address ", address, " is not currently present in the coin or else is NULL. Continue anyway (y/n)?  "))
+  if(is_log_address){
 
-    if(xx %nin% c("y", "n")){
-      stop("You didn't input y or n. I'm taking that as a no.", call. = FALSE)
+    subaddress <- get_log_subaddress(address)
+    subaddress_value <- eval(str2lang(paste0("coin", subaddress)))
+
+    if(is.null(subaddress_value)){
+      require_user_input(address, " is a coin log address of a function that doesn't yet exist in the coin.\nThis is not recommended and can cause unexpected behaviour. Continue anyway (y/n)?  ")
     }
 
-    if(xx == "n"){
-      stop("Exiting sensitivity analysis. Please check the address: ", address, call. = FALSE)
+  } else {
+
+    # Check generally whether the address parameter exists
+
+    # this is the call to evaluate, as a string
+    expr_str <- paste0("coin", address)
+    # evaluate the call
+    address_value <- eval(str2lang(expr_str))
+
+    if(is.null(address_value)){
+      require_user_input(address, " is not currently present in the coin or else is NULL. Continue anyway (y/n)?  ")
     }
+
+  }
+}
+
+require_user_input <- function(address, message_fragment){
+  xx <- readline(paste0("Address ", address, message_fragment))
+
+  if(xx %nin% c("y", "n")){
+    stop("You didn't input y or n. I'm taking that as a no.", call. = FALSE)
+  }
+
+  if(xx == "n"){
+    stop("Exiting sensitivity analysis. Please check the address: ", address, call. = FALSE)
+  }
+}
+
+
+# Extracts the log part of a coin address up to the function. This is in order
+# to see whether a function has been run and issue a warning otherwise.
+# E.g. if address is "$Log$Denominate$dset" will return "$Log$Denominate". If
+# the address is not a valid log address, returns NULL.
+get_log_subaddress <- function(address){
+
+  # Define the regex pattern
+  pattern <- "^([^$]*\\$[^$]*\\$[^$]*)\\$"
+
+  # Use `regmatches` and `gregexpr` to apply the regex
+  matches <- regmatches(address, gregexpr(pattern, address))
+
+  # Extract the match and display it
+  if (length(matches[[1]]) > 0) {
+    result <- regmatches(address, gregexpr(pattern, address))[[1]][1]
+    sub(pattern, "\\1", result)
+  } else {
+    NULL
   }
 
 }

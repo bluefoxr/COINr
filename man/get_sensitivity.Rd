@@ -13,7 +13,8 @@ get_sensitivity(
   iCode,
   Nboot = NULL,
   quietly = FALSE,
-  check_addresses = TRUE
+  check_addresses = TRUE,
+  diagnostic_mode = FALSE
 )
 }
 \arguments{
@@ -37,6 +38,9 @@ indices.}
 
 \item{check_addresses}{Logical: if \code{FALSE} skips the check of the validity of the parameter addresses. Default \code{TRUE},
 but useful to set to \code{FALSE} if running this e.g. in a Rmd document (because may require user input).}
+
+\item{diagnostic_mode}{Logical: if \code{TRUE}, this will additionally attach all coins generated as part of the sensitivity
+analysis to the output list. This is intended to be used to check what is going on within the sensitivity analysis.}
 }
 \value{
 Sensitivity analysis results as a list, containing:
@@ -47,7 +51,7 @@ Sensitivity analysis results as a list, containing:
 \item \code{.$Para} a list containing parameter values for each run
 \item \code{.$Nominal} the nominal scores and ranks of each unit (i.e. from the original COIN)
 \item \code{.$Sensitivity} (only if \code{SA_type = "SA"}) sensitivity indices for each parameter. Also confidence intervals if \code{Nboot}
-was specified.
+\item \code{.$coins} (only if \code{diagnostic_mode = TRUE}) a list of all coins generated during the sensitivity analysis
 \item Some information on the time elapsed, average time, and the parameters perturbed.
 \item Depending on the setting of \code{store_results}, may also contain a list of Methods or a list of COINs for each replication.
 }
@@ -76,9 +80,14 @@ This is done using \code{SA_specs}, a structured list. See \code{vignette("sensi
 You also need to specify the target of the sensitivity analysis. This should be an indicator or aggregate that can be
 found in one of the data sets of the coin, and is specified using the \code{dset} and \code{iCode} arguments.
 
-Finally, if \code{SA_type = "SA"}, it is advisable to set \code{Nboot} to e.g. 100 or more, which is the number of bootstrap samples
+If \code{SA_type = "SA"}, it is advisable to set \code{Nboot} to e.g. 100 or more, which is the number of bootstrap samples
 to take when estimating confidence intervals on sensitivity indices. This does \emph{not} perform extra regenerations of the
 coin, so setting this to a higher number shouldn't have much impact on computational time.
+
+If you want to understand what is going on more deeply in the regenerated coins in the sensitivity analysis, set
+\code{diagnostic_mode = TRUE} in \code{get_sensitivity()}. This will additionally output a list containing every coin that was generated
+as part of the sensitivity analysis, and allows you to check in detail whether the coins are generated as you expect.
+Clearly it is better to run this on a low sample size as the output can potentially become quite large.
 
 This function replaces the now-defunct \code{sensitivity()} from COINr < v1.0.
 }
