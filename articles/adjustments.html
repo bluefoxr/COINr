@@ -5,95 +5,67 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="COINr">
 <title>Adjustments and Comparisons • COINr</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha512-7O5pXpc0oCRrxk8RUfDYFgn0nO1t+jLuIOQdOMRp4APB7uZ4vSjspzp5y6YDtDs4VzUSTbWzBFZ/LKJhnyFOKw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Adjustments and Comparisons">
-<meta property="og:description" content="COINr">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Adjustments and Comparisons">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-    
 
-    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary" data-bs-theme="dark"><div class="container">
-    
+
+    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">COINr</a>
 
     <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.14</small>
 
-    
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item">
-  <a class="nav-link" href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li class="nav-item">
-  <a class="nav-link" href="../articles/overview.html">Overview</a>
-</li>
-<li class="nav-item">
-  <a class="nav-link" href="../articles/v1.html">v1.0 updates</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../index.html"><span class="fa fa-home fa-lg"></span></a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/overview.html">Overview</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/v1.html">v1.0 updates</a></li>
 <li class="active nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-guides">Guides</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-guides">
-    <h6 class="dropdown-header" data-toc-skip>Construction</h6>
-    <a class="dropdown-item" href="../articles/coins.html">Building coins</a>
-    <a class="dropdown-item" href="../articles/imputation.html">Imputation of missing data</a>
-    <a class="dropdown-item" href="../articles/denomination.html">Denomination</a>
-    <a class="dropdown-item" href="../articles/screening.html">Unit screening</a>
-    <a class="dropdown-item" href="../articles/treat.html">Outlier treatment</a>
-    <a class="dropdown-item" href="../articles/normalise.html">Normalisation</a>
-    <a class="dropdown-item" href="../articles/weights.html">Weighting</a>
-    <a class="dropdown-item" href="../articles/aggregate.html">Aggregation</a>
-    <div class="dropdown-divider"></div>
-    <h6 class="dropdown-header" data-toc-skip>Post-processing</h6>
-    <a class="dropdown-item" href="../articles/visualisation.html">Visualisation</a>
-    <a class="dropdown-item" href="../articles/analysis.html">Statistical analysis</a>
-    <a class="dropdown-item" href="../articles/results.html">Presenting results</a>
-    <a class="dropdown-item" href="../articles/adjustments.html">Adjustments and comparisons</a>
-    <a class="dropdown-item" href="../articles/sensitivity.html">Sensitivity analysis</a>
-    <div class="dropdown-divider"></div>
-    <h6 class="dropdown-header" data-toc-skip>Other</h6>
-    <a class="dropdown-item" href="../articles/data_selection.html">Data selection</a>
-    <a class="dropdown-item" href="../articles/other_functions.html">Other functions</a>
-  </div>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-guides">
+<li><h6 class="dropdown-header" data-toc-skip>Construction</h6></li>
+    <li><a class="dropdown-item" href="../articles/coins.html">Building coins</a></li>
+    <li><a class="dropdown-item" href="../articles/imputation.html">Imputation of missing data</a></li>
+    <li><a class="dropdown-item" href="../articles/denomination.html">Denomination</a></li>
+    <li><a class="dropdown-item" href="../articles/screening.html">Unit screening</a></li>
+    <li><a class="dropdown-item" href="../articles/treat.html">Outlier treatment</a></li>
+    <li><a class="dropdown-item" href="../articles/normalise.html">Normalisation</a></li>
+    <li><a class="dropdown-item" href="../articles/weights.html">Weighting</a></li>
+    <li><a class="dropdown-item" href="../articles/aggregate.html">Aggregation</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Post-processing</h6></li>
+    <li><a class="dropdown-item" href="../articles/visualisation.html">Visualisation</a></li>
+    <li><a class="dropdown-item" href="../articles/analysis.html">Statistical analysis</a></li>
+    <li><a class="dropdown-item" href="../articles/results.html">Presenting results</a></li>
+    <li><a class="dropdown-item" href="../articles/adjustments.html">Adjustments and comparisons</a></li>
+    <li><a class="dropdown-item" href="../articles/sensitivity.html">Sensitivity analysis</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Other</h6></li>
+    <li><a class="dropdown-item" href="../articles/data_selection.html">Data selection</a></li>
+    <li><a class="dropdown-item" href="../articles/other_functions.html">Other functions</a></li>
+  </ul>
 </li>
-<li class="nav-item">
-  <a class="nav-link" href="../reference/index.html">Functions</a>
-</li>
-<li class="nav-item">
-  <a class="nav-link" href="../news/index.html">News</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Functions</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">News</a></li>
       </ul>
-<form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
-</form>
-
-      <ul class="navbar-nav">
-<li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/bluefoxr/COINr/">
-    <span class="fa fa-github"></span>
-     
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/bluefoxr/COINr/"><span class="fa fa-github"></span></a></li>
       </ul>
 </div>
 
-    
+
   </div>
 </nav><div class="container template-article">
 
@@ -102,10 +74,11 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="" class="logo" alt=""><h1>Adjustments and Comparisons</h1>
+
+      <h1>Adjustments and Comparisons</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/bluefoxr/COINr/blob/HEAD/vignettes/adjustments.Rmd" class="external-link"><code>vignettes/adjustments.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/bluefoxr/COINr/blob/master/vignettes/adjustments.Rmd" class="external-link"><code>vignettes/adjustments.Rmd</code></a></small>
       <div class="d-none name"><code>adjustments.Rmd</code></div>
     </div>
 
@@ -186,9 +159,8 @@ list:</p>
 <span>                 level_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Indicator"</span>, <span class="st">"Pillar"</span>, <span class="st">"Sub-index"</span>, <span class="st">"Index"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; iData checked and OK.</span></span>
 <span><span class="co">#&gt; iMeta checked and OK.</span></span>
-<span><span class="co">#&gt; Written data set to .$Data$Raw</span></span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; Written data set to .$Data$Raw</span></span>
+<span></span>
 <span><span class="co"># look in log</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">coin</span><span class="op">$</span><span class="va">Log</span>, max.level <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 2</span></span>
@@ -209,12 +181,11 @@ function. There is also another logical variable called
 <p>This demonstrates that when we call a building function, its
 arguments are stored in the coin. To show another example, if we apply
 the <code><a href="../reference/Normalise.html">Normalise()</a></code> function:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># normalise</span></span>
 <span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Normalise.html">Normalise</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Raw"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Written data set to .$Data$Normalised</span></span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; Written data set to .$Data$Normalised</span></span>
+<span></span>
 <span><span class="co"># view log</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">coin</span><span class="op">$</span><span class="va">Log</span>, max.level <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 3</span></span>
@@ -241,7 +212,7 @@ allows coins to be <em>regenerated</em>, which means automatically
 re-running the building functions that were used to create the coin and
 its data sets. This is done with a function called
 <code><a href="../reference/Regen.html">Regen()</a></code>:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># regenerate the coin</span></span>
 <span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Regen.html">Regen</a></span><span class="op">(</span><span class="va">coin</span>, quietly <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; iData checked and OK.</span></span>
@@ -259,7 +230,7 @@ in a regeneration.</p>
 unless you modify something first. And this brings us to the copying and
 modifying points. Let us take an example: first, we’ll build the full
 example coin, then we’ll make a copy of our existing coin:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># build full example coin</span></span>
 <span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_example_coin.html">build_example_coin</a></span><span class="op">(</span>quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
@@ -272,7 +243,7 @@ Here, we will change the normalisation method to percentile ranks, and
 regenerate. To make this change it is necessary to target the right
 argument. Let’s first see what is already in the Log for
 <code><a href="../reference/Normalise.html">Normalise()</a></code>:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">coin2</span><span class="op">$</span><span class="va">Log</span><span class="op">$</span><span class="va">Normalise</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 7</span></span>
 <span><span class="co">#&gt;  $ dset        : chr "Treated"</span></span>
@@ -287,7 +258,7 @@ argument. Let’s first see what is already in the Log for
 <span><span class="co">#&gt;  $ write2log   : logi TRUE</span></span></code></pre></div>
 <p>At the moment, the normalisation is min-max onto the interval of 0 to
 100. We will change this to the new function <code><a href="../reference/n_prank.html">n_prank()</a></code>:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># change to prank function (percentile ranks)</span></span>
 <span><span class="co"># we don't need to specify any additional parameters (f_n_para) here</span></span>
 <span><span class="va">coin2</span><span class="op">$</span><span class="va">Log</span><span class="op">$</span><span class="va">Normalise</span><span class="op">$</span><span class="va">global_specs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>f_n <span class="op">=</span> <span class="st">"n_prank"</span><span class="op">)</span></span>
@@ -328,15 +299,14 @@ argument of <code><a href="../reference/new_coin.html">new_coin()</a></code>.</p
 <p>A short cut function, <code><a href="../reference/change_ind.html">change_ind()</a></code> can be also used to
 quickly add or remove indicators from the framework, and regenerate the
 coin, all in one command.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># copy base coin</span></span>
 <span><span class="va">coin_remove</span> <span class="op">&lt;-</span> <span class="va">coin</span></span>
 <span></span>
 <span><span class="co"># remove two indicators and regenerate the coin</span></span>
 <span><span class="va">coin_remove</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/change_ind.html">change_ind</a></span><span class="op">(</span><span class="va">coin</span>, drop <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LPI"</span>, <span class="st">"Forest"</span><span class="op">)</span>, regen <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; coin has been regenerated using new specs.</span></span></code></pre></div>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; coin has been regenerated using new specs.</span></span>
+<span></span>
 <span><span class="va">coin_remove</span></span>
 <span><span class="co">#&gt; --------------</span></span>
 <span><span class="co">#&gt; A coin with...</span></span>
@@ -397,7 +367,7 @@ former is for comparing two coins only, whereas the latter allows to
 compare more than two coins. Let’s start by comparing the two coins we
 have: the default example coin, and the same coin but with a percentile
 rank normalisation method:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># compare index, sort by absolute rank difference</span></span>
 <span><span class="fu"><a href="../reference/compare_coins.html">compare_coins</a></span><span class="op">(</span><span class="va">coin</span>, <span class="va">coin2</span>, dset <span class="op">=</span> <span class="st">"Aggregated"</span>, iCode <span class="op">=</span> <span class="st">"Index"</span>,</span>
 <span>              sort_by <span class="op">=</span> <span class="st">"Abs.diff"</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -459,7 +429,7 @@ or aggregate in the index. This also works if the number of units
 changes. At the moment, the coin has an imputation step which fills in
 all <code>NA</code>s. We could alternatively filter out any units with
 less than 90% data availability and remove the imputation step.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># copy original coin</span></span>
 <span><span class="va">coin90</span> <span class="op">&lt;-</span> <span class="va">coin</span></span>
 <span></span>
@@ -501,7 +471,7 @@ less than 90% data availability and remove the imputation step.</p>
 <span><span class="co">#&gt;   Aggregated (46 units)</span></span></code></pre></div>
 <p>We can see that we are down to 46 units after the screening step. Now
 let’s compare with the original coin:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># compare index, sort by absolute rank difference</span></span>
 <span><span class="fu"><a href="../reference/compare_coins.html">compare_coins</a></span><span class="op">(</span><span class="va">coin</span>, <span class="va">coin90</span>, dset <span class="op">=</span> <span class="st">"Aggregated"</span>, iCode <span class="op">=</span> <span class="st">"Index"</span>,</span>
 <span>              sort_by <span class="op">=</span> <span class="st">"Abs.diff"</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -561,7 +531,7 @@ let’s compare with the original coin:</p>
 coin.</p>
 <p>Finally, to demonstrate comparing multiple coins, we can call the
 <code><a href="../reference/compare_coins_multi.html">compare_coins_multi()</a></code> function:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/compare_coins_multi.html">compare_coins_multi</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Nominal <span class="op">=</span> <span class="va">coin</span>, Prank <span class="op">=</span> <span class="va">coin2</span>, NoLPIFor <span class="op">=</span> <span class="va">coin_remove</span>,</span>
 <span>                         Screen90 <span class="op">=</span> <span class="va">coin90</span><span class="op">)</span>, dset <span class="op">=</span> <span class="st">"Aggregated"</span>, iCode <span class="op">=</span> <span class="st">"Index"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    uCode Nominal Prank NoLPIFor Screen90</span></span>
@@ -622,7 +592,7 @@ absolute rank changes. Obviously a requirement is that the coins must
 all have some common units, and must all have <code>iCode</code> and
 <code>dset</code> available within.</p>
 </div>
-  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
 
@@ -633,15 +603,15 @@ all have some common units, and must all have <code>iCode</code> and
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
     </footer>
 </div>
 
-  
 
-  
+
+
 
   </body>
 </html>

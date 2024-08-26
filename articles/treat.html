@@ -5,95 +5,67 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="COINr">
 <title>Outlier Treatment • COINr</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha512-7O5pXpc0oCRrxk8RUfDYFgn0nO1t+jLuIOQdOMRp4APB7uZ4vSjspzp5y6YDtDs4VzUSTbWzBFZ/LKJhnyFOKw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Outlier Treatment">
-<meta property="og:description" content="COINr">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Outlier Treatment">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-    
 
-    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary" data-bs-theme="dark"><div class="container">
-    
+
+    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">COINr</a>
 
     <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.14</small>
 
-    
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item">
-  <a class="nav-link" href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li class="nav-item">
-  <a class="nav-link" href="../articles/overview.html">Overview</a>
-</li>
-<li class="nav-item">
-  <a class="nav-link" href="../articles/v1.html">v1.0 updates</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../index.html"><span class="fa fa-home fa-lg"></span></a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/overview.html">Overview</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/v1.html">v1.0 updates</a></li>
 <li class="active nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-guides">Guides</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-guides">
-    <h6 class="dropdown-header" data-toc-skip>Construction</h6>
-    <a class="dropdown-item" href="../articles/coins.html">Building coins</a>
-    <a class="dropdown-item" href="../articles/imputation.html">Imputation of missing data</a>
-    <a class="dropdown-item" href="../articles/denomination.html">Denomination</a>
-    <a class="dropdown-item" href="../articles/screening.html">Unit screening</a>
-    <a class="dropdown-item" href="../articles/treat.html">Outlier treatment</a>
-    <a class="dropdown-item" href="../articles/normalise.html">Normalisation</a>
-    <a class="dropdown-item" href="../articles/weights.html">Weighting</a>
-    <a class="dropdown-item" href="../articles/aggregate.html">Aggregation</a>
-    <div class="dropdown-divider"></div>
-    <h6 class="dropdown-header" data-toc-skip>Post-processing</h6>
-    <a class="dropdown-item" href="../articles/visualisation.html">Visualisation</a>
-    <a class="dropdown-item" href="../articles/analysis.html">Statistical analysis</a>
-    <a class="dropdown-item" href="../articles/results.html">Presenting results</a>
-    <a class="dropdown-item" href="../articles/adjustments.html">Adjustments and comparisons</a>
-    <a class="dropdown-item" href="../articles/sensitivity.html">Sensitivity analysis</a>
-    <div class="dropdown-divider"></div>
-    <h6 class="dropdown-header" data-toc-skip>Other</h6>
-    <a class="dropdown-item" href="../articles/data_selection.html">Data selection</a>
-    <a class="dropdown-item" href="../articles/other_functions.html">Other functions</a>
-  </div>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-guides">
+<li><h6 class="dropdown-header" data-toc-skip>Construction</h6></li>
+    <li><a class="dropdown-item" href="../articles/coins.html">Building coins</a></li>
+    <li><a class="dropdown-item" href="../articles/imputation.html">Imputation of missing data</a></li>
+    <li><a class="dropdown-item" href="../articles/denomination.html">Denomination</a></li>
+    <li><a class="dropdown-item" href="../articles/screening.html">Unit screening</a></li>
+    <li><a class="dropdown-item" href="../articles/treat.html">Outlier treatment</a></li>
+    <li><a class="dropdown-item" href="../articles/normalise.html">Normalisation</a></li>
+    <li><a class="dropdown-item" href="../articles/weights.html">Weighting</a></li>
+    <li><a class="dropdown-item" href="../articles/aggregate.html">Aggregation</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Post-processing</h6></li>
+    <li><a class="dropdown-item" href="../articles/visualisation.html">Visualisation</a></li>
+    <li><a class="dropdown-item" href="../articles/analysis.html">Statistical analysis</a></li>
+    <li><a class="dropdown-item" href="../articles/results.html">Presenting results</a></li>
+    <li><a class="dropdown-item" href="../articles/adjustments.html">Adjustments and comparisons</a></li>
+    <li><a class="dropdown-item" href="../articles/sensitivity.html">Sensitivity analysis</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Other</h6></li>
+    <li><a class="dropdown-item" href="../articles/data_selection.html">Data selection</a></li>
+    <li><a class="dropdown-item" href="../articles/other_functions.html">Other functions</a></li>
+  </ul>
 </li>
-<li class="nav-item">
-  <a class="nav-link" href="../reference/index.html">Functions</a>
-</li>
-<li class="nav-item">
-  <a class="nav-link" href="../news/index.html">News</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Functions</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">News</a></li>
       </ul>
-<form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
-</form>
-
-      <ul class="navbar-nav">
-<li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/bluefoxr/COINr/">
-    <span class="fa fa-github"></span>
-     
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/bluefoxr/COINr/"><span class="fa fa-github"></span></a></li>
       </ul>
 </div>
 
-    
+
   </div>
 </nav><div class="container template-article">
 
@@ -102,10 +74,11 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="" class="logo" alt=""><h1>Outlier Treatment</h1>
+
+      <h1>Outlier Treatment</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/bluefoxr/COINr/blob/HEAD/vignettes/treat.Rmd" class="external-link"><code>vignettes/treat.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/bluefoxr/COINr/blob/master/vignettes/treat.Rmd" class="external-link"><code>vignettes/treat.Rmd</code></a></small>
       <div class="d-none name"><code>treat.Rmd</code></div>
     </div>
 
@@ -180,9 +153,8 @@ on a numeric vector. Let’s make a vector with a couple of outliers:</p>
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bluefoxr.github.io/COINr/">COINr</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/skew.html">skew</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 3.063241</span></span></code></pre></div>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; [1] 3.063241</span></span>
+<span></span>
 <span><span class="fu"><a href="../reference/kurt.html">kurt</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 9.741391</span></span></code></pre></div>
 <p>The skew and kurtosis are both high. If we follow the default limits
@@ -191,7 +163,7 @@ would be classed as a vector with outliers. Indeed we can confirm this
 using the <code><a href="../reference/check_SkewKurt.html">check_SkewKurt()</a></code> function, which is the default
 pass/fail function used in <code><a href="../reference/Treat.html">Treat()</a></code>. This also anyway
 outputs the skew and kurtosis:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/check_SkewKurt.html">check_SkewKurt</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $Pass</span></span>
 <span><span class="co">#&gt; [1] FALSE</span></span>
@@ -209,7 +181,7 @@ treating outliers is <code>f1 = "winsorise"</code>. We also pass an
 additional parameter to <code><a href="../reference/winsorise.html">winsorise()</a></code>, which is
 <code>winmax = 2</code>. You can check the <code><a href="../reference/winsorise.html">winsorise()</a></code>
 function documentation to better understand how it works.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">l_treat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Treat.html">Treat</a></span><span class="op">(</span><span class="va">x</span>, f1 <span class="op">=</span> <span class="st">"winsorise"</span>, f1_para <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>winmax <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>,</span>
 <span>                 f_pass <span class="op">=</span> <span class="st">"check_SkewKurt"</span><span class="op">)</span></span>
 <span></span>
@@ -219,7 +191,7 @@ function documentation to better understand how it works.</p>
 point from <code>x</code> has been Winsorised (reassigned the next
 highest value). We can check the skew and kurtosis of the treated
 vector:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/check_SkewKurt.html">check_SkewKurt</a></span><span class="op">(</span><span class="va">l_treat</span><span class="op">$</span><span class="va">x</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $Pass</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
@@ -239,7 +211,7 @@ skew and kurtosis within the specified thresholds.</p>
 the same as treating a numeric vector, because the data frame method
 passes each column of the data frame to the numeric method. Here, we use
 some data from the COINr package to demonstrate.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># select three indicators</span></span>
 <span><span class="va">df1</span> <span class="op">&lt;-</span> <span class="va">ASEM_iData</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Flights"</span>, <span class="st">"Goods"</span>, <span class="st">"Services"</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
@@ -256,7 +228,7 @@ treated data frame; <code>Dets_Table</code>, a table describing what
 happened to each indicator; and <code>Treated_Points</code>, which marks
 which individual points were adjusted. This is effectively the same
 output as for treating a numeric vector.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">l_treat</span><span class="op">$</span><span class="va">Dets_Table</span></span>
 <span><span class="co">#&gt;      iCode check_SkewKurt0.Pass check_SkewKurt0.Skew check_SkewKurt0.Kurt</span></span>
 <span><span class="co">#&gt; 1  Flights                FALSE             2.103287             4.508879</span></span>
@@ -267,7 +239,7 @@ output as for treating a numeric vector.</p>
 <span><span class="co">#&gt; 2              2                 TRUE             1.140608            0.1572047</span></span>
 <span><span class="co">#&gt; 3             NA                   NA                   NA                   NA</span></span></code></pre></div>
 <p>We also check the individual points:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">l_treat</span><span class="op">$</span><span class="va">Treated_Points</span></span>
 <span><span class="co">#&gt;    Flights Goods Services</span></span>
 <span><span class="co">#&gt; 1                        </span></span>
@@ -331,7 +303,7 @@ passes it to the data frame method. So more or less, the same arguments
 are present.</p>
 <p>We begin by building the example coin, which will be used for the
 examples here.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_example_coin.html">build_example_coin</a></span><span class="op">(</span>up_to <span class="op">=</span> <span class="st">"new_coin"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; iData checked and OK.</span></span>
 <span><span class="co">#&gt; iMeta checked and OK.</span></span>
@@ -341,7 +313,7 @@ examples here.</p>
 </h3>
 <p>The <code><a href="../reference/Treat.html">Treat()</a></code> function can be applied directly to a coin
 with completely default options:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Treat.html">Treat</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Raw"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Written data set to .$Data$Treated</span></span></code></pre></div>
 <p>For each indicator, the <code><a href="../reference/Treat.html">Treat()</a></code> function:</p>
@@ -358,7 +330,7 @@ is returned without further treatment.</p>
 <p>When we run <code><a href="../reference/Treat.html">Treat()</a></code> on a coin, it also stores
 information returned from <code>f1</code>, <code>f2</code> and
 <code>f_pass</code> in the coin:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># summary of treatment for each indicator</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">coin</span><span class="op">$</span><span class="va">Analysis</span><span class="op">$</span><span class="va">Treated</span><span class="op">$</span><span class="va">Dets_Table</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     iCode check_SkewKurt0.Pass check_SkewKurt0.Skew check_SkewKurt0.Kurt</span></span>
@@ -392,7 +364,7 @@ procedure is applied to all indicators. This process is specified by the
 <code>global_specs</code> argument. To see how to use this, it is
 easiest to show the default of this argument which is built into the
 <code>treat()</code> function:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># default treatment for all cols</span></span>
 <span><span class="va">specs_def</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>f1 <span class="op">=</span> <span class="st">"winsorise"</span>,</span>
 <span>                  f1_para <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>na.rm <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -455,13 +427,12 @@ need to specify the entire list. So for example, if we want to change
 the maximum Winsorisation limit <code>winmax</code>, we can just pass
 this part of the list (notice we still have to wrap the parameter inside
 a list):</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># treat with max winsorisation of 3 points</span></span>
 <span><span class="va">coin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Treat.html">Treat</a></span><span class="op">(</span><span class="va">coin</span>, dset <span class="op">=</span> <span class="st">"Raw"</span>, global_specs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>f1_para <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>winmax <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Written data set to .$Data$Treated</span></span>
-<span><span class="co">#&gt; (overwritten existing data set)</span></span></code></pre></div>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; (overwritten existing data set)</span></span>
+<span></span>
 <span><span class="co"># see what happened</span></span>
 <span><span class="va">coin</span><span class="op">$</span><span class="va">Analysis</span><span class="op">$</span><span class="va">Treated</span><span class="op">$</span><span class="va">Dets_Table</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span>
@@ -543,7 +514,7 @@ simple, let’s say that we keep the defaults for all indicators except
 one, where we change the Winsorisation limit. We will set the
 Winsorisation limit of the indicator “Flights” to zero, to force it to
 be log-transformed.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># change individual specs for Flights</span></span>
 <span><span class="va">indiv_specs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  Flights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -564,7 +535,7 @@ wrapped into a single list to pass to <code>indiv_specs</code>. This
 looks a bit convoluted for changing a single parameter, but gives a high
 degree of control over how data treatment is performed.</p>
 <p>We can now see what happened to “Flights”:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">coin</span><span class="op">$</span><span class="va">Analysis</span><span class="op">$</span><span class="va">Treated</span><span class="op">$</span><span class="va">Dets_Table</span><span class="op">[</span></span>
 <span>  <span class="va">coin</span><span class="op">$</span><span class="va">Analysis</span><span class="op">$</span><span class="va">Treated</span><span class="op">$</span><span class="va">Dets_Table</span><span class="op">$</span><span class="va">iCode</span> <span class="op">==</span> <span class="st">"Flights"</span>, </span>
 <span><span class="op">]</span></span>
@@ -581,7 +552,7 @@ After that, the indicator passed the skew and kurtosis check.</p>
 treatment completely. To do this, we can set the corresponding entries
 in <code>indiv_specs</code> to <code>"none"</code>. This is the only
 case where we don’t have to pass a list for each indicator.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># change individual specs for two indicators</span></span>
 <span><span class="va">indiv_specs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  Flights <span class="op">=</span> <span class="st">"none"</span>,</span>
@@ -605,7 +576,7 @@ outlier detection function ` from the <a href="https://easystats.github.io/perfo
 package</p>
 <p>The following code chunk will only run if you have the ‘performance’
 package installed.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://easystats.github.io/performance/" class="external-link">performance</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># the check_outliers function outputs a logical vector which flags specific points as outliers.</span></span>
@@ -643,9 +614,8 @@ package installed.</p>
 <span><span class="co">#&gt; Warning in proc_passing(passing, f_pass, 0): f_pass has returned NA. Returning</span></span>
 <span><span class="co">#&gt; untreated vector.</span></span>
 <span><span class="co">#&gt; Written data set to .$Data$Treated</span></span>
-<span><span class="co">#&gt; (overwritten existing data set)</span></span></code></pre></div>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; (overwritten existing data set)</span></span>
+<span></span>
 <span><span class="co"># see what happened</span></span>
 <span><span class="va">coin</span><span class="op">$</span><span class="va">Analysis</span><span class="op">$</span><span class="va">Treated</span><span class="op">$</span><span class="va">Dets_Table</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span>
@@ -673,7 +643,7 @@ on your application.</p>
 It takes almost the same arguments as the coin method, and applies the
 same specifications to each coin. Here we simply demonstrate it on the
 example purse.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># build example purse</span></span>
 <span><span class="va">purse</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_example_purse.html">build_example_purse</a></span><span class="op">(</span>up_to <span class="op">=</span> <span class="st">"new_coin"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
@@ -707,14 +677,14 @@ to <code><a href="../reference/check_SkewKurt.html">check_SkewKurt()</a></code>.
 <p>The <code><a href="../reference/qTreat.html">qTreat()</a></code> function is a generic with methods for data
 frames, coins and purses. Here, we’ll just demonstrate it on a data
 frame.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># select three indicators</span></span>
 <span><span class="va">df1</span> <span class="op">&lt;-</span> <span class="va">ASEM_iData</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Flights"</span>, <span class="st">"Goods"</span>, <span class="st">"Services"</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># treat data frame, changing winmax and skew/kurtosis limits</span></span>
 <span><span class="va">l_treat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qTreat.html">qTreat</a></span><span class="op">(</span><span class="va">df1</span>, winmax <span class="op">=</span> <span class="fl">1</span>, skew_thresh <span class="op">=</span> <span class="fl">1.5</span>, kurt_thresh <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <p>Now we check what the results are:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">l_treat</span><span class="op">$</span><span class="va">Dets_Table</span></span>
 <span><span class="co">#&gt;      iCode check_SkewKurt0.Pass check_SkewKurt0.Skew check_SkewKurt0.Kurt</span></span>
 <span><span class="co">#&gt; 1  Flights                FALSE             2.103287             4.508879</span></span>
@@ -733,7 +703,7 @@ to bring “Flights” and “Goods” within the specified skew/kurtosis
 limits. Consequently, <code>f2</code> was invoked, which uses a log
 transform and brought both indicators within the specified limits.</p>
 </div>
-  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
 
@@ -744,15 +714,15 @@ transform and brought both indicators within the specified limits.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
     </footer>
 </div>
 
-  
 
-  
+
+
 
   </body>
 </html>
