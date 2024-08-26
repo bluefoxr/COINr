@@ -10,7 +10,8 @@ plot_framework(
   colour_level = NULL,
   text_colour = NULL,
   text_size = NULL,
-  transparency = TRUE
+  transparency = TRUE,
+  text_label = "iCode"
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ plot_framework(
 \item{text_size}{Text size of labels, default 2.5}
 
 \item{transparency}{If \code{TRUE}, levels below \code{colour_level} are differentiated with some transparency.}
+
+\item{text_label}{Text labelling of segments: either \code{"iCode"} or \code{"iName"}}
 }
 \value{
 A ggplot2 plot object

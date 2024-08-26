@@ -25,6 +25,7 @@
 #' @param text_colour Colour of label text - default `"white"`.
 #' @param text_size Text size of labels, default 2.5
 #' @param transparency If `TRUE`, levels below `colour_level` are differentiated with some transparency.
+#' @param text_label Text labelling of segments: either `"iCode"` or `"iName"`
 #'
 #' @importFrom rlang .data
 #'
@@ -38,7 +39,8 @@
 #' @return A ggplot2 plot object
 #' @export
 plot_framework <- function(coin, type = "sunburst", colour_level = NULL,
-                           text_colour = NULL, text_size = NULL, transparency = TRUE){
+                           text_colour = NULL, text_size = NULL, transparency = TRUE,
+                           text_label = "iCode"){
 
   # CHECKS ------------------------------------------------------------------
 
@@ -48,6 +50,10 @@ plot_framework <- function(coin, type = "sunburst", colour_level = NULL,
   # get iMeta
   iMeta <- coin$Meta$Ind[!is.na(coin$Meta$Ind$Level), ]
   maxlev <- coin$Meta$maxlev
+
+  if(text_label %nin% c("iCode", "iName")){
+    stop("text_label must be either 'iCode' or 'iName'")
+  }
 
   # DEFAULTS ----------------------------------------------------------------
 
@@ -116,7 +122,7 @@ plot_framework <- function(coin, type = "sunburst", colour_level = NULL,
   plt <- ggplot2::ggplot(iMeta, ggplot2::aes(x = .data$Level,
                                              y = .data$EffWeight,
                                              fill = .data$colourcol,
-                                             label = .data$iCode))
+                                             label = .data[[text_label]]))
 
   # bars
   if(transparency){
