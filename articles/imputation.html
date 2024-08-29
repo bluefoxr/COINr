@@ -458,18 +458,18 @@ to be passed to <code><a href="../reference/impute_panel.html">impute_panel()</a
 <p>It is difficult to show this working without a contrived example, so
 let’s contrive one. We take the example panel data set
 <code>ASEM_iData_p</code>, and introduce a missing value <code>NA</code>
-in the indicator “LPI” for unit “GB”, for year 2022.</p>
+in the indicator “LPI” for unit “GB”, for year 2021.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># copy</span></span>
 <span><span class="va">dfp</span> <span class="op">&lt;-</span> <span class="va">ASEM_iData_p</span></span>
 <span></span>
-<span><span class="co"># create NA for GB in 2022</span></span>
-<span><span class="va">dfp</span><span class="op">$</span><span class="va">LPI</span><span class="op">[</span><span class="va">dfp</span><span class="op">$</span><span class="va">uCode</span> <span class="op">==</span> <span class="st">"GB"</span> <span class="op">&amp;</span> <span class="va">dfp</span><span class="op">$</span><span class="va">Time</span> <span class="op">==</span> <span class="fl">2022</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span></code></pre></div>
+<span><span class="co"># create NA for GB in 2021</span></span>
+<span><span class="va">dfp</span><span class="op">$</span><span class="va">LPI</span><span class="op">[</span><span class="va">dfp</span><span class="op">$</span><span class="va">uCode</span> <span class="op">==</span> <span class="st">"GBR"</span> <span class="op">&amp;</span> <span class="va">dfp</span><span class="op">$</span><span class="va">Time</span> <span class="op">==</span> <span class="fl">2021</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span></code></pre></div>
 <p>This data point has a value for the previous year, 2021. Let’s see
 what it is:</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dfp</span><span class="op">$</span><span class="va">LPI</span><span class="op">[</span><span class="va">dfp</span><span class="op">$</span><span class="va">uCode</span> <span class="op">==</span> <span class="st">"GB"</span> <span class="op">&amp;</span> <span class="va">dfp</span><span class="op">$</span><span class="va">Time</span> <span class="op">==</span> <span class="fl">2021</span><span class="op">]</span></span>
-<span><span class="co">#&gt; numeric(0)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">dfp</span><span class="op">$</span><span class="va">LPI</span><span class="op">[</span><span class="va">dfp</span><span class="op">$</span><span class="va">uCode</span> <span class="op">==</span> <span class="st">"GBR"</span> <span class="op">&amp;</span> <span class="va">dfp</span><span class="op">$</span><span class="va">Time</span> <span class="op">==</span> <span class="fl">2020</span><span class="op">]</span></span>
+<span><span class="co">#&gt; [1] 4.167858</span></span></code></pre></div>
 <p>Now let’s build the purse and impute the raw data set.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># build purse</span></span>
@@ -487,10 +487,144 @@ expect that our <code>NA</code> is now replaced with the 2021 value as
 found previously. To get at the data we can use the
 <code><a href="../reference/get_data.html">get_data()</a></code> function.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/get_data.html">get_data</a></span><span class="op">(</span><span class="va">ASEMp</span>, dset <span class="op">=</span> <span class="st">"Imputed"</span>, iCodes <span class="op">=</span> <span class="st">"LPI"</span>, uCodes <span class="op">=</span> <span class="st">"GBR"</span>, Time <span class="op">=</span> <span class="fl">2021</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/get_data.html">get_data</a></span><span class="op">(</span><span class="va">ASEMp</span>, dset <span class="op">=</span> <span class="st">"Imputed"</span>, iCodes <span class="op">=</span> <span class="st">"LPI"</span>, uCodes <span class="op">=</span> <span class="st">"GBR"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     Time uCode      LPI</span></span>
-<span><span class="co">#&gt; 183 2021   GBR 4.386542</span></span></code></pre></div>
+<span><span class="co">#&gt; 30  2018   GBR 4.069669</span></span>
+<span><span class="co">#&gt; 81  2019   GBR 4.120399</span></span>
+<span><span class="co">#&gt; 132 2020   GBR 4.167858</span></span>
+<span><span class="co">#&gt; 183 2021   GBR 4.167858</span></span>
+<span><span class="co">#&gt; 234 2022   GBR 4.118561</span></span></code></pre></div>
 <p>And indeed this corresponds to what we expect.</p>
+<p>We can also optionally change parameters in
+<code><a href="../reference/impute_panel.html">impute_panel()</a></code>. Currently it is possble to change the
+<code>"imp_type"</code> and <code>"max_time"</code> parameters. To do
+this, we use <code>f_i_para</code> argument of <code><a href="../reference/Impute.html">Impute()</a></code> to
+pass these parameters.</p>
+<p>To understand this better, it’s useful to consider that in panel
+data, each unit-indicator pair has a time series which describes the
+evolution of that indicator, for that unit. So keeping our previous
+example with GBR and the LPI indicator, our time series looks like
+this:</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># make purse with fresh panel data</span></span>
+<span><span class="va">ASEMp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_coin.html">new_coin</a></span><span class="op">(</span><span class="va">ASEM_iData_p</span>, <span class="va">ASEM_iMeta</span>, split_to <span class="op">=</span> <span class="st">"all"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># extract and plot time series for GBR for indicator LPI</span></span>
+<span><span class="va">df_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_data.html">get_data</a></span><span class="op">(</span><span class="va">ASEMp</span>, dset <span class="op">=</span> <span class="st">"Raw"</span>, iCodes <span class="op">=</span> <span class="st">"LPI"</span>, uCodes <span class="op">=</span> <span class="st">"GBR"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">df_plot</span><span class="op">$</span><span class="va">Time</span>, <span class="va">df_plot</span><span class="op">$</span><span class="va">LPI</span>, type <span class="op">=</span> <span class="st">"b"</span>, xlab <span class="op">=</span> <span class="st">"Year"</span>, ylab <span class="op">=</span> <span class="st">"LPI for GBR"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="imputation_files/figure-html/unnamed-chunk-23-1.png" width="700"></p>
+<p>Now let’s demonstrate imputing this time series with adjusting the
+imputation method. First, we have to artificially create a missing value
+for the purposes of this demo. We will do this by removing the 2021
+value in the input data, then recreating the purse object (similar to
+previous example). We will then plot the series again to check.</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># copy</span></span>
+<span><span class="va">dfp</span> <span class="op">&lt;-</span> <span class="va">ASEM_iData_p</span></span>
+<span></span>
+<span><span class="co"># create NA for GB in 2021</span></span>
+<span><span class="va">dfp</span><span class="op">$</span><span class="va">LPI</span><span class="op">[</span><span class="va">dfp</span><span class="op">$</span><span class="va">uCode</span> <span class="op">==</span> <span class="st">"GBR"</span> <span class="op">&amp;</span> <span class="va">dfp</span><span class="op">$</span><span class="va">Time</span> <span class="op">==</span> <span class="fl">2021</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
+<span></span>
+<span><span class="co"># make purse with fresh panel data</span></span>
+<span><span class="va">ASEMp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_coin.html">new_coin</a></span><span class="op">(</span><span class="va">dfp</span>, <span class="va">ASEM_iMeta</span>, split_to <span class="op">=</span> <span class="st">"all"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># extract and plot time series for GBR for indicator LPI</span></span>
+<span><span class="va">df_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_data.html">get_data</a></span><span class="op">(</span><span class="va">ASEMp</span>, dset <span class="op">=</span> <span class="st">"Raw"</span>, iCodes <span class="op">=</span> <span class="st">"LPI"</span>, uCodes <span class="op">=</span> <span class="st">"GBR"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">df_plot</span><span class="op">$</span><span class="va">Time</span>, <span class="va">df_plot</span><span class="op">$</span><span class="va">LPI</span>, type <span class="op">=</span> <span class="st">"b"</span>, xlab <span class="op">=</span> <span class="st">"Year"</span>, ylab <span class="op">=</span> <span class="st">"LPI for GBR"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="imputation_files/figure-html/unnamed-chunk-24-1.png" width="700"></p>
+<p>The plot confirms we have removed the data point. Now, we will impute
+the missing point in 2021 using linear interpolation. This is achieved
+by setting the <code>imp_type</code> argument to “linear”, via the
+<code>f_i_para</code> argument, as follows:</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ASEMp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Impute.html">Impute</a></span><span class="op">(</span><span class="va">ASEMp</span>, dset <span class="op">=</span> <span class="st">"Raw"</span>, f_i <span class="op">=</span> <span class="st">"impute_panel"</span>, f_i_para <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>imp_type <span class="op">=</span> <span class="st">"linear"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit BGD and iCode ConSpeed because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit BGD and iCode TBTs because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit BGD and iCode Pat because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit BGD and iCode CultGood because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit BGD and iCode TertGrad because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit BGD and iCode RDExp because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit BRN and iCode ConSpeed because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit BRN and iCode ForPort because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit BRN and iCode Pat because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit BRN and iCode CultServ because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit BRN and iCode Poverty because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit BRN and iCode Palma because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit BRN and iCode TertGrad because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit BRN and iCode FemLab because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit BRN and iCode PrivDebt because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit BRN and iCode RDExp because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit CHN and iCode NEET because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit ESP and iCode CultServ because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit IDN and iCode CultGood because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit ITA and iCode Poverty because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit JPN and iCode Poverty because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit KAZ and iCode ConSpeed because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit KAZ and iCode TertGrad because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit KHM and iCode ConSpeed because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit KHM and iCode ForPort because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit KHM and iCode Pat because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit KHM and iCode CultGood because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit KHM and iCode Poverty because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit KHM and iCode TertGrad because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit KOR and iCode CultGood because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit KOR and iCode Palma because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit KOR and iCode NEET because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit LAO and iCode ConSpeed because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit LAO and iCode ForPort because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit LAO and iCode Pat because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit LAO and iCode CultServ because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit LAO and iCode CultGood because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit LAO and iCode PrimEner because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit LAO and iCode TertGrad because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit LAO and iCode RDExp because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit MLT and iCode Palma because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit MMR and iCode ConSpeed because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit MMR and iCode Tariff because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit MMR and iCode Pat because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit MMR and iCode CultGood because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit MMR and iCode Palma because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit MMR and iCode TertGrad because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit MMR and iCode FemLab because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit MMR and iCode RDExp because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit MNG and iCode ConSpeed because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit MNG and iCode Tariff because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit MNG and iCode PubDebt because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit MYS and iCode Poverty because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit NZL and iCode Poverty because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit NZL and iCode Palma because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit PAK and iCode ConSpeed because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit SGP and iCode Poverty because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit SGP and iCode Palma because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit THA and iCode Tariff because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit VNM and iCode Pat because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit VNM and iCode CultServ because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit VNM and iCode CultGood because all NA values.</span></span>
+<span><span class="co">#&gt; NOTE: cannot impute for unit VNM and iCode TertGrad because all NA values.</span></span>
+<span><span class="co">#&gt; Written data set to .$Data$Imputed</span></span>
+<span><span class="co">#&gt; Written data set to .$Data$Imputed</span></span>
+<span><span class="co">#&gt; Written data set to .$Data$Imputed</span></span>
+<span><span class="co">#&gt; Written data set to .$Data$Imputed</span></span>
+<span><span class="co">#&gt; Written data set to .$Data$Imputed</span></span></code></pre></div>
+<p>Recall that by doing this, we are imputing all time series in the
+purse in the same way. The warning messages above come from the fact
+that some time series have all <code>NA</code> values, so cannot be
+imputed in any way.</p>
+<p>We will now check to see how the imputation went for our selected
+time series. We extract the time series from the Imputed data set, and
+plot it.</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># extract and plot time series for GBR for indicator LPI</span></span>
+<span><span class="va">df_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_data.html">get_data</a></span><span class="op">(</span><span class="va">ASEMp</span>, dset <span class="op">=</span> <span class="st">"Imputed"</span>, iCodes <span class="op">=</span> <span class="st">"LPI"</span>, uCodes <span class="op">=</span> <span class="st">"GBR"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">df_plot</span><span class="op">$</span><span class="va">Time</span>, <span class="va">df_plot</span><span class="op">$</span><span class="va">LPI</span>, type <span class="op">=</span> <span class="st">"b"</span>, xlab <span class="op">=</span> <span class="st">"Year"</span>, ylab <span class="op">=</span> <span class="st">"LPI for GBR"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="imputation_files/figure-html/unnamed-chunk-26-1.png" width="700"></p>
+<p>The plot shows that the 2021 value has been imputed, as expected, by
+drawing a straight line from 2020 to 2022.</p>
+<p>Consider that the <code><a href="../reference/impute_panel.html">impute_panel()</a></code> function allows fairly
+basic time series imputation using the functionalities of
+<code><a href="https://rdrr.io/r/stats/approxfun.html" class="external-link">stats::approx()</a></code>. If you need more sophisticated imputation,
+this would either have to be done outside of COINr, or implemented using
+a <code><a href="../reference/Custom.html">Custom()</a></code> operation.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
