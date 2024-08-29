@@ -2,15 +2,18 @@
 
 #' Impute data sets in a purse
 #'
-#' This function imputes the target data set `dset` in each coin using the imputation function `f_i`. This is performed
-#' in the same way as the coin method [Impute.coin()], but with one "special case" for panel data. If `f_i = "impute_panel`,
-#' the data sets inside the purse are imputed using the [impute_panel()]
-#' function. In this case, coins are not imputed individually, but treated as a single data set. In this
-#' case, optionally set the imputation method as `f_i_para = list(imp_type = .)`
-#' and `f_i_para = list(max_time = .)` where `.` should be substituted with the maximum
-#' number of time points to search backwards for a non-`NA` value. See [impute_panel()] for more details.
-#' No further arguments need to be passed to [impute_panel()]. See `vignette("imputation")` for more
-#' details. See also [Impute.coin()] documentation.
+#' This function imputes the target data set `dset` in each coin using the imputation function `f_i`, and optionally by specifying
+#' parameters via `f_i_para`. This is performed in the same way as the coin method [Impute.coin()], i.e. each time point is imputed separately,
+#' *unless* `f_i = "impute_panel"`. See details for more information.
+#'
+#' If `f_i = "impute_panel"` this is treated as a special case, and the data sets inside the purse are imputed using the [impute_panel()]
+#' function, which allows imputation of time series, using past/future values as information for imputation.
+#'
+#' In this case, coins are not imputed individually, but treated as a single data set. To do this, set `f_i = "impute_panel"`
+#' and pass further parameters to [impute_panel()] using the `f_i_para` argument. Note that as this is a special case,
+#' the supported parameters of [impute_panel()] to specify through [Impute()] are `"imp_type"` and `"max_time"` (see [Impute()]
+#' for details on these). No further arguments need to be passed to [impute_panel()]. See `vignette("imputation")` for more
+#' details.
 #'
 #' @param x A purse object
 #' @param dset The name of the data set to apply the function to, which should be accessible in `.$Data`.

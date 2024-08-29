@@ -205,20 +205,20 @@ case, optionally set `f_i_para = list(max_time = .)` where `.` should be substit
 number of time points to search backwards for a non-`NA` value. See `impute_panel()` for more details.
 No further arguments need to be passed to `impute_panel()`.
 
-It is difficult to show this working without a contrived example, so let's contrive one. We take the example panel data set `ASEM_iData_p`, and introduce a missing value `NA` in the indicator "LPI" for unit "GB", for year 2022.
+It is difficult to show this working without a contrived example, so let's contrive one. We take the example panel data set `ASEM_iData_p`, and introduce a missing value `NA` in the indicator "LPI" for unit "GB", for year 2021.
 
 ```{r}
 # copy
 dfp <- ASEM_iData_p
 
-# create NA for GB in 2022
-dfp$LPI[dfp$uCode == "GB" & dfp$Time == 2022] <- NA
+# create NA for GB in 2021
+dfp$LPI[dfp$uCode == "GBR" & dfp$Time == 2021] <- NA
 ```
 
 This data point has a value for the previous year, 2021. Let's see what it is:
 
 ```{r}
-dfp$LPI[dfp$uCode == "GB" & dfp$Time == 2021]
+dfp$LPI[dfp$uCode == "GBR" & dfp$Time == 2020]
 ```
 
 Now let's build the purse and impute the raw data set.
@@ -234,7 +234,57 @@ ASEMp <- Impute(ASEMp, dset = "Raw", f_i = "impute_panel")
 Now we check whether our imputed point is what we expect: we would expect that our `NA` is now replaced with the 2021 value as found previously. To get at the data we can use the `get_data()` function.
 
 ```{r}
-get_data(ASEMp, dset = "Imputed", iCodes = "LPI", uCodes = "GBR", Time = 2021)
+get_data(ASEMp, dset = "Imputed", iCodes = "LPI", uCodes = "GBR")
 ```
 
 And indeed this corresponds to what we expect.
+
+We can also optionally change parameters in `impute_panel()`. Currently it is possble to change the `"imp_type"` and `"max_time"` parameters. To do this, we use `f_i_para` argument of `Impute()` to pass these parameters.
+
+To understand this better, it's useful to consider that in panel data, each unit-indicator pair has a time series which describes the evolution of that indicator, for that unit. So keeping our previous example with GBR and the LPI indicator, our time series looks like this:
+
+```{r}
+# make purse with fresh panel data
+ASEMp <- new_coin(ASEM_iData_p, ASEM_iMeta, split_to = "all", quietly = TRUE)
+
+# extract and plot time series for GBR for indicator LPI
+df_plot <- get_data(ASEMp, dset = "Raw", iCodes = "LPI", uCodes = "GBR")
+plot(df_plot$Time, df_plot$LPI, type = "b", xlab = "Year", ylab = "LPI for GBR")
+```
+
+Now let's demonstrate imputing this time series with adjusting the imputation method. First, we have to artificially create a missing value for the purposes of this demo. We will do this by removing the 2021 value in the input data, then recreating the purse object (similar to previous example). We will then plot the series again to check.
+
+```{r}
+# copy
+dfp <- ASEM_iData_p
+
+# create NA for GB in 2021
+dfp$LPI[dfp$uCode == "GBR" & dfp$Time == 2021] <- NA
+
+# make purse with fresh panel data
+ASEMp <- new_coin(dfp, ASEM_iMeta, split_to = "all", quietly = TRUE)
+
+# extract and plot time series for GBR for indicator LPI
+df_plot <- get_data(ASEMp, dset = "Raw", iCodes = "LPI", uCodes = "GBR")
+plot(df_plot$Time, df_plot$LPI, type = "b", xlab = "Year", ylab = "LPI for GBR")
+```
+
+The plot confirms we have removed the data point. Now, we will impute the missing point in 2021 using linear interpolation. This is achieved by setting the `imp_type` argument to "linear", via the `f_i_para` argument, as follows:
+
+```{r}
+ASEMp <- Impute(ASEMp, dset = "Raw", f_i = "impute_panel", f_i_para = list(imp_type = "linear"))
+```
+
+Recall that by doing this, we are imputing all time series in the purse in the same way. The warning messages above come from the fact that some time series have all `NA` values, so cannot be imputed in any way.
+
+We will now check to see how the imputation went for our selected time series. We extract the time series from the Imputed data set, and plot it.
+
+```{r}
+# extract and plot time series for GBR for indicator LPI
+df_plot <- get_data(ASEMp, dset = "Imputed", iCodes = "LPI", uCodes = "GBR")
+plot(df_plot$Time, df_plot$LPI, type = "b", xlab = "Year", ylab = "LPI for GBR")
+```
+
+The plot shows that the 2021 value has been imputed, as expected, by drawing a straight line from 2020 to 2022.
+
+Consider that the `impute_panel()` function allows fairly basic time series imputation using the functionalities of `stats::approx()`. If you need more sophisticated imputation, this would either have to be done outside of COINr, or implemented using a `Custom()` operation.
