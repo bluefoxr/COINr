@@ -446,15 +446,13 @@ frames to Amelia, which has imputed each one and passed them back.</p>
 <p>Purse imputation is very similar to coin imputation, because by
 default the purse method of <code><a href="../reference/Impute.html">Impute()</a></code> imputes each coin
 separately. There is one exception to this: if
-<code>f_i = "impute_panel</code>, the data sets inside the purse are
-imputed using the last available data point, using the
+<code>f_i = "impute_panel"</code>, the data sets inside the purse are
+imputed past/future values in the same time series, using the
 <code><a href="../reference/impute_panel.html">impute_panel()</a></code> function. In this case, coins are not
-imputed individually, but treated as a single data set. In this case,
-optionally set <code>f_i_para = list(max_time = .)</code> where
-<code>.</code> should be substituted with the maximum number of time
-points to search backwards for a non-<code>NA</code> value. See
-<code><a href="../reference/impute_panel.html">impute_panel()</a></code> for more details. No further arguments need
-to be passed to <code><a href="../reference/impute_panel.html">impute_panel()</a></code>.</p>
+imputed individually, but treated as a single data set. When
+<code>f_i = "impute_panel"</code>, you can optionally set the values of
+the <code><a href="../reference/impute_panel.html">impute_panel()</a></code> arguments using the
+<code>f_i_para</code> argument of <code><a href="../reference/Impute.html">Impute()</a></code>.</p>
 <p>It is difficult to show this working without a contrived example, so
 let’s contrive one. We take the example panel data set
 <code>ASEM_iData_p</code>, and introduce a missing value <code>NA</code>
