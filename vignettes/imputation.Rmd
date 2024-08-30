@@ -199,11 +199,7 @@ This has now passed each group of indicators at level 2 as data frames to Amelia
 
 # Purses
 
-Purse imputation is very similar to coin imputation, because by default the purse method of `Impute()` imputes each coin separately. There is one exception to this: if `f_i = "impute_panel`, the data sets inside the purse are imputed using the last available data point, using the `impute_panel()`
-function. In this case, coins are not imputed individually, but treated as a single data set. In this
-case, optionally set `f_i_para = list(max_time = .)` where `.` should be substituted with the maximum
-number of time points to search backwards for a non-`NA` value. See `impute_panel()` for more details.
-No further arguments need to be passed to `impute_panel()`.
+Purse imputation is very similar to coin imputation, because by default the purse method of `Impute()` imputes each coin separately. There is one exception to this: if `f_i = "impute_panel"`, the data sets inside the purse are imputed past/future values in the same time series, using the `impute_panel()` function. In this case, coins are not imputed individually, but treated as a single data set. When `f_i = "impute_panel"`, you can optionally set the values of the `impute_panel()` arguments using the `f_i_para` argument of `Impute()`. 
 
 It is difficult to show this working without a contrived example, so let's contrive one. We take the example panel data set `ASEM_iData_p`, and introduce a missing value `NA` in the indicator "LPI" for unit "GB", for year 2021.
 
