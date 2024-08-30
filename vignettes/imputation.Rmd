@@ -211,7 +211,7 @@ dfp <- ASEM_iData_p
 dfp$LPI[dfp$uCode == "GBR" & dfp$Time == 2021] <- NA
 ```
 
-This data point has a value for the previous year, 2021. Let's see what it is:
+This data point has a value for the previous year, 2020. Let's see what it is:
 
 ```{r}
 dfp$LPI[dfp$uCode == "GBR" & dfp$Time == 2020]
@@ -227,7 +227,7 @@ ASEMp <- new_coin(dfp, ASEM_iMeta, split_to = "all", quietly = TRUE)
 ASEMp <- Impute(ASEMp, dset = "Raw", f_i = "impute_panel")
 ```
 
-Now we check whether our imputed point is what we expect: we would expect that our `NA` is now replaced with the 2021 value as found previously. To get at the data we can use the `get_data()` function.
+Now we check whether our imputed point is what we expect: we would expect that our `NA` is now replaced with the 2020 value as found previously. To get at the data we can use the `get_data()` function.
 
 ```{r}
 get_data(ASEMp, dset = "Imputed", iCodes = "LPI", uCodes = "GBR")
@@ -235,7 +235,7 @@ get_data(ASEMp, dset = "Imputed", iCodes = "LPI", uCodes = "GBR")
 
 And indeed this corresponds to what we expect.
 
-We can also optionally change parameters in `impute_panel()`. Currently it is possble to change the `"imp_type"` and `"max_time"` parameters. To do this, we use `f_i_para` argument of `Impute()` to pass these parameters.
+We can also optionally change parameters in `impute_panel()`. Currently it is possible to change the `"imp_type"` and `"max_time"` parameters. To do this, we use `f_i_para` argument of `Impute()` to pass these parameters.
 
 To understand this better, it's useful to consider that in panel data, each unit-indicator pair has a time series which describes the evolution of that indicator, for that unit. So keeping our previous example with GBR and the LPI indicator, our time series looks like this:
 
