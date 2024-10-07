@@ -862,12 +862,14 @@ i_median_grp <- function(x, f, skip_f_na = TRUE){
 #' @param max_time The maximum number of time points to look backwards to impute from. E.g. if `max_time = 1`, if an
 #' `NA` is found at time \eqn{t}, it will only look for a replacement value at \eqn{t-1} but not in any time points before that.
 #' By default, searches all time points available.
-#' @param imp_type One of `"latest"` `"constant"` or `"linear"`. In the first case, missing points are imputed with the last non-`NA` observation for each
+#' @param imp_type One of `"latest"` `"constant"`, `"linear"` or `"linear-constant"`. In the first case, missing points are imputed with the last non-`NA` observation for each
 #' time series, up to `max_time`. For `"constant"` or `"linear"`, missing points are imputed using [stats::approx()], passing  `"constant"` or `"linear"` to the
 #' `method` argument, and points outside of the range of observed values are replaced with the nearest non-`NA` point.
 #' This is equivalent to `rule = 2` in [stats::approx()] for each time series. The difference between `"latest"` and `"constant"` is that
 #' the latter allows control over the maximum number of time points to impute backwards (using `max_time`) whereas the former
-#' doesn't. Additionally, `"constant"` will impute outside of the observed range of values at the beginning of the time series, whereas `"latest"` won't.
+#' doesn't. Additionally, `"constant"` will impute outside of the observed range of values at the beginning of the time series, whereas `"latest"` won't. Finally, the `"linear-constant"`
+#' option will apply linear imputation where possible, but will revert to the "constant" method for any time series with only one observation,
+#' which would otherwise throw an error for "linear".
 #'
 #' @examples
 #' # Copy example panel data
@@ -1042,7 +1044,7 @@ impute_panel <- function(iData, time_col = NULL, unit_col = NULL, cols = NULL, i
     DataT <- lapply(l_imp,  `[[`, "DataT")
     DataT <- Reduce(rbind, DataT)
 
-  } else if (imp_type %in% c("constant", "linear")){
+  } else if (imp_type %in% c("constant", "linear", "linear-constant")){
 
     # linear imputation: work by col
     iCodes <- names(iData)[names(iData) %nin% c(unit_col, time_col)]
@@ -1065,17 +1067,30 @@ impute_panel <- function(iData, time_col = NULL, unit_col = NULL, cols = NULL, i
 
         na_positions <- is.na(y)
 
-        if(length(na_positions) == 0){
-          # no missing values so skip
+        # no missing values so skip
+        if(sum(na_positions) == 0){
           next
         }
+
+        # all missing values, skip with message
         if(all(is.na(y))){
           message("NOTE: cannot impute for unit ", uCode, " and iCode ", iCode, " because all NA values.")
           next
         }
 
-        # impute with linear, and extremes are imputed with the closest value
+        # for linear-constant we switch method if only one obs
+        if(imp_type == "linear-constant"){
+          if(sum(!na_positions) == 1){
+            imp_type <- "constant"
+            message("NOTE: only one non-NA point for unit ", uCode, " and iCode ", iCode, ". Using 'constant' imputation type for this time series.")
+          } else {
+            imp_type <- "linear"
+          }
+        }
+
+        # impute using specified method
         y_imp <- stats::approx(x, y, xout = x, rule = 2, method = imp_type)$y
+
         # check nothing changed in non-NA
         stopifnot(identical(y_imp[!na_positions], y[!na_positions]))
 
@@ -1091,7 +1106,7 @@ impute_panel <- function(iData, time_col = NULL, unit_col = NULL, cols = NULL, i
     DataT <- NULL
 
   } else {
-    stop("imp_type must be either 'latest', 'constant' or 'linear'")
+    stop("imp_type must be either 'latest', 'constant', 'linear' or 'linear-constant'.")
   }
 
 

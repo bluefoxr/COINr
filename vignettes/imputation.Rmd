@@ -283,4 +283,6 @@ plot(df_plot$Time, df_plot$LPI, type = "b", xlab = "Year", ylab = "LPI for GBR")
 
 The plot shows that the 2021 value has been imputed, as expected, by drawing a straight line from 2020 to 2022.
 
+Note that if you have any time series with only one non-NA observation, the "linear" method will throw an error because linear imputation cannot work with only one point. In this case, you can set `imp_type = "linear-constant")`, which will use linear regression where possible, but will revert to the "constant" method for any series with only one known observation. 
+
 Consider that the `impute_panel()` function allows fairly basic time series imputation using the functionalities of `stats::approx()`. If you need more sophisticated imputation, this would either have to be done outside of COINr, or implemented using a `Custom()` operation.

@@ -24,12 +24,14 @@ and other numerical columns to be imputed.}
 \item{cols}{Optionally, a character vector of names of columns to impute. If \code{NULL} (default), all columns apart from \code{time_col} and
 \code{unit_col} will be imputed where possible.}
 
-\item{imp_type}{One of \code{"latest"} \code{"constant"} or \code{"linear"}. In the first case, missing points are imputed with the last non-\code{NA} observation for each
+\item{imp_type}{One of \code{"latest"} \code{"constant"}, \code{"linear"} or \code{"linear-constant"}. In the first case, missing points are imputed with the last non-\code{NA} observation for each
 time series, up to \code{max_time}. For \code{"constant"} or \code{"linear"}, missing points are imputed using \code{\link[stats:approxfun]{stats::approx()}}, passing  \code{"constant"} or \code{"linear"} to the
 \code{method} argument, and points outside of the range of observed values are replaced with the nearest non-\code{NA} point.
 This is equivalent to \code{rule = 2} in \code{\link[stats:approxfun]{stats::approx()}} for each time series. The difference between \code{"latest"} and \code{"constant"} is that
 the latter allows control over the maximum number of time points to impute backwards (using \code{max_time}) whereas the former
-doesn't. Additionally, \code{"constant"} will impute outside of the observed range of values at the beginning of the time series, whereas \code{"latest"} won't.}
+doesn't. Additionally, \code{"constant"} will impute outside of the observed range of values at the beginning of the time series, whereas \code{"latest"} won't. Finally, the \code{"linear-constant"}
+option will apply linear imputation where possible, but will revert to the "constant" method for any time series with only one observation,
+which would otherwise throw an error for "linear".}
 
 \item{max_time}{The maximum number of time points to look backwards to impute from. E.g. if \code{max_time = 1}, if an
 \code{NA} is found at time \eqn{t}, it will only look for a replacement value at \eqn{t-1} but not in any time points before that.
