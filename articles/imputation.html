@@ -618,6 +618,12 @@ plot it.</p>
 <p><img src="imputation_files/figure-html/unnamed-chunk-26-1.png" width="700"></p>
 <p>The plot shows that the 2021 value has been imputed, as expected, by
 drawing a straight line from 2020 to 2022.</p>
+<p>Note that if you have any time series with only one non-NA
+observation, the “linear” method will throw an error because linear
+imputation cannot work with only one point. In this case, you can set
+<code>imp_type = "linear-constant")</code>, which will use linear
+regression where possible, but will revert to the “constant” method for
+any series with only one known observation.</p>
 <p>Consider that the <code><a href="../reference/impute_panel.html">impute_panel()</a></code> function allows fairly
 basic time series imputation using the functionalities of
 <code><a href="https://rdrr.io/r/stats/approxfun.html" class="external-link">stats::approx()</a></code>. If you need more sophisticated imputation,
@@ -635,7 +641,7 @@ a <code><a href="../reference/Custom.html">Custom()</a></code> operation.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>

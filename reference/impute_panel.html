@@ -99,12 +99,14 @@ and other numerical columns to be imputed.</p></dd>
 
 
 <dt id="arg-imp-type">imp_type<a class="anchor" aria-label="anchor" href="#arg-imp-type"></a></dt>
-<dd><p>One of <code>"latest"</code> <code>"constant"</code> or <code>"linear"</code>. In the first case, missing points are imputed with the last non-<code>NA</code> observation for each
+<dd><p>One of <code>"latest"</code> <code>"constant"</code>, <code>"linear"</code> or <code>"linear-constant"</code>. In the first case, missing points are imputed with the last non-<code>NA</code> observation for each
 time series, up to <code>max_time</code>. For <code>"constant"</code> or <code>"linear"</code>, missing points are imputed using <code><a href="https://rdrr.io/r/stats/approxfun.html" class="external-link">stats::approx()</a></code>, passing  <code>"constant"</code> or <code>"linear"</code> to the
 <code>method</code> argument, and points outside of the range of observed values are replaced with the nearest non-<code>NA</code> point.
 This is equivalent to <code>rule = 2</code> in <code><a href="https://rdrr.io/r/stats/approxfun.html" class="external-link">stats::approx()</a></code> for each time series. The difference between <code>"latest"</code> and <code>"constant"</code> is that
 the latter allows control over the maximum number of time points to impute backwards (using <code>max_time</code>) whereas the former
-doesn't. Additionally, <code>"constant"</code> will impute outside of the observed range of values at the beginning of the time series, whereas <code>"latest"</code> won't.</p></dd>
+doesn't. Additionally, <code>"constant"</code> will impute outside of the observed range of values at the beginning of the time series, whereas <code>"latest"</code> won't. Finally, the <code>"linear-constant"</code>
+option will apply linear imputation where possible, but will revert to the "constant" method for any time series with only one observation,
+which would otherwise throw an error for "linear".</p></dd>
 
 
 <dt id="arg-max-time">max_time<a class="anchor" aria-label="anchor" href="#arg-max-time"></a></dt>
@@ -160,7 +162,7 @@ from previous time points. It will replace using the most recently available poi
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer></div>
