@@ -1081,15 +1081,17 @@ impute_panel <- function(iData, time_col = NULL, unit_col = NULL, cols = NULL, i
         # for linear-constant we switch method if only one obs
         if(imp_type == "linear-constant"){
           if(sum(!na_positions) == 1){
-            imp_type <- "constant"
+            imp_type_use <- "constant"
             message("NOTE: only one non-NA point for unit ", uCode, " and iCode ", iCode, ". Using 'constant' imputation type for this time series.")
           } else {
-            imp_type <- "linear"
+            imp_type_use <- "linear"
           }
+        } else {
+          imp_type_use <- imp_type
         }
 
         # impute using specified method
-        y_imp <- stats::approx(x, y, xout = x, rule = 2, method = imp_type)$y
+        y_imp <- stats::approx(x, y, xout = x, rule = 2, method = imp_type_use)$y
 
         # check nothing changed in non-NA
         stopifnot(identical(y_imp[!na_positions], y[!na_positions]))
