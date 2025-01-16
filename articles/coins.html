@@ -8,8 +8,8 @@
 <title>Building coins • COINr</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Building coins">
 </head>
 <body>
@@ -372,6 +372,17 @@ names of <code>iData</code>. There are also denominators:</p>
 <p>Denominators are used to divide or “scale” other indicators. They are
 ideally included in <code>iData</code> because this ensures that they
 match the units and possibly the time points.</p>
+<p>The <code>Direction</code> column specifies the directionality of
+each indicator. Indicators with <code>1</code> behave such that higher
+values of these indicators will imply higher index values, while
+indicators with <code>-1</code> are associated in the opposite
+direction. For example, in a quality of life index, a “Median Income”
+indicator would have direction <code>1</code>, while “Crime rate” would
+have direction <code>-1</code>. Note that directions are applied in
+COINr during the normalisation step only, and <em>not</em> during
+aggregation. This means that any directions assigned to aggregates above
+level 1 have no effect (i.e. aggregates are all considered to contribute
+positively).</p>
 <p>The <code>Parent</code> column requires a few extra words. This is
 used to define the structure of the index. Simply put, it specifies the
 aggregation group to which the indicator or aggregate belongs to, in the
