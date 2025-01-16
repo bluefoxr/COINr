@@ -140,6 +140,8 @@ ASEM_iMeta[ASEM_iMeta$Type == "Denominator", ]
 
 Denominators are used to divide or "scale" other indicators. They are ideally included in `iData` because this ensures that they match the units and possibly the time points.
 
+The `Direction` column specifies the directionality of each indicator. Indicators with `1` behave such that higher values of these indicators will imply higher index values, while indicators with `-1` are associated in the opposite direction. For example, in a quality of life index, a "Median Income" indicator would have direction `1`, while "Crime rate" would have direction `-1`. Note that directions are applied in COINr during the normalisation step only, and *not* during aggregation. This means that any directions assigned to aggregates above level 1 have no effect (i.e. aggregates are all considered to contribute positively).
+
 The `Parent` column requires a few extra words. This is used to define the structure of the index. Simply put, it specifies the aggregation group to which the indicator or aggregate belongs to, in the level immediately above. For indicators in level 1, this should refer to `iCode`s in level 2, and for aggregates in level 2, it should refer to `iCode`s in level 3. Every entry in `Parent` must refer to an entry that can be found in the `iCode` column, or else be `NA` for the highest aggregation level or for groups, denominators and other `iData` columns that are not included in the index.
 
 The `iMeta` data frame is more complex that `iData` and it may be easy to make errors. Use the `check_iMeta()` function (which is anyway called by `new_coin()`) to check the validity of your `iMeta`. Informative error messages are included where possible to help correct any errors.
