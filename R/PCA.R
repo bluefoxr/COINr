@@ -85,6 +85,8 @@
 get_PCA <- function(coin, dset = "Raw", iCodes = NULL, Level = NULL, by_groups = TRUE,
                    nowarnings = FALSE, weights_to = NULL, out2 = "list"){
 
+  check_coin_input(coin)
+
   if(is.null(Level)){
     Level <- 1
   }
