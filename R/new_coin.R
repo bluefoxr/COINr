@@ -182,6 +182,12 @@ new_coin <- function(iData, iMeta, exclude = NULL, split_to = NULL,
     stop("Aggregate iCode(s) found in iMeta that do not have any children (not named in 'Parent' column). Codes: ", icodes_agg_nokids, call. = FALSE)
   }
 
+  # Check aggregates are not already included in iData
+  bad_aggcodes <- intersect(icodes_agg, names(iData))
+  if(length(bad_aggcodes) > 0){
+    stop("You have included columns specified as aggregates in your iData. Please remove them, as they will be created by COINr. Offending columns: ", toString(bad_aggcodes))
+  }
+
   # EXCLUDE INDICATORS ------------------------------------------------------
   # Optionally exclude any specified indicators
 
