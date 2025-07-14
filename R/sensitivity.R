@@ -1,4 +1,3 @@
-
 #' Sensitivity and uncertainty analysis of a coin
 #'
 #' This function performs global sensitivity and uncertainty analysis of a coin. You must specify which
@@ -48,8 +47,12 @@
 #' but useful to set to `FALSE` if running this e.g. in a Rmd document (because may require user input).
 #' @param diagnostic_mode Logical: if `TRUE`, this will additionally attach all coins generated as part of the sensitivity
 #' analysis to the output list. This is intended to be used to check what is going on within the sensitivity analysis.
+#' @param BPPARAM A \code{\link[BiocParallel]{BiocParallelParam}} object specifying the parallel
+#'   backend to use. Defaults to the package-specific setting, optimized for the given operating system.
 #'
 #' @importFrom stats runif
+#' @importFrom data.table as.data.table setnames
+#' @importFrom BiocParallel bplapply
 #'
 #' @return Sensitivity analysis results as a list, containing:
 #' * `.$Scores` a data frame with a row for each unit, and columns are the scores for each replication.
@@ -70,7 +73,7 @@
 #' # take a few minutes to run at realistic settings)
 #'
 get_sensitivity <- function(coin, SA_specs, N, SA_type = "UA", dset, iCode, Nboot = NULL, quietly = FALSE,
-                            check_addresses = TRUE, diagnostic_mode = FALSE){
+                            check_addresses = TRUE, diagnostic_mode = FALSE, BPPARAM = getPackageBPPARAM()){
 
   t0 <- proc.time()
   # CHECKS ------------------------------------------------------------------
@@ -131,7 +134,7 @@ get_sensitivity <- function(coin, SA_specs, N, SA_type = "UA", dset, iCode, Nboo
 
   # check addresses for validity
   if(check_addresses){
-    a_check <- lapply(addresses, check_address, coin)
+    lapply(addresses, check_address, coin)
   }
 
   # RUN COINS ---------------------------------------------------------------
@@ -144,31 +147,33 @@ get_sensitivity <- function(coin, SA_specs, N, SA_type = "UA", dset, iCode, Nboo
 
   # make a df of NAs in case a coin regen fails
   v_fail <- SA_scores
-  v_fail[names(v_fail) == iCode] <- NA
+  v_fail[[iCode]] <- NA
 
-  names(SA_scores)[names(SA_scores) == iCode] <- "Nominal"
+  # use data.table for efficiency
+  SA_scores <- data.table::as.data.table(SA_scores)
+  data.table::setnames(SA_scores, iCode, "Nominal")
 
-  # optionally save coins to list
+
+  # optionally save coins to list for diagnostics
   if(diagnostic_mode){
     coin_list <- vector(mode = "list", length = NT)
   }
 
-  # looping over each replication in the SA
-  for(irep in 1:NT){
+  # Use BiocParallel::bplapply to run the replications in parallel
+  results_list <- BiocParallel::bplapply(1:NT, function(irep) {
 
     # list of parameters for current rep
     l_para_rep <- lapply(XX_p, `[[`, irep)
-
-    if (!quietly){
-      message(paste0("Rep ",irep," of ",NT," ... ", round(irep*100/NT,1), "% complete" ))
-    }
 
     # regenerate coin using parameter list
     coin_rep <- regen_edit(l_para_rep, addresses, coin)
 
     # optionally save coin
     if(diagnostic_mode){
-      coin_list[[irep]] <- coin_rep
+      # add it via the the return list
+      return_list <- list(coin_rep = coin_rep)
+    } else {
+      return_list <- list()
     }
 
     # extract variable of interest
@@ -180,12 +185,33 @@ get_sensitivity <- function(coin, SA_specs, N, SA_type = "UA", dset, iCode, Nboo
       # df with just NAs
       v_out <- v_fail
     }
+    
+    # return a data.table
+    v_out_dt <- data.table::as.data.table(v_out)
+    data.table::setnames(v_out_dt, iCode, paste0("r_", irep))
+    
+    return_list$v_out <- v_out_dt
+    return_list
 
-    # merge onto nominal results and rename
-    SA_scores <- merge(SA_scores, v_out, by = "uCode", all = TRUE)
-    names(SA_scores)[names(SA_scores) == iCode] <- paste0("r_",irep)
+  }, BPPARAM = BPPARAM)
+  
+  # More efficient merging using data.table
+  # Extract the result data.tables from the list
+  v_out_dts <- lapply(results_list, `[[`, "v_out")
+  
+  # Add the initial SA_scores table to the list for merging
+  all_scores_dts <- c(list(SA_scores), v_out_dts)
+  
+  # Use Reduce with a data.table merge for a single, efficient join
+  SA_scores <- Reduce(function(dt1, dt2) merge(dt1, dt2, by = "uCode", all = TRUE), all_scores_dts)
 
+  # If diagnostic mode, retrieve the coins
+  if(diagnostic_mode){
+    coin_list <- lapply(results_list, `[[`, "coin_rep")
   }
+  
+  # Convert back to data.frame for consistency with original function output type
+  SA_scores <- as.data.frame(SA_scores)
 
 
   # POST --------------------------------------------------------------------
@@ -253,7 +279,6 @@ get_sensitivity <- function(coin, SA_specs, N, SA_type = "UA", dset, iCode, Nboo
 
   SA_out
 }
-
 
 # Regenerate an edited coin
 #
