@@ -1,0 +1,117 @@
+---
+title: "Parallelization"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Parallelization}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Many functions in COINr can be computationally intensive, especially when dealing with large data sets or running many iterations (such as in sensitivity analysis). To speed up these operations, COINr allows for parallel processing.
+
+COINr uses the excellent [BiocParallel](https://bioconductor.org/packages/release/bioc/html/BiocParallel.html) package as a backend for parallelization. This is a powerful and flexible framework which allows COINr to be used with any parallel backend that is supported by `BiocParallel`.
+
+# Default Backend
+
+To make things easier, COINr automatically selects a sensible default parallel backend when the package is loaded. This depends on your operating system:
+
+* **Windows**: The default is `SnowParam()`, which creates a "socket cluster".
+* **Linux/Mac**: The default is `MulticoreParam()`, which uses forked processes and is generally faster on these systems.
+
+You can see the default parallel backend for your system by calling the `getPackageBPPARAM()` function.
+
+```{r, message=FALSE}
+library(COINr)
+library(BiocParallel)
+
+# Get the default parallel backend
+# This will be different depending on your OS
+getPackageBPPARAM()
+```
+
+This default setting is used by any COINr function that supports parallel processing unless you specify otherwise.
+
+# Customising the Backend
+
+While the default settings are often sufficient, you may want to customise the parallel environment. For example, you might want to limit the number of workers (cores) to use.
+
+You can do this by creating a new `BiocParallelParam` object and setting it as the default for your session using `setPackageBPPARAM()`. Let's say we want to use a `SnowParam` cluster with 2 workers.
+
+```{r}
+# Create a new backend configuration
+my_bpparam <- SnowParam(workers = 2)
+
+# Set this as the default for the COINr package
+setPackageBPPARAM(my_bpparam)
+
+# Check that the default has been updated
+getPackageBPPARAM()
+```
+
+Now, any parallel COINr function will use this new 2-worker configuration for the rest of your R session.
+
+# Parallel functions in COINr
+
+Functions in COINr that can be run in parallel have a `BPPARAM` argument. This argument defaults to `getPackageBPPARAM()`, so it automatically uses the package's default setting.
+
+Let's demonstrate this with the `get_sensitivity()` function, which can be time-consuming. First, we'll build the example coin up to the aggregation step.
+
+```{r}
+# Build the example coin
+coin <- build_example_coin(up_to = "new_coin")
+coin <- Normalise(coin, dset = "Raw", global_specs = list(f_n = "n_minmax", f_n_para = list(c(0,100))))
+coin <- Aggregate(coin, dset = "Normalised")
+```
+
+Now, let's run a small sensitivity analysis. By default, `get_sensitivity()` will use the parallel backend we configured with `getPackageBPPARAM()`.
+
+```{r, eval=FALSE}
+# This example is not run in the vignette for speed, but you can run it yourself.
+
+# Define some parameters to test in the sensitivity analysis
+SA_specs <- list(
+  w_ag = list(
+    Address = "$Log$Aggregate$w_ag",
+    Distribution = get_noisy_weights(coin$Meta$Weights$Original,
+                                     noise_specs = data.frame(Level = 2, NoiseFactor = 0.2),
+                                     Nrep = 10),
+    Type = "discrete"
+  )
+)
+
+# Run sensitivity analysis - this will use the default parallel backend
+# (in our case, the 2-worker SnowParam we set earlier)
+SA_results <- get_sensitivity(coin, SA_specs = SA_specs, N = 10, SA_type = "UA",
+                              dset = "Aggregated", iCode = "Index")
+```
+
+If you want to use a specific backend for a single function call without changing the package default, you can pass it directly to the `BPPARAM` argument.
+
+```{r, eval=FALSE}
+# Run the same analysis, but this time explicitly pass a different backend
+# This will not change the package default we set with setPackageBPPARAM()
+SA_results_alt <- get_sensitivity(coin, SA_specs = SA_specs, N = 10, SA_type = "UA",
+                                  dset = "Aggregated", iCode = "Index",
+                                  BPPARAM = MulticoreParam(workers = 4))
+```
+
+This flexibility allows you to easily control how parallel processing is handled within COINr, whether you want to set a session-wide default or specify configurations on a per-call basis.
+
+# Summary
+
+Using parallel processing in COINr is straightforward:
+
+1.  COINr automatically sets a sensible default parallel backend. You can check this with `getPackageBPPARAM()`.
+2.  To change the default for your session, create a `BiocParallelParam` object (e.g. `SnowParam()`, `MulticoreParam()`) and use `setPackageBPPARAM()`.
+3.  Functions that support parallel processing will use this default automatically.
+4.  You can also override the default for a single function call by passing a `BiocParallelParam` object to the `BPPARAM` argument.
+
+This allows you to significantly speed up your analysis with minimal extra code. For more advanced configurations, consult the documentation of the `BiocParallel` package.
+
