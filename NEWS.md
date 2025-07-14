@@ -1,3 +1,8 @@
+# COINr 1.1.15
+
+- Add unit tests for `rbind_fill`
+- Refactor `rbind_fill`
+
 # COINr 1.1.14
 
 - Minor bug fixes: spaces in uCodes, issue exporting 2-level composite indicators to Excel
