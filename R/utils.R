@@ -14,36 +14,6 @@
 }
 
 
-# rbind two lists with different names into a data frame
-#
-# Performs an `rbind()` operation on two named lists or vectors that do not need to share the same names, but
-# will match the names and fill any missing cols with `NA`s.
-#
-# @param x1 A named list or named vector
-# @param x2 Another named list or named vector
-#
-# @examples
-# #
-#
-# @return Data frame
-rbind_fill <- function(x1, x2){
-
-  if(is.null(names(x1)) || is.null(names(x2))){
-    stop("names of x1 or x2 is NULL")
-  }
-
-  # make to dfs
-  x1 <- as.data.frame(as.list(x1))
-  x2 <- as.data.frame(as.list(x2))
-
-  # fill with NAs
-  x1[setdiff(names(x2), names(x1))] <- NA
-  x2[setdiff(names(x1), names(x2))] <- NA
-
-  rbind(x1, x2)
-
-}
-
 #' rbind two lists or vectors with different names into a data frame
 #'
 #' Performs an `rbind()` operation on two named lists or vectors. This version
