@@ -226,3 +226,8 @@ reference:
   - ASEM_iMeta
   - WorldDenoms
 
+- title: Parallelization
+  desc: Helper function used for the parallelization
+  contents:
+  - getPackageBPPARAM
+  - setPackageBPPARAM
