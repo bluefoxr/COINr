@@ -36,6 +36,7 @@
 #' l2 <- list(b = "another", c = TRUE, d = 1.5)
 #' rbind_fill(v1, l2)
 #' }
+#' @keywords internal
 rbind_fill <- function(x1, x2) {
   
   # Helper function to check for valid input type

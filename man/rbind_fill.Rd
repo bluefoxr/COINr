@@ -32,3 +32,4 @@ l2 <- list(b = "another", c = TRUE, d = 1.5)
 rbind_fill(v1, l2)
 }
 }
+\keyword{internal}
