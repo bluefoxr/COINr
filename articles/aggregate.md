@@ -1,0 +1,541 @@
+# Aggregation
+
+This vignette describes the process of aggregating indicators, in COINr.
+
+## Introduction
+
+Aggregation is the operation of combining multiple indicators into one
+value. Many composite indicators have a hierarchical structure, so in
+practice this often involves multiple aggregations, for example
+aggregating groups of indicators into aggregate values, then aggregating
+those values into higher-level aggregates, and so on, until the final
+index value.
+
+Aggregating should almost always be done on normalised data, unless the
+indicators are already on very similar scales. Otherwise the relative
+influence of indicators will be very uneven.
+
+Of course you don’t *have* to aggregate indicators at all, and you might
+be content with a scoreboard, or perhaps aggregating into several
+aggregate values rather than a single index. However, consider that
+aggregation should not substitute the underlying indicator data, but
+complement it.
+
+Overall, aggregating indicators is a form of information compression -
+you are trying to combine many indicator values into one, and inevitably
+information will be lost
+([this](https://doi.org/10.1016/j.envsoft.2021.105208) recent paper may
+be of interest). As long as this is kept in mind, and indicator data is
+presented and made available along side aggregate values, then aggregate
+(index) values can complement indicators and be used as a useful tool
+for summarising the underlying data, and identifying overall trends and
+patterns.
+
+### Weighting
+
+Many aggregation methods involve some kind of weighting,
+i.e. coefficients that define the relative weight of the
+indicators/aggregates in the aggregation. In order to aggregate, weights
+need to first be specified, but to effectively adjust weights it is
+necessary to aggregate.
+
+This chicken and egg conundrum is best solved by aggregating initially
+with a trial set of weights, perhaps equal weights, then seeing the
+effects of the weighting, and making any weight adjustments necessary.
+
+### Approaches
+
+#### Means
+
+The most straightforward and widely-used approach to aggregation is the
+**weighted arithmetic mean**. Denoting the indicators as
+$x_{i} \in \{ x_{1},x_{2},...,x_{d}\}$, a weighted arithmetic mean is
+calculated as:
+
+$$y = \frac{1}{\sum\limits_{i = 1}^{d}w_{i}}\sum\limits_{i = 1}^{d}x_{i}w_{i}$$
+
+where the $w_{i}$ are the weights corresponding to each $x_{i}$. Here,
+if the weights are chosen to sum to 1, it will simplify to the weighted
+sum of the indicators. In any case, the weighted mean is scaled by the
+sum of the weights, so weights operate relative to each other.
+
+Clearly, if the index has more than two levels, then there will be
+multiple aggregations. For example, there may be three groups of
+indicators which give three separate aggregate scores. These aggregate
+scores would then be fed back into the weighted arithmetic mean above to
+calculate the overall index.
+
+The arithmetic mean has “perfect compensability”, which means that a
+high score in one indicator will perfectly compensate a low score in
+another. In a simple example with two indicators scaled between 0 and 10
+and equal weighting, a unit with scores (0, 10) would be given the same
+score as a unit with scores (5, 5) – both have a score of 5.
+
+An alternative is the **weighted geometric mean**, which uses the
+product of the indicators rather than the sum.
+
+$$y = \left( \prod\limits_{i = 1}^{d}x_{i}^{w_{i}} \right)^{1/\sum\limits_{i = 1}^{d}w_{i}}$$
+
+This is simply the product of each indicator to the power of its weight,
+all raised the the power of the inverse of the sum of the weights.
+
+The geometric mean is less compensatory than the arithmetic mean – low
+values in one indicator only partially substitute high values in others.
+For this reason, the geometric mean may sometimes be preferred when
+indicators represent “essentials”. An example might be quality of life:
+a longer life expectancy perhaps should not compensate severe
+restrictions on personal freedoms.
+
+A third type of mean, in fact the third of the so-called [Pythagorean
+means](https://en.wikipedia.org/wiki/Pythagorean_means) is the
+**weighted harmonic mean**. This uses the mean of the reciprocals of the
+indicators:
+
+$$y = \frac{\sum\limits_{i = 1}^{d}w_{i}}{\sum\limits_{i = 1}^{d}w_{i}/x_{i}}$$
+
+The harmonic mean is the the least compensatory of the the three means,
+even less so than the geometric mean. It is often used for taking the
+mean of rates and ratios.
+
+#### Other methods
+
+The *weighted median* is also a simple alternative candidate. It is
+defined by ordering indicator values, then picking the value which has
+half of the assigned weight above it, and half below it. For *ordered*
+indicators $x_{1},x_{2},...,x_{d}$ and corresponding weights
+$w_{1},w_{2},...,w_{d}$ the weighted median is the indicator value
+$x_{m}$ that satisfies:
+
+$$\sum\limits_{i = 1}^{m - 1}w_{i} \leq \frac{1}{2},\ \ \text{and}\sum\limits_{i = m + 1}^{d}w_{i} \leq \frac{1}{2}$$
+
+The median is known to be robust to outliers, and this may be of
+interest if the distribution of scores across indicators is skewed.
+
+Another somewhat different approach to aggregation is to use the
+[Copeland method](https://en.wikipedia.org/wiki/Copeland%27s_method).
+This approach is based pairwise comparisons between units and proceeds
+as follows. First, an *outranking matrix* is constructed, which is a
+square matrix with $N$ columns and $N$ rows, where $N$ is the number of
+units.
+
+The element in the $p$th row and $q$th column of the matrix is
+calculated by summing all the indicator weights where unit $p$ has a
+higher value in those indicators than unit $q$. Similarly, the cell in
+the $q$th row and $p$th column (which is the cell opposite on the other
+side of the diagonal), is calculated as the sum of the weights unit
+where $q$ has a higher value than unit $p$. If the indicator weights sum
+to one over all indicators, then these two scores will also sum to 1 by
+definition. The outranking matrix effectively summarises to what extent
+each unit scores better or worse than all other units, for all unit
+pairs.
+
+The Copeland score for each unit is calculated by taking the sum of the
+row values in the outranking matrix. This can be seen as an average
+measure of to what extent that unit performs above other units.
+
+Clearly, this can be applied at any level of aggregation and used
+hierarchically like the other aggregation methods presented here.
+
+In some cases, one unit may score higher than the other in all
+indicators. This is called a *dominance pair*, and corresponds to any
+pair scores equal to one (equivalent to any pair scores equal to zero).
+
+The percentage of dominance pairs is an indication of robustness. Under
+dominance, there is no way methodological choices (weighting,
+normalisation, etc.) can affect the relative standing of the pair in the
+ranking. One will always be ranked higher than the other. The greater
+the number of dominance (or robust) pairs in a classification, the less
+sensitive country ranks will be to methodological assumptions. COINr
+allows to calculate the percentage of dominance pairs with an inbuilt
+function.
+
+## Coins
+
+We now turn to how data sets in a coin can be aggregated using the
+methods described previously. The function of interest is
+[`Aggregate()`](https://bluefoxr.github.io/COINr/reference/Aggregate.md),
+which is a generic with methods for coins, purses and data frames. To
+demonstrate COINr’s
+[`Aggregate()`](https://bluefoxr.github.io/COINr/reference/Aggregate.md)
+function on a coin, we begin by loading the package, and building the
+example coin, up to the normalised data set.
+
+``` r
+library(COINr)
+
+# build example up to normalised data set
+coin <- build_example_coin(up_to = "Normalise")
+#> iData checked and OK.
+#> iMeta checked and OK.
+#> Written data set to .$Data$Raw
+#> Written data set to .$Data$Denominated
+#> Written data set to .$Data$Imputed
+#> Written data set to .$Data$Screened
+#> Written data set to .$Data$Treated
+#> Written data set to .$Data$Normalised
+```
+
+Consider what is needed to aggregate the normalised data into its higher
+levels. We need:
+
+- The data set to aggregate
+- The structure of the index: which indicators belong to which groups,
+  etc.
+- Weights to assign to indicators
+- Specifications for aggregation: an aggregation function (e.g. the
+  weighted mean) and any other parameters to be passed to that function
+
+All of these elements are already present in the coin, except the last.
+For the first point, we simply need to tell
+[`Aggregate()`](https://bluefoxr.github.io/COINr/reference/Aggregate.md)
+which data set to use (using the `dset` argument). The structure of the
+index was defined when building the coin in
+[`new_coin()`](https://bluefoxr.github.io/COINr/reference/new_coin.md)
+(the `iMeta` argument). Weights were also attached to `iMeta`. Finally,
+specifications can be specified in the arguments of
+[`Aggregate()`](https://bluefoxr.github.io/COINr/reference/Aggregate.md).
+Let’s begin with the simple case though: using the function defaults.
+
+``` r
+# aggregate normalised data set
+coin <- Aggregate(coin, dset = "Normalised")
+#> Written data set to .$Data$Aggregated
+```
+
+By default, the aggregation function performs the following steps:
+
+- Uses the weights that were attached to `iMeta`
+- Aggregates hierarchically (with default method of weighted arithmetic
+  mean), following the index structure specified in `iMeta` and using
+  the data specified in `dset`
+- Creates a new data set `.$Data$Aggregated`, which consists of the data
+  in `dset`, plus extra columns with scores for each aggregation group,
+  at each aggregation level.
+
+Let’s examine the new data set. The columns of each level are added
+successively, working from level 1 upwards, so the highest aggregation
+level (the index, here) will be the last column of the data frame.
+
+``` r
+dset_aggregated <- get_dset(coin, dset = "Aggregated")
+
+nc <- ncol(dset_aggregated)
+# view aggregated scores (last 11 columns here)
+dset_aggregated[(nc - 10) : nc] |>
+  head(5) |>
+  signif(3)
+#>   ConEcFin Environ Instit   P2P Physical Political Social SusEcFin Conn Sust
+#> 1     12.6    31.9   52.4 39.50     34.8      52.5   71.9     55.7 38.4 53.2
+#> 2     26.2    69.5   77.5 54.10     41.1      78.2   72.8     62.9 55.4 68.4
+#> 3     48.2    53.0   75.6 43.30     72.0      80.8   86.2     50.1 64.0 63.1
+#> 4     13.3    81.7   26.5  5.85     22.9      32.4   27.5     64.6 20.2 57.9
+#> 5     24.6    55.7   75.9 27.10     28.4      67.5   53.3     61.7 44.7 56.9
+#>   Index
+#> 1  45.8
+#> 2  61.9
+#> 3  63.5
+#> 4  39.0
+#> 5  50.8
+```
+
+Here we see the level 2 aggregated scores created by aggregating each
+group of indicators (the first eight columns), followed by the two
+sub-indexes (level 3) created by aggregating the scores of level 2, and
+finally the Index (level 4), which is created by aggregating the “Conn”
+and “Sust” sub-indexes.
+
+The format of this data frame is not hugely convenient for inspecting
+the results. To see a more user-friendly version, use the
+[`get_results()`](https://bluefoxr.github.io/COINr/reference/get_results.md)
+function.
+
+### COINr aggregation functions
+
+Let’s now explore some of the options of the
+[`Aggregate()`](https://bluefoxr.github.io/COINr/reference/Aggregate.md)
+function. Like other coin-building functions in COINr,
+[`Aggregate()`](https://bluefoxr.github.io/COINr/reference/Aggregate.md)
+comes with a number of inbuilt options, but can also accept any function
+that is passed to it, as long as it satisfies some requirements. COINr’s
+inbuilt aggregation functions begin with `a_`, and are:
+
+- [`a_amean()`](https://bluefoxr.github.io/COINr/reference/a_amean.md):
+  the weighted arithmetic mean
+- [`a_gmean()`](https://bluefoxr.github.io/COINr/reference/a_gmean.md):
+  the weighted geometric mean
+- [`a_hmean()`](https://bluefoxr.github.io/COINr/reference/a_hmean.md):
+  the weighted harmonic mean
+- [`a_copeland()`](https://bluefoxr.github.io/COINr/reference/a_copeland.md):
+  the Copeland method (note: requires `by_df = TRUE`)
+
+For details of these methods, see [Approaches](#approaches) above and
+the function documentation of each of the functions listed.
+
+By default, the arithmetic mean is called but we can easily change this
+to the geometric mean, for example. However here we run into a problem:
+the geometric mean will fail if any values to aggregate are less than or
+equal to zero. So to use the geometric mean we have to re-do the
+normalisation step to avoid this. Luckily this is straightforward in
+COINr:
+
+``` r
+coin <- Normalise(coin, dset = "Treated",
+                   global_specs = list(f_n = "n_minmax",
+                                        f_n_para = list(l_u = c(1,100))))
+#> Written data set to .$Data$Normalised
+#> (overwritten existing data set)
+```
+
+Now, since the indicators are scaled between 1 and 100 (instead of 0 and
+100 as previously), they can be aggregated with the geometric mean.
+
+``` r
+coin <- Aggregate(coin, dset = "Normalised",
+                   f_ag = "a_gmean")
+#> Written data set to .$Data$Aggregated
+#> (overwritten existing data set)
+```
+
+### External functions
+
+All of the four aggregation functions mentioned above have the same
+format (try
+e.g. [`?a_gmean`](https://bluefoxr.github.io/COINr/reference/a_gmean.md)),
+and are built into the COINr package. But what if we want to use another
+type of aggregation function? The process is exactly the same.
+
+*NOTE: the compind package has been disabled here from running the
+commands in this vignette because of changes to a dependent package
+which are causing problems with the R CMD check. The commands should
+still work if you run them, but the results will not be shown here.*
+
+In this section we use some functions from other packages: the
+matrixStats package and the Compind package. These are not imported by
+COINr, so the code here will only work if you have these installed. If
+this vignette was built on your computer, we have to check whether these
+packages are installed:
+
+``` r
+# ms_installed <- requireNamespace("matrixStats", quietly = TRUE)
+# ms_installed
+
+# ci_installed <- requireNamespace("Compind", quietly = TRUE)
+# ci_installed
+```
+
+If either of these have returned `FALSE`, in the following code chunks
+you will see some blanks. See the online version of this vignette to see
+the results, or install the above packages and rebuild the vignettes.
+
+Now for an example, we can use the `weightedMedian()` function from the
+matrixStats package. This has a number of arguments, but the ones we
+will use are `x` and `w` (with the same meanings as COINr functions),
+and `na.rm` which we need to set to `TRUE`.
+
+``` r
+# RESTORE above eval=ms_installed
+# load matrixStats package
+# library(matrixStats)
+# 
+# # aggregate using weightedMedian()
+# coin <- Aggregate(coin, dset = "Normalised",
+#                    f_ag = "weightedMedian",
+#                    f_ag_para = list(na.rm = TRUE))
+```
+
+The weights `w` do not need to be specified in `f_ag_para` because they
+are automatically passed to `f_ag` unless specified otherwise.
+
+The general requirements for `f_ag` functions passed to
+[`Aggregate()`](https://bluefoxr.github.io/COINr/reference/Aggregate.md)
+are that:
+
+1.  The input to the function is a numeric vector `x`, possibly with
+    missing values
+2.  The function returns a single (scalar) aggregated value
+3.  If the function accepts a vector of weights, this vector (of the
+    same length of `x`) is passed as function argument `w`. If the
+    function doesn’t accept a vector of weights, we can set `w = "none"`
+    in the arguments to
+    [`Aggregate()`](https://bluefoxr.github.io/COINr/reference/Aggregate.md),
+    and it will not try to pass `w`.
+4.  Any other arguments to `f_ag`, apart from `x` and `w`, should be
+    included in the named list `f_ag_para`.
+
+Sometimes this may mean that we have to create a wrapper function to
+satisfy these requirements. For example, the ‘Compind’ package has a
+number of sophisticated aggregation approaches. The “benefit of the
+doubt” uses data envelopment analysis to aggregate indicators, however
+the function Compind::ci_bod() outputs a list. We can make a wrapper
+function to use this inside COINr:
+
+``` r
+# RESTORE ABOVE eval= ci_installed
+
+# NOTE: this chunk disabled - see comments above.
+
+# load Compind
+# suppressPackageStartupMessages(library(Compind))
+# 
+# # wrapper to get output of interest from ci_bod
+# # also suppress messages about missing values
+# ci_bod2 <- function(x){
+#   suppressMessages(Compind::ci_bod(x)$ci_bod_est)
+# }
+# 
+# # aggregate
+# coin <- Aggregate(coin, dset = "Normalised",
+#                    f_ag = "ci_bod2", by_df = TRUE, w = "none")
+```
+
+The benefit of the doubt approach automatically assigns individual
+weights to each unit, so we need to specify `w = "none"` to stop
+[`Aggregate()`](https://bluefoxr.github.io/COINr/reference/Aggregate.md)
+from attempting to pass weights to the function. Importantly, we also
+need to specify `by_df = TRUE` which tells
+[`Aggregate()`](https://bluefoxr.github.io/COINr/reference/Aggregate.md)
+to pass a data frame to `f_ag` rather than a vector.
+
+### Data availability limits
+
+Many aggregation functions will return an aggregated value as long as at
+least one of the values passed to it is non-`NA`. For example, R’s
+[`mean()`](https://rdrr.io/r/base/mean.html) function:
+
+``` r
+# data with all NAs except 1 value
+x <- c(NA, NA, NA, 1, NA)
+
+mean(x)
+#> [1] NA
+
+mean(x, na.rm = TRUE)
+#> [1] 1
+```
+
+Depending on how we set `na.rm`, we either get an answer or `NA`, and
+this is the same for many other aggregation functions (e.g. the ones
+built into COINr). Sometimes we might want a bit more control. For
+example, if we have five indicators in a group, it might only be
+reasonable to give an aggregated score if, say, at least three out of
+five indicators have non-`NA` values.
+
+The
+[`Aggregate()`](https://bluefoxr.github.io/COINr/reference/Aggregate.md)
+function has the option to specify a data availability limit when
+aggregating. We simply set `dat_thresh` to a value between 0 and 1, and
+for each aggregation group, any unit that has a data availability lower
+than `dat_thresh` will get a `NA` value instead of an aggregated score.
+This is most easily illustrated on a data frame (see next section for
+more details on aggregating in data frames):
+
+``` r
+df1 <- data.frame(
+  i1 = c(1, 2, 3),
+  i2 = c(3, NA, NA),
+  i3 = c(1, NA, 1)
+)
+df1
+#>   i1 i2 i3
+#> 1  1  3  1
+#> 2  2 NA NA
+#> 3  3 NA  1
+```
+
+We will require that at least 2/3 of the indicators should be non-`NA`
+to give an aggregated value.
+
+``` r
+# aggregate with arithmetic mean, equal weight and data avail limit of 2/3
+Aggregate(df1, f_ag = "a_amean",
+           f_ag_para = list(w = c(1,1,1)),
+           dat_thresh = 2/3)
+#> [1] 1.666667       NA 2.000000
+```
+
+Here we see that the second row is aggregated to give `NA` because it
+only has 1/3 data availability.
+
+### By level
+
+We can also use a different aggregation function for each aggregation
+level by specifying `f_ag` as a vector of function names rather than a
+single function.
+
+``` r
+coin <- Aggregate(coin, dset = "Normalised", f_ag = c("a_amean", "a_gmean", "a_amean"))
+#> Written data set to .$Data$Aggregated
+#> (overwritten existing data set)
+```
+
+In this example, there are four levels in the index, which means there
+are three aggregation operations to be performed: from Level 1 to Level
+2, from Level 2 to Level 3, and from Level 3 to Level 4. This means that
+`f_ag` vector must have `n-1` entries, where `n` is the number of
+aggregation levels. The functions are run in the order of aggregation.
+
+In the same way, if parameters need to be passed to the functions
+specified by `f_ag`, `f_ag_para` can be specified as a list of length
+`n-1`, where each element is a list of parameters.
+
+## Data frames
+
+The
+[`Aggregate()`](https://bluefoxr.github.io/COINr/reference/Aggregate.md)
+function also works in the same way on data frames. This is probably
+more useful when aggregation functions take vectors as inputs, rather
+than data frames, since it would otherwise be easier to go directly to
+the underlying function. In any case, here are a couple of examples.
+First, using a built in COINr function to compute the weighted harmonic
+mean of a data frame.
+
+``` r
+# get some indicator data - take a few columns from built in data set
+X <- ASEM_iData[12:15]
+
+# normalise to avoid zeros - min max between 1 and 100
+X <- Normalise(X,
+                global_specs = list(f_n = "n_minmax",
+                                     f_n_para = list(l_u = c(1,100))))
+
+# aggregate using harmonic mean, with some weights
+y <- Aggregate(X, f_ag = "a_hmean", f_ag_para = list(w = c(1, 1, 2, 1)))
+
+cbind(X, y) |>
+  head(5) |>
+  signif(3)
+#>    LPI Flights Ship Bord     y
+#> 1 94.1   14.20  1.0 29.4  2.36
+#> 2 94.6   15.60 97.2 40.0 41.50
+#> 3 35.0    4.89 38.0 15.6 14.30
+#> 4 51.2    4.90 59.2 34.3 17.40
+#> 5 43.7    4.66 55.7  1.0  3.93
+```
+
+## Purses
+
+The purse method for
+[`Aggregate()`](https://bluefoxr.github.io/COINr/reference/Aggregate.md)
+is straightforward and simply applies the same aggregation
+specifications to each of the coins within. It has exactly the same
+parameters as the coin method.
+
+``` r
+# build example purse up to normalised data set
+purse <- build_example_purse(up_to = "Normalise", quietly = TRUE)
+
+# aggregate using defaults
+purse <- Aggregate(purse, dset = "Normalised")
+#> Written data set to .$Data$Aggregated
+#> Written data set to .$Data$Aggregated
+#> Written data set to .$Data$Aggregated
+#> Written data set to .$Data$Aggregated
+#> Written data set to .$Data$Aggregated
+```
+
+## What next?
+
+After aggregating indicators, it is likely that you will want to begin
+viewing and exploring the results. See the vignette on [Exploring
+results](https://bluefoxr.github.io/COINr/articles/results.md) for more
+details.

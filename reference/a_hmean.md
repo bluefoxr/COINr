@@ -1,0 +1,41 @@
+# Weighted harmonic mean
+
+Weighted harmonic mean of a vector. `NA` are skipped by default.
+
+## Usage
+
+``` r
+a_hmean(x, w = NULL)
+```
+
+## Arguments
+
+- x:
+
+  A numeric vector of positive values.
+
+- w:
+
+  A vector of weights, which should have length equal to `length(x)`.
+  Weights are relative and will be re-scaled to sum to 1. If `w` is not
+  specified, defaults to equal weights.
+
+## Value
+
+Weighted harmonic mean, as a numeric value.
+
+## Details
+
+This function replaces the now-defunct `harMean()` from COINr \< v1.0.
+
+## Examples
+
+``` r
+# a vector of values
+x <- 1:10
+# a vector of weights
+w <- runif(10)
+# weighted harmonic mean
+a_hmean(x,w)
+#> [1] 2.879339
+```
