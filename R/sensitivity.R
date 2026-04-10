@@ -692,7 +692,7 @@ plot_uncertainty <- function(SAresults, plot_units = NULL, order_by = "nominal",
   rnks <- SAresults$RankStats
 
   if(!is.null(plot_units)){
-    if(length(plot_units == 1)){
+    if(length(plot_units) == 1){
 
       if (plot_units == "top10"){
         unit_include <- SAresults$Nominal$uCode[SAresults$Nominal$Rank <= 10]
