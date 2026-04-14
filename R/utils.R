@@ -14,34 +14,59 @@
 }
 
 
-# rbind two lists with different names into a data frame
-#
-# Performs an `rbind()` operation on two named lists or vectors that do not need to share the same names, but
-# will match the names and fill any missing cols with `NA`s.
-#
-# @param x1 A named list or named vector
-# @param x2 Another named list or named vector
-#
-# @examples
-# #
-#
-# @return Data frame
-rbind_fill <- function(x1, x2){
-
-  if(is.null(names(x1)) || is.null(names(x2))){
-    stop("names of x1 or x2 is NULL")
+#' rbind two lists or vectors with different names into a data frame
+#'
+#' Performs an `rbind()` operation on two named lists or vectors. This version
+#' uses data.table::rbindlist for high performance, automatically matching
+#' names and filling missing columns with NAs.
+#'
+#' @param x1 A named list or named vector.
+#' @param x2 Another named list or named vector.
+#' @importFrom data.table rbindlist
+#' @return A data.frame.
+#' @examples
+#' \dontrun{
+#' # Example 1: Combining two lists
+#' l1 <- list(a = 1, b = 2, c = 3)
+#' l2 <- list(b = 4, c = 5, d = 6)
+#' rbind_fill(l1, l2)
+#'
+#' # Example 2: Combining a vector and a list
+#' v1 <- c(a = 10, b = "test")
+#' l2 <- list(b = "another", c = TRUE, d = 1.5)
+#' rbind_fill(v1, l2)
+#' }
+#' @keywords internal
+rbind_fill <- function(x1, x2) {
+  
+  # Helper function to check for valid input type
+  is_valid_type <- function(x) {
+    is.list(x) || is.atomic(x)
   }
-
-  # make to dfs
-  x1 <- as.data.frame(as.list(x1))
-  x2 <- as.data.frame(as.list(x2))
-
-  # fill with NAs
-  x1[setdiff(names(x2), names(x1))] <- NA
-  x2[setdiff(names(x1), names(x2))] <- NA
-
-  rbind(x1, x2)
-
+  
+  # Check for valid inputs
+  if (!is_valid_type(x1) || !is_valid_type(x2)) {
+    stop("Inputs x1 and x2 must be named lists or named vectors.")
+  }
+  if (is.null(names(x1)) || is.null(names(x2))) {
+    stop("Inputs x1 and x2 must be named.")
+  }
+  
+  # Create a list of the inputs
+  inputs <- list(x1, x2)
+  
+  # Ensure all elements are lists, converting atomic vectors.
+  # This is required by rbindlist.
+  inputs <- lapply(inputs, function(item) {
+    if (is.atomic(item)) {
+      as.list(item)
+    } else {
+      item
+    }
+  })
+  
+  # data.table::rbindlist can now safely process the list of lists.
+  as.data.frame(data.table::rbindlist(inputs, use.names = TRUE, fill = TRUE))
 }
 
 
