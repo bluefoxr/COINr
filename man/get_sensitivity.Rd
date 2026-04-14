@@ -14,7 +14,8 @@ get_sensitivity(
   Nboot = NULL,
   quietly = FALSE,
   check_addresses = TRUE,
-  diagnostic_mode = FALSE
+  diagnostic_mode = FALSE,
+  BPPARAM = getPackageBPPARAM()
 )
 }
 \arguments{
@@ -41,6 +42,9 @@ but useful to set to \code{FALSE} if running this e.g. in a Rmd document (becaus
 
 \item{diagnostic_mode}{Logical: if \code{TRUE}, this will additionally attach all coins generated as part of the sensitivity
 analysis to the output list. This is intended to be used to check what is going on within the sensitivity analysis.}
+
+\item{BPPARAM}{A \code{\link[BiocParallel]{BiocParallelParam}} object specifying the parallel
+backend to use. Defaults to the package-specific setting, optimized for the given operating system.}
 }
 \value{
 Sensitivity analysis results as a list, containing:

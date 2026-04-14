@@ -1,3 +1,9 @@
+# COINr 1.1.16
+- Enabled parallel processing for computationally-intensive functions, starting with get_sensitivity(). 
+- Added functions getPackageBPPARAM() and setPackageBPPARAM() to get and set default parallelisation settings for the package
+- Refactored get_sensitivity() to use BiocParallel and improve efficiency using data.table.
+- Added new vignette for parallelization.
+
 # COINr 1.1.14
 
 - Minor bug fixes: spaces in uCodes, issue exporting 2-level composite indicators to Excel
