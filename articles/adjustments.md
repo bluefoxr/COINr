@@ -28,20 +28,21 @@ features:
 
 Building functions are the following:
 
-| Function                                                                   | Description                                                |
-|:---------------------------------------------------------------------------|:-----------------------------------------------------------|
-| [`new_coin()`](https://bluefoxr.github.io/COINr/reference/new_coin.md)     | Initialise a coin object given indicator data and metadata |
-| [`Screen()`](https://bluefoxr.github.io/COINr/reference/Screen.md)         | Screen units based on data availability rules              |
-| [`Denominate()`](https://bluefoxr.github.io/COINr/reference/Denominate.md) | Denominate/scale indicators by other indicators            |
-| [`Impute()`](https://bluefoxr.github.io/COINr/reference/Impute.md)         | Impute missing data                                        |
-| [`Treat()`](https://bluefoxr.github.io/COINr/reference/Treat.md)           | Treat outliers and skewed distributions                    |
-| [`Normalise()`](https://bluefoxr.github.io/COINr/reference/Normalise.md)   | Normalise indicators onto a common scale                   |
-| [`Aggregate()`](https://bluefoxr.github.io/COINr/reference/Aggregate.md)   | Aggregate indicators using weighted mean                   |
+| Function | Description |
+|:---|:---|
+| [`new_coin()`](https://bluefoxr.github.io/COINr/reference/new_coin.md) | Initialise a coin object given indicator data and metadata |
+| [`Screen()`](https://bluefoxr.github.io/COINr/reference/Screen.md) | Screen units based on data availability rules |
+| [`Denominate()`](https://bluefoxr.github.io/COINr/reference/Denominate.md) | Denominate/scale indicators by other indicators |
+| [`Impute()`](https://bluefoxr.github.io/COINr/reference/Impute.md) | Impute missing data |
+| [`Treat()`](https://bluefoxr.github.io/COINr/reference/Treat.md) | Treat outliers and skewed distributions |
+| [`Normalise()`](https://bluefoxr.github.io/COINr/reference/Normalise.md) | Normalise indicators onto a common scale |
+| [`Aggregate()`](https://bluefoxr.github.io/COINr/reference/Aggregate.md) | Aggregate indicators using weighted mean |
 
 Let’s explain the concept of the “Log” now with an example. We will
 build the example coin manually, then look inside the coin’s Log list:
 
 ``` r
+
 library(COINr)
 
 # create new coin by calling new_coin()
@@ -77,6 +78,7 @@ are stored in the coin. To show another example, if we apply the
 function:
 
 ``` r
+
 # normalise
 coin <- Normalise(coin, dset = "Raw")
 #> Written data set to .$Data$Normalised
@@ -112,6 +114,7 @@ sets. This is done with a function called
 [`Regen()`](https://bluefoxr.github.io/COINr/reference/Regen.md):
 
 ``` r
+
 # regenerate the coin
 coin <- Regen(coin, quietly = FALSE)
 #> iData checked and OK.
@@ -134,6 +137,7 @@ modifying points. Let us take an example: first, we’ll build the full
 example coin, then we’ll make a copy of our existing coin:
 
 ``` r
+
 # build full example coin
 coin <- build_example_coin(quietly = TRUE)
 
@@ -150,6 +154,7 @@ argument. Let’s first see what is already in the Log for
 [`Normalise()`](https://bluefoxr.github.io/COINr/reference/Normalise.md):
 
 ``` r
+
 str(coin2$Log$Normalise)
 #> List of 7
 #>  $ dset        : chr "Treated"
@@ -169,6 +174,7 @@ At the moment, the normalisation is min-max onto the interval of 0 to
 [`n_prank()`](https://bluefoxr.github.io/COINr/reference/n_prank.md):
 
 ``` r
+
 # change to prank function (percentile ranks)
 # we don't need to specify any additional parameters (f_n_para) here
 coin2$Log$Normalise$global_specs <- list(f_n = "n_prank")
@@ -220,6 +226,7 @@ can be also used to quickly add or remove indicators from the framework,
 and regenerate the coin, all in one command.
 
 ``` r
+
 # copy base coin
 coin_remove <- coin
 
@@ -302,6 +309,7 @@ have: the default example coin, and the same coin but with a percentile
 rank normalisation method:
 
 ``` r
+
 # compare index, sort by absolute rank difference
 compare_coins(coin, coin2, dset = "Aggregated", iCode = "Index",
               sort_by = "Abs.diff", decreasing = TRUE)
@@ -367,6 +375,7 @@ all `NA`s. We could alternatively filter out any units with less than
 90% data availability and remove the imputation step.
 
 ``` r
+
 # copy original coin
 coin90 <- coin
 
@@ -412,6 +421,7 @@ We can see that we are down to 46 units after the screening step. Now
 let’s compare with the original coin:
 
 ``` r
+
 # compare index, sort by absolute rank difference
 compare_coins(coin, coin90, dset = "Aggregated", iCode = "Index",
               sort_by = "Abs.diff", decreasing = TRUE)
@@ -476,6 +486,7 @@ Finally, to demonstrate comparing multiple coins, we can call the
 function:
 
 ``` r
+
 compare_coins_multi(list(Nominal = coin, Prank = coin2, NoLPIFor = coin_remove,
                          Screen90 = coin90), dset = "Aggregated", iCode = "Index")
 #>    uCode Nominal Prank NoLPIFor Screen90

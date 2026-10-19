@@ -52,6 +52,7 @@ exactly how this is built by calling `edit(build_example_coin)` by the
 way.
 
 ``` r
+
 library(COINr)
 
 # build example coin
@@ -87,6 +88,7 @@ Let’s demonstrate by defining one part of `SA_specs`, for our first
 assumption: the maximum number of Winsorised points.
 
 ``` r
+
 # component of SA_specs for winmax distribution
 l_winmax <- list(Address = "$Log$Treat$global_specs$f1_para$winmax",
                Distribution = 1:5,
@@ -117,6 +119,7 @@ with lists for the other assumptions below, and input to
 Now let’s see the entry for the normalisation method:
 
 ``` r
+
 # normalisation method
 
 # first, we define the two alternatives: minmax or zscore (along with respective parameters)
@@ -172,6 +175,7 @@ nominal weights (those that you would normally use) and feed them into
 the function:
 
 ``` r
+
 # get nominal weights
 w_nom <- coin$Meta$Weights$Original
 
@@ -200,6 +204,7 @@ above shows the last few rows of one of these weight-sets.
 Now we can feed this into our list chunk:
 
 ``` r
+
 # component of SA_specs for weights
 l_weights <- list(Address = "$Log$Aggregate$w",
                   Distribution = noisy_wts,
@@ -213,6 +218,7 @@ continuous distribution.
 Last of all we define the list chunk for the aggregation method:
 
 ``` r
+
 ## aggregation
 l_agg <- list(Address = "$Log$Aggregate$f_ag",
                Distribution = c("a_amean", "a_gmean"),
@@ -225,6 +231,7 @@ Having defined all of our input distributions individually, it’s time to
 put them all together:
 
 ``` r
+
 # create overall specification list
 SA_specs <- list(
   Winmax = l_winmax,
@@ -247,6 +254,7 @@ here. We can now call the
 function:
 
 ``` r
+
 # Not run here: will take a few seconds to finish if you run this
 SA_res <- get_sensitivity(coin, SA_specs = SA_specs, N = 100, SA_type = "UA",
                           dset = "Aggregated", iCode = "Index")
@@ -284,6 +292,7 @@ the output uncertainty analysis by calling the
 function:
 
 ``` r
+
 plot_uncertainty(SA_res)
 ```
 
@@ -294,6 +303,7 @@ Results are contained in the output of
 and can also be viewed directly, e.g.
 
 ``` r
+
 head(SA_res$RankStats)
 #>   uCode Nominal  Mean Median    Q5 Q95
 #> 1   AUS      35 35.28     35 34.00  38
@@ -313,6 +323,7 @@ The process for performing a sensitivity analysis is the same, but we
 set `SA_type = "SA"`.
 
 ``` r
+
 # Not run here: will take a few seconds to finish if you run this
 SA_res <- get_sensitivity(coin, SA_specs = SA_specs, N = 100, SA_type = "SA",
                           dset = "Aggregated", iCode = "Index", Nboot = 100)
@@ -321,8 +332,8 @@ SA_res <- get_sensitivity(coin, SA_specs = SA_specs, N = 100, SA_type = "SA",
 If you run this, you will see an important difference: although we set
 `N = 100` the coin is replicated 600 times! This is because a variance
 based sensitivity analysis requires a specific *experimental design*,
-and the actual number of runs is $N(d + 2)$, where $d$ is the number of
-uncertain assumptions.
+and the actual number of runs is $`N(d+2)`$, where $`d`$ is the number
+of uncertain assumptions.
 
 Notice also that we have set `Nboot = 100`, which is the number of
 bootstrap replications to perform, and is used for estimating confidence
@@ -333,6 +344,7 @@ Let’s now plot the results using the
 function:
 
 ``` r
+
 plot_sensitivity(SA_res)
 ```
 
@@ -348,6 +360,7 @@ The same results can be plotted as a pie chart, or as a box plot,
 depending on how we set `ptype`:
 
 ``` r
+
 plot_sensitivity(SA_res, ptype = "box")
 ```
 
@@ -451,6 +464,7 @@ regenerates the results each time. We also have to specify which
 indicator/aggregate to target as the output:
 
 ``` r
+
 # run function removing elements in level 2
 l_res <- remove_elements(coin, Level = 2, dset = "Aggregated", iCode = "Index")
 #> Iteration 1 of 8

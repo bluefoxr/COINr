@@ -21,6 +21,7 @@ is called “Original”. We can see this by building the example coin and
 accessing the “Original” set directly:
 
 ``` r
+
 library(COINr)
 
 # build example coin
@@ -42,6 +43,7 @@ itself. Notice that the indicator codes also include aggregate codes, up
 to the index:
 
 ``` r
+
 # view rows not in level 1
 coin$Meta$Weights$Original[coin$Meta$Weights$Original$Level != 1, ]
 #>        iCode Level Weight
@@ -79,6 +81,7 @@ For example, if we want to change the weighting of the “Conn” and “Sust”
 sub-indices, we could do this:
 
 ``` r
+
 # copy original weights
 w1 <- coin$Meta$Weights$Original
 
@@ -98,6 +101,7 @@ of the weights to
 [`Aggregate()`](https://bluefoxr.github.io/COINr/reference/Aggregate.md):
 
 ``` r
+
 coin <- Aggregate(coin, dset = "Normalised", w = "MyFavouriteWeights")
 #> Written data set to .$Data$Aggregated
 ```
@@ -107,6 +111,7 @@ Alternatively, we can pass the data frame itself to
 if we don’t want to store it in the coin for some reason:
 
 ``` r
+
 coin <- Aggregate(coin, dset = "Normalised", w = w1)
 #> Written data set to .$Data$Aggregated
 #> (overwritten existing data set)
@@ -130,6 +135,7 @@ understand. COINr has a built in function to get these “effective
 weights”:
 
 ``` r
+
 w_eff <- get_eff_weights(coin, out2 = "df")
 
 head(w_eff)
@@ -147,6 +153,7 @@ highest level of aggregation (the index). These weights sum to 1 for
 each level:
 
 ``` r
+
 # get sum of effective weights for each level
 tapply(w_eff$EffWeight, w_eff$Level, sum)
 #> 1 2 3 4 
@@ -159,6 +166,7 @@ function, where the angle of each indicator/aggregate is proportional to
 its effective weight:
 
 ``` r
+
 plot_framework(coin)
 ```
 
@@ -206,6 +214,7 @@ level of aggregation. To do this, we need to use the “Aggregated” data
 set because the PCA needs to have the level 2 scores to work with:
 
 ``` r
+
 coin <- get_PCA(coin, dset = "Aggregated", Level =  2,
                 weights_to = "PCAwtsLev2", out2 = "coin")
 #> Weights written to .$Meta$Weights$PCAwtsLev2
@@ -216,6 +225,7 @@ name we gave it. Let’s have a look at the resulting weights. The only
 weights that have changed are at level 2, so we look at those:
 
 ``` r
+
 coin$Meta$Weights$PCAwtsLev2[coin$Meta$Weights$PCAwtsLev2$Level == 2, ]
 #>        iCode Level     Weight
 #> 50  Physical     2  0.5117970
@@ -291,6 +301,7 @@ we will first check what the correlations look like between level 3 and
 the index, using equal weighting:
 
 ``` r
+
 # build example coin
 coin <- build_example_coin(quietly = TRUE)
 
@@ -305,6 +316,7 @@ This shows that the correlations are similar but not the same. Now let’s
 run the optimisation:
 
 ``` r
+
 # optimise weights at level 3
 coin <- get_opt_weights(coin, itarg = "equal", dset = "Aggregated",
                         Level = 3, weights_to = "OptLev3", out2 = "coin")
@@ -330,6 +342,7 @@ coin <- get_opt_weights(coin, itarg = "equal", dset = "Aggregated",
 We can view the optimised weights (weights will only change at level 3)
 
 ``` r
+
 coin$Meta$Weights$OptLev3[coin$Meta$Weights$OptLev3$Level == 3, ]
 #>    iCode Level    Weight
 #> 58  Conn     3 0.3902439
@@ -340,6 +353,7 @@ To see if this was successful in balancing correlations, let’s
 re-aggregate using these weights and check correlations.
 
 ``` r
+
 # re-aggregate
 coin <- Aggregate(coin, dset = "Normalised", w = "OptLev3")
 #> Written data set to .$Data$Aggregated

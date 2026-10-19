@@ -15,6 +15,7 @@ see it in an easy to read format. To help with this, the
 function
 
 ``` r
+
 library(COINr)
 
 # build full example coin
@@ -55,6 +56,7 @@ rather than returning scores we can return ranks within GDP per capita
 groups:
 
 ``` r
+
 # get results table
 df_results <- get_results(coin, dset = "Aggregated", tab_type = "Aggs", use_group = "GDPpc_group", use = "groupranks")
 
@@ -77,6 +79,7 @@ head(df_results[df_results$GDPpc_group == "XL", ])
 ```
 
 ``` r
+
 # see first few entries in "L" group
 head(df_results[df_results$GDPpc_group == "L", ])
 #>    uCode GDPpc_group Index Conn Sust Physical ConEcFin Political Instit P2P
@@ -102,6 +105,7 @@ levels. Typically we can use this to look at a unit’s index scores and
 scores for the aggregates:
 
 ``` r
+
 get_unit_summary(coin, usel = "IND", Levels = c(4,3,2), dset = "Aggregated")
 #>         Code                         Name Score Rank
 #> 1      Index     Sustainable Connectivity 39.79   45
@@ -127,6 +131,7 @@ indicators with the highest and lowest ranks. This can be particularly
 useful in “country profiles”, for example.
 
 ``` r
+
 get_str_weak(coin, dset = "Raw", usel = "ESP")
 #> $Strengths
 #>        Code                                     Name    Pillar Rank Value

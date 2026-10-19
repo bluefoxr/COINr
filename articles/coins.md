@@ -1,6 +1,7 @@
 # Building coins
 
 ``` r
+
 library(COINr)
 ```
 
@@ -75,6 +76,7 @@ data set. This data set is from a composite indicator covering 51
 countries with 49 indicators, and is used for examples throughout COINr:
 
 ``` r
+
 head(ASEM_iData[1:20], 5)
 #>      uName uCode GDP_group GDPpc_group Pop_group EurAsia_group Time   Area
 #> 1  Austria   AUT         L          XL         M        Europe 2018  83871
@@ -140,6 +142,7 @@ You can also perform this check yourself in advance by calling
 [`check_iData()`](https://bluefoxr.github.io/COINr/reference/check_iData.md):
 
 ``` r
+
 check_iData(ASEM_iData)
 #> iData checked and OK.
 ```
@@ -157,6 +160,7 @@ be created by aggregating indicators. Let’s look at the built-in
 example.
 
 ``` r
+
 head(ASEM_iMeta, 5)
 #>   Level   iCode                                    iName Direction Weight
 #> 1     1     LPI              Logistics Performance Index         1      1
@@ -231,6 +235,7 @@ Apart from the indicator entries shown above, we can see aggregate
 entries:
 
 ``` r
+
 ASEM_iMeta[ASEM_iMeta$Type == "Aggregate", ]
 #>    Level     iCode                        iName Direction Weight  Unit Target
 #> 50     2  Physical                     Physical         1      1 Score     NA
@@ -264,6 +269,7 @@ These values will only be created when we call the
 function (see relevant vignette). We also have groups:
 
 ``` r
+
 ASEM_iMeta[ASEM_iMeta$Type == "Group", ]
 #>    Level         iCode                iName Direction Weight Unit Target
 #> 61    NA     GDP_group            GDP group        NA     NA <NA>     NA
@@ -281,6 +287,7 @@ Notice that the `iCode` entries here correspond to column names of
 `iData`. There are also denominators:
 
 ``` r
+
 ASEM_iMeta[ASEM_iMeta$Type == "Denominator", ]
 #>    Level      iCode              iName Direction Weight               Unit
 #> 65    NA       Area          Land area        NA     NA Thousand square km
@@ -328,6 +335,7 @@ to check the validity of your `iMeta`. Informative error messages are
 included where possible to help correct any errors.
 
 ``` r
+
 check_iMeta(ASEM_iMeta)
 #> iMeta checked and OK.
 ```
@@ -345,6 +353,7 @@ function. This has some other arguments and options that we will see in
 a minute, but by default it looks like this:
 
 ``` r
+
 # build a new coin using example data
 coin <- new_coin(iData = ASEM_iData,
                  iMeta = ASEM_iMeta,
@@ -366,6 +375,7 @@ is done simply by calling the name of the coin at the command line, or
 equivalently `print(coin)`:
 
 ``` r
+
 coin
 #> --------------
 #> A coin with...
@@ -399,6 +409,7 @@ using the
 function:
 
 ``` r
+
 # first few cols and rows of Raw data set
 data_raw <- get_dset(coin, "Raw")
 head(data_raw[1:5], 5)
@@ -420,6 +431,7 @@ also attach other columns such as groups and names by using the
 such as groups, etc.
 
 ``` r
+
 get_dset(coin, "Raw", also_get = c("uName", "Pop_group"))[1:5] |>
   head(5)
 #>   uCode      uName Pop_group      LPI  Flights
@@ -438,6 +450,7 @@ is useful when testing alternative sets of indicators - see vignette on
 adjustments and comparisons.
 
 ``` r
+
 # exclude two indicators
 coin <- new_coin(iData = ASEM_iData,
                  iMeta = ASEM_iMeta,
@@ -491,6 +504,7 @@ coin as an input. Here we build the example coin (which is again from
 the ASEM data set built into COINr) and inspect its contents:
 
 ``` r
+
 ASEM <- build_example_coin(quietly = TRUE)
 
 ASEM
@@ -547,6 +561,7 @@ from. To see an example, we can look at the built-in (artificial) panel
 data set `ASEM_iData_p`.
 
 ``` r
+
 # sample of 2018 observations
 ASEM_iData_p[ASEM_iData_p$Time == 2018, 1:15] |>
   head(5)
@@ -589,6 +604,7 @@ To build a purse from this data, we input it into
 [`new_coin()`](https://bluefoxr.github.io/COINr/reference/new_coin.md)
 
 ``` r
+
 # build purse from panel data
 purse <- new_coin(iData = ASEM_iData_p,
                   iMeta = ASEM_iMeta,
@@ -612,6 +628,7 @@ A quick way to check the contents of the purse is to call its print
 method:
 
 ``` r
+
 purse
 #> -----------------------------
 #> A purse with... 5 coins 
@@ -657,6 +674,7 @@ As with coins, the purse class also has a function in COINr which
 produces an example purse:
 
 ``` r
+
 ASEM_purse <- build_example_purse(quietly = TRUE)
 
 ASEM_purse

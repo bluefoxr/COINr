@@ -50,6 +50,7 @@ Let’s begin with a simple example. We build the example coin and
 normalise the raw data.
 
 ``` r
+
 library(COINr)
 
 # build example coin
@@ -66,6 +67,7 @@ coin <- Normalise(coin, dset = "Raw")
 We can compare one of the raw and un-normalised indicators side by side.
 
 ``` r
+
 plot_scatter(coin, dsets = c("Raw", "Normalised"), iCodes = "Goods")
 ```
 
@@ -75,10 +77,11 @@ This plot also illustrates the linear nature of the min-max
 transformation.
 
 The default normalisation uses the min-max approach, scaling indicators
-onto the $\lbrack 0,100\rbrack$ interval. But we can change the
-normalisation type and its parameters using the `global_specs` argument.
+onto the $`[0, 100]`$ interval. But we can change the normalisation type
+and its parameters using the `global_specs` argument.
 
 ``` r
+
 coin <- Normalise(coin, dset = "Raw",
                    global_specs = list(f_n = "n_zscore",
                                         f_n_para = list(c(10,2))))
@@ -89,6 +92,7 @@ coin <- Normalise(coin, dset = "Raw",
 Again, let’s plot an example of the result:
 
 ``` r
+
 plot_scatter(coin, dsets = c("Raw", "Normalised"), iCodes = "Goods")
 ```
 
@@ -139,6 +143,7 @@ create a simple wrapper function around it, then pass that function to
 [`Normalise()`](https://bluefoxr.github.io/COINr/reference/Normalise.md).
 
 ``` r
+
 # wrapper function
 f_bin <- function(x, nbins){
   cut(x, breaks = nbins, labels = FALSE)
@@ -156,6 +161,7 @@ To illustrate the difference with the linear transformations above, we
 again plot the raw against normalised indicator:
 
 ``` r
+
 plot_scatter(coin, dsets = c("Raw", "Normalised"), iCodes = "Goods")
 ```
 
@@ -185,6 +191,7 @@ To show an example, we take the existing directions from the coin,
 modify them slightly, and then run the normalisation function again:
 
 ``` r
+
 # get directions from coin
 directions <- coin$Meta$Ind[c("iCode", "Direction")]
 
@@ -205,6 +212,7 @@ head(directions, 10)
 We’ll change the direction of the “Goods” indicator and re-normalise:
 
 ``` r
+
 # change Goods to -1
 directions$Direction[directions$iCode == "Goods"] <- -1
 
@@ -245,6 +253,7 @@ fact, the example data with COINr already has a “Target” column which
 can be used for this purpose:
 
 ``` r
+
 # show first few rows of iCode and Target cols in built-in iMeta
 head(ASEM_iMeta[c("iCode", "Target")])
 #>     iCode     Target
@@ -268,6 +277,7 @@ one indicator to another. Since the Target column is already present, we
 will just add the missing column:
 
 ``` r
+
 # copy built in data
 iMeta <- ASEM_iMeta
 # set cap_max
@@ -277,6 +287,7 @@ iMeta$dist2targ_cap_max <- TRUE
 Now we build the coin and normalise.
 
 ``` r
+
 # build coin
 coin <- new_coin(ASEM_iData, iMeta, quietly = TRUE)
 
@@ -290,6 +301,7 @@ the function to use the `iMeta` columns. Let us visualise the result for
 a selected indicator:
 
 ``` r
+
 plot_scatter(coin, dsets = c("Raw", "Normalised"), iCodes = "LPI")
 ```
 
@@ -304,10 +316,12 @@ as “distance to frontier”. In this method, each indicator is scaled as a
 distance between an upper and lower bound. The following equation is for
 a positive direction indicator.
 
-$$x_{n} = \frac{x - G_{low}}{G_{high} - G_{low}}$$
+``` math
+ x_n = \frac{x - G_{low}}{G_{high} - G_{low}} 
+```
 
-where $x_{n}$ is the normalised indicator value and $G_{low}$ and
-$G_{high}$ are respectively the lower and upper goalpost values. The
+where $`x_n`$ is the normalised indicator value and $`G_{low}`$ and
+$`G_{high}`$ are respectively the lower and upper goalpost values. The
 negative direction formula is analogous.
 
 To use this approach we again need to define the necessary columns in
@@ -324,6 +338,7 @@ range from the maximum and minimum of each indicator. We set the scaling
 to 1 and truncation to `TRUE`.
 
 ``` r
+
 # get iCodes and raw data
 iCodes <- iMeta$iCode[iMeta$Type == "Indicator"]
 
@@ -353,6 +368,7 @@ coin <- Normalise(coin, dset = "Raw",
 Again, let’s plot an indicator before and after normalisation:
 
 ``` r
+
 plot_scatter(coin, dsets = c("Raw", "Normalised"), iCodes = "Cov4G")
 ```
 
@@ -393,6 +409,7 @@ default of `global_specs` is min-max, we don’t need to specify that at
 all here.
 
 ``` r
+
 # individual specifications:
 # LPI - borda scores
 # Flights - z-scores with mean 10 and sd 2
@@ -438,6 +455,7 @@ Normalising a data frame is very similar to normalising a coin, except
 the input is a data frame and output is also a data frame.
 
 ``` r
+
 mtcars_n <- Normalise(mtcars, global_specs = list(f_n = "n_dist2max"))
 
 head(mtcars_n)
@@ -462,6 +480,7 @@ using the `indiv_spec` argument in exactly the same way as with a coin.
 Note that non-numeric columns are always ignored:
 
 ``` r
+
 Normalise(iris) |>
   head()
 #>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
@@ -477,6 +496,7 @@ There is also a method for numeric vectors, although usually it is just
 as easy to call the underlying normalisation function directly.
 
 ``` r
+
 # example vector
 x <- runif(10)
 
@@ -509,8 +529,8 @@ using the minimum and maximum over all time points of data, as opposed
 to having a separate max and min for each.
 
 If indicators were normalised separately for each time point, then the
-highest scoring unit would get a score of 100 in time $t$ (assuming
-min-max between 0 and 100), but the highest scoring unit in time $t + 1$
+highest scoring unit would get a score of 100 in time $`t`$ (assuming
+min-max between 0 and 100), but the highest scoring unit in time $`t+1`$
 would *also* be assigned a score of 100. The underlying values of these
 two scores could be very different, but they would get
 
@@ -532,6 +552,7 @@ Let’s anyway illustrate with an example. We build the example purse
 first.
 
 ``` r
+
 purse <- build_example_purse(quietly = TRUE)
 ```
 
@@ -542,6 +563,7 @@ simultaneously, with the aim of making the index comparable. Here, we
 will apply the default min-max approach to all coins:
 
 ``` r
+
 purse <- Normalise(purse, dset = "Raw", global = TRUE)
 #> Written data set to .$Data$Normalised
 #> (overwritten existing data set)
@@ -559,6 +581,7 @@ Now let’s examine the data set of the first coin. We’ll see what the max
 and min of a few indicators is:
 
 ``` r
+
 # get normalised data of first coin in purse
 x1 <- get_dset(purse$coin[[1]], dset = "Normalised")
 
@@ -577,6 +600,7 @@ To show that the global maximum is indeed 100, we can extract the whole
 normalised data set for all years and run the same check.
 
 ``` r
+
 # get entire normalised data set for all coins in one df
 x1_global <- get_dset(purse, dset = "Normalised")
 
@@ -610,6 +634,7 @@ Normalisation can also be performed independently on each coin, by
 setting `global = FALSE`.
 
 ``` r
+
 purse <- Normalise(purse, dset = "Raw", global = FALSE)
 #> Written data set to .$Data$Normalised
 #> (overwritten existing data set)
@@ -650,6 +675,7 @@ generic so can be used on data frames, coins and purses. Let’s
 demonstrate on a data frame:
 
 ``` r
+
 # some made up data
 X <- data.frame(uCode = letters[1:10],
                 a = runif(10),
@@ -669,10 +695,11 @@ X
 #> 10     j 0.97554784 68.855600
 ```
 
-By default, normalisation results in min-max on the
-$\lbrack 0,100\rbrack$ interval:
+By default, normalisation results in min-max on the $`[0, 100]`$
+interval:
 
 ``` r
+
 qNormalise(X)
 #>    uCode          a         b
 #> 1      a  89.275844  25.66438
@@ -692,6 +719,7 @@ a bit easier than
 [`Normalise()`](https://bluefoxr.github.io/COINr/reference/Normalise.md):
 
 ``` r
+
 qNormalise(X, f_n = "n_dist2ref", f_n_para = list(iref = 1, cap_max = TRUE))
 #>    uCode          a        b
 #> 1      a 1.00000000 1.000000
@@ -720,8 +748,8 @@ and friends), all of which are of the form `n_*()`, such as
 [`n_borda()`](https://bluefoxr.github.io/COINr/reference/n_borda.md),
 etc. Type `n_` in the R Studio console and press the Tab key to see a
 list. Here these functions are also explained in a little more detail.
-In the following, $x$ is a vector of un-normalised indicator values, and
-$x\prime$ is the corresponding normalised vector, using one of the
+In the following, $`x`$ is a vector of un-normalised indicator values,
+and $`x'`$ is the corresponding normalised vector, using one of the
 methods below.
 
 ### Linear methods
@@ -733,14 +761,17 @@ The
 function implements the min-max method, which is probably the most
 commonly-used normalisation approach in composite indicator
 construction. The indicator is simply rescaled to lie on an interval
-specified by upper and lower bounds $u$ and $l$:
+specified by upper and lower bounds $`u`$ and $`l`$:
 
-$$x\prime = \frac{x - x_{\text{min}}}{x_{\text{max}} - x_{\text{min}}} \times (u - l) + l$$
+``` math
+x' = \frac{x - x_{\text{min}} }{ x_{\text{max}} - x_{\text{min}} } \times (u - l) + l
+```
 
-This results in a linear transformation with minimum value $l$ and
-maximum value $u$:
+This results in a linear transformation with minimum value $`l`$ and
+maximum value $`u`$:
 
 ``` r
+
 # example data
 set.seed(69)
 x <- runif(20)
@@ -768,17 +799,21 @@ The transformation is analogous for negative-direction indicators.
 
 The z-score function
 [`n_zscore()`](https://bluefoxr.github.io/COINr/reference/n_zscore.md)
-calculates z-scores which rescales $x$ to have a specified mean $\mu$
-and standard deviation $\sigma$ (by default 0 and 1 respectively).
+calculates z-scores which rescales $`x`$ to have a specified mean
+$`\mu`$ and standard deviation $`\sigma`$ (by default 0 and 1
+respectively).
 
-$$x\prime = \frac{x - \text{mean}(x)}{\text{std}(x)} \times \sigma + \mu$$
+``` math
+x' = \frac{x - \text{mean}(x)}{\text{std}(x)} \times \sigma + \mu
+```
 
 where \$\text{mean}(x)}{\text{std}(x)\$ and (x) are the sample mean and
-standard deviation of $x$ respectively.
+standard deviation of $`x`$ respectively.
 
 For example, specifying to have mean 10 and standard deviation 2:
 
 ``` r
+
 nplot(x, n_zscore(x, c(10, 2)))
 ```
 
@@ -788,17 +823,20 @@ nplot(x, n_zscore(x, c(10, 2)))
 
 The
 [`n_scaled()`](https://bluefoxr.github.io/COINr/reference/n_scaled.md)
-function is a generic linear scaling function with parameters $u$ and
-$l$ of the form:
+function is a generic linear scaling function with parameters $`u`$ and
+$`l`$ of the form:
 
-$$x\prime = \frac{x - l}{u - l} \times 100$$
+``` math
+x' = \frac{x-l}{u-l} \times 100 
+```
 
-Note this is *not* the min-max transformation and $l$ and $u$ do not
+Note this is *not* the min-max transformation and $`l`$ and $`u`$ do not
 generally represent the upper and lower bounds. This is a linear
 transformation with shift `u` and scaling factor `u-l`. The result looks
 as follows:
 
 ``` r
+
 nplot(x, n_scaled(x, c(1,10)), "Linear scaling using c(1,10)")
 ```
 
@@ -809,12 +847,15 @@ nplot(x, n_scaled(x, c(1,10)), "Linear scaling using c(1,10)")
 Normalises as a measure of the distance to the maximum value, where the
 maximum value is the highest-scoring value. The formula used is:
 
-$$x\prime = 1 - \frac{x_{max} - x}{x_{max} - x_{min}}$$
+``` math
+x' = 1 - \frac{x_{max} - x}{x_{max} - x_{min}}
+```
 
 This means that the closer a value is to the maximum, the higher its
 score will be. Scores will be in the range of 0 to 1.
 
 ``` r
+
 nplot(x, n_dist2max(x), "Distance to maximum")
 ```
 
@@ -825,14 +866,17 @@ nplot(x, n_dist2max(x), "Distance to maximum")
 The
 [`n_fracmax()`](https://bluefoxr.github.io/COINr/reference/n_fracmax.md)
 function simply measures each point as a fraction of the maximum
-observed value in $x$.
+observed value in $`x`$.
 
-$$x\prime = \frac{x}{x_{max}}$$
+``` math
+x' = \frac{x}{x_{max}}
+```
 
-This looks as follows (not very exciting since $x$ is already on a
-$\lbrack 0,1\rbrack$ scale):
+This looks as follows (not very exciting since $`x`$ is already on a
+$`[0,1]`$ scale):
 
 ``` r
+
 nplot(x, n_fracmax(x), "Fraction of max value")
 ```
 
@@ -849,6 +893,7 @@ for the purposes of normalisation so that higher scores will give higher
 rank values, and sets ties to the minimum value by default.
 
 ``` r
+
 nplot(x, n_rank(x), "Rank")
 ```
 
@@ -860,7 +905,9 @@ The [`n_borda()`](https://bluefoxr.github.io/COINr/reference/n_borda.md)
 function calculates [Borda
 scores](https://en.wikipedia.org/wiki/Borda_count) as:
 
-$$x\prime = \text{rank}(x) - 1$$
+``` math
+x' = \text{rank}(x) - 1
+```
 
 where the rank is calculated by default as
 `rank(x, ties.method = "min", na.last = "keep")`. Borda ranking is a
@@ -868,6 +915,7 @@ nonlinear transformation and may be useful for highly-skewed indicators
 as an alternative to :
 
 ``` r
+
 # normalise
 xdash <- n_borda(x)
 nplot(x, xdash, "Borda")
@@ -891,15 +939,16 @@ that score*.
 Percentile ranks act like ranks, but have the added nice property that
 they don’t depend on the number of observations. For example: if we
 convert an indicator with 100 observed values using [Borda](#borda)
-scores we will end up with scores in the range $\lbrack 0,99\rbrack$.
-Another indicator in the same data set with only 75 observed values (the
-rest are `NA`) would on the other hand get scores in the range
-$\lbrack 0,74\rbrack$! On the other hand, percentile ranks always scale
-onto the $\lbrack 0,1\rbrack$ interval.
+scores we will end up with scores in the range $`[0, 99]`$. Another
+indicator in the same data set with only 75 observed values (the rest
+are `NA`) would on the other hand get scores in the range $`[0,74]`$! On
+the other hand, percentile ranks always scale onto the $`[0, 1]`$
+interval.
 
 An indicator normalised by percentile ranks looks as follows:
 
 ``` r
+
 nplot(x, n_prank(x), "Percentile ranks")
 ```
 
@@ -912,9 +961,11 @@ nplot(x, n_prank(x), "Percentile ranks")
 The
 [`n_dist2ref()`](https://bluefoxr.github.io/COINr/reference/n_dist2ref.md)
 function gives a measure of the distance to a specific value
-$x_{\text{ref}}$ found in `x`. The formula is:
+$`x_{\text{ref}}`$ found in `x`. The formula is:
 
-$$x\prime = 1 - \frac{x_{\text{ref}} - x}{x_{\text{ref}} - x_{min}}$$
+``` math
+x' = 1 - \frac{x_{\text{ref}} - x}{x_{\text{ref}} - x_{min}}
+```
 
 In composite indicators, this is often used in the context of
 benchmarking scores against the scores of a specific country. The
@@ -923,6 +974,7 @@ value as opposed to the value itself. Values exceeding
 x_ref`can be optionally capped at 1 if`cap_max = TRUE\`.
 
 ``` r
+
 xdash <- n_dist2ref(x, iref = 3, cap_max = FALSE)
 nplot(x, xdash, "Distance to reference (no cap)")
 ```
@@ -932,6 +984,7 @@ nplot(x, xdash, "Distance to reference (no cap)")
 With the cap, the result changes:
 
 ``` r
+
 xdash <- n_dist2ref(x, iref = 3, cap_max = TRUE)
 nplot(x, xdash, "Distance to reference (no cap)")
 ```
@@ -947,18 +1000,22 @@ in a future update.*
 
 The
 [`n_dist2targ()`](https://bluefoxr.github.io/COINr/reference/n_dist2targ.md)
-function gives the distance of each point in $x$ to a specified
+function gives the distance of each point in $`x`$ to a specified
 numerical target. This is different from the previous
 [`n_dist2ref()`](https://bluefoxr.github.io/COINr/reference/n_dist2ref.md)
 in that the target is specified as a fixed value, rather than the index
-of a point in $x$. Additionally, this function allows for adjustment by
-the direction of the indicator. For positive-direction indicators:
+of a point in $`x`$. Additionally, this function allows for adjustment
+by the direction of the indicator. For positive-direction indicators:
 
-$$x\prime = \frac{x - x_{min}}{x_{targ} - x_{min}}$$
+``` math
+x' = \frac{x - x_{min}}{x_{targ} - x_{min}}
+```
 
 else for negative direction indicators:
 
-$$x\prime = \frac{x_{max} - x}{x_{max} - x_{targ}}$$
+``` math
+x' = \frac{x_{max} - x}{x_{max} - x_{targ}}
+```
 
 The function also features the possibility to cap values that exceed the
 target, as
@@ -966,6 +1023,7 @@ target, as
 To see how this looks for a positive indicator (with cap):
 
 ``` r
+
 xdash <- n_dist2targ(x, targ = 0.75, direction = 1, cap_max = TRUE)
 nplot(x, xdash, "Distance to 0.75 target (positive direction: with cap)")
 ```
@@ -975,6 +1033,7 @@ nplot(x, xdash, "Distance to 0.75 target (positive direction: with cap)")
 Similarly, with a negative direction and low target:
 
 ``` r
+
 xdash <- n_dist2targ(x, targ = 0.2, direction = -1, cap_max = TRUE)
 nplot(x, xdash, "Distance to 0.2 target (negative direction: with cap)")
 ```
@@ -990,24 +1049,29 @@ applying this function to a coin you can specify the targets in the
 
 The goalposts function
 [`n_goalposts()`](https://bluefoxr.github.io/COINr/reference/n_goalposts.md)
-normalises as the fraction of the distance of each value of $x$ from the
-lower “goalpost” to the upper one (these values are specified as
+normalises as the fraction of the distance of each value of $`x`$ from
+the lower “goalpost” to the upper one (these values are specified as
 function inputs). The direction of the function can be specified to
 measure positive or negative progress. Goalpost normalisation (sometimes
 known as “distance to frontier”) is often used when there is a logical
 lower and upper bound to the indicator.
 
-For a positive indicator with goalposts $GP_{low}$ and $GP_{high}$:
+For a positive indicator with goalposts $`GP_{low}`$ and $`GP_{high}`$:
 
-$$x\prime = \frac{x - GP_{low}}{GP_{high} - GP_{low}}$$
+``` math
+x' = \frac{x - GP_{low}}{GP_{high} - GP_{low}}
+```
 
 and for a negative directionality indicator:
 
-$$x\prime = \frac{x - GP_{high}}{GP_{low} - GP_{high}}$$
+``` math
+x' = \frac{x - GP_{high}}{GP_{low} - GP_{high}}
+```
 
 To see how this looks:
 
 ``` r
+
 xdash <- n_goalposts(x, gposts = c(0.2, 0.75, 1), direction = 1)
 nplot(x, xdash, "Goalposts with positive indicator")
 ```
@@ -1018,6 +1082,7 @@ This is effectively a distance to target, but with upper and lower
 “targets”. The effect is analogous if the directionality is reversed:
 
 ``` r
+
 xdash <- n_goalposts(x, gposts = c(0.2, 0.75, 1), direction = -1)
 nplot(x, xdash, "Goalposts with negative indicator")
 ```

@@ -16,6 +16,7 @@ Indicator statistics can be obtained using the
 function.
 
 ``` r
+
 # load COINr
 library(COINr)
 
@@ -30,6 +31,7 @@ The resulting data frame has 18 columns, which is hard to display
 concisely here. Therefore we will look at the columns in groups of five.
 
 ``` r
+
 head(stat_table[1:5], 5)
 #>     iCode  Min    Max  Mean Median
 #> 1     LPI 2.07   4.23  3.41   3.42
@@ -44,6 +46,7 @@ columns are statistics, here obvious things like the minimum, maximum,
 mean and median.
 
 ``` r
+
 head(stat_table[6:10], 5)
 #>      Std   Skew   Kurt N.Avail N.NonZero
 #> 1  0.538 -0.304 -0.657      51        51
@@ -60,6 +63,7 @@ points. This latter can be of interest because some indicators may have
 a high proportion of zeroes, which can be problematic.
 
 ``` r
+
 head(stat_table[11:15], 5)
 #>   N.Unique N.Same Frc.Avail Frc.NonZero Frc.Unique
 #> 1       51      1         1       1.000      1.000
@@ -80,6 +84,7 @@ argument of
 it will be flagged as “LOW”.
 
 ``` r
+
 head(stat_table[16:ncol(stat_table)], 5)
 #>   Frc.Same Flag.Avail Flag.NonZero Flag.Unique Flag.SkewKurt
 #> 1   0.0196         ok           ok          ok            ok
@@ -111,6 +116,7 @@ can be obtained throug the
 function.
 
 ``` r
+
 l_dat <- get_data_avail(coin, dset = "Raw", out2 = "list")
 
 str(l_dat, max.level = 1)
@@ -123,6 +129,7 @@ Here we see the output is a list with two data frames. The first is a
 summary for each unit:
 
 ``` r
+
 head(l_dat$Summary, 5)
 #>    uCode N_missing N_zero N_miss_or_zero Dat_Avail  Non_Zero
 #> 31   AUS         0      3              3  1.000000 0.9387755
@@ -138,6 +145,7 @@ non-zero. The “ByGroup” data frame gives data availability within
 aggregation groups:
 
 ``` r
+
 head(l_dat$ByGroup[1:5], 5)
 #>    uCode ConEcFin    Instit  P2P Physical
 #> 31   AUS        1 1.0000000 1.00    1.000
@@ -172,6 +180,7 @@ vignette. However to demonstrate a couple of examples we begin by
 building the full example coin up to the aggregated data set.
 
 ``` r
+
 coin <- build_example_coin(quietly = TRUE)
 ```
 
@@ -179,6 +188,7 @@ Now we can take some examples. First, to get the correlations between
 indicators within the Environmental group:
 
 ``` r
+
 # get correlations
 cmat <- get_corr(coin, dset = "Raw", iCodes = list("Environ"), Levels = 1)
 # examine first few rows
@@ -198,6 +208,7 @@ is a long-format correlation table. If you want the wide format, set
 `make_long = FALSE`.
 
 ``` r
+
 # get correlations
 cmat <- get_corr(coin, dset = "Raw", iCodes = list("Environ"), Levels = 1, make_long = FALSE)
 # examine first few rows
@@ -232,6 +243,7 @@ This is a useful function for finding correlations between indicators
 that exceed or fall below a given threshold, within aggregation groups:
 
 ``` r
+
 get_corr_flags(coin, dset = "Normalised", cor_thresh = 0.75,
                thresh_type = "high", grouplev = 2)
 #>      Group Ind1      Ind2  Corr
@@ -249,6 +261,7 @@ By switching `thresh_type = "low"` we can similarly look for
 low/negative correlations:
 
 ``` r
+
 get_corr_flags(coin, dset = "Normalised", cor_thresh = -0.5,
                thresh_type = "low", grouplev = 2)
 #>       Group      Ind1   Ind2   Corr
@@ -273,6 +286,7 @@ strongly related with a denominator that means it is dependent on it,
 which may be a reason to denominate.
 
 ``` r
+
 get_denom_corr(coin, dset = "Raw", cor_thresh = 0.7)
 #>          Ind  Denom Corr
 #> 70  CultGood Energy 0.71
@@ -300,6 +314,7 @@ with any group of indicators, either the full set, or else targeting
 specific groups.
 
 ``` r
+
 get_cronbach(coin, dset = "Raw", iCodes = "P2P", Level = 1)
 #> [1] 0.05126659
 ```
@@ -315,6 +330,7 @@ function makes it easier to obtain PCA for groups of indicators,
 following the structure of the index.
 
 ``` r
+
 l_pca <- get_PCA(coin, dset = "Raw", iCodes = "Sust", out2 = "list")
 #> Warning in PCAwts(parents[ii]): 1 missing values found. Removing 1 rows with missing values in order to perform
 #> PCA. You can also try imputing data first to avoid this.
@@ -331,6 +347,7 @@ be suppressed using `nowarnings = TRUE`. The output list looks like
 this:
 
 ``` r
+
 str(l_pca, max.level = 1)
 #> List of 2
 #>  $ Weights   :'data.frame':  60 obs. of  3 variables:
@@ -341,6 +358,7 @@ I.e. we have a data frame of “PCA weights” and some PCA results. We
 ignore the weights for the moment and look closer at the PCA results:
 
 ``` r
+
 str(l_pca$PCAresults, max.level = 2)
 #> List of 3
 #>  $ Environ :List of 3
@@ -373,6 +391,7 @@ We can do some basic PCA analysis using base R’s tools using the
 “PCAres” objects, e.g.:
 
 ``` r
+
 # summarise PCA results for "Social" group
 summary(l_pca$PCAresults$Social$PCAres)
 #> Importance of components:

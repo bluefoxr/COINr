@@ -20,6 +20,7 @@ data for demonstration. I cherry-pick some rows and columns which have
 some missing values.
 
 ``` r
+
 library(COINr)
 
 # example data
@@ -52,6 +53,7 @@ that have less than 75% data availabilty (3 of 4 indicators with
 non-`NA` values):
 
 ``` r
+
 l_scr <- Screen(iData, unit_screen = "byNA", dat_thresh = 0.75)
 ```
 
@@ -60,6 +62,7 @@ The output of
 list:
 
 ``` r
+
 str(l_scr, max.level = 1)
 #> List of 3
 #>  $ ScreenedData:'data.frame':    9 obs. of  5 variables:
@@ -72,6 +75,7 @@ units were removed based on our specifications. We now have our new
 screened data set:
 
 ``` r
+
 l_scr$ScreenedData
 #>    uCode Research   Pat CultServ CultGood
 #> 40   KOR    20437 249.8  1.79800       NA
@@ -88,6 +92,7 @@ l_scr$ScreenedData
 And we have a summary of data availability and some other things:
 
 ``` r
+
 head(l_scr$DataSummary)
 #>    uCode N_missing N_zero N_miss_or_zero Dat_Avail Non_Zero LowData LowNonZero
 #> 40   KOR         1      0              1      0.75        1   FALSE      FALSE
@@ -113,9 +118,9 @@ vignette.
 
 Other than data availability, units can also be screened based on the
 presence of zeros, or on both - this is specified by the `unit_screen`
-argument. Use the `Force`[¹](#fn1) argument to override the screening
-rules for specified units if required (either to force inclusion or
-force exclusion).
+argument. Use the `Force`[^1] argument to override the screening rules
+for specified units if required (either to force inclusion or force
+exclusion).
 
 ## Coins
 
@@ -131,6 +136,7 @@ threshold of 85% data availability and also name the new data set
 something different rather than “Screened” (the default):
 
 ``` r
+
 # build example coin
 coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
 
@@ -165,6 +171,7 @@ compared to the raw data set with 51. We can find which units were
 filtered because this is stored in the coin’s “Analysis” sub-list:
 
 ``` r
+
 coin$Analysis$Filtered_85pc$RemovedUnits
 #> [1] "BRN" "LAO" "MMR"
 ```
@@ -183,6 +190,7 @@ purse, without any special features. Here, we perform the same example
 as in the coin section, but on a purse of coins:
 
 ``` r
+
 # build example purse
 purse <- build_example_purse(up_to = "new_coin", quietly = TRUE)
 
@@ -196,6 +204,4 @@ purse <- Screen(purse, dset = "Raw", unit_screen = "byNA",
 #> Written data set to .$Data$Filtered_85pc
 ```
 
-------------------------------------------------------------------------
-
-1.  Luke. Sorry.
+[^1]: Luke. Sorry.

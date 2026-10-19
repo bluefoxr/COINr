@@ -22,6 +22,7 @@ done visually with the
 function, which generates a sunburst plot of the index structure.
 
 ``` r
+
 library(COINr)
 
 # assemble example COIN
@@ -56,6 +57,7 @@ function has a few options for colouring. Other than that, if you don’t
 like sunburst plots, another possibility is to set `type = "stack"`:
 
 ``` r
+
 plot_framework(coin, type = "stack", colour_level = 2)
 ```
 
@@ -81,6 +83,7 @@ function. The simplest case is to plot the distribution of a single
 indicator.
 
 ``` r
+
 plot_dist(coin, dset = "Raw", iCodes = "CO2")
 ```
 
@@ -97,6 +100,7 @@ all indicators belonging to a particular group - let’s plot all
 indicator distributions in the “P2P” pillar:
 
 ``` r
+
 plot_dist(coin, dset = "Raw", iCodes = "P2P", Level = 1, type = "Violindot")
 ```
 
@@ -130,12 +134,14 @@ mind, we will build the full example coin including the normalisation
 step and then plot some correlations:
 
 ``` r
+
 coin <- build_example_coin(quietly = TRUE)
 ```
 
 Now let’s do a basic plot of correlations within a group:
 
 ``` r
+
 plot_corr(coin, dset = "Normalised", iCodes = list("Physical"), Levels = 1)
 ```
 
@@ -151,6 +157,7 @@ The reason that `iCodes` is specified as a list is that we can pass two
 character vectors to it, possibly from different levels:
 
 ``` r
+
 plot_corr(coin, dset = "Aggregated",
           iCodes = list(c("Flights", "LPI"), c("Physical", "P2P")), Levels = c(1,2))
 ```
@@ -169,6 +176,7 @@ indicators with only its parent groups - this is done by setting
 using `flagcolours = TRUE`.
 
 ``` r
+
 plot_corr(coin, dset = "Aggregated", iCodes = list("Sust"), withparent = "family", flagcolours = T)
 ```
 
@@ -183,6 +191,7 @@ in-group correlations using the `grouplev` argument, which takes an
 aggregation level to group indicators at:
 
 ``` r
+
 plot_corr(coin, dset = "Normalised", iCodes = list("Sust"),
           grouplev = 2, flagcolours = T)
 ```
@@ -193,6 +202,7 @@ This can also be done with the `box_level` argument, which can be used
 additionally to highlight groupings at different levels:
 
 ``` r
+
 plot_corr(coin, dset = "Normalised", grouplev = 3, box_level = 2, showvals = F)
 ```
 
@@ -221,6 +231,7 @@ A simple way to look at a set of scores for an indicator is with a bar
 chart:
 
 ``` r
+
 plot_bar(coin, dset = "Raw", iCode = "CO2")
 #> Warning: `label` cannot be a <ggplot2::element_blank> object.
 ```
@@ -234,6 +245,7 @@ low values. We can also colour this by any of the grouping variables
 found in the coin
 
 ``` r
+
 plot_bar(coin, dset = "Raw", iCode = "CO2", by_group = "GDPpc_group", axes_label = "iName")
 #> Warning: `label` cannot be a <ggplot2::element_blank> object.
 ```
@@ -251,6 +263,7 @@ how the Sustainability scores break down into their three underlying
 components, for each country:
 
 ``` r
+
 plot_bar(coin, dset = "Aggregated", iCode = "Sust", stack_children = TRUE)
 #> Warning: `label` cannot be a <ggplot2::element_blank> object.
 ```
@@ -265,6 +278,7 @@ to its peers. This means that to make it useful, you should also select
 one or more units to highlight.
 
 ``` r
+
 plot_dot(coin, dset = "Raw", iCode = "LPI", usel = c("JPN", "ESP"))
 ```
 
@@ -275,6 +289,7 @@ Japan. We can also add a statistic of this indicator, such as the
 median:
 
 ``` r
+
 plot_dot(coin, dset = "Raw", iCode = "LPI", usel = c("JPN", "ESP"), add_stat = "median",
          stat_label = "Median", plabel = "iName+unit")
 ```
@@ -293,6 +308,7 @@ function gives a quick way to plot scatter plots between any indicators
 or any variables in a coin.
 
 ``` r
+
 plot_scatter(coin, dsets = "Raw", iCodes = c("Goods", "Services"), point_label = "uCode")
 ```
 
@@ -302,6 +318,7 @@ Variables can come from different data sets (including unit metadata),
 and we can also colour by groups:
 
 ``` r
+
 plot_scatter(coin, dsets = c("uMeta", "Raw"), iCodes = c("Population", "Flights"),
              by_group = "GDPpc_group", log_scale = c(TRUE, FALSE))
 ```

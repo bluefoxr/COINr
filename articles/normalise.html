@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Normalisation • COINr</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Normalisation">
 </head>
@@ -151,7 +151,7 @@ side.</p>
 transformation.</p>
 <p>The default normalisation uses the min-max approach, scaling
 indicators onto the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">[</mo><mn>0</mn><mo>,</mo><mn>100</mn><mo stretchy="true" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[0, 100]</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mn>0</mn><mo>,</mo><mn>100</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[0, 100]</annotation></semantics></math>
 interval. But we can change the normalisation type and its parameters
 using the <code>global_specs</code> argument.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -686,7 +686,7 @@ demonstrate on a data frame:</p>
 <span><span class="co">#&gt; 9      i 0.38870131 69.582388</span></span>
 <span><span class="co">#&gt; 10     j 0.97554784 68.855600</span></span></code></pre></div>
 <p>By default, normalisation results in min-max on the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">[</mo><mn>0</mn><mo>,</mo><mn>100</mn><mo stretchy="true" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[0, 100]</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mn>0</mn><mo>,</mo><mn>100</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[0, 100]</annotation></semantics></math>
 interval:</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/qNormalise.html">qNormalise</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span></span>
@@ -730,7 +730,7 @@ console and press the Tab key to see a list. Here these functions are
 also explained in a little more detail. In the following,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>
 is a vector of un-normalised indicator values, and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mi>′</mi></mrow><annotation encoding="application/x-tex">x'</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>x</mi><mo>′</mo></msup><annotation encoding="application/x-tex">x'</annotation></semantics></math>
 is the corresponding normalised vector, using one of the methods
 below.</p>
 <div class="section level3">
@@ -746,7 +746,7 @@ lie on an interval specified by upper and lower bounds
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>u</mi><annotation encoding="application/x-tex">u</annotation></semantics></math>
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>l</mi><annotation encoding="application/x-tex">l</annotation></semantics></math>:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mi>′</mi><mo>=</mo><mfrac><mrow><mi>x</mi><mo>−</mo><msub><mi>x</mi><mtext mathvariant="normal">min</mtext></msub></mrow><mrow><msub><mi>x</mi><mtext mathvariant="normal">max</mtext></msub><mo>−</mo><msub><mi>x</mi><mtext mathvariant="normal">min</mtext></msub></mrow></mfrac><mo>×</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>u</mi><mo>−</mo><mi>l</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mi>l</mi></mrow><annotation encoding="application/x-tex">
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>x</mi><mo>′</mo></msup><mo>=</mo><mfrac><mrow><mi>x</mi><mo>−</mo><msub><mi>x</mi><mtext mathvariant="normal">min</mtext></msub></mrow><mrow><msub><mi>x</mi><mtext mathvariant="normal">max</mtext></msub><mo>−</mo><msub><mi>x</mi><mtext mathvariant="normal">min</mtext></msub></mrow></mfrac><mo>×</mo><mo stretchy="false" form="prefix">(</mo><mi>u</mi><mo>−</mo><mi>l</mi><mo stretchy="false" form="postfix">)</mo><mo>+</mo><mi>l</mi></mrow><annotation encoding="application/x-tex">
 x' = \frac{x - x_{\text{min}} }{ x_{\text{max}} - x_{\text{min}} } \times (u - l) + l
 </annotation></semantics></math></p>
 <p>This results in a linear transformation with minimum value
@@ -786,7 +786,7 @@ to have a specified mean
 and standard deviation
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>σ</mi><annotation encoding="application/x-tex">\sigma</annotation></semantics></math>
 (by default 0 and 1 respectively).</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mi>′</mi><mo>=</mo><mfrac><mrow><mi>x</mi><mo>−</mo><mtext mathvariant="normal">mean</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mtext mathvariant="normal">std</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo>×</mo><mi>σ</mi><mo>+</mo><mi>μ</mi></mrow><annotation encoding="application/x-tex">
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>x</mi><mo>′</mo></msup><mo>=</mo><mfrac><mrow><mi>x</mi><mo>−</mo><mtext mathvariant="normal">mean</mtext><mo stretchy="false" form="prefix">(</mo><mi>x</mi><mo stretchy="false" form="postfix">)</mo></mrow><mrow><mtext mathvariant="normal">std</mtext><mo stretchy="false" form="prefix">(</mo><mi>x</mi><mo stretchy="false" form="postfix">)</mo></mrow></mfrac><mo>×</mo><mi>σ</mi><mo>+</mo><mi>μ</mi></mrow><annotation encoding="application/x-tex">
 x' = \frac{x - \text{mean}(x)}{\text{std}(x)} \times \sigma + \mu
 </annotation></semantics></math></p>
 <p>where <span class="math inline">$\text{mean}(x)}{\text{std}(x)$</span> and (x) are
@@ -807,7 +807,7 @@ function with parameters
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>l</mi><annotation encoding="application/x-tex">l</annotation></semantics></math>
 of the form:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mi>′</mi><mo>=</mo><mfrac><mrow><mi>x</mi><mo>−</mo><mi>l</mi></mrow><mrow><mi>u</mi><mo>−</mo><mi>l</mi></mrow></mfrac><mo>×</mo><mn>100</mn></mrow><annotation encoding="application/x-tex">
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>x</mi><mo>′</mo></msup><mo>=</mo><mfrac><mrow><mi>x</mi><mo>−</mo><mi>l</mi></mrow><mrow><mi>u</mi><mo>−</mo><mi>l</mi></mrow></mfrac><mo>×</mo><mn>100</mn></mrow><annotation encoding="application/x-tex">
 x' = \frac{x-l}{u-l} \times 100 
 </annotation></semantics></math></p>
 <p>Note this is <em>not</em> the min-max transformation and
@@ -826,7 +826,7 @@ transformation with shift <code>u</code> and scaling factor
 </h4>
 <p>Normalises as a measure of the distance to the maximum value, where
 the maximum value is the highest-scoring value. The formula used is:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mi>′</mi><mo>=</mo><mn>1</mn><mo>−</mo><mfrac><mrow><msub><mi>x</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><mo>−</mo><mi>x</mi></mrow><mrow><msub><mi>x</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><mo>−</mo><msub><mi>x</mi><mrow><mi>m</mi><mi>i</mi><mi>n</mi></mrow></msub></mrow></mfrac></mrow><annotation encoding="application/x-tex">
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>x</mi><mo>′</mo></msup><mo>=</mo><mn>1</mn><mo>−</mo><mfrac><mrow><msub><mi>x</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><mo>−</mo><mi>x</mi></mrow><mrow><msub><mi>x</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><mo>−</mo><msub><mi>x</mi><mrow><mi>m</mi><mi>i</mi><mi>n</mi></mrow></msub></mrow></mfrac></mrow><annotation encoding="application/x-tex">
 x' = 1 - \frac{x_{max} - x}{x_{max} - x_{min}}
 </annotation></semantics></math></p>
 <p>This means that the closer a value is to the maximum, the higher its
@@ -841,13 +841,13 @@ score will be. Scores will be in the range of 0 to 1.</p>
 <p>The <code><a href="../reference/n_fracmax.html">n_fracmax()</a></code> function simply measures each point as a
 fraction of the maximum observed value in
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>.</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mi>′</mi><mo>=</mo><mfrac><mi>x</mi><msub><mi>x</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub></mfrac></mrow><annotation encoding="application/x-tex">
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>x</mi><mo>′</mo></msup><mo>=</mo><mfrac><mi>x</mi><msub><mi>x</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub></mfrac></mrow><annotation encoding="application/x-tex">
 x' = \frac{x}{x_{max}}
 </annotation></semantics></math></p>
 <p>This looks as follows (not very exciting since
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>
 is already on a
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">[</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[0,1]</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[0,1]</annotation></semantics></math>
 scale):</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">nplot</span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="../reference/n_fracmax.html">n_fracmax</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, <span class="st">"Fraction of max value"</span><span class="op">)</span></span></code></pre></div>
@@ -874,7 +874,7 @@ value by default.</p>
 </h4>
 <p>The <code><a href="../reference/n_borda.html">n_borda()</a></code> function calculates <a href="https://en.wikipedia.org/wiki/Borda_count" class="external-link">Borda scores</a>
 as:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mi>′</mi><mo>=</mo><mtext mathvariant="normal">rank</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>x</mi><mo>′</mo></msup><mo>=</mo><mtext mathvariant="normal">rank</mtext><mo stretchy="false" form="prefix">(</mo><mi>x</mi><mo stretchy="false" form="postfix">)</mo><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">
 x' = \text{rank}(x) - 1
 </annotation></semantics></math></p>
 <p>where the rank is calculated by default as
@@ -900,13 +900,13 @@ distribution that are less than that score</em>.</p>
 <p>Percentile ranks act like ranks, but have the added nice property
 that they don’t depend on the number of observations. For example: if we
 convert an indicator with 100 observed values using <a href="#borda">Borda</a> scores we will end up with scores in the range
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">[</mo><mn>0</mn><mo>,</mo><mn>99</mn><mo stretchy="true" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[0, 99]</annotation></semantics></math>.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mn>0</mn><mo>,</mo><mn>99</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[0, 99]</annotation></semantics></math>.
 Another indicator in the same data set with only 75 observed values (the
 rest are <code>NA</code>) would on the other hand get scores in the
 range
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">[</mo><mn>0</mn><mo>,</mo><mn>74</mn><mo stretchy="true" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[0,74]</annotation></semantics></math>!
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mn>0</mn><mo>,</mo><mn>74</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[0,74]</annotation></semantics></math>!
 On the other hand, percentile ranks always scale onto the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">[</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[0, 1]</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[0, 1]</annotation></semantics></math>
 interval.</p>
 <p>An indicator normalised by percentile ranks looks as follows:</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
@@ -924,7 +924,7 @@ interval.</p>
 distance to a specific value
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mtext mathvariant="normal">ref</mtext></msub><annotation encoding="application/x-tex">x_{\text{ref}}</annotation></semantics></math>
 found in <code>x</code>. The formula is:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mi>′</mi><mo>=</mo><mn>1</mn><mo>−</mo><mfrac><mrow><msub><mi>x</mi><mtext mathvariant="normal">ref</mtext></msub><mo>−</mo><mi>x</mi></mrow><mrow><msub><mi>x</mi><mtext mathvariant="normal">ref</mtext></msub><mo>−</mo><msub><mi>x</mi><mrow><mi>m</mi><mi>i</mi><mi>n</mi></mrow></msub></mrow></mfrac></mrow><annotation encoding="application/x-tex">
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>x</mi><mo>′</mo></msup><mo>=</mo><mn>1</mn><mo>−</mo><mfrac><mrow><msub><mi>x</mi><mtext mathvariant="normal">ref</mtext></msub><mo>−</mo><mi>x</mi></mrow><mrow><msub><mi>x</mi><mtext mathvariant="normal">ref</mtext></msub><mo>−</mo><msub><mi>x</mi><mrow><mi>m</mi><mi>i</mi><mi>n</mi></mrow></msub></mrow></mfrac></mrow><annotation encoding="application/x-tex">
 x' = 1 - \frac{x_{\text{ref}} - x}{x_{\text{ref}} - x_{min}}
 </annotation></semantics></math></p>
 <p>In composite indicators, this is often used in the context of
@@ -957,11 +957,11 @@ value, rather than the index of a point in
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>.
 Additionally, this function allows for adjustment by the direction of
 the indicator. For positive-direction indicators:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mi>′</mi><mo>=</mo><mfrac><mrow><mi>x</mi><mo>−</mo><msub><mi>x</mi><mrow><mi>m</mi><mi>i</mi><mi>n</mi></mrow></msub></mrow><mrow><msub><mi>x</mi><mrow><mi>t</mi><mi>a</mi><mi>r</mi><mi>g</mi></mrow></msub><mo>−</mo><msub><mi>x</mi><mrow><mi>m</mi><mi>i</mi><mi>n</mi></mrow></msub></mrow></mfrac></mrow><annotation encoding="application/x-tex">
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>x</mi><mo>′</mo></msup><mo>=</mo><mfrac><mrow><mi>x</mi><mo>−</mo><msub><mi>x</mi><mrow><mi>m</mi><mi>i</mi><mi>n</mi></mrow></msub></mrow><mrow><msub><mi>x</mi><mrow><mi>t</mi><mi>a</mi><mi>r</mi><mi>g</mi></mrow></msub><mo>−</mo><msub><mi>x</mi><mrow><mi>m</mi><mi>i</mi><mi>n</mi></mrow></msub></mrow></mfrac></mrow><annotation encoding="application/x-tex">
 x' = \frac{x - x_{min}}{x_{targ} - x_{min}}
 </annotation></semantics></math></p>
 <p>else for negative direction indicators:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mi>′</mi><mo>=</mo><mfrac><mrow><msub><mi>x</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><mo>−</mo><mi>x</mi></mrow><mrow><msub><mi>x</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><mo>−</mo><msub><mi>x</mi><mrow><mi>t</mi><mi>a</mi><mi>r</mi><mi>g</mi></mrow></msub></mrow></mfrac></mrow><annotation encoding="application/x-tex">
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>x</mi><mo>′</mo></msup><mo>=</mo><mfrac><mrow><msub><mi>x</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><mo>−</mo><mi>x</mi></mrow><mrow><msub><mi>x</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><mo>−</mo><msub><mi>x</mi><mrow><mi>t</mi><mi>a</mi><mi>r</mi><mi>g</mi></mrow></msub></mrow></mfrac></mrow><annotation encoding="application/x-tex">
 x' = \frac{x_{max} - x}{x_{max} - x_{targ}}
 </annotation></semantics></math></p>
 <p>The function also features the possibility to cap values that exceed
@@ -995,11 +995,11 @@ lower and upper bound to the indicator.</p>
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><msub><mi>P</mi><mrow><mi>l</mi><mi>o</mi><mi>w</mi></mrow></msub></mrow><annotation encoding="application/x-tex">GP_{low}</annotation></semantics></math>
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><msub><mi>P</mi><mrow><mi>h</mi><mi>i</mi><mi>g</mi><mi>h</mi></mrow></msub></mrow><annotation encoding="application/x-tex">GP_{high}</annotation></semantics></math>:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mi>′</mi><mo>=</mo><mfrac><mrow><mi>x</mi><mo>−</mo><mi>G</mi><msub><mi>P</mi><mrow><mi>l</mi><mi>o</mi><mi>w</mi></mrow></msub></mrow><mrow><mi>G</mi><msub><mi>P</mi><mrow><mi>h</mi><mi>i</mi><mi>g</mi><mi>h</mi></mrow></msub><mo>−</mo><mi>G</mi><msub><mi>P</mi><mrow><mi>l</mi><mi>o</mi><mi>w</mi></mrow></msub></mrow></mfrac></mrow><annotation encoding="application/x-tex">
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>x</mi><mo>′</mo></msup><mo>=</mo><mfrac><mrow><mi>x</mi><mo>−</mo><mi>G</mi><msub><mi>P</mi><mrow><mi>l</mi><mi>o</mi><mi>w</mi></mrow></msub></mrow><mrow><mi>G</mi><msub><mi>P</mi><mrow><mi>h</mi><mi>i</mi><mi>g</mi><mi>h</mi></mrow></msub><mo>−</mo><mi>G</mi><msub><mi>P</mi><mrow><mi>l</mi><mi>o</mi><mi>w</mi></mrow></msub></mrow></mfrac></mrow><annotation encoding="application/x-tex">
 x' = \frac{x - GP_{low}}{GP_{high} - GP_{low}}
 </annotation></semantics></math></p>
 <p>and for a negative directionality indicator:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mi>′</mi><mo>=</mo><mfrac><mrow><mi>x</mi><mo>−</mo><mi>G</mi><msub><mi>P</mi><mrow><mi>h</mi><mi>i</mi><mi>g</mi><mi>h</mi></mrow></msub></mrow><mrow><mi>G</mi><msub><mi>P</mi><mrow><mi>l</mi><mi>o</mi><mi>w</mi></mrow></msub><mo>−</mo><mi>G</mi><msub><mi>P</mi><mrow><mi>h</mi><mi>i</mi><mi>g</mi><mi>h</mi></mrow></msub></mrow></mfrac></mrow><annotation encoding="application/x-tex">
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>x</mi><mo>′</mo></msup><mo>=</mo><mfrac><mrow><mi>x</mi><mo>−</mo><mi>G</mi><msub><mi>P</mi><mrow><mi>h</mi><mi>i</mi><mi>g</mi><mi>h</mi></mrow></msub></mrow><mrow><mi>G</mi><msub><mi>P</mi><mrow><mi>l</mi><mi>o</mi><mi>w</mi></mrow></msub><mo>−</mo><mi>G</mi><msub><mi>P</mi><mrow><mi>h</mi><mi>i</mi><mi>g</mi><mi>h</mi></mrow></msub></mrow></mfrac></mrow><annotation encoding="application/x-tex">
 x' = \frac{x - GP_{high}}{GP_{low} - GP_{high}}
 </annotation></semantics></math></p>
 <p>To see how this looks:</p>
@@ -1031,7 +1031,7 @@ iMeta specification</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

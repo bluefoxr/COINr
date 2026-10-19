@@ -60,6 +60,7 @@ and fast export to Excel.
 COINr is on CRAN and can be installed by running:
 
 ``` r
+
 # Install released version from CRAN
 install.packages("COINr")
 ```
@@ -68,6 +69,7 @@ The development version, which may be slightly more up-to-date, can be
 installed from GitHub:
 
 ``` r
+
 # Install development version from GitHub
 devtools::install_github("bluefoxr/COINr")
 ```
@@ -125,6 +127,7 @@ If you prefer to roll back to the old COINr, you can still install it as
 a separate package called “COINr6”. This is available on GitHub:
 
 ``` r
+
 remotes::install_github("bluefoxr/COINr6")
 ```
 
@@ -149,6 +152,7 @@ accompanied by unit tests, and all existing tests should run without
 errors or warnings. To do this, run:
 
 ``` r
+
 devtools::test()
 ```
 

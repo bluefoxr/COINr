@@ -57,7 +57,7 @@ export_to_excel(coin, fname = paste0(tempdir(), "\\ASEM_results.xlsx"))
 
 # spreadsheet is at:
 print(paste0(tempdir(), "\\ASEM_results.xlsx"))
-#> [1] "/tmp/Rtmp3Xy3ML\\ASEM_results.xlsx"
+#> [1] "/tmp/Rtmpl4y4SD\\ASEM_results.xlsx"
 
 # now delete temporary file to keep things tidy in testing
 unlink(paste0(tempdir(),"\\ASEM_results.xlsx"))

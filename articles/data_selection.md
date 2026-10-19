@@ -23,6 +23,7 @@ sub-list of the coin. We can retrieve a data set at any time using the
 function:
 
 ``` r
+
 library(COINr)
 
 # build full example coin
@@ -48,6 +49,7 @@ and anything else that was input when building the coin, using the
 `also_get` argument:
 
 ``` r
+
 # retrieve normalised data set
 dset_norm2 <- get_dset(coin, dset = "Normalised", also_get = c("uName", "GDP_group"))
 
@@ -77,6 +79,7 @@ A simple example is to extract one or more named indicators from a
 target data set:
 
 ``` r
+
 x <- get_data(coin, dset = "Raw", iCodes = c("Flights", "LPI"))
 
 # see first few rows
@@ -100,6 +103,7 @@ structure of the index. In our example, indicators are aggregated into
 extract the underlying indicators:
 
 ``` r
+
 x <- get_data(coin, dset = "Raw", iCodes = "Political", Level = 1)
 head(x, 5)
 #>    uCode Embs IGOs   UNVote
@@ -118,6 +122,7 @@ scores. Here, for example, we can ask for all the pillar scores (level
 2) which belong to the sustainability sub-index (level 3):
 
 ``` r
+
 x <- get_data(coin, dset = "Aggregated", iCodes = "Sust", Level = 2)
 
 head(x, 5)
@@ -147,6 +152,7 @@ with selecting indicators). Starting with a simple example, let’s select
 specified units for a specific indicator:
 
 ``` r
+
 get_data(coin, dset = "Raw", iCodes = "Goods", uCodes = c("AUT", "VNM"))
 #>    uCode    Goods
 #> 1    AUT 278.4264
@@ -160,6 +166,7 @@ reminder that you can see some details about the coin using its print
 method):
 
 ``` r
+
 coin
 #> --------------
 #> A coin with...
@@ -192,6 +199,7 @@ know the values of the “Goods” indicator for all the countries in the
 “XL” GDP group:
 
 ``` r
+
 get_data(coin, dset = "Raw", iCodes = "Goods", use_group = list(GDP_group = "XL"))
 #>    uCode GDP_group     Goods
 #> 1    AUS        XL  288.4893
@@ -219,6 +227,7 @@ want to see the values of the “Flights” indicator for a specific unit,
 as well as all other units within the same population group:
 
 ``` r
+
 get_data(coin, dset = "Raw", iCodes = "Flights", uCodes = "MLT", use_group = "Pop_group")
 #>    uCode Pop_group  Flights
 #> 6    BRN         S  2.01900
@@ -257,6 +266,7 @@ data simply by exploring the coin yourself.
 The data sets live in the `.$Data` sub-list of the coin:
 
 ``` r
+
 names(coin$Data)
 #> [1] "Raw"         "Denominated" "Imputed"     "Screened"    "Treated"    
 #> [6] "Normalised"  "Aggregated"
@@ -265,6 +275,7 @@ names(coin$Data)
 And we can access any of these directly:
 
 ``` r
+
 data_raw <- coin$Data$Raw
 
 head(data_raw[1:5], 5)
@@ -280,6 +291,7 @@ The metadata lives in the `.$Meta` sub-list. For example, the unit
 metadata, which includes groups, names etc:
 
 ``` r
+
 str(coin$Meta$Unit)
 #> 'data.frame':    51 obs. of  11 variables:
 #>  $ uCode        : chr  "AUS" "AUT" "BEL" "BGD" ...

@@ -8,6 +8,7 @@ missing data we have in the data set. We begin by building the example
 coin, up the point of assembling the coin, but not any further:
 
 ``` r
+
 library(COINr)
 
 ASEM <- build_example_coin(up_to = "new_coin", quietly = TRUE)
@@ -19,12 +20,14 @@ function can be used. It can output to either the coin or to a list –
 here we output to a list to readily display the results.
 
 ``` r
+
 l_avail <- get_data_avail(ASEM, dset = "Raw", out2 = "list")
 ```
 
 The output list has data availability by unit:
 
 ``` r
+
 head(l_avail$Summary)
 #>    uCode N_missing N_zero N_miss_or_zero Dat_Avail  Non_Zero
 #> 31   AUS         0      3              3 1.0000000 0.9387755
@@ -38,6 +41,7 @@ head(l_avail$Summary)
 The lowest data availability by unit is:
 
 ``` r
+
 min(l_avail$Summary$Dat_Avail)
 #> [1] 0.7959184
 ```
@@ -47,6 +51,7 @@ calling
 [`get_stats()`](https://bluefoxr.github.io/COINr/reference/get_stats.md):
 
 ``` r
+
 df_avail <- get_stats(ASEM, dset = "Raw", out2 = "df")
 
 head(df_avail[c("iCode", "N.Avail", "Frc.Avail")], 10)
@@ -66,6 +71,7 @@ head(df_avail[c("iCode", "N.Avail", "Frc.Avail")], 10)
 By indicator, the minimum data availability is:
 
 ``` r
+
 min(df_avail$Frc.Avail)
 #> [1] 0.843
 ```
@@ -100,6 +106,7 @@ since it is easier to see what’s going on. We will use a small data
 frame which is easy to visualise:
 
 ``` r
+
 # some data to use as an example
 # this is a selected portion of the data with some missing values
 df1 <-  ASEM_iData[37:46, 36:39]
@@ -121,6 +128,7 @@ In the simplest case, imputation can be performed column-wise, i.e. by
 imputing each indicator one at a time:
 
 ``` r
+
 Impute(df1, f_i = "i_mean")
 #>       Pat  CultServ CultGood Tourist
 #> 37  23.70 0.1340500   4.5395  11.519
@@ -143,6 +151,7 @@ that imputes a numeric vector - in this case the built-in
 function:
 
 ``` r
+
 # demo of i_mean() function, which is built in to COINr
 x <- c(1,2,3,4, NA)
 i_mean(x)
@@ -201,6 +210,7 @@ the `f_i_para` argument which takes any additional parameters top `f_i`
 apart from the data to be imputed.
 
 ``` r
+
 # row grouping
 groups <- c(rep("a", 5), rep("b", 5))
 
@@ -242,6 +252,7 @@ have indicators on rather different scales. Let’s see what happens if we
 impute by row mean but *don’t* normalise:
 
 ``` r
+
 Impute(df1, f_i = "i_mean", impute_by = "row", normalise_first = FALSE)
 #>           Pat CultServ  CultGood Tourist
 #> 37  23.700000  0.13405 11.784350  11.519
@@ -262,6 +273,7 @@ unless all indicators are on the same scale. We can however normalise
 first, impute, then return indicators to their original scales:
 
 ``` r
+
 Impute(df1, f_i = "i_mean", impute_by = "row", normalise_first = TRUE, directions = rep(1,4))
 #>          Pat CultServ  CultGood Tourist
 #> 37  23.70000 0.134050  2.850908  11.519
@@ -322,6 +334,7 @@ In the simple case we impute a named data set `dset` using the function
 median values:
 
 ``` r
+
 ASEM <- Impute(ASEM, dset = "Raw", f_i = "i_mean")
 #> Written data set to .$Data$Imputed
 
@@ -358,6 +371,7 @@ unit groups are stored within the coin (variables labelled as “Group” in
 (without having to specify the `f_i_para` argument):
 
 ``` r
+
 ASEM <- Impute(ASEM, dset = "Raw", f_i = "i_mean_grp", use_group = "GDP_group", )
 #> Written data set to .$Data$Imputed
 #> (overwritten existing data set)
@@ -372,6 +386,7 @@ rather than imputing across the entire row of data, it splits rows into
 indicator groups, using the structure of the index. For example:
 
 ``` r
+
 ASEM <- Impute(ASEM, dset = "Raw", f_i = "i_mean", impute_by = "row",
                group_level = 2, normalise_first = TRUE)
 #> Written data set to .$Data$Imputed
@@ -408,6 +423,7 @@ COINr and Amelia. This also gives us the chance to specify some other
 function arguments that are necessary.
 
 ``` r
+
 # this function takes a data frame input and returns an imputed data frame using amelia
 i_EM <- function(x){
   # impute
@@ -423,6 +439,7 @@ don’t need to specify `f_i_para` because these arguments are already
 specified in the intermediary function.
 
 ``` r
+
 # impute raw data set
 coin <- Impute(coin, dset = "Raw", f_i = i_EM, impute_by = "df", group_level = 2)
 ```
@@ -452,6 +469,7 @@ and introduce a missing value `NA` in the indicator “LPI” for unit “GB”,
 for year 2021.
 
 ``` r
+
 # copy
 dfp <- ASEM_iData_p
 
@@ -463,6 +481,7 @@ This data point has a value for the previous year, 2020. Let’s see what
 it is:
 
 ``` r
+
 dfp$LPI[dfp$uCode == "GBR" & dfp$Time == 2020]
 #> [1] 4.167858
 ```
@@ -470,6 +489,7 @@ dfp$LPI[dfp$uCode == "GBR" & dfp$Time == 2020]
 Now let’s build the purse and impute the raw data set.
 
 ``` r
+
 # build purse
 ASEMp <- new_coin(dfp, ASEM_iMeta, split_to = "all", quietly = TRUE)
 
@@ -489,6 +509,7 @@ previously. To get at the data we can use the
 function.
 
 ``` r
+
 get_data(ASEMp, dset = "Imputed", iCodes = "LPI", uCodes = "GBR")
 #>     Time uCode      LPI
 #> 30  2018   GBR 4.069669
@@ -513,6 +534,7 @@ of that indicator, for that unit. So keeping our previous example with
 GBR and the LPI indicator, our time series looks like this:
 
 ``` r
+
 # make purse with fresh panel data
 ASEMp <- new_coin(ASEM_iData_p, ASEM_iMeta, split_to = "all", quietly = TRUE)
 
@@ -530,6 +552,7 @@ value in the input data, then recreating the purse object (similar to
 previous example). We will then plot the series again to check.
 
 ``` r
+
 # copy
 dfp <- ASEM_iData_p
 
@@ -552,6 +575,7 @@ by setting the `imp_type` argument to “linear”, via the `f_i_para`
 argument, as follows:
 
 ``` r
+
 ASEMp <- Impute(ASEMp, dset = "Raw", f_i = "impute_panel", f_i_para = list(imp_type = "linear"))
 #> NOTE: cannot impute for unit BGD and iCode ConSpeed because all NA values.
 #> NOTE: cannot impute for unit BGD and iCode TBTs because all NA values.
@@ -632,6 +656,7 @@ series. We extract the time series from the Imputed data set, and plot
 it.
 
 ``` r
+
 # extract and plot time series for GBR for indicator LPI
 df_plot <- get_data(ASEMp, dset = "Imputed", iCodes = "LPI", uCodes = "GBR")
 plot(df_plot$Time, df_plot$LPI, type = "b", xlab = "Year", ylab = "LPI for GBR")

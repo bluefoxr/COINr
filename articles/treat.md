@@ -56,6 +56,7 @@ function is on a numeric vector. Let’s make a vector with a couple of
 outliers:
 
 ``` r
+
 # numbers between 1 and 10
 x <- 1:10
 
@@ -66,6 +67,7 @@ x <- c(x, 30, 100)
 We can check the skew and kurtosis of this vector:
 
 ``` r
+
 library(COINr)
 
 skew(x)
@@ -85,6 +87,7 @@ function, which is the default pass/fail function used in
 also anyway outputs the skew and kurtosis:
 
 ``` r
+
 check_SkewKurt(x)
 #> $Pass
 #> [1] FALSE
@@ -107,6 +110,7 @@ which is `winmax = 2`. You can check the
 function documentation to better understand how it works.
 
 ``` r
+
 l_treat <- Treat(x, f1 = "winsorise", f1_para = list(winmax = 2),
                  f_pass = "check_SkewKurt")
 
@@ -120,6 +124,7 @@ point from `x` has been Winsorised (reassigned the next highest value).
 We can check the skew and kurtosis of the treated vector:
 
 ``` r
+
 check_SkewKurt(l_treat$x)
 #> $Pass
 #> [1] TRUE
@@ -143,6 +148,7 @@ frame method passes each column of the data frame to the numeric method.
 Here, we use some data from the COINr package to demonstrate.
 
 ``` r
+
 # select three indicators
 df1 <- ASEM_iData[c("Flights", "Goods", "Services")]
 
@@ -162,6 +168,7 @@ We can see the output is a list with `x_treat`, the treated data frame;
 This is effectively the same output as for treating a numeric vector.
 
 ``` r
+
 l_treat$Dets_Table
 #>      iCode check_SkewKurt0.Pass check_SkewKurt0.Skew check_SkewKurt0.Kurt
 #> 1  Flights                FALSE             2.103287             4.508879
@@ -176,6 +183,7 @@ l_treat$Dets_Table
 We also check the individual points:
 
 ``` r
+
 l_treat$Treated_Points
 #>    Flights Goods Services
 #> 1                        
@@ -242,6 +250,7 @@ We begin by building the example coin, which will be used for the
 examples here.
 
 ``` r
+
 coin <- build_example_coin(up_to = "new_coin")
 #> iData checked and OK.
 #> iMeta checked and OK.
@@ -255,6 +264,7 @@ function can be applied directly to a coin with completely default
 options:
 
 ``` r
+
 coin <- Treat(coin, dset = "Raw")
 #> Written data set to .$Data$Treated
 ```
@@ -280,6 +290,7 @@ coin, it also stores information returned from `f1`, `f2` and `f_pass`
 in the coin:
 
 ``` r
+
 # summary of treatment for each indicator
 head(coin$Analysis$Treated$Dets_Table)
 #>     iCode check_SkewKurt0.Pass check_SkewKurt0.Skew check_SkewKurt0.Kurt
@@ -321,6 +332,7 @@ applied to all indicators. This process is specified by the
 the default of this argument which is built into the `treat()` function:
 
 ``` r
+
 # default treatment for all cols
 specs_def <- list(f1 = "winsorise",
                   f1_para = list(na.rm = TRUE,
@@ -372,6 +384,7 @@ the maximum Winsorisation limit `winmax`, we can just pass this part of
 the list (notice we still have to wrap the parameter inside a list):
 
 ``` r
+
 # treat with max winsorisation of 3 points
 coin <- Treat(coin, dset = "Raw", global_specs = list(f1_para = list(winmax = 1)))
 #> Written data set to .$Data$Treated
@@ -458,6 +471,7 @@ Winsorisation limit of the indicator “Flights” to zero, to force it to
 be log-transformed.
 
 ``` r
+
 # change individual specs for Flights
 indiv_specs <- list(
   Flights = list(
@@ -482,6 +496,7 @@ degree of control over how data treatment is performed.
 We can now see what happened to “Flights”:
 
 ``` r
+
 coin$Analysis$Treated$Dets_Table[
   coin$Analysis$Treated$Dets_Table$iCode == "Flights", 
 ]
@@ -503,6 +518,7 @@ in `indiv_specs` to `"none"`. This is the only case where we don’t have
 to pass a list for each indicator.
 
 ``` r
+
 # change individual specs for two indicators
 indiv_specs <- list(
   Flights = "none",
@@ -532,6 +548,7 @@ The following code chunk will only run if you have the ‘performance’
 package installed.
 
 ``` r
+
 library(performance)
 
 # the check_outliers function outputs a logical vector which flags specific points as outliers.
@@ -600,6 +617,7 @@ specifications to each coin. Here we simply demonstrate it on the
 example purse.
 
 ``` r
+
 # build example purse
 purse <- build_example_purse(up_to = "new_coin", quietly = TRUE)
 
@@ -639,6 +657,7 @@ function is a generic with methods for data frames, coins and purses.
 Here, we’ll just demonstrate it on a data frame.
 
 ``` r
+
 # select three indicators
 df1 <- ASEM_iData[c("Flights", "Goods", "Services")]
 
@@ -649,6 +668,7 @@ l_treat <- qTreat(df1, winmax = 1, skew_thresh = 1.5, kurt_thresh = 3)
 Now we check what the results are:
 
 ``` r
+
 l_treat$Dets_Table
 #>      iCode check_SkewKurt0.Pass check_SkewKurt0.Skew check_SkewKurt0.Kurt
 #> 1  Flights                FALSE             2.103287             4.508879

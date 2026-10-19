@@ -23,6 +23,7 @@ We’ll begin by demonstrating denomination on a data frame. We’ll use the
 in-built data set to get a small sample of indicators:
 
 ``` r
+
 library(COINr)
 
 # Get a sample of indicator data (note must be indicators plus a "UnitCode" column)
@@ -43,6 +44,7 @@ denominating the indicators. COINr has an in-built set of denominator
 data called `WorldDenoms`:
 
 ``` r
+
 head(WorldDenoms)
 #>            uName uCode          GDP Population    Area      GDPpc
 #> 1    Afghanistan   AFG  19291104008   38041754  652860   507.1034
@@ -75,6 +77,7 @@ column name of the denominator data frame to use), and “ScaleFactor” is
 a multiplying factor to apply if needed. We create this data frame here:
 
 ``` r
+
 # specify how to denominate
 denomby <- data.frame(iCode = c("Goods", "Flights"),
                       Denominator = c("GDP", "Population"),
@@ -99,6 +102,7 @@ function.
 Ok so now we are ready to denominate:
 
 ``` r
+
 # Denominate one by the other
 iData_den <- Denominate(iData, WorldDenoms, denomby)
 
@@ -133,6 +137,7 @@ in `iMeta` the mapping between indicators and denominators, using the
 `iMeta$Type` column. To see what this looks like:
 
 ``` r
+
 # first few rows of the example iMeta, selected cols
 head(ASEM_iMeta[c("iCode", "Denominator")])
 #>     iCode Denominator
@@ -148,6 +153,7 @@ The entries in “Denominator” correspond to column names that are present
 in `iData`:
 
 ``` r
+
 # see names of example iData
 names(ASEM_iData)
 #>  [1] "uName"         "uCode"         "GDP_group"     "GDPpc_group"  
@@ -172,6 +178,7 @@ present in the coin - the denominator data, and the mapping. In this
 case, to denominate, we simply call:
 
 ``` r
+
 # build example coin
 coin <- build_example_coin(up_to = "new_coin", quietly = TRUE)
 
@@ -195,6 +202,7 @@ denominated - let’s plot the raw indicator against the denominated
 version:
 
 ``` r
+
 plot_scatter(coin, dsets = c("Raw", "Denominated"), iCodes = "Flights")
 ```
 
@@ -229,6 +237,7 @@ the mapping. This means that denomination is exactly the same operation
 as denominating a coin:
 
 ``` r
+
 # build example purse
 purse <- build_example_purse(up_to = "new_coin", quietly = TRUE)
 

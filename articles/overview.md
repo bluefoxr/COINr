@@ -23,6 +23,7 @@ v1.0](https://bluefoxr.github.io/COINr/articles/v1.md).
 COINr is on CRAN and can be installed by running:
 
 ``` r
+
 install.packages("COINr")
 ```
 
@@ -33,6 +34,7 @@ them), you can install the development version from GitHub. First,
 install the ‘remotes’ package if you don’t already have it, then run:
 
 ``` r
+
 remotes::install_github("bluefoxr/COINr")
 ```
 
@@ -43,6 +45,7 @@ necessary, so you can also try skipping this step if you prefer.
 Once the package is installed, it can be loaded as follows:
 
 ``` r
+
 library(COINr)
 ```
 
@@ -57,17 +60,17 @@ functions are briefly listed (this list is not exhaustive):
 [`new_coin()`](https://bluefoxr.github.io/COINr/reference/new_coin.md)
 which is used to initialise a coin object
 
-| Function                                                                   | Description                                                                                           |
-|:---------------------------------------------------------------------------|:------------------------------------------------------------------------------------------------------|
-| [`new_coin()`](https://bluefoxr.github.io/COINr/reference/new_coin.md)     | Initialise a coin object given indicator data and metadata                                            |
-| [`Screen()`](https://bluefoxr.github.io/COINr/reference/Screen.md)         | Screen units based on data availability rules                                                         |
-| [`Denominate()`](https://bluefoxr.github.io/COINr/reference/Denominate.md) | Denominate/scale indicators by other indicators                                                       |
-| [`Impute()`](https://bluefoxr.github.io/COINr/reference/Impute.md)         | Impute missing data                                                                                   |
-| [`Treat()`](https://bluefoxr.github.io/COINr/reference/Treat.md)           | Treat outliers and skewed distributions                                                               |
-| [`qTreat()`](https://bluefoxr.github.io/COINr/reference/qTreat.md)         | Simplified-syntax version of [`Treat()`](https://bluefoxr.github.io/COINr/reference/Treat.md)         |
-| [`Normalise()`](https://bluefoxr.github.io/COINr/reference/Normalise.md)   | Normalise indicators onto a common scale                                                              |
+| Function | Description |
+|:---|:---|
+| [`new_coin()`](https://bluefoxr.github.io/COINr/reference/new_coin.md) | Initialise a coin object given indicator data and metadata |
+| [`Screen()`](https://bluefoxr.github.io/COINr/reference/Screen.md) | Screen units based on data availability rules |
+| [`Denominate()`](https://bluefoxr.github.io/COINr/reference/Denominate.md) | Denominate/scale indicators by other indicators |
+| [`Impute()`](https://bluefoxr.github.io/COINr/reference/Impute.md) | Impute missing data |
+| [`Treat()`](https://bluefoxr.github.io/COINr/reference/Treat.md) | Treat outliers and skewed distributions |
+| [`qTreat()`](https://bluefoxr.github.io/COINr/reference/qTreat.md) | Simplified-syntax version of [`Treat()`](https://bluefoxr.github.io/COINr/reference/Treat.md) |
+| [`Normalise()`](https://bluefoxr.github.io/COINr/reference/Normalise.md) | Normalise indicators onto a common scale |
 | [`qNormalise()`](https://bluefoxr.github.io/COINr/reference/qNormalise.md) | Simplified-syntax version of [`Normalise()`](https://bluefoxr.github.io/COINr/reference/Normalise.md) |
-| [`Aggregate()`](https://bluefoxr.github.io/COINr/reference/Aggregate.md)   | Aggregate indicators using weighted mean                                                              |
+| [`Aggregate()`](https://bluefoxr.github.io/COINr/reference/Aggregate.md) | Aggregate indicators using weighted mean |
 
 Building functions are defined as those that modify the data (by
 creating an additional data set). They also keep a record of their
@@ -79,57 +82,57 @@ Comparisons](https://bluefoxr.github.io/COINr/articles/adjustments.md).
 optimisation and sensitivity analysis, as well as those for reporting
 results:
 
-| Function                                                                               | Description                                               |
-|:---------------------------------------------------------------------------------------|:----------------------------------------------------------|
-| [`get_corr()`](https://bluefoxr.github.io/COINr/reference/get_corr.md)                 | Get correlations between any indicator/aggregate sets     |
-| [`get_corr_flags()`](https://bluefoxr.github.io/COINr/reference/get_corr_flags.md)     | Find high or low-correlated indicators within groups      |
-| [`get_cronbach()`](https://bluefoxr.github.io/COINr/reference/get_cronbach.md)         | Get Cronbach’s alpha for any set of indicators            |
-| [`get_data()`](https://bluefoxr.github.io/COINr/reference/get_data.md)                 | Get subsets of indicator data                             |
-| [`get_data_avail()`](https://bluefoxr.github.io/COINr/reference/get_data_avail.md)     | Get data availability details of each unit                |
-| [`get_denom_corr()`](https://bluefoxr.github.io/COINr/reference/get_denom_corr.md)     | Get high correlations between indicators and denominators |
-| [`get_eff_weights()`](https://bluefoxr.github.io/COINr/reference/get_eff_weights.md)   | Get effective weights at index level                      |
-| [`get_opt_weights()`](https://bluefoxr.github.io/COINr/reference/get_opt_weights.md)   | Get optimised weights                                     |
-| [`get_results()`](https://bluefoxr.github.io/COINr/reference/get_results.md)           | Get conveniently-arranged results tables                  |
-| [`get_sensitivity()`](https://bluefoxr.github.io/COINr/reference/get_sensitivity.md)   | Perform a global uncertainty or sensitivity analysis      |
-| [`get_stats()`](https://bluefoxr.github.io/COINr/reference/get_stats.md)               | Get a table of indicator statistics                       |
-| [`get_str_weak()`](https://bluefoxr.github.io/COINr/reference/get_str_weak.md)         | Highest and lowest-ranking indicators for a given unit    |
-| [`get_unit_summary()`](https://bluefoxr.github.io/COINr/reference/get_unit_summary.md) | Summary of scores and ranks for a given unit              |
-| [`remove_elements()`](https://bluefoxr.github.io/COINr/reference/remove_elements.md)   | Test the effect of removing indicators or aggregates      |
+| Function | Description |
+|:---|:---|
+| [`get_corr()`](https://bluefoxr.github.io/COINr/reference/get_corr.md) | Get correlations between any indicator/aggregate sets |
+| [`get_corr_flags()`](https://bluefoxr.github.io/COINr/reference/get_corr_flags.md) | Find high or low-correlated indicators within groups |
+| [`get_cronbach()`](https://bluefoxr.github.io/COINr/reference/get_cronbach.md) | Get Cronbach’s alpha for any set of indicators |
+| [`get_data()`](https://bluefoxr.github.io/COINr/reference/get_data.md) | Get subsets of indicator data |
+| [`get_data_avail()`](https://bluefoxr.github.io/COINr/reference/get_data_avail.md) | Get data availability details of each unit |
+| [`get_denom_corr()`](https://bluefoxr.github.io/COINr/reference/get_denom_corr.md) | Get high correlations between indicators and denominators |
+| [`get_eff_weights()`](https://bluefoxr.github.io/COINr/reference/get_eff_weights.md) | Get effective weights at index level |
+| [`get_opt_weights()`](https://bluefoxr.github.io/COINr/reference/get_opt_weights.md) | Get optimised weights |
+| [`get_results()`](https://bluefoxr.github.io/COINr/reference/get_results.md) | Get conveniently-arranged results tables |
+| [`get_sensitivity()`](https://bluefoxr.github.io/COINr/reference/get_sensitivity.md) | Perform a global uncertainty or sensitivity analysis |
+| [`get_stats()`](https://bluefoxr.github.io/COINr/reference/get_stats.md) | Get a table of indicator statistics |
+| [`get_str_weak()`](https://bluefoxr.github.io/COINr/reference/get_str_weak.md) | Highest and lowest-ranking indicators for a given unit |
+| [`get_unit_summary()`](https://bluefoxr.github.io/COINr/reference/get_unit_summary.md) | Summary of scores and ranks for a given unit |
+| [`remove_elements()`](https://bluefoxr.github.io/COINr/reference/remove_elements.md) | Test the effect of removing indicators or aggregates |
 
 **Plotting** functions generate plots using the ggplot2 package:
 
-| Function                                                                               | Description                                               |
-|:---------------------------------------------------------------------------------------|:----------------------------------------------------------|
-| [`plot_bar()`](https://bluefoxr.github.io/COINr/reference/plot_bar.md)                 | Bar chart of a single indicator or aggregate              |
-| [`plot_corr()`](https://bluefoxr.github.io/COINr/reference/plot_corr.md)               | Heat maps of correlations between indicators/aggregates   |
-| [`plot_dist()`](https://bluefoxr.github.io/COINr/reference/plot_dist.md)               | Statistical plots of indicator/aggregate distributions    |
-| [`plot_dot()`](https://bluefoxr.github.io/COINr/reference/plot_dot.md)                 | Dot plot of an indictaor/aggregate with unit highlighting |
-| [`plot_framework()`](https://bluefoxr.github.io/COINr/reference/plot_framework.md)     | Sunburst or linear plot of indicator framework            |
-| [`plot_scatter()`](https://bluefoxr.github.io/COINr/reference/plot_scatter.md)         | Scatter plot between two indicators/aggregates            |
-| [`plot_sensitivity()`](https://bluefoxr.github.io/COINr/reference/plot_sensitivity.md) | Plots of sensitivity indices                              |
-| [`plot_uncertainty()`](https://bluefoxr.github.io/COINr/reference/plot_uncertainty.md) | Plots of confidence intervals on unit ranks               |
+| Function | Description |
+|:---|:---|
+| [`plot_bar()`](https://bluefoxr.github.io/COINr/reference/plot_bar.md) | Bar chart of a single indicator or aggregate |
+| [`plot_corr()`](https://bluefoxr.github.io/COINr/reference/plot_corr.md) | Heat maps of correlations between indicators/aggregates |
+| [`plot_dist()`](https://bluefoxr.github.io/COINr/reference/plot_dist.md) | Statistical plots of indicator/aggregate distributions |
+| [`plot_dot()`](https://bluefoxr.github.io/COINr/reference/plot_dot.md) | Dot plot of an indictaor/aggregate with unit highlighting |
+| [`plot_framework()`](https://bluefoxr.github.io/COINr/reference/plot_framework.md) | Sunburst or linear plot of indicator framework |
+| [`plot_scatter()`](https://bluefoxr.github.io/COINr/reference/plot_scatter.md) | Scatter plot between two indicators/aggregates |
+| [`plot_sensitivity()`](https://bluefoxr.github.io/COINr/reference/plot_sensitivity.md) | Plots of sensitivity indices |
+| [`plot_uncertainty()`](https://bluefoxr.github.io/COINr/reference/plot_uncertainty.md) | Plots of confidence intervals on unit ranks |
 
 **Adjustment and comparison** functions allow copies, adjustments and
 comparisons to be made between alternative versions of the composite
 indicator:
 
-| Function                                                                                     | Description                                                                         |
-|:---------------------------------------------------------------------------------------------|:------------------------------------------------------------------------------------|
-| [`Regen()`](https://bluefoxr.github.io/COINr/reference/Regen.md)                             | Regenerate results of a coin object                                                 |
-| [`change_ind()`](https://bluefoxr.github.io/COINr/reference/change_ind.md)                   | Add and remove indicators                                                           |
-| [`compare_coins()`](https://bluefoxr.github.io/COINr/reference/compare_coins.md)             | Exports all data frames in the COINr object to an Excel workbook                    |
+| Function | Description |
+|:---|:---|
+| [`Regen()`](https://bluefoxr.github.io/COINr/reference/Regen.md) | Regenerate results of a coin object |
+| [`change_ind()`](https://bluefoxr.github.io/COINr/reference/change_ind.md) | Add and remove indicators |
+| [`compare_coins()`](https://bluefoxr.github.io/COINr/reference/compare_coins.md) | Exports all data frames in the COINr object to an Excel workbook |
 | [`compare_coins_multi()`](https://bluefoxr.github.io/COINr/reference/compare_coins_multi.md) | Convert a COINr class object to a COIN class object, for use in the ‘COINr’ package |
 
 **Other functions** are useful tools that don’t fit into the other
 categories
 
-| Function                                                                                     | Description                                                         |
-|:---------------------------------------------------------------------------------------------|:--------------------------------------------------------------------|
-| [`import_coin_tool()`](https://bluefoxr.github.io/COINr/reference/import_COIN_tool.md)       | Import data and metadata from the COIN Tool                         |
-| [`COIN_to_coin()`](https://bluefoxr.github.io/COINr/reference/COIN_to_coin.md)               | Convert an older “COIN” class object to a newer “coin” class object |
-| [`build_example_coin()`](https://bluefoxr.github.io/COINr/reference/build_example_coin.md)   | Build the example coin using built-in example data                  |
-| [`build_example_purse()`](https://bluefoxr.github.io/COINr/reference/build_example_purse.md) | Build the example purse using built-in example data                 |
-| [`export_to_excel()`](https://bluefoxr.github.io/COINr/reference/export_to_excel.md)         | Export contents of the coin to Excel                                |
+| Function | Description |
+|:---|:---|
+| [`import_coin_tool()`](https://bluefoxr.github.io/COINr/reference/import_COIN_tool.md) | Import data and metadata from the COIN Tool |
+| [`COIN_to_coin()`](https://bluefoxr.github.io/COINr/reference/COIN_to_coin.md) | Convert an older “COIN” class object to a newer “coin” class object |
+| [`build_example_coin()`](https://bluefoxr.github.io/COINr/reference/build_example_coin.md) | Build the example coin using built-in example data |
+| [`build_example_purse()`](https://bluefoxr.github.io/COINr/reference/build_example_purse.md) | Build the example purse using built-in example data |
+| [`export_to_excel()`](https://bluefoxr.github.io/COINr/reference/export_to_excel.md) | Export contents of the coin to Excel |
 
 All functions are fully documented and individual function help can be
 accessed in the usual way by `?function_name`.
@@ -144,6 +147,7 @@ function arguments specifying how to apply the function. E.g. the syntax
 is typically:
 
 ``` r
+
 coin <- COINr_function(coin, function_arguments)
 ```
 
@@ -183,6 +187,7 @@ coins](https://bluefoxr.github.io/COINr/articles/coins.md) for more
 details on this.
 
 ``` r
+
 ASEM <- new_coin(ASEM_iData, ASEM_iMeta, level_names = c("Indicator", "Pillar", "Sub-index", "Index"))
 #> iData checked and OK.
 #> iMeta checked and OK.
@@ -194,6 +199,7 @@ The output of
 is a coin class object with a single data set called “Raw”:
 
 ``` r
+
 ASEM
 #> --------------
 #> A coin with...
@@ -219,6 +225,7 @@ Let’s view the structure of the index that we have specified, using the
 function:
 
 ``` r
+
 plot_framework(ASEM)
 ```
 
@@ -237,6 +244,7 @@ small and large countries. See the vignette on
 [Denomination](https://bluefoxr.github.io/COINr/articles/denomination.md).
 
 ``` r
+
 ASEM <- Denominate(ASEM, dset = "Raw")
 #> Written data set to .$Data$Denominated
 ```
@@ -260,6 +268,7 @@ availability across all indicators. Screening is done by the
 function:
 
 ``` r
+
 ASEM <- Screen(ASEM, dset = "Denominated", dat_thresh = 0.9, unit_screen = "byNA")
 #> Written data set to .$Data$Screened
 ```
@@ -271,6 +280,7 @@ set. Let’s look again at the contents of the coin using its
 [`print()`](https://rdrr.io/r/base/print.html) method:
 
 ``` r
+
 ASEM
 #> --------------
 #> A coin with...
@@ -303,6 +313,7 @@ the Asian mean. If a country is in the “Europe” group, we replace with
 the European mean.
 
 ``` r
+
 ASEM <- Impute(ASEM, dset = "Screened", f_i = "i_mean_grp", use_group = "EurAsia_group")
 #> Written data set to .$Data$Imputed
 ```
@@ -324,6 +335,7 @@ be found in the [Outlier
 treatment](https://bluefoxr.github.io/COINr/articles/treat.md) vignette.
 
 ``` r
+
 ASEM <- Treat(ASEM, dset = "Screened")
 #> Written data set to .$Data$Treated
 ```
@@ -338,10 +350,11 @@ which may be easier to use in many cases.
 The final step before aggregating is to bring the indicators onto a
 common scale by normalising them. The
 [`Normalise()`](https://bluefoxr.github.io/COINr/reference/Normalise.md)
-function will, by default, scale each indicator onto the
-$\lbrack 0,100\rbrack$ interval using a “min-max” approach.
+function will, by default, scale each indicator onto the $`[0, 100]`$
+interval using a “min-max” approach.
 
 ``` r
+
 ASEM <- Normalise(ASEM, dset = "Treated")
 #> Written data set to .$Data$Normalised
 ```
@@ -368,6 +381,7 @@ By default, this is done using the arithmetic mean, and using weights
 which were also specified in `iMeta`.
 
 ``` r
+
 ASEM <- Aggregate(ASEM, dset = "Normalised", f_ag = "a_amean")
 #> Written data set to .$Data$Aggregated
 ```
@@ -382,6 +396,7 @@ How do we look at the results? One way is the
 function which extracts a conveniently-arranged table of results:
 
 ``` r
+
 # get results table
 df_results <- get_results(ASEM, dset = "Aggregated", tab_type = "Aggs")
 
@@ -410,6 +425,7 @@ for more ways to generate results tables.
 We can also generate a bar chart:
 
 ``` r
+
 plot_bar(ASEM, dset = "Aggregated", iCode = "Index", stack_children = TRUE)
 #> Warning: `label` cannot be a <ggplot2::element_blank> object.
 ```
@@ -422,6 +438,7 @@ We will not explore all functions here. As a final useful step, we can
 export the entire contents of the coin to Excel if needed:
 
 ``` r
+
 # export coin to Excel
 export_to_excel(coin, fname = "example_coin_results.xlsx")
 ```

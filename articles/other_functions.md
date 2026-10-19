@@ -13,6 +13,7 @@ point in its construction, and is very simple to run. We first build the
 example coin:
 
 ``` r
+
 library(COINr)
 
 # build example coin
@@ -22,6 +23,7 @@ coin <- build_example_coin(quietly = TRUE)
 Then export to Excel:
 
 ``` r
+
 # export coin to Excel
 export_to_excel(coin, fname = "example_coin_results.xlsx")
 ```
@@ -35,7 +37,7 @@ R (let’s face it, that’s most people).
 Data can also be imported directly into COINr from the [COIN
 Tool](https://knowledge4policy.ec.europa.eu/composite-indicators/coin-tool_en)
 which is an Excel-based tool for building and analysing composite
-indicators, similar in fact to COINr[¹](#fn1). With the
+indicators, similar in fact to COINr[^1]. With the
 [`import_coin_tool()`](https://bluefoxr.github.io/COINr/reference/import_COIN_tool.md)
 function you can import data directly from the COIN Tool to cross check
 or extend your analysis in COINr.
@@ -46,6 +48,7 @@ you can download
 Then it’s as simple as running:
 
 ``` r
+
 # make sure file is in working directory!
 coin_import <- import_coin_tool("COIN_Tool_v1_LITE_exampledata.xlsm",
                                 makecodes = TRUE, out2 = "coin")
@@ -63,6 +66,7 @@ If you have worked in COINr before v1.0, you can use the
 function to convert old COINs into new coins:
 
 ``` r
+
 coin <- COIN_to_coin(COIN)
 ```
 
@@ -83,6 +87,7 @@ function converts a data frame to ranks, ignoring non-numeric columns.
 Taking some sample data:
 
 ``` r
+
 X <- ASEM_iData[1:5,c(2,10:12)]
 X
 #>   uCode       GDP Population      LPI
@@ -96,6 +101,7 @@ X
 This looks like
 
 ``` r
+
 rank_df(X)
 #>   uCode GDP Population LPI
 #> 1   AUT   2          2   2
@@ -111,6 +117,7 @@ function replaces values found anywhere in a data frame with
 corresponding new values:
 
 ``` r
+
 replace_df(X, data.frame(old = c("AUT", "BEL"), new = c("test1", "test2")))
 #>   uCode       GDP Population      LPI
 #> 1 test1 390.79999   8735.453 4.097985
@@ -126,6 +133,7 @@ rounds to a specified number of decimal places, ignoring non-numeric
 columns:
 
 ``` r
+
 round_df(X, 1)
 #>   uCode   GDP Population LPI
 #> 1   AUT 390.8     8735.5 4.1
@@ -140,6 +148,7 @@ The
 is equivalent but for a number of significant figures:
 
 ``` r
+
 signif_df(X, 3)
 #>   uCode   GDP Population  LPI
 #> 1   AUT 391.0       8740 4.10
@@ -166,6 +175,7 @@ We’ll demonstrate this by copying the example data frame, altering some
 values and seeing what happens:
 
 ``` r
+
 # copy
 X1 <- X
 
@@ -213,7 +223,5 @@ It is mainly intended for the use case described above, where the data
 frames are known to be similar, are of the same size, but we want to
 check for precise differences.
 
-------------------------------------------------------------------------
-
-1.  Full disclosure, I was also involved in the development of the COIN
-    Tool
+[^1]: Full disclosure, I was also involved in the development of the
+    COIN Tool

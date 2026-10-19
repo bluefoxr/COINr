@@ -49,12 +49,14 @@ effects of the weighting, and making any weight adjustments necessary.
 
 The most straightforward and widely-used approach to aggregation is the
 **weighted arithmetic mean**. Denoting the indicators as
-$x_{i} \in \{ x_{1},x_{2},...,x_{d}\}$, a weighted arithmetic mean is
+$`x_i \in \{x_1, x_2, ... , x_d \}`$, a weighted arithmetic mean is
 calculated as:
 
-$$y = \frac{1}{\sum\limits_{i = 1}^{d}w_{i}}\sum\limits_{i = 1}^{d}x_{i}w_{i}$$
+``` math
+ y = \frac{1}{\sum_{i=1}^d w_i} \sum_{i=1}^d x_iw_i 
+```
 
-where the $w_{i}$ are the weights corresponding to each $x_{i}$. Here,
+where the $`w_i`$ are the weights corresponding to each $`x_i`$. Here,
 if the weights are chosen to sum to 1, it will simplify to the weighted
 sum of the indicators. In any case, the weighted mean is scaled by the
 sum of the weights, so weights operate relative to each other.
@@ -74,7 +76,9 @@ score as a unit with scores (5, 5) – both have a score of 5.
 An alternative is the **weighted geometric mean**, which uses the
 product of the indicators rather than the sum.
 
-$$y = \left( \prod\limits_{i = 1}^{d}x_{i}^{w_{i}} \right)^{1/\sum\limits_{i = 1}^{d}w_{i}}$$
+``` math
+ y = \left( \prod_{i=1}^d x_i^{w_i} \right)^{1 / \sum_{i=1}^d w_i} 
+```
 
 This is simply the product of each indicator to the power of its weight,
 all raised the the power of the inverse of the sum of the weights.
@@ -91,7 +95,9 @@ means](https://en.wikipedia.org/wiki/Pythagorean_means) is the
 **weighted harmonic mean**. This uses the mean of the reciprocals of the
 indicators:
 
-$$y = \frac{\sum\limits_{i = 1}^{d}w_{i}}{\sum\limits_{i = 1}^{d}w_{i}/x_{i}}$$
+``` math
+ y = \frac{\sum_{i=1}^d w_i}{\sum_{i=1}^d w_i/x_i} 
+```
 
 The harmonic mean is the the least compensatory of the the three means,
 even less so than the geometric mean. It is often used for taking the
@@ -102,11 +108,13 @@ mean of rates and ratios.
 The *weighted median* is also a simple alternative candidate. It is
 defined by ordering indicator values, then picking the value which has
 half of the assigned weight above it, and half below it. For *ordered*
-indicators $x_{1},x_{2},...,x_{d}$ and corresponding weights
-$w_{1},w_{2},...,w_{d}$ the weighted median is the indicator value
-$x_{m}$ that satisfies:
+indicators $`x_1, x_2, ..., x_d`$ and corresponding weights
+$`w_1, w_2, ..., w_d`$ the weighted median is the indicator value
+$`x_m`$ that satisfies:
 
-$$\sum\limits_{i = 1}^{m - 1}w_{i} \leq \frac{1}{2},\ \ \text{and}\sum\limits_{i = m + 1}^{d}w_{i} \leq \frac{1}{2}$$
+``` math
+ \sum_{i=1}^{m-1} w_i \leq \frac{1}{2}, \: \: \text{and} \sum_{i=m+1}^{d} w_i \leq \frac{1}{2} 
+```
 
 The median is known to be robust to outliers, and this may be of
 interest if the distribution of scores across indicators is skewed.
@@ -115,19 +123,19 @@ Another somewhat different approach to aggregation is to use the
 [Copeland method](https://en.wikipedia.org/wiki/Copeland%27s_method).
 This approach is based pairwise comparisons between units and proceeds
 as follows. First, an *outranking matrix* is constructed, which is a
-square matrix with $N$ columns and $N$ rows, where $N$ is the number of
-units.
+square matrix with $`N`$ columns and $`N`$ rows, where $`N`$ is the
+number of units.
 
-The element in the $p$th row and $q$th column of the matrix is
-calculated by summing all the indicator weights where unit $p$ has a
-higher value in those indicators than unit $q$. Similarly, the cell in
-the $q$th row and $p$th column (which is the cell opposite on the other
-side of the diagonal), is calculated as the sum of the weights unit
-where $q$ has a higher value than unit $p$. If the indicator weights sum
-to one over all indicators, then these two scores will also sum to 1 by
-definition. The outranking matrix effectively summarises to what extent
-each unit scores better or worse than all other units, for all unit
-pairs.
+The element in the $`p`$th row and $`q`$th column of the matrix is
+calculated by summing all the indicator weights where unit $`p`$ has a
+higher value in those indicators than unit $`q`$. Similarly, the cell in
+the $`q`$th row and $`p`$th column (which is the cell opposite on the
+other side of the diagonal), is calculated as the sum of the weights
+unit where $`q`$ has a higher value than unit $`p`$. If the indicator
+weights sum to one over all indicators, then these two scores will also
+sum to 1 by definition. The outranking matrix effectively summarises to
+what extent each unit scores better or worse than all other units, for
+all unit pairs.
 
 The Copeland score for each unit is calculated by taking the sum of the
 row values in the outranking matrix. This can be seen as an average
@@ -161,6 +169,7 @@ function on a coin, we begin by loading the package, and building the
 example coin, up to the normalised data set.
 
 ``` r
+
 library(COINr)
 
 # build example up to normalised data set
@@ -197,6 +206,7 @@ specifications can be specified in the arguments of
 Let’s begin with the simple case though: using the function defaults.
 
 ``` r
+
 # aggregate normalised data set
 coin <- Aggregate(coin, dset = "Normalised")
 #> Written data set to .$Data$Aggregated
@@ -217,6 +227,7 @@ successively, working from level 1 upwards, so the highest aggregation
 level (the index, here) will be the last column of the data frame.
 
 ``` r
+
 dset_aggregated <- get_dset(coin, dset = "Aggregated")
 
 nc <- ncol(dset_aggregated)
@@ -279,6 +290,7 @@ normalisation step to avoid this. Luckily this is straightforward in
 COINr:
 
 ``` r
+
 coin <- Normalise(coin, dset = "Treated",
                    global_specs = list(f_n = "n_minmax",
                                         f_n_para = list(l_u = c(1,100))))
@@ -290,6 +302,7 @@ Now, since the indicators are scaled between 1 and 100 (instead of 0 and
 100 as previously), they can be aggregated with the geometric mean.
 
 ``` r
+
 coin <- Aggregate(coin, dset = "Normalised",
                    f_ag = "a_gmean")
 #> Written data set to .$Data$Aggregated
@@ -316,6 +329,7 @@ this vignette was built on your computer, we have to check whether these
 packages are installed:
 
 ``` r
+
 # ms_installed <- requireNamespace("matrixStats", quietly = TRUE)
 # ms_installed
 
@@ -333,6 +347,7 @@ will use are `x` and `w` (with the same meanings as COINr functions),
 and `na.rm` which we need to set to `TRUE`.
 
 ``` r
+
 # RESTORE above eval=ms_installed
 # load matrixStats package
 # library(matrixStats)
@@ -370,6 +385,7 @@ the function Compind::ci_bod() outputs a list. We can make a wrapper
 function to use this inside COINr:
 
 ``` r
+
 # RESTORE ABOVE eval= ci_installed
 
 # NOTE: this chunk disabled - see comments above.
@@ -403,6 +419,7 @@ least one of the values passed to it is non-`NA`. For example, R’s
 [`mean()`](https://rdrr.io/r/base/mean.html) function:
 
 ``` r
+
 # data with all NAs except 1 value
 x <- c(NA, NA, NA, 1, NA)
 
@@ -430,6 +447,7 @@ This is most easily illustrated on a data frame (see next section for
 more details on aggregating in data frames):
 
 ``` r
+
 df1 <- data.frame(
   i1 = c(1, 2, 3),
   i2 = c(3, NA, NA),
@@ -446,6 +464,7 @@ We will require that at least 2/3 of the indicators should be non-`NA`
 to give an aggregated value.
 
 ``` r
+
 # aggregate with arithmetic mean, equal weight and data avail limit of 2/3
 Aggregate(df1, f_ag = "a_amean",
            f_ag_para = list(w = c(1,1,1)),
@@ -463,6 +482,7 @@ level by specifying `f_ag` as a vector of function names rather than a
 single function.
 
 ``` r
+
 coin <- Aggregate(coin, dset = "Normalised", f_ag = c("a_amean", "a_gmean", "a_amean"))
 #> Written data set to .$Data$Aggregated
 #> (overwritten existing data set)
@@ -490,6 +510,7 @@ First, using a built in COINr function to compute the weighted harmonic
 mean of a data frame.
 
 ``` r
+
 # get some indicator data - take a few columns from built in data set
 X <- ASEM_iData[12:15]
 
@@ -521,6 +542,7 @@ specifications to each of the coins within. It has exactly the same
 parameters as the coin method.
 
 ``` r
+
 # build example purse up to normalised data set
 purse <- build_example_purse(up_to = "Normalise", quietly = TRUE)
 
